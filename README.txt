@@ -24,7 +24,7 @@ make
 make test
 make install
  
-(For platform specific information on what 'make' command to use, check "perl -V:make". On Win32 this usually returns "make='nmake';", which means you'll need the 'nmake' utility: http://support.microsoft.com/default.aspx?scid=kb;en-us;Q132084)
+(For platform specific information on what 'make' command to use, check "perl -V:make". On Windows this usually returns "make='nmake';", which means you'll need the free 'nmake' utility)
 
 AUTHOR
 
