@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Komodo Project File - DO NOT EDIT -->
+<project id="52f87a86-7232-6042-be6b-9b08f84426d2" kpf_version="4" name="BioPhylo.kpf">
+<preference-set idref="52f87a86-7232-6042-be6b-9b08f84426d2">
+  <string id="import_exclude_matches">*.*~;*.bak;*.tmp;CVS;.#*;*.pyo;*.pyc;.svn;*%*;tmp*.html;.DS_Store</string>
+  <string id="import_include_matches"></string>
+  <boolean id="import_live">1</boolean>
+  <boolean id="import_recursive">1</boolean>
+  <string id="import_type">useFolders</string>
+  <string id="lastTestPlanName_pref">test:plugins</string>
+  <string relative="path" id="perlExtraPaths">lib</string>
+  <boolean id="perl_lintOption_includeCurrentDirForLinter">1</boolean>
+<preference-set id="testPlans">
+<preference-set id="test all">
+  <string id="command_line">rake test</string>
+  <string relative="url" id="directory"></string>
+  <string id="language">Ruby - Rake tests</string>
+</preference-set>
+<preference-set id="test:functionals">
+  <string id="command_line">rake test:functionals</string>
+  <string relative="url" id="directory"></string>
+  <string id="language">Ruby - Rake tests</string>
+</preference-set>
+<preference-set id="test:integration">
+  <string id="command_line">rake test:integration</string>
+  <string relative="url" id="directory"></string>
+  <string id="language">Ruby - Rake tests</string>
+</preference-set>
+<preference-set id="test:plugins">
+  <string id="command_line">rake test:plugins</string>
+  <string relative="url" id="directory"></string>
+  <string id="language">Perl - TAP (*.t)</string>
+</preference-set>
+<preference-set id="test:units">
+  <string id="command_line">rake test:units</string>
+  <string relative="url" id="directory"></string>
+  <string id="language">Ruby - Rake tests</string>
+</preference-set>
+</preference-set>
+</preference-set>
+<preference-set idref="52f87a86-7232-6042-be6b-9b08f84426d2/lib/Bio/Phylo/NeXML/DOM/Element/Libxml.pm">
+<preference-set id="Invocations">
+<preference-set id="default">
+  <string id="cookieparams"></string>
+  <string id="cwd"></string>
+  <long id="debugger.io-port">9011</long>
+  <string id="documentRoot"></string>
+  <string id="executable-params"></string>
+  <string relative="path" id="filename">lib/Bio/Phylo/NeXML/DOM/Element/Libxml.pm</string>
+  <string id="getparams"></string>
+  <string id="language">Perl</string>
+  <string id="mpostparams"></string>
+  <string id="params"></string>
+  <string id="postparams"></string>
+  <string id="posttype">application/x-www-form-urlencoded</string>
+  <string id="request-method">GET</string>
+  <boolean id="show-dialog">1</boolean>
+  <boolean id="sim-cgi">0</boolean>
+  <boolean id="use-console">0</boolean>
+  <string id="userCGIEnvironment"></string>
+  <string id="userEnvironment"></string>
+  <string id="warnings">enabled</string>
+</preference-set>
+</preference-set>
+  <string id="lastInvocation">default</string>
+</preference-set>
+<preference-set idref="52f87a86-7232-6042-be6b-9b08f84426d2/t/29-treemodels.t">
+<preference-set id="Invocations">
+<preference-set id="default">
+  <string id="cookieparams"></string>
+  <string id="cwd"></string>
+  <long id="debugger.io-port">9011</long>
+  <string id="documentRoot"></string>
+  <string id="executable-params"></string>
+  <string relative="path" id="filename">t/29-treemodels.t</string>
+  <string id="getparams"></string>
+  <string id="language">Perl</string>
+  <string id="mpostparams"></string>
+  <string id="params"></string>
+  <string id="postparams"></string>
+  <string id="posttype">application/x-www-form-urlencoded</string>
+  <string id="request-method">GET</string>
+  <boolean id="show-dialog">1</boolean>
+  <boolean id="sim-cgi">0</boolean>
+  <boolean id="use-console">0</boolean>
+  <string id="userCGIEnvironment"></string>
+  <string id="userEnvironment"></string>
+  <string id="warnings">enabled</string>
+</preference-set>
+</preference-set>
+  <string id="lastInvocation">default</string>
+</preference-set>
+<preference-set idref="52f87a86-7232-6042-be6b-9b08f84426d2/t/33-models.t">
+<preference-set id="Invocations">
+<preference-set id="default">
+  <string id="cookieparams"></string>
+  <string id="cwd"></string>
+  <long id="debugger.io-port">9011</long>
+  <string id="documentRoot"></string>
+  <string id="executable-params"></string>
+  <string relative="path" id="filename">t/33-models.t</string>
+  <string id="getparams"></string>
+  <string id="language">Perl</string>
+  <string id="mpostparams"></string>
+  <string id="params"></string>
+  <string id="postparams"></string>
+  <string id="posttype">application/x-www-form-urlencoded</string>
+  <string id="request-method">GET</string>
+  <boolean id="show-dialog">1</boolean>
+  <boolean id="sim-cgi">0</boolean>
+  <boolean id="use-console">0</boolean>
+  <string id="userCGIEnvironment"></string>
+  <string id="userEnvironment"></string>
+  <string id="warnings">enabled</string>
+</preference-set>
+</preference-set>
+  <string id="lastInvocation">default</string>
+</preference-set>
+</project>

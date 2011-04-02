@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svnroot/nexml/!svn/ver/1593/trunk/nexml/perl/lib/Bio/Phylo/Unparsers
+END
+Phylip.pm
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/nexml/!svn/ver/1660/trunk/nexml/perl/lib/Bio/Phylo/Unparsers/Phylip.pm
+END
+Pagel.pm
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/nexml/!svn/ver/1660/trunk/nexml/perl/lib/Bio/Phylo/Unparsers/Pagel.pm
+END
+Phyloxml.pm
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svnroot/nexml/!svn/ver/1660/trunk/nexml/perl/lib/Bio/Phylo/Unparsers/Phyloxml.pm
+END
+Mrp.pm
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/nexml/!svn/ver/1660/trunk/nexml/perl/lib/Bio/Phylo/Unparsers/Mrp.pm
+END
+Newick.pm
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/nexml/!svn/ver/1660/trunk/nexml/perl/lib/Bio/Phylo/Unparsers/Newick.pm
+END
+Nexus.pm
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/nexml/!svn/ver/1660/trunk/nexml/perl/lib/Bio/Phylo/Unparsers/Nexus.pm
+END
+Nexml.pm
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/nexml/!svn/ver/1660/trunk/nexml/perl/lib/Bio/Phylo/Unparsers/Nexml.pm
+END
+Abstract.pm
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svnroot/nexml/!svn/ver/1660/trunk/nexml/perl/lib/Bio/Phylo/Unparsers/Abstract.pm
+END

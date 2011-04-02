@@ -1,0 +1,299 @@
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svnroot/nexml/!svn/ver/1630/trunk/nexml/perl/t
+END
+perl-critic.t
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svnroot/nexml/!svn/ver/1237/trunk/nexml/perl/t/perl-critic.t
+END
+18-taxlist.t
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svnroot/nexml/!svn/ver/1524/trunk/nexml/perl/t/18-taxlist.t
+END
+06-tree.t
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svnroot/nexml/!svn/ver/1621/trunk/nexml/perl/t/06-tree.t
+END
+pod.t
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svnroot/nexml/!svn/ver/838/trunk/nexml/perl/t/pod.t
+END
+19-svg.t
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svnroot/nexml/!svn/ver/838/trunk/nexml/perl/t/19-svg.t
+END
+27-phylows.t
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svnroot/nexml/!svn/ver/1171/trunk/nexml/perl/t/27-phylows.t
+END
+29-treemodels.t
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svnroot/nexml/!svn/ver/1590/trunk/nexml/perl/t/29-treemodels.t
+END
+25-dom-mapping.t
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svnroot/nexml/!svn/ver/1387/trunk/nexml/perl/t/25-dom-mapping.t
+END
+30-phyloxml.t
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svnroot/nexml/!svn/ver/1514/trunk/nexml/perl/t/30-phyloxml.t
+END
+34-json.t
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svnroot/nexml/!svn/ver/1630/trunk/nexml/perl/t/34-json.t
+END
+24-bioperl-alignio.t
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svnroot/nexml/!svn/ver/1249/trunk/nexml/perl/t/24-bioperl-alignio.t
+END
+17-parse.t
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svnroot/nexml/!svn/ver/1247/trunk/nexml/perl/t/17-parse.t
+END
+07-unparse.t
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svnroot/nexml/!svn/ver/838/trunk/nexml/perl/t/07-unparse.t
+END
+05-trees.t
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svnroot/nexml/!svn/ver/1549/trunk/nexml/perl/t/05-trees.t
+END
+regress_41070.t
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svnroot/nexml/!svn/ver/1255/trunk/nexml/perl/t/regress_41070.t
+END
+04-generator.t
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svnroot/nexml/!svn/ver/1583/trunk/nexml/perl/t/04-generator.t
+END
+regress_21417.t
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svnroot/nexml/!svn/ver/838/trunk/nexml/perl/t/regress_21417.t
+END
+11-taxon.t
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svnroot/nexml/!svn/ver/1247/trunk/nexml/perl/t/11-taxon.t
+END
+regress_35511.t
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svnroot/nexml/!svn/ver/1221/trunk/nexml/perl/t/regress_35511.t
+END
+15-table.t
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svnroot/nexml/!svn/ver/1524/trunk/nexml/perl/t/15-table.t
+END
+pod-coverage.t
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svnroot/nexml/!svn/ver/1257/trunk/nexml/perl/t/pod-coverage.t
+END
+regress_18208.t
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svnroot/nexml/!svn/ver/838/trunk/nexml/perl/t/regress_18208.t
+END
+12-taxa.t
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svnroot/nexml/!svn/ver/1247/trunk/nexml/perl/t/12-taxa.t
+END
+32-tolweb.t
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svnroot/nexml/!svn/ver/1524/trunk/nexml/perl/t/32-tolweb.t
+END
+regress_52960.t
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svnroot/nexml/!svn/ver/1220/trunk/nexml/perl/t/regress_52960.t
+END
+13-listable.t
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svnroot/nexml/!svn/ver/1247/trunk/nexml/perl/t/13-listable.t
+END
+perlcriticrc
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svnroot/nexml/!svn/ver/1237/trunk/nexml/perl/t/perlcriticrc
+END
+14-nexus.t
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svnroot/nexml/!svn/ver/1524/trunk/nexml/perl/t/14-nexus.t
+END
+10-matrices.t
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svnroot/nexml/!svn/ver/1247/trunk/nexml/perl/t/10-matrices.t
+END
+31-phylip.t
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svnroot/nexml/!svn/ver/1521/trunk/nexml/perl/t/31-phylip.t
+END
+09-matrix.t
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svnroot/nexml/!svn/ver/1622/trunk/nexml/perl/t/09-matrix.t
+END
+00-load.t
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svnroot/nexml/!svn/ver/838/trunk/nexml/perl/t/00-load.t
+END
+02-newick.t
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svnroot/nexml/!svn/ver/838/trunk/nexml/perl/t/02-newick.t
+END
+08-datum.t
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svnroot/nexml/!svn/ver/838/trunk/nexml/perl/t/08-datum.t
+END
+22-bioperl-node.t
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svnroot/nexml/!svn/ver/1138/trunk/nexml/perl/t/22-bioperl-node.t
+END
+28-reroot.t
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svnroot/nexml/!svn/ver/1211/trunk/nexml/perl/t/28-reroot.t
+END
+16-unparse.t
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svnroot/nexml/!svn/ver/1247/trunk/nexml/perl/t/16-unparse.t
+END
+35-processing.t
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svnroot/nexml/!svn/ver/1660/trunk/nexml/perl/t/35-processing.t
+END
+20-nexml.t
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svnroot/nexml/!svn/ver/1627/trunk/nexml/perl/t/20-nexml.t
+END
+23-bioperl-treeio.t
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svnroot/nexml/!svn/ver/1249/trunk/nexml/perl/t/23-bioperl-treeio.t
+END
+26-dom.t
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svnroot/nexml/!svn/ver/1387/trunk/nexml/perl/t/26-dom.t
+END
+03-node.t
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svnroot/nexml/!svn/ver/1614/trunk/nexml/perl/t/03-node.t
+END
+33-models.t
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svnroot/nexml/!svn/ver/1576/trunk/nexml/perl/t/33-models.t
+END
+regress_21209.t
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svnroot/nexml/!svn/ver/838/trunk/nexml/perl/t/regress_21209.t
+END
+regress_51602.t
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svnroot/nexml/!svn/ver/1224/trunk/nexml/perl/t/regress_51602.t
+END
+21-bioperl-tree.t
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svnroot/nexml/!svn/ver/1138/trunk/nexml/perl/t/21-bioperl-tree.t
+END
+01-phylo.t
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svnroot/nexml/!svn/ver/1237/trunk/nexml/perl/t/01-phylo.t
+END
+regress_22813.t
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svnroot/nexml/!svn/ver/1125/trunk/nexml/perl/t/regress_22813.t
+END
+regress_26332.t
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svnroot/nexml/!svn/ver/838/trunk/nexml/perl/t/regress_26332.t
+END

@@ -1,0 +1,116 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+use Getopt::Long;
+
+# inheritance \
+# 	--skip=Bio::Phylo::PhyloWS \
+# 	--skip=Bio::Phylo::NeXML::DOM \
+# 	--skip=Bio::Phylo::EvolutionaryModels \
+# 	--collapse=Bio::Phylo::Parsers \
+# 	--collapse=Bio::Phylo::Unparsers \
+# 	--collapse=Bio::Phylo::Matrices::Datatype \
+# 	--skip=Bio::Phylo::Taxa::TaxonLinker \
+# 	--skip=Bio::Phylo::Taxa::TaxaLinker \
+# 	--skip=Bio::Align::AlignI \
+# 	--skip=Bio::Tree::TreeI \
+# 	--skip=Bio::Seq  -- $pms > ../inheritance.dot
+
+
+my ( %parents_of, %children_of, %simplified, @skip, @collapse, %expand, @cluster );
+GetOptions(
+	'skip=s'     => \@skip,
+	'collapse=s' => \@collapse,
+	'cluster=s'  => \@cluster,
+);
+my %skip = map { $_ => 1 } @skip;
+
+FILE: for my $file ( @ARGV ) {
+	eval { require $file };
+	if ( $@ ) {
+		next FILE;
+	}
+	else {
+		my @isa;
+		my $child = file_to_ns( $file );
+		next FILE if skip( $child );		
+		eval "\@isa = \@${child}::ISA";
+		$child = collapse( $child );
+		PARENT: for my $parent ( @isa ) {
+			next PARENT if skip( $parent );
+			if ( not exists $parents_of{$child} ) {
+				$parents_of{$child} = [];
+			}
+			push @{ $parents_of{$child} }, $parent;
+			
+			if ( not exists $children_of{$parent} ) {
+				$children_of{$parent} = [];
+			}
+			push @{ $children_of{$parent} }, $child;	
+			$simplified{$parent} = simplify($parent);
+		}
+		$simplified{$child} = simplify($child);
+	}		
+}
+
+print "digraph inheritance {\n";
+print "\tnode [ shape = \"record\" fontname=\"Verdana\" ];\n";
+print "\trankdir=LR;\n";
+my %seen;
+for my $child ( sort { $a cmp $b } keys %parents_of ) {
+	my $simple_child = $simplified{$child};
+	if ( not $seen{$child} ) {
+		print "\t${simple_child}[label=\"${child}\"];\n";
+		$seen{$child}=1;
+	}
+	for my $parent ( sort { $a cmp $b } @{ $parents_of{$child} } ) {
+		my $simple_parent = $simplified{$parent};
+		if ( not $seen{$parent} ) {
+			print "\t${simple_parent}[label=\"${parent}\"];\n";
+			$seen{$parent}=1;
+		}
+	}
+}
+for my $child ( sort { $a cmp $b } keys %parents_of ) {
+	my $simple_child = $simplified{$child};
+	for my $parent ( sort { $a cmp $b } @{ $parents_of{$child} } ) {
+		my $simple_parent = $simplified{$parent};
+		print "\t${simple_child} -> ${simple_parent};\n";
+	}
+}
+print "}\n";
+
+sub collapse {
+	my $class = shift;
+	for my $collapse ( @collapse ) {
+		if ( $class =~ /^$collapse/ ) {
+			return $collapse;
+		}	
+	}
+	return $class;
+}
+
+sub skip {
+	my $class = shift;
+	for my $skip ( @skip ) {
+		if ( $class =~ /^$skip/ ) {
+			return 1;
+		}		
+	}
+	return;
+}
+
+sub simplify {
+	my $string = shift;
+	my $simple_string = $string;
+	$simple_string =~ s/::/_/g;
+	return $simple_string;
+}
+
+sub file_to_ns {
+	my $file = shift;
+	$file =~ s/\//::/g;
+	$file =~ s/\\/::/g;
+	$file =~ s/\.pm$//;
+	return $file;
+}

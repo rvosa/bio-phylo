@@ -1,0 +1,47 @@
+<p>
+This subdirectory contains a release candidate for Bio::Phylo
+with nexml parser support.
+</p>
+<p>
+To build this, you may want to get several optional prerequisites
+from CPAN first:
+</p>
+<ul>
+    <li>SVG.pm</li>
+    <li>XML::LibXML</li>
+    <li>IO::String</li>
+    <li>Math::Random</li>
+</ul>
+<p>
+And for the nexml extension you <em>must</em> install XML::Twig
+first.
+</p>
+<p>
+The code in this subdirectory is released under the standard
+perl licensing scheme, which is a dual system supplying users
+a choice between the artistic license and the GNU public license.
+</p>
+<p>
+Provided you have the prerequisites, you can build this code
+by issuing:<br/>
+<code>$ perl Makefile.PL</code><br/>
+<code>$ make</code><br/>
+Which places the built code in a 'blib' subdirectory of this
+folder.
+</p>
+<p>To run the test suite (which might fail at this stage of the development), issue:<br/>
+<code>$ make test</code><br/>
+For NeXML tests, set environment variable NEXML_ROOT to the checked out 
+trunk/nexml folder of the nexml project. For BioPerl tests, set environment
+variable BIOPERL_LIVE_ROOT to the checked trunk/bioperl-live folder. 
+</p>
+<p>
+To install (but don't do that just yet, instead point your $PERL5LIB
+to the lib/ folder), issue:<br/>
+<code>$ make install</code><br/>
+</p>
+<p>
+For examples of validation and translation, check out the full source tree
+from <a href="http://sf.net/projects/nexml">the sourceforge project</a> and
+peruse nexml/validator.cgi and nexml/nex2xml.cgi, respectively.
+</p>

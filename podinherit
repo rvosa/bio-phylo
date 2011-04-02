@@ -1,0 +1,495 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+use Getopt::Long;
+use Pod::Usage;
+use Data::Dumper;
+use File::Spec;
+use File::Find;
+
+my $SKIPME  = qr/./; # regular expression for methods to skip, is updated later
+my $VERBOSE = 0;     # verbose level
+my $FORCE   = 0;
+my %ACTION = (
+    'strip'  => 0,
+    'append' => 0,
+);
+
+my $ALL_CAPS_REGEX  = '[A-Z]+'; # all caps methods
+my $INTERNALS_REGEX = '_.+';    # 'internal/private' methods
+
+my @STARTING_CLASSES;  # classes to analyze
+my $WITH_OVERRIDES;    # if true, also include override methods
+
+# process command line arguments
+GetOptions(
+	'class=s'        => sub { my ($key,$value) = @_; push @STARTING_CLASSES, $value },
+	'dir=s'          => sub { my ($key,$value) = @_; push @STARTING_CLASSES, dir_to_classes($value) },
+	'verbose'        => \$VERBOSE,
+	'force'          => \$FORCE,
+	'strip'          => \$ACTION{'strip'},
+	'append'         => \$ACTION{'append'},
+	'with-overrides' => \$WITH_OVERRIDES,
+	'with-all-caps'  => sub { $ALL_CAPS_REGEX  = '' },
+	'with-internals' => sub { $INTERNALS_REGEX = '' },	
+	'help|?'         => sub { pod2usage(2) },
+	'man'            => sub { pod2usage(0) },
+);
+pod2usage( "Need a class name or directory to analyze!" ) if not @STARTING_CLASSES;
+
+if ( $ALL_CAPS_REGEX || $INTERNALS_REGEX ) {
+	# concatenate regular expressions
+	my $regex = join '|', $ALL_CAPS_REGEX, $INTERNALS_REGEX;
+	$SKIPME = qr/^(?:$regex)$/;
+}
+
+CLASS: for my $CLASS ( @STARTING_CLASSES ) {
+    msg( "*** Processing $CLASS ***" );
+    if ( not do_require( $CLASS ) ) {
+        msg( "couldn't load $CLASS" );
+        next CLASS;
+    }
+    if ( $ACTION{'strip'} ) {
+        my @stripped = strip( $CLASS );
+        my $file = find_file( $CLASS );
+        msg( "Going to strip generated pod from $file" );
+        open my $fh, '>', $file or die $!;
+        print $fh @stripped;
+        close $fh;    
+    }
+    elsif ( $ACTION{'append'} ) {
+        msg( "Appending..." );
+        my @stripped = strip( $CLASS );
+        msg( "Stripped old pod..." );
+        my $file = find_file( $CLASS ); 
+        msg( "Going to append generated pod to $file" );    
+        open my $fh, '>', $file or die $!;
+        my $have_printed_generated_pod = 0;
+        for my $line ( @stripped ) {
+            print $fh $line;
+            if ( $line =~ /podinherit_insert_token/ ) {
+                print $fh create_pod( $CLASS );
+                $have_printed_generated_pod++;
+            }            
+        }
+        print $fh create_pod( $CLASS ) if not $have_printed_generated_pod;
+        close $fh; 
+    }
+    else {
+        print create_pod( $CLASS );
+    }
+}
+
+sub do_require {
+    my $class = shift;
+    if ( $class !~ /\.pm$/ ) {
+        $class =~ s|::|/|g;
+        $class .= '.pm';
+    }
+    eval { require $class };
+    if ( $@ ) {
+        if ( ! $FORCE ) {
+            die $@;
+        }
+        else {
+            msg( "couldn't load $class, will continue anyway - $@" );
+            undef $@;
+            return 0;
+        }
+    }
+    return $class;
+}
+
+# given a root dir, return all perl class names that it subtends
+sub dir_to_classes {
+    my $dir = shift;
+    msg( "getting all classes in $dir" );
+    my @classes;
+    find(
+        sub {
+            my $name = $File::Find::name;
+            if ( $name =~ /\.pm$/ ) {
+                my @parts = File::Spec->splitpath( $name );
+                my @dirs = File::Spec->splitdir( $parts[1] );
+                if ( $dir eq shift @dirs ) {
+                    my $base_file = $parts[2];
+                    $base_file =~ s/\.pm$//;
+                    my $class = join( '::', @dirs ) . $base_file;
+                    push @classes, $class;
+                }
+            }
+        }, $dir
+    );
+    return @classes;
+}
+
+# strip generated pod from $class, return all remaining lines as array
+sub strip {
+    my $class = shift;
+    msg( "Stripping from $class" );
+    my $file = find_file( $class );
+    msg( "Will modify $file" );
+    my @stripped;
+    my $inside_inherited_pod = 0;
+    open my $fh, '<', $file or die $!;
+    while(<$fh>) {
+        $inside_inherited_pod++ if /podinherit_start_token_do_not_remove/;
+        push @stripped, $_ if not $inside_inherited_pod;
+        $inside_inherited_pod-- if /podinherit_stop_token_do_not_remove/;        
+    }
+    close $fh;
+    return @stripped;
+}
+
+# find the absolute file name for $class
+sub find_file {
+    my $class = shift;
+    msg( "Finding file for $class" );
+    
+	# turn Class::Name into Class/Name.pm
+    my $canon_class = do_require( $class );
+	
+	# get path of Class/Name.pm from %INC
+	return $INC{$canon_class};
+}
+
+# given the base class and all superclasses as arg,
+# returns generated pod
+sub create_pod {
+    my $CLASS = shift;
+    msg( "creating pod for $CLASS" );
+    
+    # make @classes array, with focal child class as first element
+    my @classes = recurse_isa( $CLASS );
+    
+    my $equals = '='; # otherwise perldoc chokes on this script
+    
+    # do we really have any superclasses?
+    if ( scalar @classes > 1 ) {
+        my $script = $0;
+        my $time = localtime;
+        my $concatenated_pod = << "HEADER";
+# podinherit_start_token_do_not_remove
+# AUTOGENERATED pod created by $script on $time
+# DO NOT EDIT the code below, rerun $script instead.
+
+${equals}pod
+
+${equals}head1 INHERITED METHODS
+
+$CLASS inherits from one or more superclasses. This means that objects of 
+class $CLASS also "do" the methods from the superclasses in addition to the 
+ones implemented in this class. Below is the documentation for those additional 
+methods, organized by superclass.
+
+HEADER
+    
+        for my $c ( @classes ) {
+            if ( $c ne $CLASS ) {
+                $concatenated_pod .= << "CLASSHEADER";
+${equals}head2 SUPERCLASS $c
+
+$CLASS inherits from superclass L<$c>. 
+Below are the public methods (if any) from this superclass.
+
+${equals}over
+
+CLASSHEADER
+            }
+            # get methods for current (super?) class, sort alphabetically
+            my @methods = sort { $a cmp $b } get_methods( $c, $CLASS );
+            for my $method ( @methods ) {
+                
+                # see if we have pod, print it out if we do
+                my $pod = get_pod( $c, $method );
+                $concatenated_pod .= $pod if $pod;
+            }
+            $concatenated_pod .= "=back\n\n" if $c ne $CLASS;		
+        }
+        $concatenated_pod .= "=cut\n\n";
+        $concatenated_pod .= "# podinherit_stop_token_do_not_remove\n";
+        return $concatenated_pod;        
+    }
+}
+
+# depth-first traversal of inheritance tree
+sub recurse_isa {
+    my $class = shift;
+    msg( "fetching inheritance tree for $class" );
+    my $isa = { $class => 1 };
+    my $classes = [ $class ];
+    _recurse_isa( $class, $isa, $classes );
+    return @{ $classes };
+}
+sub _recurse_isa {
+	my ( $class, $ISA, $classes ) = @_;	
+	do_require( $class );
+	my @isa;
+	eval "\@isa = \@${class}::ISA";
+	for ( @isa ) {
+		
+		# skip over Exporter
+		next if $_ eq 'Exporter';
+		
+		# we do this so that we don't get caught in circular inheritance
+		if ( not exists $ISA->{$_} ) {
+		    msg( "\trecursing up superclass $_" );
+		    push @{ $classes }, $_;
+			_recurse_isa($_,$ISA,$classes);
+		}
+		$ISA->{$_} = 1;
+	}
+}
+
+# get methods from symbol table
+sub get_methods {
+	my ( $class, $CLASS ) = @_;
+	my $LOCAL = {};
+	msg( "getting methods from superclass $class for baseclass $CLASS" );
+	
+	# this would only fail if @ISA has a wrong entry(?)
+	do_require( $class );
+	if ( $@ ) {
+		msg( "Can't load superclass $class: $@" );
+		return;
+	}
+	my %symbol_table_for_class;
+	my @methods;
+	eval "\%symbol_table_for_class = \%${class}::";
+	
+	# at this point we have lots of things, we just want methods
+	for my $entry ( keys %symbol_table_for_class ) {
+		
+		# check if entry is a CODE reference
+		my $can = $class->can( $entry );
+		if ( UNIVERSAL::isa( $can, 'CODE' ) ) {
+			
+			# if we're still in child class, just store for overrides
+			if ( $class eq $CLASS ) {
+				$LOCAL->{$entry} = 1 if not $WITH_OVERRIDES;
+				msg( "\tfound local method $entry" );
+			}	
+			else {
+				
+				# check if method is neither all caps or internal, nor local
+				if ( $entry !~ $SKIPME and not exists $LOCAL->{$entry} ) {
+					push @methods, $entry;
+					msg( "\tfound method $entry in ${class}'s symbol table" );
+				}
+				else {
+					msg( "\tskipping method $entry in ${class}'s symbol table" );
+				}
+			}
+		}
+	}
+	return @methods;
+}
+
+# fetch pod entry for a method in a class
+sub get_pod {
+	my ( $class, $method ) = @_;
+	msg( "getting pod for method $method in class $class" );
+	
+	my $path = find_file( $class );
+	my $pod;
+	if ( $path ) {	
+		msg( "going to parse pod from file $path" );
+		
+		# use the Pod::Parser subclass (see below)
+		my $parser = ItemParser->new;
+		$parser->method_to_find( $method );
+		$parser->parse_from_file( $path );
+		$pod = $parser->get_pod_for_method;
+	}
+	$pod = "=item $method()\n\n" if not $pod;
+	msg( $pod );
+	return $pod;
+}
+
+# a simple logger
+sub msg {
+	my ( $msg, $level ) = @_;
+	print STDERR $msg, "\n" if $VERBOSE;
+}
+
+BEGIN {
+	package ItemParser;
+	use Pod::Parser;
+	@ItemParser::ISA = qw(Pod::Parser);
+	
+	sub command {
+		my ( $parser, $command, $paragraph, $line_num ) = @_;
+		my $method = $parser->{'method'};
+		if ( $paragraph =~ m/^(?:\$\w+->)?$method(?:\(|\b)/ ) {
+			$parser->{'para'} = "=item " . $paragraph;
+			$parser->{'concat'} = 1;
+		}
+		else {
+			$parser->{'concat'} = 0;
+		}
+	}
+	
+	sub verbatim {
+		my ( $parser, $paragraph, $line_num ) = @_;
+		if ( $parser->{'concat'} ) {
+			$parser->{'para'} .= $paragraph;
+		}
+	}
+	
+	sub method_to_find {
+		my ( $parser, $method ) = @_;
+		$parser->{'method'} = $method;
+	}
+	
+	sub get_pod_for_method { shift->{'para'} }
+	
+	sub textblock {
+		my ( $parser, $text, $line_num, $pod_para ) = @_;
+		if ( $parser->{'concat'} ) {
+			$parser->{'para'} .= $text;
+		}
+	}
+	
+	sub interior_sequence {}
+}
+
+__END__
+
+=head1 NAME
+
+podinherit - Imports pod from superclasses
+
+=head1 SYNOPSIS
+
+ podinherit -class <Some::Class> [or -dir </path/to/dir>] 
+            [-with-overrides] [-with-all-caps] [-with-internals]
+            [-append] [-strip] [-force]
+            [-verbose] [-help] [-man] 
+
+=head1 OPTIONS
+
+=over 8
+
+=item B<-class> C<Some::Class>
+
+Name of class for which to import pod.
+
+=item B<-dir> C</path/to/dir>
+
+Name of directory to search for *.pm files for which to import pod.
+
+=item B<-with-overrides>
+
+Also import pod from superclasses for methods that Some::Class overrides.
+
+=item B<-with-all-caps>
+
+Also import pod for methods with names in all capitals (typically internal
+methods such as DESTROY or TIEARRAY).
+
+=item B<-with-internals>
+
+Also import pod for methods with names starting with underscores (conventionally
+these are private/internal methods).
+
+=item B<-append>
+
+Appends generated pod to file Some/Class.pm. If generated pod has been appended
+previously, this is stripped first. B<WARNING>: this will modify the file in place.
+
+=item B<-strip>
+
+Removes previously appended pod generated by podinherit (if any) from Some/Class.pm.
+B<WARNING>: this will modify the file in place.
+
+=item B<-force>
+
+Continues execution even if class loading fails.
+
+=item B<-verbose>
+
+Print verbose feedback to STDERR
+
+=item B<-help>
+
+Print a brief help message and exits.
+
+=item B<-man>
+
+Prints the manual page and exits. Full documentation can be found by issuing
+C<perldoc podinherit>.
+
+=back
+
+=head1 DESCRIPTION
+
+=head2 FOR USERS
+
+Object-oriented perl classes sometimes uses "inheritance", which is a technique
+for re-using code. When we say that a child class inherits from a super class, 
+that means that the child class has effectively copied all the functionality of 
+the super class (and usually adds to that). For example, 
+L<IO::File> inherits from L<IO::Handle>, and so an IO::File object "does" 
+anything an IO::Handle object does, and more. In many cases this is only cryptically
+indicated in the documentation - in the version of IO::File that came with my
+system, the documentation says:
+
+ "IO::File" inherits from "IO::Handle" and "IO::Seekable". It extends
+ these classes with methods that are specific to file handles.
+
+What you're supposed to get out of that is that, if you want to know everything
+you can do with IO::File, you should also look in the documentation for IO::Handle
+and IO::Seekable. If there is a long chain of inheritance this quickly becomes
+a pain to do. C<podinherit> helps you by fetching all the documentation for methods
+and functions from super classes, organizing it by superclass, alphabetizing it,
+concatenating it and printing it to STDOUT as pod ("plain ol' documentation", see
+L<perlpod>). To make that output more readable, you might do something like:
+
+ podinherit -class IO::File | pod2text | more
+
+=head2 FOR MODULE AUTHORS
+
+I once received a bug report that I had removed a method called "set_name", and
+that that was such a shame because it was such a useful method. All I had done
+was re-factor it into a superclass - so the method was still available, but just
+no in the child class the bug submitter had read the pod for. I had a similar
+experience when I was teaching a course on perl programming: many students turned
+out to be confused by the fact that some objects could do things that weren't
+in that class's pod or even in the source. Many novice programmers and end users
+have trouble understanding inheritance and navigating pod.
+
+You, the module author, can help them by using C<podinherit>. When you're getting
+a module ready for CPAN (or are distributing it some other way) you can add the
+pod from that module's superclasses by issuing:
+
+ podinherit -class My::Module -append
+
+To remove it again:
+
+ podinherit -class My::Module -strip
+
+=head1 IMPLEMENTATION
+
+This script contains a subclass of L<Pod::Parser>, which implements a stream
+parser for pod. The appropriate documentation for superclass methods is 
+identified by the C<command> method, which takes the following arguments:
+
+ my ( $parser, $command, $paragraph, $line_num ) = @_;
+
+To recognize pod, the method name needs to be part of a $paragraph start token,
+e.g. to find pod for 'method', permutations of the following will be recognized:
+
+ =item method
+ =head1 method()
+ =item method( $arg )
+ =item $obj->method( $arg )
+
+Or, specifically, anything that matches:
+ 
+ /^(?:\$\w+->)?$method(?:\(|\b)/
+
+I.e. an optional object reference with method arrow ($self->), a method name, 
+and an optional opening parenthesis or token delimiter \b, to be matched against
+the $paragraph argument to the C<command> call in subclasses of L<Pod::Parser>.
+
+=cut
