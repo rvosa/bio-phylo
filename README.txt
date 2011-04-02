@@ -32,7 +32,7 @@ Rutger Vos, rutgeraldo@gmail.com, http://rutgervos.blogspot.com
 
 BUGS
 
-Please report any bugs or feature requests to bug-phylo@rt.cpan.org, or through the web interface at http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Bio-Phylo I will be notified, and then you'll automatically be notified of progress on your bug as I make changes. 
+Please report any bugs or feature requests to bug-bio-phylo@rt.cpan.org, or through the web interface at http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Bio-Phylo I will be notified, and then you'll automatically be notified of progress on your bug as I make changes. 
  
 ACKNOWLEDGEMENTS
 
