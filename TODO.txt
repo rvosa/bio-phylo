@@ -1,6 +1,4 @@
 * Substitution models
 * PhyloWS services
 * Walrus, Dot, Text drawer
-* Move to github
 * Tree comparison algorithm: http://bioinformatics.oxfordjournals.org/content/22/1/117
-* Bio::Phylo::Util::OptionalParent, Bio::Phylo::Util::Dependency
