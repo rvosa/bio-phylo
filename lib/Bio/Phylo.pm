@@ -3,6 +3,8 @@ package Bio::Phylo;
 use strict;
 use base 'Bio::Phylo::Identifiable';
 
+# ABSTRACT: Phyloinformatic analysis using Perl
+
 # Because we use a roll-your-own looks_like_number from
 # Bio::Phylo::Util::CONSTANT, here we don't have to worry
 # about older core S::U versions that don't have it...
