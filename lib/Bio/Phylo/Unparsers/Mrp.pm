@@ -2,6 +2,11 @@
 package Bio::Phylo::Unparsers::Mrp;
 use strict;
 use base 'Bio::Phylo::Unparsers::Abstract';
+use Bio::Phylo::Util::CONSTANT qw'/looks_like/ :objecttypes';
+use Bio::Phylo::Util::Exceptions 'throw';
+use Bio::Phylo::Factory;
+
+my $factory = Bio::Phylo::Factory->new;
 
 =head1 NAME
 
@@ -31,60 +36,18 @@ directly.
 sub _to_string {
     my $self   = shift;
     my $forest = $self->{'PHYLO'};
-    my $string = "BEGIN DATA;\n[! Data block written by " . ref $self;
-    $string .= " " . $self->VERSION . " on " . localtime() . " ]\n";
-    my $taxa = $forest->make_taxa;
-    my $ntax = scalar @{ $taxa->get_entities } + 1;    # + 1 for mrp_outgroup
-    $string .= "    DIMENSIONS NTAX=$ntax ";
-    my $nchar = 0;
-
-    foreach my $tree ( @{ $forest->get_entities } ) {
-        foreach my $node ( @{ $tree->get_internals } ) {
-            $nchar++;
-        }
+    if ( looks_like_implementor $forest, 'get_forests' ) {
+        ($forest) = @{ $forest->get_forests };
     }
-    $string .= "NCHAR=$nchar;\n";
-    $string .= "    FORMAT DATATYPE=STANDARD MISSING=?;\n    MATRIX\n";
-    my $length = length('mrp_outgroup');
-    foreach my $taxon ( @{ $taxa->get_entities } ) {
-        $length = length( $taxon->get_name )
-          if length( $taxon->get_name ) > $length;
+    if ( looks_like_implementor $forest, 'make_matrix' ) {
+        my $proj = $factory->create_project;
+        my $matrix = $forest->make_matrix;
+        $proj->insert( $matrix->get_taxa, $matrix );
+        return $proj->to_nexus( '-charstatelabels' => 1 );
     }
-    $length += 4;
-    my $sp = ' ';
-    my %mrp;
-    foreach my $tree ( @{ $forest->get_entities } ) {
-        my %in_tree = map { $_->get_taxon => 1 } @{ $tree->get_terminals };
-        my $n = scalar @{ $tree->get_internals };
-        foreach my $t ( @{ $taxa->get_entities } ) {
-            $mrp{$t} = ( $sp x ( $length - length( $t->get_name ) ) )
-              if !defined $mrp{$t};
-            if ( exists $in_tree{$t} ) {
-                foreach my $node ( @{ $tree->get_internals } ) {
-                    my %in_clade =
-                      map { $_->get_taxon => 1 } @{ $node->get_terminals };
-                    if ( exists $in_clade{$t} ) {
-                        $mrp{$t} .= '1';
-                    }
-                    else {
-                        $mrp{$t} .= '0';
-                    }
-                }
-            }
-            else {
-                $mrp{$t} .= '?' x $n;
-            }
-        }
+    else {
+        throw 'ObjectMismatch' => "Can't make MRP matrix out of $forest";
     }
-    $string .=
-      '        mrp_outgroup' . ( $sp x ( $length - length('mrp_outgroup') ) );
-    $string .= ( '0' x $nchar ) . "\n";
-    foreach my $taxon ( @{ $taxa->get_entities } ) {
-        $string .= '        ' . $taxon->get_name;
-        $string .= $mrp{$taxon} . "\n";
-    }
-    $string .= "    ;\nEND;\n";
-    return $string;
 }
 
 # podinherit_insert_token
@@ -95,7 +58,7 @@ sub _to_string {
 
 =item L<Bio::Phylo::IO>
 
-The newick unparser is called by the L<Bio::Phylo::IO> object.
+The mrp unparser is called by the L<Bio::Phylo::IO> object.
 Look there to learn how to create mrp matrices.
 
 =item L<Bio::Phylo::Manual>
