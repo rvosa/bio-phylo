@@ -412,7 +412,7 @@ Creates an MRP matrix object.
         my $recursion = sub {
             my ( $node, $tree, $taxa, $method ) = @_;
             push @charlabels, $tree->get_internal_name;
-            push @statelabels, [ 'outgroup', $node->get_internal_name ];
+            push @statelabels, [ 'outgroup', $node->get_nexus_name ];
             my %tip_values =
               map { $_->get_name => 1 } @{ $node->get_terminals };
             for my $tipname ( map { $_->get_name } @{ $tree->get_terminals } ) {
