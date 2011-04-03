@@ -1,13 +1,15 @@
 package Bio::Phylo::Project;
 use strict;
 use base 'Bio::Phylo::Listable';
-use Bio::Phylo::Util::CONSTANT
-  qw':namespaces :objecttypes /looks_like/ _NEXML_VERSION_';
+use Bio::Phylo::Util::CONSTANT qw':all';
 use Bio::Phylo::Util::Exceptions 'throw';
 use Bio::Phylo::Util::Logger;
+use Bio::Phylo::IO 'parse';
 use Bio::Phylo::Factory;
 my $fac    = Bio::Phylo::Factory->new;
 my $logger = Bio::Phylo::Util::Logger->new;
+
+{
 
 =head1 NAME
 
@@ -31,38 +33,27 @@ matrices.
 
 =head1 METHODS
 
-=head2 CONSTRUCTOR
+=head2 MUTATORS
 
 =over
 
-=item new()
+=item set_datasource()
 
 Project constructor.
 
  Type    : Constructor
- Title   : new
- Usage   : my $project = Bio::Phylo::Project->new;
- Function: Instantiates a Bio::Phylo::Project
-           object.
+ Title   : set_datasource
+ Usage   : $project->set_datasource( -file => $file, -format => 'nexus' )
+ Function: Populates a Bio::Phylo::Project object from a data source
  Returns : A Bio::Phylo::Project object.
- Args    : none.
+ Args    : Arguments as must be passed to Bio::Phylo::IO::parse
 
 =cut
 
-# sub new {
-# 	my $class = shift;
-# 	my $version = $class->VERSION;
-# 	my %args = (
-# 		'-attributes' => {
-# 			'version'   => _NEXML_VERSION_,
-# 			'generator' => "$class v.$version",
-# 			'xmlns'     => _NS_NEXML_,
-# 			'xsi:schemaLocation' => _NS_NEXML_ . ' ' . _NS_NEXML_ . '/nexml.xsd',
-# 		},
-# 		'-identifiable' => 0,
-# 	);
-# 	return $class->SUPER::new(%args,@_);
-# }
+    sub set_datasource {
+        my $self = shift;
+        return parse( '-project' => $self, @_ );
+    }
 
 =back
 
@@ -71,7 +62,7 @@ Project constructor.
 =over
 
 =cut
-{
+
     my $TYPE       = _PROJECT_;
     my $TAXA       = _TAXA_;
     my $FOREST     = _FOREST_;
