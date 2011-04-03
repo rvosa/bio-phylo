@@ -1613,7 +1613,7 @@ Serializes matrix to nexus format.
                     else {
                         $charstatelabels .= " ' '";
                     }
-                    $charstatelabels .= $i == $nlabels ? "\n\t;" : ',';
+                    $charstatelabels .=  ',' if $i < $nlabels;
                 }
                 $string .= "\tCHARSTATELABELS$charstatelabels\n\t;\n";
             }
