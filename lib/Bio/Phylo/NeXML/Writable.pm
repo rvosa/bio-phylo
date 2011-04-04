@@ -368,16 +368,21 @@ Retrieves the metadata for the element.
  Usage   : my @meta = @{ $obj->get_meta };
  Function: Retrieves the metadata for the element.
  Returns : An array ref of Bio::Phylo::NeXML::Meta objects
- Args    : None.
+ Args    : Optional: a list of CURIE predicates, in which case
+           the returned objects will be those matching these
+	   predicates
 
 =cut
 
     sub get_meta {
-        my $self = shift;
-
-        #        $logger->debug("getting meta for $self");
-        my $id = $self->get_id;
-        return $meta{$id} || [];
+	my $self = shift;
+	my $metas = $meta{ $self->get_id } || [];
+        if ( @_ ) {
+	    my %predicates = map { $_ => 1 } @_;
+	    my @matches = grep { $predicates{$_->get_predicate} } @{ $metas };
+	    return \@matches;
+	}
+	return $metas;        
     }
 
 =item get_tag()
