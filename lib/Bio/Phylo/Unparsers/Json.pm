@@ -55,8 +55,6 @@ Look there to learn how to unparse objects.
 
 Also see the manual: L<Bio::Phylo::Manual> and L<http://rutgervos.blogspot.com>.
 
-=back
-
 =item L<http://www.json.org>
 
 To learn more about the JavaScript Object Notation (JSON) format, visit
