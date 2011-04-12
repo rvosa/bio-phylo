@@ -5,7 +5,6 @@ use Bio::Phylo::Util::Exceptions 'throw';
 use Bio::Phylo::Util::CONSTANT 'looks_like_hash';
 use Bio::Phylo::Util::Logger;
 use Bio::Phylo::Factory;
-use English;
 
 =head1 NAME
 
@@ -23,7 +22,7 @@ my $logger  = Bio::Phylo::Util::Logger->new;
 # argument is a file name, which we open
 sub _open_file {
     my $file_name = shift;
-    open my $handle, '<', $file_name or throw 'FileError' => $OS_ERROR;
+    open my $handle, '<', $file_name or throw 'FileError' => $!;
     return $handle;
 }
 
@@ -31,7 +30,7 @@ sub _open_file {
 # we can treat as a handle by opening it by reference
 sub _open_string {
     my $string_value = shift;
-    open my $handle, '<', \$string_value or throw 'FileError' => $OS_ERROR;
+    open my $handle, '<', \$string_value or throw 'FileError' => $!;
     return $handle;
 }
 
@@ -44,11 +43,11 @@ sub _open_url {
     # we don't "use" it at the top of the module because that
     # would make it a required dependency
     eval { require LWP::UserAgent };
-    if ($EVAL_ERROR) {
+    if ($@) {
         throw 'ExtensionError' =>
 "Providing a -url argument requires\nsuccesful loading of LWP::UserAgent.\n"
           . "However, there was an error when I\ntried that:\n"
-          . $EVAL_ERROR;
+          . $@;
     }
 
     # apparently it's installed, so let's instantiate a client
