@@ -162,25 +162,7 @@ Matrix constructor.
         # go up inheritance tree, eventually get an ID
         my $self = $class->SUPER::new(
             '-characters' => $factory->create_characters,
-            '-listener'   => sub {
-                my $self       = shift;
-                my $nchar      = $self->get_nchar;
-                my $characters = $self->get_characters;
-                my @chars      = @{ $characters->get_entities };
-                my @defined    = grep { defined $_ } @chars;
-                if ( scalar @defined != $nchar ) {
-                    for my $i ( 0 .. ( $nchar - 1 ) ) {
-                        if ( not $chars[$i] ) {
-                            $characters->insert_at_index(
-                                $factory->create_character, $i );
-                        }
-                    }
-                }
-                @chars = @{ $characters->get_entities };
-                if ( scalar(@chars) > $nchar ) {
-                    $characters->prune_entities( [ $nchar .. $#chars ] );
-                }
-            },
+            '-listener'   => \&_update_characters,
             @_
         );
         return $self;
@@ -1771,6 +1753,31 @@ Analog to to_xml.
         for (@inside_out_arrays) {
             delete $_->{$id} if defined $id and exists $_->{$id};
         }
+    }
+    
+    sub _update_characters {
+	my $self        = shift;
+	my $nchar       = $self->get_nchar;
+	my $characters  = $self->get_characters;
+	my $type_object = $self->get_type_object; 
+	my @chars       = @{ $characters->get_entities };
+	my @defined     = grep { defined $_ } @chars;
+	if ( scalar @defined != $nchar ) {
+	    for my $i ( 0 .. ( $nchar - 1 ) ) {
+		if ( not $chars[$i] ) {
+		    $characters->insert_at_index(
+			$factory->create_character(
+			    '-type_object' => $type_object
+			),
+			$i,
+		    );
+		}
+	    }
+	}
+	@chars = @{ $characters->get_entities };
+	if ( scalar(@chars) > $nchar ) {
+	    $characters->prune_entities( [ $nchar .. $#chars ] );
+	}
     }
 
 =back
