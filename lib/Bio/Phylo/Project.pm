@@ -295,7 +295,7 @@ Serializes invocant to XML.
             my $twig = XML::Twig->new( 'pretty_print' => 'indented' );
             eval { $twig->parse($xml) };
             if ($@) {
-                throw 'API' => "Couldn't build xml: " . $@;
+                throw 'API' => "Couldn't build xml: " . $@ . "\n\n$xml";
             }
             else {
                 return $twig->sprint;
