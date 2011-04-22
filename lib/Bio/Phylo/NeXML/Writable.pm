@@ -547,8 +547,14 @@ Retrieves attributes for the element.
         my $self  = shift;
         my $attrs = $flatten_attributes->($self);
         if ( not exists $attrs->{'label'} and my $label = $self->get_name ) {
-            $attrs->{'label'} = $XMLEntityEncode->($label);
+            $attrs->{'label'} = $label;
         }
+	if ( $attrs->{'label'} ne '' ) {
+	    $attrs->{'label'} = $XMLEntityEncode->($attrs->{'label'});
+	}
+	else {
+	    delete $attrs->{'label'};
+	}
         if ( not exists $attrs->{'id'} ) {
             $attrs->{'id'} = $self->get_xml_id;
         }
@@ -618,9 +624,10 @@ Retrieves xml id for the element.
             return $id;
         }
         else {
-            my $tag = $self->get_tag;
-            $tag =~ s/:/_/;
-            return $tag . $self->get_id;
+            my $xml_id = $self->get_tag;
+	    my $obj_id = $self->get_id;
+            $xml_id =~ s/^(.).+(.)$/$1$2$obj_id/;
+            return $id{$obj_id} = $xml_id;
         }
     }
 
