@@ -91,23 +91,7 @@ Datum object constructor.
         # go up inheritance tree, eventually get an ID
         my $self = $class->SUPER::new(
             @_,
-            '-listener' => sub {
-                my $self = shift;
-                if ( my $matrix = $self->get_matrix ) {
-                    my $nchar      = $matrix->get_nchar;
-                    my $characters = $matrix->get_characters;
-                    my @chars      = @{ $characters->get_entities };
-                    my @defined    = grep { defined $_ } @chars;
-                    if ( scalar @defined != $nchar ) {
-                        for my $i ( 0 .. ( $nchar - 1 ) ) {
-                            if ( not $chars[$i] ) {
-                                $characters->insert_at_index(
-                                    $fac->create_character, $i );
-                            }
-                        }
-                    }
-                }
-            }
+            '-listener' => \&_update_characters,
         );
         return $self;
     }
@@ -1124,6 +1108,13 @@ Analog to to_xml.
             for my $field (@fields) {
                 delete $field->{$id};
             }
+        }
+    }
+    
+    sub _update_characters {
+        my $self = shift;
+        if ( my $matrix = $self->get_matrix ) {
+            $matrix->_update_characters;
         }
     }
 }
