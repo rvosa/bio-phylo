@@ -2875,7 +2875,7 @@ Serializes invocant to xml.
         if ( my $root = $self->get_root ) {
             $xml .= $root->to_xml;
         }
-        $xml .= sprintf( "\n</%s>", $self->get_tag );
+        $xml .= $self->sets_to_xml . sprintf('</%s>', $self->get_tag);
         return $xml;
     }
 
