@@ -466,14 +466,6 @@ Retrieves tag string
             $xml .= $_->to_xml for @{$meta};
             $has_contents++;
         }
-        if ( looks_like_implementor $self, 'get_sets' ) {
-            my $sets = $self->get_sets;
-            if ( @{$sets} ) {
-                $xml .= '>' if not @{$meta};
-                $xml .= $_->to_xml for @{$sets};
-                $has_contents++;
-            }
-        }
         if ($has_contents) {
             $xml .= "</$tag>" if $closeme;
         }
@@ -549,7 +541,7 @@ Retrieves attributes for the element.
         if ( not exists $attrs->{'label'} and my $label = $self->get_name ) {
             $attrs->{'label'} = $label;
         }
-	if ( $attrs->{'label'} ne '' ) {
+	if ( defined $attrs->{'label'} and $attrs->{'label'} ne '' ) {
 	    $attrs->{'label'} = $XMLEntityEncode->($attrs->{'label'});
 	}
 	else {
@@ -557,21 +549,6 @@ Retrieves attributes for the element.
 	}
         if ( not exists $attrs->{'id'} ) {
             $attrs->{'id'} = $self->get_xml_id;
-        }
-        if ( $self->can('_get_container') ) {
-            my $container = $self->_get_container;
-            if ( $self->can('get_tree') ) {
-                $container = $self->get_tree;
-            }
-            if ($container) {
-                my @classes;
-                for my $set ( @{ $container->get_sets } ) {
-                    if ( $container->is_in_set( $self, $set ) ) {
-                        push @classes, $set->get_xml_id;
-                    }
-                }
-                $attrs->{'class'} = join ' ', @classes if scalar(@classes);
-            }
         }
         if ( defined $self->is_identifiable and not $self->is_identifiable ) {
             delete $attrs->{'id'};
@@ -770,16 +747,17 @@ Serializes invocant to XML.
     sub to_xml {
         my $self = shift;
         my $xml  = '';
-        if ( $self->can('get_entities') ) {
+        if ( $self->can('get_entities') ) {	    
             for my $ent ( @{ $self->get_entities } ) {
                 if ( looks_like_implementor $ent, 'to_xml' ) {
                     $xml .= "\n" . $ent->to_xml;
                 }
             }
+	    $xml .= $self->sets_to_xml;
         }
         if ($xml) {
             $xml =
-              $self->get_xml_tag . $xml . sprintf( "</%s>", $self->get_tag );
+              $self->get_xml_tag . $xml . sprintf('</%s>', $self->get_tag);
         }
         else {
             $xml = $self->get_xml_tag(1);
