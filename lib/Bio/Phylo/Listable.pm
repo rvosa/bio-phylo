@@ -1050,8 +1050,8 @@ Consult the documentation for L<Bio::Phylo::Set> for a code sample.
 =cut 
 
     sub is_in_set {
-        my ( $self, $obj, $set ) = @_;
-        if ( $sets{ $self->get_id }->{ $set->get_id } ) {
+        my ( $self, $obj, $set ) = @_;        
+        if ( looks_like_object($set,_SET_) and $sets{ $self->get_id }->{ $set->get_id } ) {
             my $i = $self->get_index_of($obj);
             if ( defined $i ) {
                 return $set->get_by_index($i) ? 1 : 0;
@@ -1133,6 +1133,44 @@ Consult the documentation for L<Bio::Phylo::Set> for a code sample.
         }
         return $self;
     }
+
+=item sets_to_xml()
+
+Returns string representation of sets
+
+ Type    : Accessor
+ Title   : sets_to_xml
+ Usage   : my $str = $obj->sets_to_xml;
+ Function: Gets xml string
+ Returns : Scalar
+ Args    : None
+
+=cut
+
+    sub sets_to_xml {
+	my $self = shift;
+	my $xml = '';
+	if ( $self->can('get_sets') ) {
+	    for my $set ( @{ $self->get_sets } ) {
+		my %contents;
+		for my $ent ( @{ $self->get_entities } ) {
+		    if ( $self->is_in_set($ent,$set) ) {
+			my $tag = $ent->get_tag;
+			$contents{$tag} = [] if not $contents{$tag};
+			push @{ $contents{$tag} }, $ent->get_xml_id;
+		    }
+		}
+		for my $key ( keys %contents ) {
+		    my @ids = @{ $contents{$key} };
+		    $contents{$key} = join ' ', @ids;
+		}
+		$set->set_attributes(%contents);
+		$xml .= "\n" . $set->to_xml;
+	    }
+	}
+	return $xml;
+    }
+
 
 =begin comment
 
