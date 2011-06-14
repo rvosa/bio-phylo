@@ -124,6 +124,30 @@ sub _obj_from_elt {
     return ( $obj, $id );
 }
 
+# this processes subsets of things
+sub _process_set {
+    my ( $self, $parent_elt, $container ) = @_;
+    for my $elt ( $parent_elt->children('set') ) {
+        my ( $set, $set_id ) = $self->_obj_from_elt( $elt, 'set' );
+        $container->add_set($set);
+        my %idrefs;
+        for my $thing ( @{ $container->get_entities } ) {
+            my $tag = $thing->get_tag;
+            my $id = $thing->get_xml_id;
+            if ( not exists $idrefs{$tag} ) {
+                my @refs = grep { /\S/ } split /\s+/, $elt->att($tag);
+                if ( @refs ) {
+                    my %map = map { $_ => 1 } @refs;
+                    $idrefs{$tag} = \%map;
+                }
+            }
+            if ( $idrefs{$tag}->{$id} ) {
+                $container->add_to_set($thing,$set);
+            }
+        }
+    }
+}
+
 # this is the constructor that gets called by Bio::Phylo::IO,
 # here we create the object instance that will process the file/string
 sub _init {
@@ -223,6 +247,10 @@ sub _handle_otus {
         # add reference for later lookup
         $self->{'_taxon_in_taxa'}->{$taxa_id}->{$taxon_id} = $taxon_obj;
     }
+    
+    # process taxon sets
+    $self->_process_set($taxa_elt,$taxa_obj);
+    
     $self->_logger->info( $self->_pos . " Processed block id: $taxa_id" );
 }
 
@@ -305,8 +333,8 @@ sub _handle_chars {
 
     # create character definitions, if any
     my ( $def_hash, $def_array ) = ( {}, [] );
-    my $lookup;
-    if ( my $definitions_elt = $characters_elt->first_child('format') ) {
+    my ( $lookup, $definitions_elt );
+    if ( $definitions_elt = $characters_elt->first_child('format') ) {
         ( $def_hash, $def_array, $lookup ) =
           $self->_process_definitions($definitions_elt);
     }
@@ -352,6 +380,16 @@ sub _handle_chars {
         $self->_set_otu_for_obj( $row_elt, $row_obj, $taxa_idref );
         $matrix_obj->insert($row_obj);
     }
+    my $characters = $matrix_obj->get_characters;
+    
+    # assign original xml ids to character objects
+    my $chars = $characters->get_entities;
+    for my $i ( 0 .. $#{ $chars } ) {
+        $chars->[$i]->set_xml_id($def_array->[$i]);
+    }
+    
+    # now process character sets
+    $self->_process_set($definitions_elt,$characters);
     push @{ $self->{'_blocks'} }, $matrix_obj;
 }
 
@@ -550,6 +588,10 @@ sub _handle_forest {
             $self->_logger->warn( $self->_pos . " Can't process networks yet" );
         }
     }
+    
+    # process tree sets
+    $self->_process_set($trees_elt,$forest_obj);
+
     push @{ $self->{'_blocks'} }, $forest_obj;
 }
 
@@ -625,6 +667,10 @@ sub _process_listtree {
             'line' => $self->{'_twig'}->parser->current_line
         );
     }
+    
+    # process node sets
+    $self->_process_set($tree_elt,$tree_obj);
+    
     return $tree_obj;
 }
 
