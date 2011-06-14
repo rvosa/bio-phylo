@@ -1,7 +1,7 @@
 package Bio::Phylo::Set;
 use strict;
 use base 'Bio::Phylo::Listable';
-use Bio::Phylo::Util::CONSTANT '_NONE_';
+use Bio::Phylo::Util::CONSTANT qw'_NONE_ _SET_';
 
 =head1 NAME
 
@@ -58,6 +58,7 @@ for more information on how to use this feature.
 =cut
 {
     my $NONE = _NONE_;
+    my $TYPE = _SET_;
 
     #     sub new {
     #         return shift->SUPER::new( '-tag' => 'class', @_ );
@@ -89,8 +90,8 @@ Tests if argument can be inserted in invocant.
         return 1;
     }
     sub _container { $NONE }
-    sub _type      { $NONE }
-    sub _tag       { 'class' }
+    sub _type      { $TYPE }
+    sub _tag       { 'set' }
 }
 
 =back
