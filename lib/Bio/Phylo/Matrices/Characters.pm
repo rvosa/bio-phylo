@@ -41,7 +41,12 @@ Serializes characters to nexml format.
 
 sub to_xml {
     my $self = shift;
-    return join '', map { $_->to_xml } @{ $self->get_entities };
+    my $xml = '';
+    for my $ent ( @{ $self->get_entities } ) {
+        $xml .= $ent->to_xml;
+    }
+    $xml .= $self->sets_to_xml;
+    return $xml;
 }
 sub _validate  { 1 }
 sub _container { _NONE_ }
