@@ -35,6 +35,7 @@ BEGIN {
       _ELEMENT_
       _CHARACTERS_
       _CHARACTER_
+      _SET_
       looks_like_number
       looks_like_object
       looks_like_hash
@@ -86,6 +87,7 @@ BEGIN {
               _ELEMENT_
               _CHARACTERS_
               _CHARACTER_
+              _SET_
               )
         ],
         'functions' => [
@@ -166,6 +168,7 @@ sub _DOCUMENT_ ()      { 22 }
 sub _ELEMENT_ ()       { 23 }
 sub _CHARACTERS_ ()    { 24 }
 sub _CHARACTER_ ()     { 25 }
+sub _SET_ ()           { 26 }
 
 # for PhyloWS
 sub _HTTP_SC_SEE_ALSO_ () { '303 See Other' }
