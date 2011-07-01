@@ -54,6 +54,7 @@ L<http://dx.doi.org/10.1186/1471-2105-12-63>
  $Id: Tolweb.pm 1660 2011-04-02 18:29:40Z rvos $
 
 =cut
+
 # this is the constructor that gets called by Bio::Phylo::IO,
 # here we create the object instance that will process the file/string
 sub _init {
@@ -77,93 +78,61 @@ sub _parse {
     my $self = shift;
     $self->_init;
     $self->_logger->debug("going to parse xml");
-    $self->{'_tree'} =
-      $self->_factory->create_tree->insert( $self->_factory->create_node );
+    $self->{'_tree'} = $self->_factory->create_tree;
+    $self->{'_tree'}->set_namespaces( 'tbe' => _NS_TWE_ );
+    $self->{'_tree'}->set_namespaces( 'dc'  => _NS_DC_ );
+    $self->{'_tree'}->set_namespaces( 'tba' => _NS_TWA_ );
     $self->{'_twig'}->parse( $self->_string );
     $self->_logger->debug("done parsing xml");
 
     # now we build the tree structure
-    my $root;
     for my $node_id ( keys %{ $self->{'_node_of'} } ) {
         if ( defined( my $parent_id = $self->{'_parent_of'}->{$node_id} ) ) {
             my $child  = $self->{'_node_of'}->{$node_id};
             my $parent = $self->{'_node_of'}->{$parent_id};
             $child->set_parent($parent);
         }
-        else {
-            $root = $self->{'_node_of'}->{$node_id};
-        }
     }
-    $root->set_parent( $self->{'_tree'}->get_root );
-    $self->{'_tree'}->get_root->add_meta(
-        $self->_factory->create_meta(
-            '-triple' => { 'tba:id' => $root->get_generic('ANCESTORWITHPAGE') }
-        )
-    );
-    $self->_logger->debug("done building tree");
 
-    # we're done, now grab the tree from its field
-    my $tree = $self->{'_tree'};
-    return $self->_factory->create_forest->insert($tree);
+    # we're done, now insert the tree in a forest
+    return $self->_factory->create_forest->insert($self->{'_tree'});
 }
 
 sub _handle_node {
     my ( $self, $twig, $node_elt ) = @_;
-    $self->_logger->debug("handling node $node_elt");
-    my $node_obj = $self->_factory->create_node;
-    my $id       = $node_elt->att('ID');
-    $node_obj->set_generic( 'id' => $id );
-    $self->{'_node_of'}->{$id} = $node_obj;
+    my $fac = $self->_factory;    
+    my $node_obj = $fac->create_node;    
+    $self->{'_tree'}->insert($node_obj);
+
+    # these hashes are populated so that we can build the topology
+    # once we've processed all NODE elements
+    my $id = $node_elt->att('ID');    
+    $self->{'_node_of'}->{$id} = $node_obj;    
     if ( my $parent = $node_elt->parent->parent ) {
         $self->{'_parent_of'}->{$id} = $parent->att('ID');
-        $self->_logger->debug("found parent node");
     }
-    $self->{'_tree'}->insert($node_obj);
-    for my $child_elt ( $node_elt->children ) {
-        if ( $child_elt->tag eq 'NODES' or $child_elt->tag eq 'OTHERNAMES' ) {
-            next;
+
+    # we don't process child NODE elements here, we construct the topology
+    # afterwards. This so that we can process the element structure in chunks.
+    for my $child ( $node_elt->children ) {
+        my ( $tag, $text ) = ( $child->tag, $child->text );
+        if ( $text && $tag eq 'NAME' ) {
+            $node_obj->set_name($text);
         }
-        elsif ( $child_elt->tag eq 'NAME' ) {
-            if ( my $name = $child_elt->text ) {
-                $name =~ m/[ ()]/
-                  ? $node_obj->set_name( "'" . $name . "'" )
-                  : $node_obj->set_name($name);
-            }
+        elsif ( $text && $tag eq 'DESCRIPTION' ) {
+            $node_obj->add_meta( $fac->create_meta( '-triple' => { 'dc:description' => $text } ) );
         }
-        elsif ( $child_elt->tag eq 'DESCRIPTION' ) {
-            if ( my $desc = $child_elt->text ) {
-                $node_obj->set_namespaces( 'dc' => _NS_DC_ );
-                $node_obj->add_meta(
-                    $self->_factory->create_meta(
-                        '-triple' => { 'dc:description' => $desc }
-                    )
-                );
-            }
-        }
-        elsif ( my $text = $child_elt->text ) {
-            $node_obj->set_namespaces( 'tbe' => _NS_TWE_ );
-            $node_obj->add_meta(
-                $self->_factory->create_meta(
-                    '-triple' => { 'tbe:' . lc( $child_elt->tag ) => $text }
-                )
-            );
+        elsif ( $text && $tag ne 'NODES' && $tag ne 'OTHERNAMES' ) {
+            $node_obj->add_meta( $fac->create_meta( '-triple' => { 'tbe:' . lc( $tag ) => $text } ) );
         }
     }
+    
     for my $att_name ( $node_elt->att_names ) {
-        $node_obj->set_namespaces( 'tba' => _NS_TWA_ );
-        if ( $att_name eq 'ANCESTORWITHPAGE' ) {
-            $node_obj->set_generic(
-                'ANCESTORWITHPAGE' => $node_elt->att($att_name) );
-        }
         if ( defined $node_elt->att($att_name) ) {
-            $node_obj->add_meta(
-                $self->_factory->create_meta(
-                    '-triple' =>
-                      { 'tba:' . lc($att_name) => $node_elt->att($att_name) }
-                )
-            );
+            $node_obj->add_meta( $fac->create_meta( '-triple' => { 'tba:' . lc($att_name) => $node_elt->att($att_name) } ) );
         }
     }
-    $twig->purge;
+    
+    $node_elt->delete;
 }
 1;
