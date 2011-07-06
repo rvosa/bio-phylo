@@ -117,7 +117,8 @@ Gets an array ref of supported formats
  Returns : [ qw(nexml nexus newick html) ]
  Args    : NONE
 
-=cut    
+=cut
+
     sub get_supported_formats { [qw(nexml nexus newick html)] }
 
 =back
