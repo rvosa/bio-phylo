@@ -146,8 +146,6 @@ Gets invocant's url.
                 $uri = $build_query_string->( $uri, %args );
             }
             elsif ( $args{'-query'} ) {
-                $uri .= lc( $args{'-section'} ) . '/find?';
-                delete $args{'-section'};
                 $uri = $build_query_string->( $uri, %args );
             }
         }
