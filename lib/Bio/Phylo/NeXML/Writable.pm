@@ -385,6 +385,36 @@ Retrieves the metadata for the element.
 	return $metas;        
     }
 
+=item get_meta_object()
+
+Retrieves the metadata annotation object for the provided predicate
+
+ Type    : Accessor
+ Title   : get_meta_object
+ Usage   : my $title = $obj->get_meta_object('dc:title');
+ Function: Retrieves the metadata annotation value for the object.
+ Returns : An annotation value, i.e. the object of a triple
+ Args    : Required: a CURIE predicate for which the annotation
+           value is returned
+ Note    : This method returns the object for the first annotation
+           with the provided predicate. Keep this in mind when dealing
+	   with an object that has multiple annotations with the same
+	   predicate.
+
+=cut
+    
+    sub get_meta_object {
+	my ( $self, $predicate ) = @_;
+	throw 'BadArgs' => "No CURIE provided" unless $predicate;
+	my ( $meta ) = @{ $self->get_meta($predicate) };
+	if ( $meta ) {
+	    return $meta->get_object;
+	}
+	else {
+	    return undef;
+	}
+    }
+
 =item get_tag()
 
 Retrieves tag name for the element.
