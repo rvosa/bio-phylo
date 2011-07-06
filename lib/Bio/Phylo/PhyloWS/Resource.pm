@@ -5,7 +5,7 @@ use Bio::Phylo::Util::Exceptions 'throw';
 use Bio::Phylo::Util::CONSTANT qw'_DESCRIPTION_ _RESOURCE_';
 use Bio::Phylo::Util::Logger;
 {
-    my @fields = \( my ( %guid, %format ) );
+    my @fields = \( my ( %guid, %format, %query ) );
     my $logger = Bio::Phylo::Util::Logger->new;
 
 =head1 NAME
@@ -43,8 +43,8 @@ recommendations.
 
     sub new {
         my $self = shift->SUPER::new( '-tag' => 'item', @_ );
-        if ( not $self->get_guid ) {
-            throw 'BadArgs' => 'Need -guid argument';
+        if ( not ( $self->get_guid xor $self->get_query ) ) {
+            throw 'BadArgs' => 'Need -guid or -query argument';
         }
         return $self;
     }
@@ -93,6 +93,25 @@ Sets invocant's preferred serialization format.
         return $self;
     }
 
+=item set_query()
+
+Sets invocant's query parameter
+
+ Type    : Mutator
+ Title   : set_query
+ Usage   : $obj->set_query($query);
+ Function: Assigns an object's query.
+ Returns : Modified object.
+ Args    : Argument must be a string.
+
+=cut
+
+    sub set_query {
+	my ( $self, $query ) = @_;
+	$query{ $self->get_id } = $query;
+	return $self;
+    }
+
 =back
 
 =head2 ACCESSORS
@@ -133,6 +152,23 @@ Gets invocant's preferred serialization format
         return $format{ shift->get_id };
     }
 
+=item get_query()
+
+Gets invocant's query parameter
+
+ Type    : Accessor
+ Title   : get_query
+ Usage   : my $query = $obj->get_query;
+ Function: Retrieves an object's query.
+ Returns : Query
+ Args    : None
+
+=cut
+
+    sub get_query {
+	return $query{ shift->get_id };
+    }
+
 =item get_full_url()
 
 Gets invocant's full url (i.e. including query string)
@@ -148,9 +184,9 @@ Gets invocant's full url (i.e. including query string)
 
     sub get_full_url {
         my $self = shift;
-	my ( $url, $guid ) = ( $self->get_url, $self->get_guid );
-	my $full = $url . $guid;
-	$logger->debug("URL=$url, GUID=$guid");
+	my ( $guid, $query ) = ( $self->get_guid, $self->get_query );
+	my %args = $query ? ( '-query' => $query ) : ( '-guid' => $guid );
+	my $full = $self->get_url(%args);
 	$logger->debug("FULL=$full");
         if ( my $format = $self->get_format ) {
 	    $logger->debug("Will add format paramer for $format serialization");	    
