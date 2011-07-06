@@ -26,11 +26,10 @@ my %class = (
     'dom'         => 'Bio::Phylo::NeXML::DOM',
     'document'    => 'Bio::Phylo::NeXML::DOM::Document',
     'element'     => 'Bio::Phylo::NeXML::DOM::Element',
-
-    #    'client'      => 'Bio::Phylo::PhyloWS::Client',
-    #    'server'      => 'Bio::Phylo::PhyloWS::Server',
-    #    'resource'    => 'Bio::Phylo::PhyloWS::Resource',
-    #    'description' => 'Bio::Phylo::PhyloWS::Resource::Description',
+    'client'      => 'Bio::Phylo::PhyloWS::Client',
+    'server'      => 'Bio::Phylo::PhyloWS::Server',
+    'resource'    => 'Bio::Phylo::PhyloWS::Resource',
+    'description' => 'Bio::Phylo::PhyloWS::Resource::Description',
 );
 
 =head1 NAME
