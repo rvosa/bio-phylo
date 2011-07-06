@@ -101,8 +101,7 @@ abstract methods.
                 else {
                     $logger->info("Returning description of query '$query'");
                     print $cgi->header( $Bio::Phylo::PhyloWS::MIMETYPE{'rdf'} );
-                    print $self->get_description( '-guid' => 'tree/find?query='
-                          . URI::Escape::uri_escape($query) )->to_xml;
+                    print $self->get_description('-query'=>$query)->to_xml;
                 }
             }
             exit(0);
@@ -253,21 +252,19 @@ Gets an RSS1.0/XML representation of a phylows record
     sub get_description {
         my $self = shift;
         if ( my %args = looks_like_hash @_ ) {
-            if ( my $id = $args{'-guid'} ) {
-                my $desc = $fac->create_description( '-url' => $self->get_url, @_ );
-                for my $format ( @{ $self->get_supported_formats } ) {
-                    $desc->insert(
-                        $fac->create_resource(
-                            '-format' => $format,
-                            '-url'    => $self->get_url,
-                            '-name'   => $format,
-                            '-desc'   => "A $format serialization of the resource",
-                            @_,
-                        )
-                    );
-                }
-                return $desc;
+            my $desc = $fac->create_description( '-url' => $self->get_url, @_ );
+            for my $format ( @{ $self->get_supported_formats } ) {
+                $desc->insert(
+                    $fac->create_resource(
+                        '-format' => $format,
+                        '-url'    => $self->get_url,
+                        '-name'   => $format,
+                        '-desc'   => "A $format serialization of the resource",
+                        @_,
+                    )
+                );
             }
+            return $desc;
         }
     }
 
