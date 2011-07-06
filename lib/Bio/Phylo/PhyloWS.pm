@@ -117,6 +117,7 @@ Gets invocant's url.
  Args    : None
 
 =cut
+
     my $build_query_string = sub {
         my ( $uri, %args ) = @_;
         while ( my ( $key, $value ) = each %args ) {
