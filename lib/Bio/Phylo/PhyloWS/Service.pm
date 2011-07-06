@@ -6,8 +6,10 @@ use Bio::Phylo::IO 'unparse';
 use Bio::Phylo::Util::CONSTANT qw'looks_like_hash _HTTP_SC_SEE_ALSO_';
 use Bio::Phylo::Util::Exceptions 'throw';
 use Bio::Phylo::Util::Dependency 'URI::Escape';
+use Bio::Phylo::Util::Logger;
 {
     my $fac = Bio::Phylo::Factory->new;
+    my $logger = Bio::Phylo::Util::Logger->new;
 
 =head1 NAME
 
@@ -88,6 +90,9 @@ abstract methods.
                 }
             }
             exit(0);
+        }
+        else {
+            $logger->warn("'$path_info' is not a PhyloWS URL");
         }
     }
 
