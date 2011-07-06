@@ -254,20 +254,14 @@ Gets an RSS1.0/XML representation of a phylows record
         my $self = shift;
         if ( my %args = looks_like_hash @_ ) {
             if ( my $id = $args{'-guid'} ) {
-                my $desc = $fac->create_description(
-                    '-url'  => $self->get_url,
-                    '-guid' => $id,
-                    @_,
-                );
+                my $desc = $fac->create_description( '-url' => $self->get_url, @_ );
                 for my $format ( @{ $self->get_supported_formats } ) {
                     $desc->insert(
                         $fac->create_resource(
                             '-format' => $format,
                             '-url'    => $self->get_url,
-                            '-guid'   => $id,
                             '-name'   => $format,
-                            '-desc' =>
-                              "A $format serialization of the resource",
+                            '-desc'   => "A $format serialization of the resource",
                             @_,
                         )
                     );
