@@ -30,7 +30,7 @@ sub get_query_result {
             'NODE' => sub {
                 my ( $twig, $node_elt ) = @_;
                 my $id = $node_elt->att('ID');
-                my ($name_elt) = $node_elt->children('name');
+                my ($name_elt) = $node_elt->children('NAME');
                 $taxa->insert(
                     $fac->create_taxon( '-name' => $name_elt->text )->add_meta(
                         $fac->create_meta( '-triple' => { 'tba:id' => $id } )
