@@ -53,37 +53,53 @@ abstract methods.
         my ( $self, $cgi ) = @_;    # CGI.pm
         my $path_info = $cgi->path_info;
         if ( $path_info =~ m|.*/phylows/(.+?)$| ) {
-            my $guid = $1;
-            if ( my $redirect = $self->get_redirect($cgi) ) {
+            my $id = $1;
+            
+            # there is a different address under the given conditions.
+            # typically this is the case if there are web pages we can
+            # point to.
+            if ( my $redirect = $self->get_redirect($cgi) ) {                
+                $logger->info("Redirecting to $redirect");
                 print $cgi->redirect(
                     '-uri'    => $redirect,
                     '-status' => _HTTP_SC_SEE_ALSO_,
                 );
             }
-            elsif ( $guid !~ m|/find/?| ) {
-                if ( my $format = $cgi->param('format') ) {
-                    print $cgi->header(
-                        $Bio::Phylo::PhyloWS::MIMETYPE{$format} );
-                    print $self->get_serialization(
-                        '-guid'   => $guid,
-                        '-format' => $format,
-                    );
+            
+            # the url isn't a search query, i.e. it's an object lookup
+            elsif ( $id !~ m|/find/?| ) {
+                
+                # a serialization format has been specified
+                if ( my $f = $cgi->param('format') ) {
+                    $logger->info("Returing $f serialization of $id");
+                    print $cgi->header( $Bio::Phylo::PhyloWS::MIMETYPE{$f} );
+                    print $self->get_serialization('-guid'=>$id,'-format'=>$f);
                 }
+                
+                # no serialization format has been specified, returning a
+                # resource description instead
                 else {
+                    $logger->info("Returning description of $id");
                     print $cgi->header( $Bio::Phylo::PhyloWS::MIMETYPE{'rdf'} );
-                    print $self->get_description( '-guid' => $guid )->to_xml;
+                    print $self->get_description('-guid'=>$id)->to_xml;
                 }
             }
+            
+            # the url is a search query
             else {
                 my $query = $cgi->param('query');
-                if ( my $format = $cgi->param('format') ) {
+                
+                # a serialization format for the query result has been specified
+                if ( my $f = $cgi->param('format') ) {
+                    $logger->info("Returning $f serialization of query '$query'");
                     my $project = $self->get_query_result($query);
-                    print $cgi->header(
-                        $Bio::Phylo::PhyloWS::MIMETYPE{$format} );
-                    print unparse( '-phylo' => $project, '-format' => $format,
-                    );
+                    print $cgi->header( $Bio::Phylo::PhyloWS::MIMETYPE{$f} );
+                    print unparse( '-phylo' => $project, '-format' => $f );
                 }
+                
+                # no serialization specified, returning a description instead
                 else {
+                    $logger->info("Returning description of query '$query'");
                     print $cgi->header( $Bio::Phylo::PhyloWS::MIMETYPE{'rdf'} );
                     print $self->get_description( '-guid' => 'tree/find?query='
                           . URI::Escape::uri_escape($query) )->to_xml;
