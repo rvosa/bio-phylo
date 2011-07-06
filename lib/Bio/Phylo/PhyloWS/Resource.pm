@@ -3,8 +3,10 @@ use strict;
 use base qw'Bio::Phylo::PhyloWS Bio::Phylo::NeXML::Writable';
 use Bio::Phylo::Util::Exceptions 'throw';
 use Bio::Phylo::Util::CONSTANT qw'_DESCRIPTION_ _RESOURCE_';
+use Bio::Phylo::Util::Logger;
 {
     my @fields = \( my ( %guid, %format ) );
+    my $logger = Bio::Phylo::Util::Logger->new;
 
 =head1 NAME
 
@@ -146,17 +148,21 @@ Gets invocant's full url (i.e. including query string)
 
     sub get_full_url {
         my $self = shift;
-        if ( $self->get_format ) {
-            my $full = $self->get_url . $self->get_guid;
+	my ( $url, $guid ) = ( $self->get_url, $self->get_guid );
+	my $full = $url . $guid;
+	$logger->debug("URL=$url, GUID=$guid");
+	$logger->debug("FULL=$full");
+        if ( my $format = $self->get_format ) {
+	    $logger->debug("Will add format paramer for $format serialization");	    
             if ( $full !~ m/\?/ ) {
-                return $full . '?format=' . $self->get_format;
+                return $full . '?format=' . $format;
             }
             else {
-                return $full . '&amp;format=' . $self->get_format;
+                return $full . '&amp;format=' . $format;
             }
         }
         else {
-            return $self->get_url . $self->get_guid;
+            return $full;
         }
     }
 
