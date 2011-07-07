@@ -5,9 +5,9 @@ use Bio::Phylo::Util::CONSTANT 'looks_like_hash';
 use Bio::Phylo::Util::Exceptions 'throw';
 use Bio::Phylo::Util::Dependency 'URI::URL';
 our %MIMETYPE = (
-    'nexml'  => 'application/xml',
-    'yaml'   => 'application/x-yaml',
-    'rdf'    => 'application/rdf+xml',
+    'nexml'  => 'application/xml;charset=UTF-8',
+    'yaml'   => 'application/x-yaml;charset=UTF-8',
+    'rdf'    => 'application/rdf+xml;charset=UTF-8',
     'nexus'  => 'text/plain',
     'json'   => 'text/javascript',
     'newick' => 'text/plain',
