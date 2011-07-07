@@ -5,7 +5,8 @@ use constant RDFURL => 'http://www.ubio.org/authority/metadata.php?lsid=urn:lsid
 use constant UBIOWS => 'http://www.ubio.org/webservices/service.php?function=namebank_search&searchName=%s&sci=1&vern=1&keyCode=%s';
 use Bio::Phylo::Util::Dependency qw'XML::Twig LWP::UserAgent';
 use Bio::Phylo::Util::CONSTANT qw'looks_like_hash';
-use Bio::Phylo::Util::Exceptions qw'throw';
+use Bio::Phylo::Util::Exceptions 'throw';
+use Bio::Phylo::IO 'parse';
 use Bio::Phylo::Factory;
 
 my $fac = Bio::Phylo::Factory->new;
