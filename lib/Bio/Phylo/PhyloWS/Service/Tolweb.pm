@@ -6,6 +6,7 @@ use Bio::Phylo::Factory;
 use Bio::Phylo::Util::Logger;
 use Bio::Phylo::Util::Exceptions 'throw';
 use Bio::Phylo::Util::CONSTANT qw'looks_like_hash :namespaces';
+use Bio::Phylo::Util::Dependency qw'XML::Twig';
 use constant NODE_URL => 'http://tolweb.org/onlinecontributors/app?service=external&page=xml/TreeStructureService&page_depth=1&node_id=';
 use constant SRCH_URL => 'http://tolweb.org/onlinecontributors/app?service=external&page=xml/GroupSearchService&group=';
 
