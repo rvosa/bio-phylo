@@ -6,10 +6,12 @@ use constant UBIOWS => 'http://www.ubio.org/webservices/service.php?function=nam
 use Bio::Phylo::Util::Dependency qw'XML::Twig LWP::UserAgent';
 use Bio::Phylo::Util::CONSTANT qw'looks_like_hash';
 use Bio::Phylo::Util::Exceptions 'throw';
+use Bio::Phylo::Util::Logger;
 use Bio::Phylo::IO 'parse';
 use Bio::Phylo::Factory;
 
 my $fac = Bio::Phylo::Factory->new;
+my $logger = Bio::Phylo::Util::Logger->new;
 
 sub get_supported_formats { [ 'nexml' ] }
 
@@ -31,6 +33,7 @@ sub get_record {
     if ( my %args = looks_like_hash @_ ) {
         if ( my $guid = $args{'-guid'} && $args{'-guid'} =~ m|(\d+)$| ) {
             my $namebank_id = $1;
+            $logger->info("Going to fetch metadata for record $namebank_id");
             $proj = parse(
                 '-url'        => RDFURL . $namebank_id,
                 '-format'     => 'ubiometa',
@@ -56,6 +59,7 @@ sub get_query_result {
     $taxa->visit( sub {
         my $taxon = shift;
         my $lsid  = $taxon->get_meta_object('dc:identifier');
+        $logger->info("Going to fold metadata into search result $lsid");
         my $meta_proj = $self->get_record( '-guid' => $lsid );        
         my $meta_taxon = $meta_proj->get_taxa->[0]->first;
         $proj->set_namespaces( $meta_proj->get_namespaces );
