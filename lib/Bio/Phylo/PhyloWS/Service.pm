@@ -73,6 +73,7 @@ abstract methods.
                 if ( my $f = $cgi->param('format') ) {
                     $logger->info("Returing $f serialization of $id");
                     print $cgi->header( $Bio::Phylo::PhyloWS::MIMETYPE{$f} );
+                    binmode STDOUT, ":utf8";
                     print $self->get_serialization('-guid'=>$id,'-format'=>$f);
                 }
                 
@@ -81,6 +82,7 @@ abstract methods.
                 else {
                     $logger->info("Returning description of $id");
                     print $cgi->header( $Bio::Phylo::PhyloWS::MIMETYPE{'rdf'} );
+                    binmode STDOUT, ":utf8";
                     print $self->get_description('-guid'=>$id)->to_xml;
                 }
             }
@@ -94,6 +96,7 @@ abstract methods.
                     $logger->info("Returning $f serialization of query '$query'");
                     my $project = $self->get_query_result($query);
                     print $cgi->header( $Bio::Phylo::PhyloWS::MIMETYPE{$f} );
+                    binmode STDOUT, ":utf8";
                     print unparse( '-phylo' => $project, '-format' => $f );
                 }
                 
@@ -101,6 +104,7 @@ abstract methods.
                 else {
                     $logger->info("Returning description of query '$query'");
                     print $cgi->header( $Bio::Phylo::PhyloWS::MIMETYPE{'rdf'} );
+                    binmode STDOUT, ":utf8";
                     print $self->get_description('-query'=>$query)->to_xml;
                 }
             }
