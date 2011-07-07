@@ -4,18 +4,14 @@ use base 'Bio::Phylo::PhyloWS::Service';
 use Bio::Phylo::IO 'parse';
 use Bio::Phylo::Factory;
 use Bio::Phylo::Util::Logger;
-use Bio::Phylo::Util::CONSTANT 'looks_like_hash';
-use constant URL =>
-'http://150.135.239.5/onlinecontributors/app?service=external&page=xml/TreeStructureService&page_depth=1&node_id=';
+use Bio::Phylo::Util::Exceptions 'throw';
+use Bio::Phylo::Util::CONSTANT qw'looks_like_hash :namespaces';
+use constant NODE_URL => 'http://tolweb.org/onlinecontributors/app?service=external&page=xml/TreeStructureService&page_depth=1&node_id=';
+use constant SRCH_URL => 'http://tolweb.org/onlinecontributors/app?service=external&page=xml/GroupSearchService&group=';
 
-# http://localhost/nexml/service/tolweb/phylows/tree/Tolweb:3?format=nexml
 {
     my $fac    = Bio::Phylo::Factory->new;
     my $logger = Bio::Phylo::Util::Logger->new;
-    $logger->VERBOSE(
-        '-level' => 4,
-        '-class' => 'Bio::Phylo::Parsers::Tolweb',
-    );
 
 =head1 NAME
 
@@ -61,15 +57,17 @@ Gets a tolweb record by its id
     sub get_record {
         my $self = shift;
         if ( my %args = looks_like_hash @_ ) {
-            if ( my $guid = $args{'-guid'} ) {
-                if ( $guid =~ m|^tree/Tolweb:(\d+)$| ) {
-                    my $tolweb_id = $1;
-                    return parse(
-                        '-format'     => 'tolweb',
-                        '-url'        => URL . $tolweb_id,
-                        '-as_project' => 1,
-                    );
-                }
+            if ( $args{'-guid'} && $args{'-guid'} =~ m|(\d+)$| ) {
+                my $tolweb_id = $1;
+                $logger->info("Getting nexml record for id: $tolweb_id");
+                return parse(
+                    '-format'     => 'tolweb',
+                    '-url'        => NODE_URL . $tolweb_id,
+                    '-as_project' => 1,
+                );
+            }
+            else {
+                throw 'BadArgs' => "Not a parseable guid: '$args{-guid}'";
             }
         }
     }
@@ -98,12 +96,52 @@ Gets a redirect URL if relevant
         my ( $self, $cgi ) = @_;
         if ( $cgi->param('format') eq 'html' ) {
             my $path_info = $cgi->path_info;
-            if ( $path_info =~ m/:(\d+)$/ ) {
+            if ( $path_info =~ m/(\d+)$/ ) {
                 my $tolweb_id = $1;
+                $logger->info("Getting html redirect for id: $tolweb_id");
                 return "http://tolweb.org/$tolweb_id";
+            }
+            else {
+                throw 'BadArgs' => "Not a parseable guid: '$path_info'";
             }
         }
         return;
+    }
+
+=item get_query_result()
+
+Gets a query result and returns it as a project object
+
+ Type    : Accessor
+ Title   : get_query_result
+ Usage   : my $proj = $obj->get_query_result($query);
+ Function: Gets a query result
+ Returns : Bio::Phylo::Project
+ Args    : A simple query string for a group lookup
+
+=cut
+
+    sub get_query_result {
+        my ( $self, $query ) = @_;
+        my $proj = $fac->create_project;
+        my $taxa = $fac->create_taxa;
+        $taxa->set_namespaces( 'tba' => _NS_TWA_ );
+        $proj->insert( $taxa );
+        XML::Twig->new(
+            'twig_handlers' => {
+                'NODE' => sub {
+                    my ( $twig, $node_elt ) = @_;
+                    my $id = $node_elt->att('ID');
+                    my ($name_elt) = $node_elt->children('NAME');
+                    $taxa->insert(
+                        $fac->create_taxon( '-name' => $name_elt->text )->add_meta(
+                            $fac->create_meta( '-triple' => { 'tba:id' => $id } )
+                        )
+                    );
+                }
+            }
+        )->parseurl( SRCH_URL . $query );
+        return $proj;
     }
 
 =item get_supported_formats()
