@@ -64,6 +64,9 @@ sub get_query_result {
         my $meta_taxon = $meta_proj->get_taxa->[0]->first;
         $proj->set_namespaces( $meta_proj->get_namespaces );
         $taxon->add_meta($_) for @{ $meta_taxon->get_meta };
+        if ( my $name = $meta_taxon->get_meta_object('dc:subject') ) {
+            $taxon->set_name($name);
+        }
     } );
     return $proj;    
 }
