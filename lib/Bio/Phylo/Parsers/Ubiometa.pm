@@ -19,7 +19,7 @@ if the C<-as_project> flag was provided to the call to C<parse()>.
 
 =cut
 
-my $SAFE_CHARACTERS_REGEX = qr/(?:[a-zA-Z0-9]|-|_|\.)/;
+my $SAFE_CHARACTERS_REGEX = qr/(?:[a-zA-Z0-9]|-|_|\.|;|,|:|\(|\)| )/;
 my $XMLEntityEncode       = sub {
     my $buf = '';
     for my $c ( split //, shift ) {
