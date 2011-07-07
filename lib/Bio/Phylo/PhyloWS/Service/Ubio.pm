@@ -11,7 +11,7 @@ use Bio::Phylo::Factory;
 
 my $fac = Bio::Phylo::Factory->new;
 
-sub get_supported_formats { [ 'nexml', 'rdf' ] }
+sub get_supported_formats { [ 'nexml' ] }
 
 sub get_redirect {
     my ( $self, $cgi ) = @_;
@@ -52,6 +52,15 @@ sub get_query_result {
         '-format'     => 'ubiosearch',
         '-as_project' => 1,
     );
+    my ($taxa) = @{ $proj->get_taxa };
+    $taxa->visit( sub {
+        my $taxon = shift;
+        my $lsid  = $taxon->get_meta_object('dc:identifier');
+        my $meta_proj = $self->get_record( '-guid' => $lsid );        
+        my $meta_taxon = $meta_proj->get_taxa->[0]->first;
+        $proj->set_namespaces( $meta_proj->get_namespaces );
+        $taxon->add_meta($_) for @{ $meta_taxon->get_meta };
+    } );
     return $proj;    
 }
 
