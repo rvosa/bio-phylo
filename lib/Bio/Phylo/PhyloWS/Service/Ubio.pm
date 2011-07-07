@@ -1,0 +1,57 @@
+package Bio::Phylo::PhyloWS::Service::Ubio;
+use strict;
+use base 'Bio::Phylo::PhyloWS::Service';
+use constant RDFURL => 'http://www.ubio.org/authority/metadata.php?lsid=urn:lsid:ubio.org:namebank:';
+use constant UBIOWS => 'http://www.ubio.org/webservices/service.php?function=namebank_search&searchName=%s&sci=1&vern=1&keyCode=%s';
+use Bio::Phylo::Util::Dependency qw'XML::Twig LWP::UserAgent';
+use Bio::Phylo::Util::CONSTANT qw'looks_like_hash';
+use Bio::Phylo::Util::Exceptions qw'throw';
+use Bio::Phylo::Factory;
+
+my $fac = Bio::Phylo::Factory->new;
+
+sub get_supported_formats { [ 'nexml', 'rdf' ] }
+
+sub get_redirect {
+    my ( $self, $cgi ) = @_;
+    if ( $cgi->param('format') eq 'rdf' ) {
+        my $path_info = $cgi->path_info;
+        if ( $path_info =~ m/:(\d+)$/ ) {
+            my $namebank_id = $1;
+            return RDFURL . $namebank_id;
+        }
+    }
+    return;
+}
+
+sub get_record {
+    my $self = shift;
+    my $proj;
+    if ( my %args = looks_like_hash @_ ) {
+        if ( my $guid = $args{'-guid'} && $args{'-guid'} =~ m|(\d+)$| ) {
+            my $namebank_id = $1;
+            $proj = parse(
+                '-url'        => RDFURL . $namebank_id,
+                '-format'     => 'ubiometa',
+                '-as_project' => 1,
+            );
+        }
+        else {
+            throw 'BadArgs' => "No parseable GUID: '$args{-guid}'";
+        }
+    }
+    return $proj;
+}
+
+sub get_query_result {
+    my ( $self, $query ) = @_;
+    throw 'System' => "No UBIO_KEYCODE env var specified" unless $ENV{'UBIO_KEYCODE'};
+    my $proj = parse(
+        '-url'        => sprintf( UBIOWS, $query, $ENV{'UBIO_KEYCODE'} ),
+        '-format'     => 'ubiosearch',
+        '-as_project' => 1,
+    );
+    return $proj;    
+}
+
+1;
