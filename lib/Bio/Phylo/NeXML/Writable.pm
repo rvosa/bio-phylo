@@ -682,6 +682,7 @@ until such time that a base URI has been found.
 	my $self = shift;
 	while ( $self ) {
 	    if ( my $base = $self->get_attributes('xml:base') ) {
+		$logger->info("Found xml:base attribute on $self");
 		return $base;
 	    }
 	    # we do this because node objects are contained inside their
@@ -697,7 +698,8 @@ until such time that a base URI has been found.
 		$self = $self->_get_container;
 	    }	    
 	}
-	return;
+	$logger->info("No xml:base attribute was found anywhere");
+	return undef;
     }
 
 =item get_dom_elt()
