@@ -5,7 +5,7 @@ use Bio::Phylo::Util::Exceptions 'throw';
 use Bio::Phylo::Util::CONSTANT qw'_DESCRIPTION_ _RESOURCE_';
 use Bio::Phylo::Util::Logger;
 {
-    my @fields = \( my ( %guid, %format, %query ) );
+    my @fields;
     my $logger = Bio::Phylo::Util::Logger->new;
 
 =head1 NAME
@@ -51,123 +51,9 @@ recommendations.
 
 =back
 
-=head2 MUTATORS
-
-=over
-
-=item set_guid()
-
-Sets invocant guid.
-
- Type    : Mutator
- Title   : set_guid
- Usage   : $obj->set_guid($guid);
- Function: Assigns an object's guid.
- Returns : Modified object.
- Args    : Argument must be a string.
-
-=cut
-
-    sub set_guid {
-        my ( $self, $base ) = @_;
-        $guid{ $self->get_id } = $base;
-        return $self;
-    }
-
-=item set_format()
-
-Sets invocant's preferred serialization format.
-
- Type    : Mutator
- Title   : set_format
- Usage   : $obj->set_format($format);
- Function: Assigns an object's serialization format.
- Returns : Modified object.
- Args    : Argument must be a string.
-
-=cut
-
-    sub set_format {
-        my ( $self, $base ) = @_;
-        $format{ $self->get_id } = $base;
-        return $self;
-    }
-
-=item set_query()
-
-Sets invocant's query parameter
-
- Type    : Mutator
- Title   : set_query
- Usage   : $obj->set_query($query);
- Function: Assigns an object's query.
- Returns : Modified object.
- Args    : Argument must be a string.
-
-=cut
-
-    sub set_query {
-	my ( $self, $query ) = @_;
-	$query{ $self->get_id } = $query;
-	return $self;
-    }
-
-=back
-
 =head2 ACCESSORS
 
 =over
-
-=item get_guid()
-
-Gets invocant's guid.
-
- Type    : Accessor
- Title   : get_guid
- Usage   : my $guid = $obj->get_guid;
- Function: Returns the object's guid.
- Returns : A string
- Args    : None
-
-=cut
-
-    sub get_guid {
-        return $guid{ shift->get_id };
-    }
-
-=item get_format()
-
-Gets invocant's preferred serialization format
-
- Type    : Accessor
- Title   : get_format
- Usage   : my $format = $obj->get_format;
- Function: Returns the object's preferred serialization format
- Returns : A string
- Args    : None
-
-=cut
-
-    sub get_format {
-        return $format{ shift->get_id };
-    }
-
-=item get_query()
-
-Gets invocant's query parameter
-
- Type    : Accessor
- Title   : get_query
- Usage   : my $query = $obj->get_query;
- Function: Retrieves an object's query.
- Returns : Query
- Args    : None
-
-=cut
-
-    sub get_query {
-	return $query{ shift->get_id };
-    }
 
 =item get_full_url()
 
