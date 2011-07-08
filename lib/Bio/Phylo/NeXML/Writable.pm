@@ -689,9 +689,9 @@ until such time that a base URI has been found.
     sub get_xml_base {
 	my $self = shift;
 	while ( $self ) {
-	    if ( my $base = $self->get_attributes('xml:base') ) {
-		use Data::Dumper;
-		$logger->info("Found xml:base attribute on $self:\n" . Dumper($base));
+	    my $attrs = $flatten_attributes->($self);
+	    if ( my $base = $attrs->{'xml:base'} ) {
+		$logger->info("Found xml:base attribute on $self: $base");
 		return $base;
 	    }
 	    # we do this because node objects are contained inside their
