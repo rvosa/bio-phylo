@@ -102,6 +102,7 @@ Gets a uBio record by its id
                     '-as_project' => 1,
                 );
                 $proj->set_xml_base($self->get_url);
+                $proj->set_guid($namebank_id);
             }
             else {
                 throw 'BadArgs' => "No parseable GUID: '$args{-guid}'";
@@ -201,7 +202,9 @@ Gets a query result and returns it as a project object
                 $taxon->set_name($name);
             }
         } );
-        return $proj->set_xml_base($self->get_url);    
+        $proj->set_xml_base($self->get_url);
+        $proj->set_guid($query);
+        return $proj;
     }
 
 =back
