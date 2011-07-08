@@ -61,7 +61,7 @@ sub _to_string {
     $twig->set_encoding('UTF-8');
     $twig->set_pretty_print('indented');
     $twig->set_empty_tag_style('normal');
-    $twig->parse( $obj->to_xml );
+    $twig->parse( $description->to_xml );
     return $twig->prolog() . "\n" . $twig->sprint();
 }
 
