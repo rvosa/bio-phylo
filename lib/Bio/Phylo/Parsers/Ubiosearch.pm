@@ -52,6 +52,9 @@ sub _parse {
                 if ( my $name = $taxon->get_meta_object('dc:subject') ) {
                     $taxon->set_name( $name );
                 }
+                if ( my $id = $taxon->get_meta_object('dc:identifier' ) ) {
+                    $taxon->set_guid( $id );
+                }
                 $taxa->insert($taxon);
             }
         }
