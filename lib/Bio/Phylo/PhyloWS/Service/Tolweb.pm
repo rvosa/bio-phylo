@@ -78,11 +78,12 @@ Gets a tolweb record by its id
             if ( $args{'-guid'} && $args{'-guid'} =~ m|(\d+)$| ) {
                 my $tolweb_id = $1;
                 $logger->info("Getting nexml record for id: $tolweb_id");
-                return parse(
+                my $proj = parse(
                     '-format'     => 'tolweb',
                     '-url'        => XML_NODE . $tolweb_id,
                     '-as_project' => 1,
                 );
+                return $proj->set_xml_base($self->get_url);                
             }
             else {
                 throw 'BadArgs' => "Not a parseable guid: '$args{-guid}'";
@@ -147,9 +148,8 @@ Gets a query result and returns it as a project object
 
     sub get_query_result {
         my ( $self, $query ) = @_;
-        my $proj = $fac->create_project;
-        my $taxa = $fac->create_taxa;
-        $taxa->set_namespaces( 'tba' => _NS_TWA_ );
+        my $proj = $fac->create_project( '-xml_base' => $self->get_url );
+        my $taxa = $fac->create_taxa( '-namespaces' => { 'tba' => _NS_TWA_ } );
         $proj->insert( $taxa );
         XML::Twig->new(
             'twig_handlers' => {
@@ -158,7 +158,10 @@ Gets a query result and returns it as a project object
                     my $id = $node_elt->att('ID');
                     my ($name_elt) = $node_elt->children('NAME');
                     $taxa->insert(
-                        $fac->create_taxon( '-name' => $name_elt->text )->add_meta(
+                        $fac->create_taxon(
+                            '-name' => $name_elt->text,
+                            '-guid' => $id,
+                        )->add_meta(
                             $fac->create_meta( '-triple' => { 'tba:id' => $id } )
                         )
                     );
