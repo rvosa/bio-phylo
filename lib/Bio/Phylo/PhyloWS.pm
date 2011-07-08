@@ -14,7 +14,7 @@ our %MIMETYPE = (
     'newick' => 'text/plain',
 );
 {
-    my @fields = \( my (%uri) );
+    my @fields = \( my (%uri, %format, %section, %query) );
 
 =head1 NAME
 
@@ -100,6 +100,63 @@ Sets invocant url.
         return $self;
     }
 
+=item set_format()
+
+Sets invocant's preferred serialization format.
+
+ Type    : Mutator
+ Title   : set_format
+ Usage   : $obj->set_format($format);
+ Function: Assigns an object's serialization format.
+ Returns : Modified object.
+ Args    : Argument must be a string.
+
+=cut
+
+    sub set_format {
+        my ( $self, $base ) = @_;
+        $format{ $self->get_id } = $base;
+        return $self;
+    }
+
+=item set_section()
+
+Sets invocant's section ("table") to operate on, e.g. 'taxon', 'tree', etc.
+
+ Type    : Mutator
+ Title   : set_section
+ Usage   : $obj->set_section($section);
+ Function: Sets section
+ Returns : Modified object.
+ Args    : Argument must be a string.
+
+=cut
+
+    sub set_section {
+        my ( $self, $section ) = @_;
+        $section{ $self->get_id } = $section;
+        return $self;
+    }
+
+=item set_query()
+
+Sets invocant's query parameter
+
+ Type    : Mutator
+ Title   : set_query
+ Usage   : $obj->set_query($query);
+ Function: Assigns an object's query.
+ Returns : Modified object.
+ Args    : Argument must be a string.
+
+=cut
+
+    sub set_query {
+	my ( $self, $query ) = @_;
+	$query{ $self->get_id } = $query;
+	return $self;
+    }
+
 =back
 
 =head2 ACCESSORS
@@ -153,6 +210,58 @@ Gets invocant's url.
         }
         return $uri;
     }
+
+=item get_format()
+
+Gets invocant's preferred serialization format
+
+ Type    : Accessor
+ Title   : get_format
+ Usage   : my $format = $obj->get_format;
+ Function: Returns the object's preferred serialization format
+ Returns : A string
+ Args    : None
+
+=cut
+
+    sub get_format {
+        return $format{ shift->get_id };
+    }
+
+=item get_section()
+
+Gets invocant's section ("table") to operate on, e.g. 'taxon', 'tree', etc.
+
+ Type    : Accessor
+ Title   : get_section
+ Usage   : my $section = $obj->get_section;
+ Function: Gets section
+ Returns : String
+ Args    : None
+
+=cut
+
+    sub get_section {
+	return $section{ shift->get_id };
+    }
+
+=item get_query()
+
+Gets invocant's query parameter
+
+ Type    : Accessor
+ Title   : get_query
+ Usage   : my $query = $obj->get_query;
+ Function: Retrieves an object's query.
+ Returns : Query
+ Args    : None
+
+=cut
+
+    sub get_query {
+	return $query{ shift->get_id };
+    }
+
 
     sub _cleanup {
         my $self = shift;
