@@ -40,7 +40,7 @@ lists taxa, otherwise 'tree' or 'matrix' for a list of those in the project.
 sub _to_string {
     my $self = shift;
     my $obj  = $self->{'PHYLO'};
-    my $type = $self->{'RECORDSCHEMA'} || 'taxon';
+    my $type = lc($self->{'RECORDSCHEMA'}) || 'taxon';
     
     # this is the root channel description
     my $description = $fac->create_description(
@@ -52,9 +52,7 @@ sub _to_string {
     
     # here we start the recursion to find the items in the
     # feed as specified by recordSchema/$type
-    for my $ent ( @{ $obj->get_entities } ) {
-        _visitor( $ent, $type, $description );
-    }
+    _visitor( $obj, $type, $description );
     
     # this is just to ensure that the produced xml
     # is well-formed and we return a pretty printed version
