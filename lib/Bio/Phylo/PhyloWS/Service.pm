@@ -119,9 +119,13 @@ most standard HTTP servers.
                 # a serialization format has been specified
                 if ( my $f = $cgi->param('format') ) {
                     $logger->info("Returing $f serialization of $id");
+                    my %args = ( '-guid' => $id, '-format' => $f );
+                    if ( my $recordSchema = $cgi->param('recordSchema') ) {
+                        $args{'recordSchema'} = $recordSchema;
+                    }
                     print $cgi->header( $Bio::Phylo::PhyloWS::MIMETYPE{$f} );
                     binmode STDOUT, ":utf8";
-                    print $self->get_serialization('-guid'=>$id,'-format'=>$f);
+                    print $self->get_serialization(%args);
                 }
                 
                 # no serialization format has been specified, returning a
@@ -142,9 +146,13 @@ most standard HTTP servers.
                 if ( my $f = $cgi->param('format') ) {
                     $logger->info("Returning $f serialization of query '$query'");
                     my $project = $self->get_query_result($query);
+                    my %args = ( '-phylo' => $project, '-format' => $f );
+                    if ( my $recordSchema = $cgi->param('recordSchema') ) {
+                        $args{'recordSchema'} = $recordSchema;
+                    }                    
                     print $cgi->header( $Bio::Phylo::PhyloWS::MIMETYPE{$f} );
                     binmode STDOUT, ":utf8";
-                    print unparse( '-phylo' => $project, '-format' => $f );
+                    print unparse(%args);
                 }
                 
                 # no serialization specified, returning a description instead
@@ -189,7 +197,11 @@ Gets serialization of the provided record
         if ( my %args = looks_like_hash @_ ) {
             if ( my $guid = $args{'-guid'} and my $format = $args{'-format'} ) {
                 my $project = $self->get_record( '-guid' => $guid );
-                return unparse( '-format' => $format, '-phylo' => $project );
+                return unparse(
+                    '-format' => $format,
+                    '-phylo'  => $project,
+                    '-recordSchema' => $args{'recordSchema'},
+                );
             }
         }
     }
