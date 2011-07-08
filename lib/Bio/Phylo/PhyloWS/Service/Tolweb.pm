@@ -7,8 +7,10 @@ use Bio::Phylo::Util::Logger;
 use Bio::Phylo::Util::Exceptions 'throw';
 use Bio::Phylo::Util::CONSTANT qw'looks_like_hash :namespaces';
 use Bio::Phylo::Util::Dependency qw'XML::Twig';
-use constant NODE_URL => 'http://tolweb.org/onlinecontributors/app?service=external&page=xml/TreeStructureService&page_depth=1&node_id=';
-use constant SRCH_URL => 'http://tolweb.org/onlinecontributors/app?service=external&page=xml/GroupSearchService&group=';
+use constant TOL_BASE => 'http://tolweb.org/';
+use constant WEB_SRCH => TOL_BASE . 'tree/home.pages/searchTOL?taxon=';
+use constant XML_NODE => TOL_BASE . 'onlinecontributors/app?service=external&page=xml/TreeStructureService&page_depth=1&node_id=';
+use constant XML_SRCH => TOL_BASE . 'onlinecontributors/app?service=external&page=xml/GroupSearchService&group=';
 
 {
     my $fac    = Bio::Phylo::Factory->new;
@@ -31,9 +33,21 @@ Bio::Phylo::PhyloWS::Service::Tolweb - PhyloWS service wrapper for Tree of Life
 =head1 DESCRIPTION
 
 This is an example implementation of a PhyloWS service. The service
-wraps around the tree of life XML service and returns project objects
+wraps around the Tree of Life XML services described at
+L<http://tolweb.org/tree/home.pages/downloadtree.html>.
+
+When doing a record lookup this service returns project objects
 that include the focal node (identified by its PhyloWS ID) and the 
 nearest child and parent nodes that have web pages.
+
+When querying, this service returns a project object with one taxa
+block containing zero or more taxon objects that matched the query.
+
+When URLs to this service specify format=html in the query string, this
+service returns redirect URLs to web pages on the Tree of Life web project
+site at L<http://tolweb.org>. The redirect URLs either point to search result
+listings or to node pages, depending on whether the redirect is for a record
+query or a record lookup, respectively.
 
 =head1 METHODS
 
@@ -63,7 +77,7 @@ Gets a tolweb record by its id
                 $logger->info("Getting nexml record for id: $tolweb_id");
                 return parse(
                     '-format'     => 'tolweb',
-                    '-url'        => NODE_URL . $tolweb_id,
+                    '-url'        => XML_NODE . $tolweb_id,
                     '-as_project' => 1,
                 );
             }
@@ -96,14 +110,19 @@ Gets a redirect URL if relevant
     sub get_redirect {
         my ( $self, $cgi ) = @_;
         if ( $cgi->param('format') eq 'html' ) {
-            my $path_info = $cgi->path_info;
-            if ( $path_info =~ m/(\d+)$/ ) {
-                my $tolweb_id = $1;
-                $logger->info("Getting html redirect for id: $tolweb_id");
-                return "http://tolweb.org/$tolweb_id";
+            if ( my $query = $cgi->param('query') ) {
+                return WEB_SRCH . $query;
             }
             else {
-                throw 'BadArgs' => "Not a parseable guid: '$path_info'";
+                my $path_info = $cgi->path_info;
+                if ( $path_info =~ m/(\d+)$/ ) {
+                    my $tolweb_id = $1;
+                    $logger->info("Getting html redirect for id: $tolweb_id");
+                    return TOL_BASE . $tolweb_id;
+                }
+                else {
+                    throw 'BadArgs' => "Not a parseable guid: '$path_info'";
+                }
             }
         }
         return;
@@ -141,7 +160,7 @@ Gets a query result and returns it as a project object
                     );
                 }
             }
-        )->parseurl( SRCH_URL . $query );
+        )->parseurl( XML_SRCH . $query );
         return $proj;
     }
 
