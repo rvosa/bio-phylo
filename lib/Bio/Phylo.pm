@@ -274,9 +274,6 @@ Sets invocant description.
 
     sub set_desc {
         my ( $self, $desc ) = @_;
-
-        # notify user
-        $logger->info("setting description '$desc'");
         $desc{ $self->get_id } = $desc;
         return $self;
     }
