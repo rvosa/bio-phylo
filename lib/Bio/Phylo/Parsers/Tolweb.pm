@@ -78,10 +78,13 @@ sub _parse {
     my $self = shift;
     $self->_init;
     $self->_logger->debug("going to parse xml");
-    $self->{'_tree'} = $self->_factory->create_tree;
-    $self->{'_tree'}->set_namespaces( 'tbe' => _NS_TWE_ );
-    $self->{'_tree'}->set_namespaces( 'dc'  => _NS_DC_ );
-    $self->{'_tree'}->set_namespaces( 'tba' => _NS_TWA_ );
+    $self->{'_tree'} = $self->_factory->create_tree(
+        '-namespaces' => {
+            'tbe' => _NS_TWE_,
+            'dc'  => _NS_DC_,
+            'tba' => _NS_TWA_
+        }    
+    );
     $self->{'_twig'}->parse( $self->_string );
     $self->_logger->debug("done parsing xml");
 
@@ -106,7 +109,8 @@ sub _handle_node {
 
     # these hashes are populated so that we can build the topology
     # once we've processed all NODE elements
-    my $id = $node_elt->att('ID');    
+    my $id = $node_elt->att('ID');
+    $node_obj->set_guid($id);
     $self->{'_node_of'}->{$id} = $node_obj;    
     if ( my $parent = $node_elt->parent->parent ) {
         $self->{'_parent_of'}->{$id} = $parent->att('ID');
