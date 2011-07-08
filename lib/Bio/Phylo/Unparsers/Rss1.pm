@@ -52,7 +52,9 @@ sub _to_string {
     
     # here we start the recursion to find the items in the
     # feed as specified by recordSchema/$type
-    $obj->visit( sub { _visitor(shift,$type,$description) } );
+    for my $ent ( @{ $obj->get_entities } ) {
+        _visitor( $ent, $type, $description );
+    }
     
     # this is just to ensure that the produced xml
     # is well-formed and we return a pretty printed version
@@ -74,6 +76,7 @@ sub _visitor {
     $class =~ s/.+://;
     $class = lc $class;
     if ( $class eq $type ) {
+        $logger->info("Focal objects are of item type '$type'");
         
         # this creates an item in the feed, i.e. a resource
         my $resource = $fac->create_resource(
@@ -89,8 +92,13 @@ sub _visitor {
         $description->insert($resource);
     }
     else {
-        if ( $obj->can('visit') ) {
-            $obj->visit( sub { _visitor(shift,$type,$description) } );
+        $logger->info("Focal '$class' objects are not of item type '$type'");
+        
+        # need to dig deeper
+        if ( $obj->can('get_entities') ) {
+            for my $ent ( @{ $obj->get_entities } ) {
+                _visitor($ent,$type,$description);
+            }
         }
     }
 }
