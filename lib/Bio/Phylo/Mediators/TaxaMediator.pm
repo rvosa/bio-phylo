@@ -97,10 +97,9 @@ Stores argument in invocant's cache.
             if ( $type == _NODE_ || $type == _TAXON_ || $type == _DATUM_ || $type == _TAXA_ || $type == _FOREST_ || $type == _MATRIX_ ) {
     
                 # notify user
-                $logger->info("registering object $obj ($id)");
+                $logger->debug("registering object $obj ($id)");
                 $object[$id] = $obj;
                 weaken $object[$id];
-                $logger->debug("done registering object $obj ($id)");
                 return $self;
             }
         }
