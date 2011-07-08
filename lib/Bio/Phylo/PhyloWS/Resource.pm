@@ -265,6 +265,16 @@ Serializes resource to RSS1.0 XML representation
               . $Bio::Phylo::PhyloWS::MIMETYPE{$format}
               . '</dc:format>';
         }
+	for my $meta ( @{ $self->get_meta } ) {
+	    my $predicate = $meta->get_predicate;
+	    my $object = $meta->get_object;
+	    if ( $object =~ /http:/ or $object =~ /urn:/ ) {
+		$xml .= "<$predicate rdf:resource=\"$object\"/>";
+	    }
+	    else {
+		$xml .= "<$predicate>$object</$predicate>";
+	    }
+	}
         $xml .= '</' . $tag . '>';
         return $xml;
     }
