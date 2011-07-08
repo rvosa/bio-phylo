@@ -4,6 +4,7 @@ use strict;
 use Scalar::Util qw'weaken';
 use Bio::Phylo;
 use Bio::Phylo::Util::Exceptions;
+use Bio::Phylo::Util::CONSTANT ':objecttypes';
 
 # XXX this class only has weak references
 {
@@ -78,7 +79,7 @@ Stores argument in invocant's cache.
  Type    : Method
  Title   : register
  Usage   : $mediator->register( $obj );
- Function: Stores an object in mediator's cache
+ Function: Stores an object in mediator's cache, if relevant
  Returns : $self
  Args    : An object, $obj
  Comments: This method is called every time an object is instantiated.
@@ -88,13 +89,18 @@ Stores argument in invocant's cache.
     sub register {
         my ( $self, $obj ) = @_;
         my $id = $obj->get_id;
+        my $type = $obj->_type;
+        
+        # node, forest, matrix, datum, taxon, taxa
+        if ( $type == _NODE_ || $type == _TAXON_ || $type == _DATUM_ || $type == _TAXA_ || $type == _FOREST_ || $type == _MATRIX_ ) {
 
-        # notify user
-        $logger->info("registering object $obj ($id)");
-        $object[$id] = $obj;
-        weaken $object[$id];
-        $logger->debug("done registering object $obj ($id)");
-        return $self;
+            # notify user
+            $logger->info("registering object $obj ($id)");
+            $object[$id] = $obj;
+            weaken $object[$id];
+            $logger->debug("done registering object $obj ($id)");
+            return $self;
+        }
     }
 
 =item unregister()
