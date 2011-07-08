@@ -682,7 +682,8 @@ until such time that a base URI has been found.
 	my $self = shift;
 	while ( $self ) {
 	    if ( my $base = $self->get_attributes('xml:base') ) {
-		$logger->info("Found xml:base attribute on $self: $base");
+		use Data::Dumper;
+		$logger->info("Found xml:base attribute on $self:\n" . Dumper($base));
 		return $base;
 	    }
 	    # we do this because node objects are contained inside their
