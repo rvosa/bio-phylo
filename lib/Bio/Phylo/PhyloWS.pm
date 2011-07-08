@@ -8,6 +8,7 @@ our %MIMETYPE = (
     'nexml'  => 'application/xml;charset=UTF-8',
     'yaml'   => 'application/x-yaml;charset=UTF-8',
     'rdf'    => 'application/rdf+xml;charset=UTF-8',
+    'rss1'   => 'application/rdf+xml;charset=UTF-8',
     'nexus'  => 'text/plain',
     'json'   => 'text/javascript',
     'newick' => 'text/plain',
