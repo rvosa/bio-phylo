@@ -83,7 +83,9 @@ Gets a tolweb record by its id
                     '-url'        => XML_NODE . $tolweb_id,
                     '-as_project' => 1,
                 );
-                return $proj->set_xml_base($self->get_url);                
+                $proj->set_guid($tolweb_id);
+                $proj->set_xml_base($self->get_url);
+                return $proj;
             }
             else {
                 throw 'BadArgs' => "Not a parseable guid: '$args{-guid}'";
