@@ -705,7 +705,8 @@ until such time that a base URI has been found.
 	    }
 	    else {
 		$self = $self->_get_container;
-	    }	    
+	    }
+	    $logger->info("Traversing up to $self to locate xml:base");
 	}
 	$logger->info("No xml:base attribute was found anywhere");
 	return undef;
