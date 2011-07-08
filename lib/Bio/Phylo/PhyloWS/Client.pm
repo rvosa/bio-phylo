@@ -24,11 +24,10 @@ Bio::Phylo::PhyloWS::Client - Base class for phylogenetic web service clients
  use Bio::Phylo::Factory;
  
  my $fac = Bio::Phylo::Factory->new;
- my $client = $fac->create_client( '-url' => 'http://8ball.sdsc.edu:6666/treebase-web/phylows/' );
+ my $client = $fac->create_client( '-url' => 'http://nexml-dev.nescent.org/nexml/phylows/tolweb/phylows/' );
  my $desc = $client->get_query_result( 
-	'-query'        => 'dcterms.identifier=S2484', 
-	'-section'      => 'study',
-	'-recordSchema' => 'tree',
+	'-query'        => 'Homo sapiens', 
+	'-section'      => 'taxon',
  );
  for my $res ( @{ $desc->get_entities } ) {
 	my $proj = $client->get_record( '-guid' => $res->get_guid );
