@@ -21,18 +21,65 @@ Bio::Phylo::PhyloWS::Service - Base class for phylogenetic web services
  use CGI;
  use Bio::Phylo::PhyloWS::Service::${child};
 
- my $cgi = CGI->new;
  my $service = Bio::Phylo::PhyloWS::Service::${child}->new( '-url' => $url );
- $service->handle_request($cgi);
+ $service->handle_request(CGI->new);
 
 =head1 DESCRIPTION
 
 This is the base class for services that implement 
 the PhyloWS (L<http://evoinfo.nescent.org/PhyloWS>) recommendations.
 Such services should subclass this class and implement any relevant
-abstract methods.
+abstract methods. Examples of this are L<Bio::Phylo::PhyloWS::Service::Tolweb>
+and L<Bio::Phylo::PhyloWS::Service::Ubio>.
 
-=head1 METHODS
+PhyloWS services are web services for phylogenetics that provide two types of
+functionality:
+
+=over
+
+=item Record lookup
+
+Services that implement record lookups are services that know how to process
+URL requests of the form C</phylows/$object_type/$authority:$identifier?format=$format>,
+where C<$object_type> is a string representing the type of object that is
+returned, e.g. 'tree', 'matrix', 'taxon', etc., $authority is a naming authority
+such as TB2 for TreeBASE2, $identifier is a local identifier for the object,
+for example an accession number, and $format is a serialization format such as
+'nexml'.
+
+In order to provide this functionality, subclasses of this class must implement
+a method called C<get_record> which is passed at least a named C<-guid> argument
+that provides the local identifier. The C<get_record> method must return a
+L<Bio::Phylo::Project> object, which is subsequently serialized in the requested
+format by the C<handle_request> method provided here.
+
+=item Record search
+
+Services that implement record searches are services that know how to process
+URL requests of the form C</phylows/$object_type/find?query=$query&format=$format>,
+where $object_type is a string representing the type of object to search for,
+$query is a CQL query (L<http://www.loc.gov/standards/sru/specs/cql.html>), and
+$format is the serialization format in which the returned results are represented.
+
+In order to provide this functionality, subclasses of this class must implement
+a method called C<get_query_result>, which is passed the $query parameter and
+which must return a L<Bio::Phylo::Project> object that combines the search
+results (e.g. in a single taxa block for taxon searches).
+
+CQL has different levels of support, services may only implement certain levels
+of support. The example services L<Bio::Phylo::PhyloWS::Service::Tolweb>
+and L<Bio::Phylo::PhyloWS::Service::Ubio> only proved Level 0, term-only support,
+meaning that C<$query> is simply a term such as C<Homo+sapiens>.
+
+=back
+
+Child classes that implement some or all of the functionality described above
+can subsequently be made operational on a web server by calling them from a
+simple CGI script as shown in the SYNOPSIS section, where C<$child> must be
+substituted by the actual class name of the child class (e.g. C<Tolweb>). The
+C<$url> parameter that is passed to the constructor is usually simply the URI
+of the CGI script, i.e. the environment variable C<$ENV{'SCRIPT_URI'}> under
+most standard HTTP servers.
 
 =head2 REQUEST HANDLER
 
