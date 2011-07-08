@@ -63,6 +63,10 @@ sub _parse {
                         '-triple' => { $key => $val }                    
                     ) );
                 }
+                if ( $child->att('rdf:about') =~ /(\d+)$/ ) {
+                    my $namebankID = $1;
+                    $taxon->set_guid($namebankID);
+                }                
                 $taxa->insert($taxon);
             }
         }
