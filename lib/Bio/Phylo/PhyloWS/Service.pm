@@ -96,78 +96,88 @@ most standard HTTP servers.
 
 =cut
 
-    sub handle_request {
-        my ( $self, $cgi ) = @_;    # CGI.pm
+    sub _process_request_params {
+        my ( $self, $cgi ) = @_;
+        $self->set_format($cgi->param('format'));
+        $self->set_query($cgi->param('query'));
         my $path_info = $cgi->path_info;
-        if ( $path_info =~ m|.*/phylows/(.+?)$| ) {
-            my $id = $1;
-            
-            # there is a different address under the given conditions.
-            # typically this is the case if there are web pages we can
-            # point to.
-            if ( my $redirect = $self->get_redirect($cgi) ) {                
-                $logger->info("Redirecting to $redirect");
-                print $cgi->redirect(
-                    '-uri'    => $redirect,
-                    '-status' => _HTTP_SC_SEE_ALSO_,
-                );
-            }
-            
-            # the url isn't a search query, i.e. it's an object lookup
-            elsif ( $id !~ m|/find/?| ) {
-                
-                # a serialization format has been specified
-                if ( my $f = $cgi->param('format') ) {
-                    $logger->info("Returing $f serialization of $id");
-                    my %args = ( '-guid' => $id, '-format' => $f );
-                    if ( my $recordSchema = $cgi->param('recordSchema') ) {
-                        $args{'recordSchema'} = $recordSchema;
-                    }
-                    print $cgi->header( $Bio::Phylo::PhyloWS::MIMETYPE{$f} );
-                    binmode STDOUT, ":utf8";
-                    print $self->get_serialization(%args);
-                }
-                
-                # no serialization format has been specified, returning a
-                # resource description instead
-                else {
-                    $logger->info("Returning description of $id");
-                    print $cgi->header( $Bio::Phylo::PhyloWS::MIMETYPE{'rdf'} );
-                    binmode STDOUT, ":utf8";
-                    print $self->get_description('-guid'=>$id)->to_xml;
-                }
-            }
-            
-            # the url is a search query
-            else {
-                my $query = $cgi->param('query');
-                
-                # a serialization format for the query result has been specified
-                if ( my $f = $cgi->param('format') ) {
-                    $logger->info("Returning $f serialization of query '$query'");
-                    my $project = $self->get_query_result($query);
-                    my %args = ( '-phylo' => $project, '-format' => $f );
-                    if ( my $recordSchema = $cgi->param('recordSchema') ) {
-                        $args{'recordSchema'} = $recordSchema;
-                    }                    
-                    print $cgi->header( $Bio::Phylo::PhyloWS::MIMETYPE{$f} );
-                    binmode STDOUT, ":utf8";
-                    print unparse(%args);
-                }
-                
-                # no serialization specified, returning a description instead
-                else {
-                    $logger->info("Returning description of query '$query'");
-                    print $cgi->header( $Bio::Phylo::PhyloWS::MIMETYPE{'rdf'} );
-                    binmode STDOUT, ":utf8";
-                    print $self->get_description('-query'=>$query)->to_xml;
-                }
-            }
-            exit(0);
+        my $section;
+        if ( $path_info =~ m|/phylows/([a-z]+)/| ) {
+            $section = $1;
+            $self->set_section($section);
+        }        
+        if ( $path_info !~ /find/ && $path_info =~ m|/phylows/$section/(.+)$|) {
+            my $guid = $1;
+            $self->set_guid($guid);
         }
-        else {
+        if ( $path_info !~ /phylows/ ) {
             $logger->warn("'$path_info' is not a PhyloWS URL");
         }
+    }
+    
+    sub handle_request {
+        my ( $self, $cgi ) = @_;    # CGI.pm
+        $self->_process_request_params($cgi);
+            
+        # there is a different address under the given conditions.
+        # typically this is the case if there are web pages we can
+        # point to.
+        if ( my $redirect = $self->get_redirect($cgi) ) {                
+            $logger->info("Redirecting to $redirect");
+            print $cgi->redirect(
+                '-uri'    => $redirect,
+                '-status' => _HTTP_SC_SEE_ALSO_,
+            );
+        }
+            
+        # a serialization format has been specified
+        if ( my $f = $self->get_format ) {
+            $logger->info("Returning $f serialization");
+            my %args = (
+                '-format'       => $f,
+                '-recordSchema' => $cgi->param('recordSchema'),
+            );
+            
+            # deal with lookup or query
+            if ( my $id = $self->get_guid ) {
+                $args{'-phylo'} = $self->get_record( '-guid' => $id );
+            }
+            elsif ( my $query = $self->get_query ) {
+                $args{'-phylo'} = $self->get_query_result($query);
+            }
+            else {
+                throw 'BadArgs' => "Neither GUID nor query provided!";
+            }
+            
+            # print result
+            print $cgi->header( $Bio::Phylo::PhyloWS::MIMETYPE{$f} );
+            binmode STDOUT, ":utf8";
+            print unparse(%args);
+        }
+        
+        # no serialization format has been specified, returning a
+        # resource description instead
+        else {
+            $logger->info("Returning RDF description");
+            
+            my $description;
+            if ( my $id = $self->get_guid ) {
+                $description = $self->get_description('-guid'=>$id);
+            }
+            elsif ( my $query = $self->get_query ) {
+                $description = $self->get_description('-query'=>$query);
+            }
+            else {
+                throw 'BadArgs' => "Neither GUID nor query provided!";
+            }                
+            
+            # print result
+            print $cgi->header( $Bio::Phylo::PhyloWS::MIMETYPE{'rdf'} );
+            binmode STDOUT, ":utf8";
+            print $description->to_xml;
+        }
+            
+        exit(0);
     }
 
 =back
