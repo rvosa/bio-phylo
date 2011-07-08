@@ -307,6 +307,27 @@ the purpose of round-tripping nexml info sets.
         }
     }
 
+=item set_xml_base()
+
+This utility method can be used to set the xml:base attribute, i.e. to specify
+a location for the object's XML serialization that potentially differs from
+the physical location of the containing document.
+
+ Type    : Mutator
+ Title   : set_xml_base
+ Usage   : $obj->set_xml_base('http://example.org');
+ Function: Sets the xml:base attribute
+ Returns : $self
+ Args    : A URI string
+
+=cut
+
+    sub set_xml_base {
+	my ( $self, $uri ) = @_;
+	$self->set_attributes( 'xml:base' => $uri );
+	return $self;
+    }
+
 =item unset_attribute()
 
 Removes specified attribute
@@ -636,6 +657,47 @@ Retrieves xml id for the element.
             $xml_id =~ s/^(.).+(.)$/$1$2$obj_id/;
             return $id{$obj_id} = $xml_id;
         }
+    }
+
+=item get_xml_base()
+
+This utility method can be used to get the xml:base attribute, which specifies
+a location for the object's XML serialization that potentially differs from
+the physical location of the containing document.
+
+If no xml:base attribute has been defined on the focal object, this method
+moves on, recursively, to containing objects (e.g. from node to tree to forest)
+until such time that a base URI has been found. 
+
+ Type    : Mutator
+ Title   : get_xml_base
+ Usage   : my $base = $obj->get_xml_base;
+ Function: Gets the xml:base attribute
+ Returns : A URI string
+ Args    : None
+
+=cut
+
+    sub get_xml_base {
+	my $self = shift;
+	while ( $self ) {
+	    if ( my $base = $self->get_attributes('xml:base') ) {
+		return $base;
+	    }
+	    # we do this because node objects are contained inside their
+	    # parents, recursively, but node nexml elements aren't. it
+	    # would be inefficient to traverse all the parent nodes when,
+	    # logically, none of them could have an xml:base attribute
+	    # that could apply to the original invocant. in fact, doing
+	    # so could yield spurious results.
+	    if ( $self->_type == _NODE_ ) {
+		$self = $self->get_tree;
+	    }
+	    else {
+		$self = $self->_get_container;
+	    }	    
+	}
+	return;
     }
 
 =item get_dom_elt()
