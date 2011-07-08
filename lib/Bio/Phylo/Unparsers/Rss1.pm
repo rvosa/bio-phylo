@@ -62,7 +62,7 @@ sub _to_string {
     $twig->set_pretty_print('indented');
     $twig->set_empty_tag_style('normal');
     $twig->parse( $description->to_xml );
-    return $twig->prolog() . "\n" . $twig->sprint();
+    return $twig->sprint();
 }
 
 sub _visitor {
