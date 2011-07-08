@@ -170,6 +170,7 @@ Gets a query result and returns it as a project object
                 }
             }
         )->parseurl( XML_SRCH . $query );
+        $proj->set_guid($query);
         return $proj;
     }
 
