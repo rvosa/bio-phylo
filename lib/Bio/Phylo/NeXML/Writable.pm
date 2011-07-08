@@ -587,23 +587,29 @@ Retrieves attributes for the element.
     };
 
     sub get_attributes {
-        my $self  = shift;
+        my ( $self, $arg ) = @_;
         my $attrs = $flatten_attributes->($self);
-        if ( not exists $attrs->{'label'} and my $label = $self->get_name ) {
-            $attrs->{'label'} = $label;
-        }
-	if ( defined $attrs->{'label'} and $attrs->{'label'} ne '' ) {
+	
+	# process the 'label' attribute: encode if there's anything there,
+	# otherwise delete the attribute
+	if ( $attrs->{'label'} ) {
 	    $attrs->{'label'} = $XMLEntityEncode->($attrs->{'label'});
 	}
 	else {
 	    delete $attrs->{'label'};
 	}
-        if ( not exists $attrs->{'id'} ) {
+	
+	# process the id attribute: if it's not there, autogenerate it, unless
+	# the object is explicitly not identifiable, in which case delete the
+	# attribute
+        if ( not $attrs->{'id'} ) {
             $attrs->{'id'} = $self->get_xml_id;
         }
         if ( defined $self->is_identifiable and not $self->is_identifiable ) {
             delete $attrs->{'id'};
         }
+	
+	# set the otus attribute
         if ( $self->can('get_taxa') ) {
             if ( my $taxa = $self->get_taxa ) {
                 $attrs->{'otus'} = $taxa->get_xml_id
@@ -614,6 +620,8 @@ Retrieves attributes for the element.
                   "$self can link to a taxa element, but doesn't";
             }
         }
+	
+	# set the otu attribute
         if ( $self->can('get_taxon') ) {
             if ( my $taxon = $self->get_taxon ) {
                 $attrs->{'otu'} = $taxon->get_xml_id;
@@ -622,15 +630,15 @@ Retrieves attributes for the element.
                 $logger->info("No linked taxon found");
             }
         }
-        $attrs = $add_namespaces_to_attributes->( $self, $attrs )
-          unless $self->is_ns_suppressed;
-        my $arg = shift;
-        if ($arg) {
-            return $attrs->{$arg};
-        }
-        else {
-            return $attrs;
-        }
+	
+	# add the namespace attributes unless explicitly supressed
+	if ( not $self->is_ns_suppressed ) {
+	    $attrs = $add_namespaces_to_attributes->( $self, $attrs )
+	}
+	
+	# now either return the whole hash or just one value if a
+	# key/attribute name was provided
+	return $arg ? $attrs->{$arg} : $attrs;
     }
 
 =item get_xml_id()
