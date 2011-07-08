@@ -89,17 +89,20 @@ Stores argument in invocant's cache.
     sub register {
         my ( $self, $obj ) = @_;
         my $id = $obj->get_id;
-        my $type = $obj->_type;
         
-        # node, forest, matrix, datum, taxon, taxa
-        if ( $type == _NODE_ || $type == _TAXON_ || $type == _DATUM_ || $type == _TAXA_ || $type == _FOREST_ || $type == _MATRIX_ ) {
-
-            # notify user
-            $logger->info("registering object $obj ($id)");
-            $object[$id] = $obj;
-            weaken $object[$id];
-            $logger->debug("done registering object $obj ($id)");
-            return $self;
+        if ( ref $obj && $obj->can('_type') ) {
+            my $type = $obj->_type;
+            
+            # node, forest, matrix, datum, taxon, taxa
+            if ( $type == _NODE_ || $type == _TAXON_ || $type == _DATUM_ || $type == _TAXA_ || $type == _FOREST_ || $type == _MATRIX_ ) {
+    
+                # notify user
+                $logger->info("registering object $obj ($id)");
+                $object[$id] = $obj;
+                weaken $object[$id];
+                $logger->debug("done registering object $obj ($id)");
+                return $self;
+            }
         }
     }
 
