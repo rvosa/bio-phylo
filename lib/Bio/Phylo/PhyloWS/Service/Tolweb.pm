@@ -65,7 +65,10 @@ Gets a tolweb record by its id
  Function: Gets a tolweb record by its id
  Returns : Bio::Phylo::Project
  Args    : Required: -guid => $guid
- Comments: The guid is of the form 'tree/Tolweb:\d+'
+ Comments: For the $guid argument, this method only cares
+           whether the last part of the argument is a series
+           of integers, which are understood to be the node
+           identifier in the Tree of Life
 
 =cut
 
@@ -137,7 +140,8 @@ Gets a query result and returns it as a project object
  Usage   : my $proj = $obj->get_query_result($query);
  Function: Gets a query result
  Returns : Bio::Phylo::Project
- Args    : A simple query string for a group lookup
+ Args    : A simple query string for a group search
+ Comments: The $query is a simple CQL level 0 term-only query
 
 =cut
 
@@ -172,12 +176,12 @@ Gets an array ref of supported formats
  Title   : get_supported_formats
  Usage   : my @formats = @{ $obj->get_supported_formats };
  Function: Gets an array ref of supported formats
- Returns : [ qw(nexml nexus newick html) ]
+ Returns : [ qw(nexml nexus newick html json phyloxml) ]
  Args    : NONE
 
 =cut
 
-    sub get_supported_formats { [qw(nexml nexus newick html)] }
+    sub get_supported_formats { [qw(nexml nexus newick html json phyloxml)] }
 
 =back
 
