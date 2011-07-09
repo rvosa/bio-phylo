@@ -298,14 +298,35 @@ Gets an RSS1.0/XML representation of a phylows record
 
     sub get_description {
         my $self = shift;
-        my $desc = $fac->create_description( '-url' => $self->get_url );
+        
+        # create constructor args
+        my %args = (
+            '-section'  => $self->get_section,
+            '-base_uri' => $self->get_base_uri,
+        );
+        if ( $self->get_query ) {
+            $args{'-query'} = $self->get_query;
+        }
+        else {
+            $args{'-authority'} = $self->get_authority;
+            $args{-guid} = $self->get_guid;
+        }
+        
+        # create root description
+        my $desc = $fac->create_description(
+            '-name' => 'About ' . $self->get_url,
+            '-desc' => 'Available serializations for this resource',
+            %args,
+        );
+        
+        # create available resources
         for my $format ( @{ $self->get_supported_formats } ) {
             $desc->insert(
                 $fac->create_resource(
                     '-format' => $format,
-                    '-url'    => $self->get_url( '-format' => $format ),
                     '-name'   => $format,
                     '-desc'   => "A $format serialization of the resource",
+                    %args
                 )
             );
         }
