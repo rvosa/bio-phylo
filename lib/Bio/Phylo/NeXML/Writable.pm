@@ -307,22 +307,22 @@ the purpose of round-tripping nexml info sets.
         }
     }
 
-=item set_xml_base()
+=item set_base_uri()
 
 This utility method can be used to set the xml:base attribute, i.e. to specify
 a location for the object's XML serialization that potentially differs from
 the physical location of the containing document.
 
  Type    : Mutator
- Title   : set_xml_base
- Usage   : $obj->set_xml_base('http://example.org');
+ Title   : set_base_uri
+ Usage   : $obj->set_base_uri('http://example.org');
  Function: Sets the xml:base attribute
  Returns : $self
  Args    : A URI string
 
 =cut
 
-    sub set_xml_base {
+    sub set_base_uri {
 	my ( $self, $uri ) = @_;
 	$self->set_attributes( 'xml:base' => $uri );
 	return $self;
@@ -667,7 +667,7 @@ Retrieves xml id for the element.
         }
     }
 
-=item get_xml_base()
+=item get_base_uri()
 
 This utility method can be used to get the xml:base attribute, which specifies
 a location for the object's XML serialization that potentially differs from
@@ -678,15 +678,15 @@ moves on, recursively, to containing objects (e.g. from node to tree to forest)
 until such time that a base URI has been found. 
 
  Type    : Mutator
- Title   : get_xml_base
- Usage   : my $base = $obj->get_xml_base;
+ Title   : get_base_uri
+ Usage   : my $base = $obj->get_base_uri;
  Function: Gets the xml:base attribute
  Returns : A URI string
  Args    : None
 
 =cut
 
-    sub get_xml_base {
+    sub get_base_uri {
 	my $self = shift;
 	while ( $self ) {
 	    my $attrs = $flatten_attributes->($self);
