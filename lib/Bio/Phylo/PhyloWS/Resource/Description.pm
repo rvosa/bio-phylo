@@ -94,44 +94,15 @@ Serializes resource to RSS1.0 XML representation
     sub to_xml {
         my $self = shift;
         my $xml  = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
-
-        # <rdf:RDF
-        #   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-        #   xmlns:dcterms="http://purl.org/dc/terms/"
-        #   xmlns:dc="http://purl.org/dc/elements/1.1/"
-        #   xmlns="http://purl.org/rss/1.0/">
         $xml .= $self->get_xml_tag(0);
-
-        #   <channel rdf:about="${baseURL}/${phyloWSPath}">
-        $xml .=
-          '<channel rdf:about="' . $self->get_url . $self->get_guid . '">';
-
-        #     <title>${phyloWSPath}</title>
+        $xml .= '<channel rdf:about="' . $self->get_link . '">';
         $xml .= '<title>' . ( $self->get_name || $self->get_guid ) . '</title>';
-
-        #     <link>${baseURL}</link>
-        $xml .= '<link>' . $self->get_url . '</link>';
-
-        #     <description>Serializations for ${phyloWSPath}</description>
-        $xml .= '<description>' . $self->get_desc . '</description>'
-          if $self->get_desc;
-
-        #     <items>
-        #       <rdf:Seq>
+        $xml .= '<link>' . $self->get_link . '</link>';
+        $xml .= '<description>' . $self->get_desc . '</description>';
         $xml .= '<items><rdf:Seq>';
-        for my $resource ( @{ $self->get_entities } ) {
-
-            # 		<rdf:li rdf:resource="${baseURL}/${phyloWSPath}?format=html"/>
-            $xml .= '<rdf:li rdf:resource="' . $resource->get_url . '"/>';
-        }
-
-        #       </rdf:Seq>
-        #     </items>
-        #   </channel>
+        $xml .= '<rdf:li rdf:resource="' . $_->get_link . '"/>' for @{ $self->get_entities };
         $xml .= '</rdf:Seq></items></channel>';
-        for my $resource ( @{ $self->get_entities } ) {
-            $xml .= $resource->to_xml;
-        }
+        $xml .= $_->to_xml for @{ $self->get_entities };
         $xml .= '</' . $self->get_tag . '>';
         return $xml;
     }
