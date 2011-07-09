@@ -106,16 +106,24 @@ Serializes resource to RSS1.0 XML representation
     sub to_xml {
         my $self = shift;
         my $tag  = $self->get_tag;
-	my $link = $self->get_link || $self->get_url;
+	
+	# create the link URL
+	my $link;
+	if ( $link = $self->get_link ) {
+	    $logger->info("Using link field");
+	}
+	else {
+	    $logger->info("Computing URL");
+	    $link = $self->get_url;
+	}
+	
+	# generating xml
         my $xml = '<' . $tag . ' rdf:about="' . $link . '">';
         $xml .= '<title>' . $self->get_name . '</title>';
         $xml .= '<link>' . $link . '</link>';
         $xml .= '<description>' . $self->get_desc . '</description>';
         if ( my $format = $self->get_format ) {
-            $xml .=
-                '<dc:format>'
-              . $Bio::Phylo::PhyloWS::MIMETYPE{$format}
-              . '</dc:format>';
+            $xml .= '<dc:format>' . $Bio::Phylo::PhyloWS::MIMETYPE{$format} . '</dc:format>';
         }
 	for my $meta ( @{ $self->get_meta } ) {
 	    my $predicate = $meta->get_predicate;
