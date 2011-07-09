@@ -61,7 +61,13 @@ sub _to_string {
     $twig->set_encoding('UTF-8');
     $twig->set_pretty_print('indented');
     $twig->set_empty_tag_style('normal');
-    $twig->parse( $description->to_xml );
+    my $xml = $description->to_xml;
+    eval {
+        $twig->parse( $xml );
+    };
+    if ( $@ ) {
+        $logger->fatal( "Couldn't produce RSS: $@\n\n$xml ");
+    }
     return $twig->sprint();
 }
 
