@@ -43,13 +43,15 @@ recommendations.
 
     sub new {
         my $self = shift->SUPER::new( '-tag' => 'item', @_ );
-	my $has_guid_and_auth = $self->get_guid && $self->get_authority;
-	if ( not $has_guid_and_auth and not $self->get_query ) {
-	    throw 'BadArgs' => 'Need -guid and -authority or -query argument';
+	if ( not $self->get_link ) {
+	    my $has_guid_and_auth = $self->get_guid && $self->get_authority;
+	    if ( not $has_guid_and_auth and not $self->get_query ) {
+		throw 'BadArgs' => 'Need -guid and -authority or -query argument';
+	    }
+	    if ( not $self->get_section ) {
+		throw 'BadArgs' => 'Need -section argument';
+	    }
 	}
-	if ( not $self->get_section ) {
-            throw 'BadArgs' => 'Need -section argument';
-        }
         return $self;
     }
 
@@ -104,11 +106,10 @@ Serializes resource to RSS1.0 XML representation
     sub to_xml {
         my $self = shift;
         my $tag  = $self->get_tag;
-
-# <item rdf:about="http://localhost/nexml/service/tolweb/phylows/tree/Tolweb:15040?format=nexml">
-        my $xml = '<' . $tag . ' rdf:about="' . $self->get_full_url . '">';
+	my $link = $self->get_link || $self->get_url;
+        my $xml = '<' . $tag . ' rdf:about="' . $link . '">';
         $xml .= '<title>' . $self->get_name . '</title>';
-        $xml .= '<link>' . $self->get_full_url . '</link>';
+        $xml .= '<link>' . $link . '</link>';
         $xml .= '<description>' . $self->get_desc . '</description>';
         if ( my $format = $self->get_format ) {
             $xml .=
