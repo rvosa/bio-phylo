@@ -148,6 +148,7 @@ sub _process_metadata {
         }
         elsif ( $text && $child_tag eq 'DESCRIPTION' ) {
             $obj->add_meta( $fac->create_meta( '-triple' => { 'dc:description' => $text } ) );
+            $obj->set_desc( $text );
         }
         elsif ( $text && $child_tag ne 'NODES' && $child_tag ne 'OTHERNAMES' ) {
             $obj->add_meta( $fac->create_meta( '-triple' => { 'tbe:' . lc( $child_tag ) => $text } ) );
