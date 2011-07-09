@@ -125,7 +125,8 @@ Sets the authority prefix (e.g. TB2) for the implementing service
 
 =item get_url()
 
-Gets invocant's url.
+Gets invocant's url. This constructs the full url including section, authority
+prefix, uid and query string.
 
  Type    : Accessor
  Title   : get_url
