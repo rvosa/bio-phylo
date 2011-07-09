@@ -43,49 +43,14 @@ recommendations.
 
     sub new {
         my $self = shift->SUPER::new( '-tag' => 'item', @_ );
-        if ( not ( $self->get_guid xor $self->get_query ) ) {
-            throw 'BadArgs' => 'Need -guid or -query argument';
+	my $has_guid_and_auth = $self->get_guid && $self->get_authority;
+	if ( not $has_guid_and_auth and not $self->get_query ) {
+	    throw 'BadArgs' => 'Need -guid and -authority or -query argument';
+	}
+	if ( not $self->get_section ) {
+            throw 'BadArgs' => 'Need -section argument';
         }
         return $self;
-    }
-
-=back
-
-=head2 ACCESSORS
-
-=over
-
-=item get_full_url()
-
-Gets invocant's full url (i.e. including query string)
-
- Type    : Accessor
- Title   : get_full_url
- Usage   : my $url = $obj->get_full_url;
- Function: Returns the object's full url
- Returns : A string
- Args    : None
-
-=cut
-
-    sub get_full_url {
-        my $self = shift;
-	my ( $guid, $query ) = ( $self->get_guid, $self->get_query );
-	my %args = $query ? ( '-query' => $query ) : ( '-guid' => $guid );
-	my $full = $self->get_url(%args);
-	$logger->debug("FULL=$full");
-        if ( my $format = $self->get_format ) {
-	    $logger->debug("Will add format paramer for $format serialization");	    
-            if ( $full !~ m/\?/ ) {
-                return $full . '?format=' . $format;
-            }
-            else {
-                return $full . '&amp;format=' . $format;
-            }
-        }
-        else {
-            return $full;
-        }
     }
 
 =back
