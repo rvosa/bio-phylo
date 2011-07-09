@@ -122,7 +122,7 @@ Serializes resource to RSS1.0 XML representation
         for my $resource ( @{ $self->get_entities } ) {
 
             # 		<rdf:li rdf:resource="${baseURL}/${phyloWSPath}?format=html"/>
-            $xml .= '<rdf:li rdf:resource="' . $resource->get_full_url . '"/>';
+            $xml .= '<rdf:li rdf:resource="' . $resource->get_url . '"/>';
         }
 
         #       </rdf:Seq>
