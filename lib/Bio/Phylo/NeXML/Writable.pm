@@ -17,7 +17,7 @@ use Bio::Phylo::Util::CONSTANT qw'/looks_like/ :namespaces :objecttypes';
         'xsd' => _NS_XSD_,
     );
     my @fields =
-      \( my ( %tag, %id, %attributes, %identifiable, %suppress_ns, %meta ) );
+      \( my ( %tag, %id, %attributes, %identifiable, %suppress_ns, %meta, %url ) );
 
 =head1 NAME
 
@@ -326,6 +326,28 @@ the physical location of the containing document.
 	my ( $self, $uri ) = @_;
 	$self->set_attributes( 'xml:base' => $uri );
 	return $self;
+    }
+
+=item set_link()
+
+This sets a clickable link, i.e. a url, for the object. This has no relation to
+the xml:base attribute, it is solely intended for serializations that
+allow clickable links, such as SVG or RSS.
+
+ Type    : Mutator
+ Title   : set_link
+ Usage   : $node->set_link($url);
+ Function: Sets clickable link
+ Returns : $self
+ Args    : url
+
+=cut
+
+    sub set_link {
+        my ( $self, $url ) = @_;
+        my $id = $self->get_id;
+        $url{$id} = $url;
+        return $self;
     }
 
 =item unset_attribute()
@@ -710,6 +732,27 @@ until such time that a base URI has been found.
 	}
 	$logger->info("No xml:base attribute was found anywhere");
 	return undef;
+    }
+
+=item get_link()
+
+This returns a clickable link for the object. This has no relation to
+the xml:base attribute, it is solely intended for serializations that
+allow clickable links, such as SVG or RSS.
+
+ Type    : Accessor
+ Title   : get_link
+ Usage   : my $link = $obj->get_link();
+ Function: Returns a clickable link
+ Returns : url
+ Args    : NONE
+
+=cut
+
+    sub get_link {
+        my $self = shift;
+        my $id   = $self->get_id;
+        return $url{$id};
     }
 
 =item get_dom_elt()
