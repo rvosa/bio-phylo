@@ -111,6 +111,7 @@ Gets a tolweb record by its id
                     my $taxon = shift;
                     my ($node) = @{ $taxon->get_nodes };
                     $taxon->set_link($node->get_link);
+                    $taxon->set_desc($node->get_desc);
                 } );
                 
                 # done!
