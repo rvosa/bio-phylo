@@ -77,7 +77,7 @@ sub _draw {
                 '-width'  => $node->get_branch_width,
                 '-stroke' => $node->get_branch_color,
                 '-fill'   => $node->get_node_colour,
-                '-url'    => $node->get_url,
+                '-url'    => $node->get_link,
             );
         }
     );
@@ -164,7 +164,7 @@ sub _draw_collapsed {
         '-fill'   => $node->get_node_colour,
         '-stroke' => $node->get_branch_color,
         '-width'  => $td->get_branch_width($node),
-        '-url'    => $node->get_url,
+        '-url'    => $node->get_link,
         'id'      => 'collapsed' . $node->get_id,
         'class'   => 'collapsed',
     );
