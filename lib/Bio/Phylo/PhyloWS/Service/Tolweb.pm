@@ -101,9 +101,16 @@ Gets a tolweb record by its id
                 my $prefix = $make_prefix->($self);
                 my ($forest) = @{ $proj->get_forests };
                 my ($tree) = @{ $forest->get_entities };
+                my $taxa = $forest->make_taxa;
+                $proj->insert($taxa);
                 $tree->visit( sub {
                     my $node = shift;
                     $node->set_link( $prefix . $node->get_guid );
+                } );                
+                $taxa->visit( sub {
+                    my $taxon = shift;
+                    my ($node) = @{ $taxon->get_nodes };
+                    $taxon->set_link($node->get_link);
                 } );
                 
                 # done!
