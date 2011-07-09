@@ -110,11 +110,11 @@ Serializes resource to RSS1.0 XML representation
 	# create the link URL
 	my $link;
 	if ( $link = $self->get_link ) {
-	    $logger->info("Using link field");
+	    $logger->info("Using link field: $link");
 	}
-	else {
-	    $logger->info("Computing URL");
+	else {	    
 	    $link = $self->get_url;
+	    $logger->info("Computed URL: $link");
 	}
 	
 	# generating xml
