@@ -161,6 +161,12 @@ prefix, uid and query string.
     sub get_url {
         my $self = shift;
         my $uri  = $self->get_base_uri;
+	my %args;
+	
+	# add format flag, if one is specified
+	if ( my $format = $self->get_format ) {
+	    $args{'-format'} = $format;
+	}
 	    
 	# the section prefix, e.g. 'taxon'
 	$uri .= '/' if $uri !~ m|/$|;
@@ -170,26 +176,16 @@ prefix, uid and query string.
 	if ( my $query = $self->get_query ) {
 	    $logger->info("Constructing query URL");
 	    $uri .= 'find';
-	    $uri = $build_query_string->(
-		$uri,
-		'-query'  => $query,
-		'-format' => $self->get_format,
-		@_, 
-	    );
+	    $args{'-query'} = $query;
 	}
 	
 	# the interaction is a record lookup
 	else {
 	    $logger->info("Constructing lookup URL");
 	    $uri .= $self->get_authority . ':' . $self->get_guid;
-	    $uri = $build_query_string->(
-		$uri,
-		'-format' => $self->get_format,
-		@_
-	    );		
 	}
 	    
-        return $uri;
+        return $build_query_string->($uri,%args,@_);
     }
 
 =item get_format()
