@@ -4,17 +4,20 @@ use base 'Bio::Phylo';
 use Bio::Phylo::Util::CONSTANT 'looks_like_hash';
 use Bio::Phylo::Util::Exceptions 'throw';
 use Bio::Phylo::Util::Dependency 'URI::URL';
+
 our %MIMETYPE = (
-    'nexml'  => 'application/xml;charset=UTF-8',
-    'yaml'   => 'application/x-yaml;charset=UTF-8',
-    'rdf'    => 'application/rdf+xml;charset=UTF-8',
-    'rss1'   => 'application/rdf+xml;charset=UTF-8',
-    'nexus'  => 'text/plain',
-    'json'   => 'text/javascript',
-    'newick' => 'text/plain',
+    'nexml'    => 'application/xml;charset=UTF-8',
+    'yaml'     => 'application/x-yaml;charset=UTF-8',
+    'rdf'      => 'application/rdf+xml;charset=UTF-8',
+    'rss1'     => 'application/rdf+xml;charset=UTF-8',
+    'phyloxml' => 'application/xml;charset=UTF-8',
+    'nexus'    => 'text/plain',
+    'json'     => 'text/javascript',
+    'newick'   => 'text/plain',
+    'fasta'    => 'text/plain',
 );
 {
-    my @fields = \( my (%uri, %format, %section, %query) );
+    my @fields = \( my (%uri, %format, %section, %query, %authority) );
 
 =head1 NAME
 
@@ -32,50 +35,6 @@ isn't used directly, it contains useful methods that are inherited by
 its children.
 
 =head1 METHODS
-
-=head2 CONSTRUCTOR
-
-=over
-
-=item new()
-
-The Bio::Phylo::PhyloWS constructor is rarely used directly. Rather, many other 
-objects in Bio::Phylo::PhyloWS internally go up the inheritance tree to this 
-constructor. The arguments shown here can therefore also be passed to any of 
-the child classes' constructors, which will pass them on up the inheritance tree. 
-Generally, constructors in Bio::Phylo::PhyloWS subclasses can process as arguments 
-all methods that have set_* in their names. The arguments are named for the 
-methods, but "set_" has been replaced with a dash "-", e.g. the method "set_name" 
-becomes the argument "-name" in the constructor.
-
- Type    : Constructor
- Title   : new
- Usage   : my $phylows = Bio::Phylo::PhyloWS->new( -url => $url );
- Function: Instantiates Bio::Phylo::PhyloWS object
- Returns : a Bio::Phylo::PhyloWS object 
- Args    : Required: -url => $url
-           Optional: any number of setters. For example,
- 		   Bio::Phylo::PhyloWS->new( -name => $name )
- 		   will call set_name( $name ) internally
-
-=cut
-
-    sub new {
-
-        # could be child class
-        my $class = shift;
-
-        # go up inheritance tree, eventually get an ID
-        my $self = $class->SUPER::new(@_);
-
-        # mandatory!
-        if ( not $self->get_url ) {
-            throw 'BadArgs' => 'Need -url => $url args';
-        }
-        return $self;
-    }
-
-=back
 
 =head2 MUTATORS
 
@@ -157,6 +116,26 @@ Sets invocant's query parameter
 	return $self;
     }
 
+=item set_authority()
+
+Sets the authority prefix (e.g. TB2) for the implementing service
+
+ Type    : Mutator
+ Title   : set_authority
+ Usage   : $obj->set_authority('TB2');
+ Function: Sets authority prefix
+ Returns : $self
+ Args    : String
+ Comments:
+
+=cut
+
+    sub set_authority {
+        my ( $self, $auth ) = @_;
+        $authority{ $self->get_id } = $auth;
+	return $self;
+    }
+
 =back
 
 =head2 ACCESSORS
@@ -172,7 +151,7 @@ Gets invocant's url.
  Usage   : my $url = $obj->get_url;
  Function: Returns the object's url.
  Returns : A string
- Args    : None
+ Args    :
 
 =cut
 
@@ -199,14 +178,22 @@ Gets invocant's url.
         my $self = shift;
         my $uri  = $uri{ $self->get_id };
         if ( my %args = looks_like_hash @_ ) {
-            if ( $args{'-guid'} ) {
-                $uri .= $args{'-guid'};
-                delete $args{'-guid'};
-                $uri = $build_query_string->( $uri, %args );
-            }
-            elsif ( $args{'-query'} ) {
-                $uri = $build_query_string->( $uri, %args );
-            }
+	    
+	    # the section prefix, e.g. 'taxon'
+	    $uri .= '/' if $uri !~ m|/$|;
+	    $uri .= $self->get_section . '/';
+	    
+	    # the interaction is a query
+	    if ( my $query = $self->get_query ) {
+		$uri .= 'find';
+		$uri = $build_query_string->( $uri, %args );
+	    }
+	    
+	    # the interaction is a record lookup
+	    else {
+		$uri .= $self->get_authority . ':' . $self->get_guid;
+                $uri = $build_query_string->( $uri, %args );		
+	    }
         }
         return $uri;
     }
@@ -226,6 +213,24 @@ Gets invocant's preferred serialization format
 
     sub get_format {
         return $format{ shift->get_id };
+    }
+
+=item get_authority()
+
+Gets the authority prefix (e.g. TB2) for the implementing service
+
+ Type    : Accessor
+ Title   : get_authority
+ Usage   : my $auth = $obj->get_authority;
+ Function: Gets authority prefix
+ Returns : String
+ Args    : None
+ Comments:
+
+=cut
+
+    sub get_authority {
+        return $authority{ shift->get_id };
     }
 
 =item get_section()
