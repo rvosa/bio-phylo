@@ -4,6 +4,7 @@ use base 'Bio::Phylo::NeXML::Writable';
 use Bio::Phylo::Util::CONSTANT 'looks_like_hash';
 use Bio::Phylo::Util::Exceptions 'throw';
 use Bio::Phylo::Util::Dependency 'URI::URL';
+use Bio::Phylo::Util::Logger;
 
 our %MIMETYPE = (
     'nexml'    => 'application/xml;charset=UTF-8',
@@ -18,6 +19,7 @@ our %MIMETYPE = (
 );
 {
     my @fields = \( my (%format, %section, %query, %authority) );
+    my $logger = Bio::Phylo::Util::Logger->new;
 
 =head1 NAME
 
@@ -167,12 +169,14 @@ prefix, uid and query string.
 	    
 	    # the interaction is a query
 	    if ( my $query = $self->get_query ) {
+		$logger->info("Constructing query URL");
 		$uri .= 'find';
 		$uri = $build_query_string->( $uri, %args, '-query' => $query );
 	    }
 	    
 	    # the interaction is a record lookup
 	    else {
+		$logger->info("Constructing lookup URL");
 		$uri .= $self->get_authority . ':' . $self->get_guid;
                 $uri = $build_query_string->( $uri, %args );		
 	    }
