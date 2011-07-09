@@ -15,6 +15,14 @@ use constant XML_SRCH => TOL_BASE . 'onlinecontributors/app?service=external&pag
 {
     my $fac    = Bio::Phylo::Factory->new;
     my $logger = Bio::Phylo::Util::Logger->new;
+    
+    my $make_prefix = sub {
+        my $self = shift;
+        my $prefix = $self->get_base_uri;
+        $prefix .= '/' if $prefix !~ m|/$|;
+        $prefix .= $self->get_section . '/' . $self->get_authority . ':';
+        return $prefix;
+    };
 
 =head1 NAME
 
@@ -78,13 +86,27 @@ Gets a tolweb record by its id
             if ( $args{'-guid'} && $args{'-guid'} =~ m|(\d+)$| ) {
                 my $tolweb_id = $1;
                 $logger->info("Getting nexml record for id: $tolweb_id");
+                
+                # fetch and parse the output
                 my $proj = parse(
                     '-format'     => 'tolweb',
                     '-url'        => XML_NODE . $tolweb_id,
                     '-as_project' => 1,
                 );
-                $proj->set_guid($args{'-guid'});
-                $proj->set_base_uri($self->get_base_uri);
+                $proj->set_link($self->get_url);
+                $proj->set_name('Tree of Life web project lookup service');
+                $proj->set_desc("Results for ID $tolweb_id");
+                
+                # post processing to make nice local links back to this service
+                my $prefix = $make_prefix->($self);
+                my ($forest) = @{ $proj->get_forests };
+                my ($tree) = @{ $forest->get_entities };
+                $tree->visit( sub {
+                    my $node = shift;
+                    $node->set_link( $prefix . $node->get_guid );
+                } );
+                
+                # done!
                 return $proj;
             }
             else {
@@ -151,12 +173,14 @@ Gets a query result and returns it as a project object
     sub get_query_result {
         my ( $self, $query ) = @_;
         my $proj = $fac->create_project(
-            '-base_uri'   => $self->get_base_uri,
-            '-guid'       => $query,
+            '-link'       => $self->get_url,
             '-namespaces' => { 'tba' => _NS_TWA_ },
+            '-desc'       => 'Results for query "' . $self->get_query . '"',
+            '-name'       => 'Tree of Life web project PhyloWS search service',
         );
-        my $taxa = $fac->create_taxa;
-        $proj->insert( $taxa );
+        my $taxa   = $fac->create_taxa;
+        my $prefix = $make_prefix->($self);
+        $proj->insert( $taxa );        
         XML::Twig->new(
             'twig_handlers' => {
                 'NODE' => sub {
@@ -167,6 +191,7 @@ Gets a query result and returns it as a project object
                         $fac->create_taxon(
                             '-name' => $name_elt->text,
                             '-guid' => $id,
+                            '-link' => $prefix . $id,
                         )->add_meta(
                             $fac->create_meta( '-triple' => { 'tba:id' => $id } )
                         )
