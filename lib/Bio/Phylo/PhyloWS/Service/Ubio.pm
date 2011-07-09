@@ -111,6 +111,21 @@ Gets a uBio record by its id
         return $proj;
     }
 
+=item get_authority()
+
+Gets the authority prefix (e.g. TB2) for the implementing service
+
+ Type    : Authority
+ Title   : get_authority
+ Usage   : my $auth = $obj->get_authority;
+ Function: Gets authority prefix
+ Returns : 'uBio'
+ Args    : None
+
+=cut
+
+    sub get_authority { 'uBio' }
+
 =item get_supported_formats()
 
 Gets an array ref of supported formats
