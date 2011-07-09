@@ -100,18 +100,22 @@ most standard HTTP servers.
         my ( $self, $cgi ) = @_;
         $self->set_format($cgi->param('format'));
         $self->set_query($cgi->param('query'));
-        my $path_info = $cgi->path_info;
+        my $path = $cgi->path_info;
         my $section;
-        if ( $path_info =~ m|/phylows/([a-z]+)/| ) {
+        if ( $path =~ m|/phylows/([a-z]+)/| ) {
             $section = $1;
             $self->set_section($section);
         }        
-        if ( $path_info !~ /find/ && $path_info =~ m|/phylows/$section/(.+)$|) {
-            my $guid = $1;
+        if ( $path !~ /find/ && $path =~ m|/phylows/$section/(.+?):(.+)$|) {
+            my ( $authority, $guid ) = ( $1, $2 );
+            if ( $authority ne $self->get_authority ) {
+                throw 'BadArgs' => ref($self) . "Can't process identifiers "
+                    ."with the $authority prefix";
+            }
             $self->set_guid($guid);
         }
-        if ( $path_info !~ /phylows/ ) {
-            $logger->warn("'$path_info' is not a PhyloWS URL");
+        if ( $path !~ /phylows/ ) {
+            $logger->warn("'$path' is not a PhyloWS URL");
         }
     }
     
@@ -185,36 +189,6 @@ most standard HTTP servers.
 =head2 ACCESSORS
 
 =over
-
-=item get_serialization()
-
-Gets serialization of the provided record
-
- Type    : Accessor
- Title   : get_serialization
- Usage   : my $serialization = $obj->get_serialization( 
-               -guid   => $guid, 
-               -format => $format 
-           );
- Function: Returns a serialization of a PhyloWS database record
- Returns : A string
- Args    : Required: -guid => $guid, -format => $format
-
-=cut
-
-    sub get_serialization {
-        my $self = shift;
-        if ( my %args = looks_like_hash @_ ) {
-            if ( my $guid = $args{'-guid'} and my $format = $args{'-format'} ) {
-                my $project = $self->get_record( '-guid' => $guid );
-                return unparse(
-                    '-format' => $format,
-                    '-phylo'  => $project,
-                    '-recordSchema' => $args{'recordSchema'},
-                );
-            }
-        }
-    }
 
 =item get_record()
 
@@ -314,7 +288,7 @@ Gets an RSS1.0/XML representation of a phylows record
  Usage   : my $desc = $obj->get_description;
  Function: Gets an RSS1.0/XML representation of a phylows record
  Returns : String
- Args    : Required: -guid => $guid
+ Args    : None
  Comments: This method creates a representation of a single record
            (i.e. the service's base url + the record's guid)
            that can be serialized in whichever formats are 
@@ -324,21 +298,18 @@ Gets an RSS1.0/XML representation of a phylows record
 
     sub get_description {
         my $self = shift;
-        if ( my %args = looks_like_hash @_ ) {
-            my $desc = $fac->create_description( '-url' => $self->get_url, @_ );
-            for my $format ( @{ $self->get_supported_formats } ) {
-                $desc->insert(
-                    $fac->create_resource(
-                        '-format' => $format,
-                        '-url'    => $self->get_url,
-                        '-name'   => $format,
-                        '-desc'   => "A $format serialization of the resource",
-                        @_,
-                    )
-                );
-            }
-            return $desc;
+        my $desc = $fac->create_description( '-url' => $self->get_url );
+        for my $format ( @{ $self->get_supported_formats } ) {
+            $desc->insert(
+                $fac->create_resource(
+                    '-format' => $format,
+                    '-url'    => $self->get_url( '-format' => $format ),
+                    '-name'   => $format,
+                    '-desc'   => "A $format serialization of the resource",
+                )
+            );
         }
+        return $desc;
     }
 
 =back
