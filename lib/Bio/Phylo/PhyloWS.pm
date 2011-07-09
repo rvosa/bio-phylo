@@ -1,6 +1,6 @@
 package Bio::Phylo::PhyloWS;
 use strict;
-use base 'Bio::Phylo';
+use base 'Bio::Phylo::NeXML::Writable';
 use Bio::Phylo::Util::CONSTANT 'looks_like_hash';
 use Bio::Phylo::Util::Exceptions 'throw';
 use Bio::Phylo::Util::Dependency 'URI::URL';
