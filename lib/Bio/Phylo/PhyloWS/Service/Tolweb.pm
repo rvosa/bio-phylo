@@ -112,6 +112,7 @@ Gets a tolweb record by its id
                     my ($node) = @{ $taxon->get_nodes };
                     $taxon->set_link($node->get_link);
                     $taxon->set_desc($node->get_desc);
+                    $taxon->add_meta($_) for @{ $node->get_meta };
                 } );
                 
                 # done!
