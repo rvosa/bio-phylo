@@ -218,12 +218,12 @@ Gets an array ref of supported formats
  Title   : get_supported_formats
  Usage   : my @formats = @{ $obj->get_supported_formats };
  Function: Gets an array ref of supported formats
- Returns : [ qw(nexml nexus newick html json phyloxml) ]
+ Returns : [ qw(nexml nexus newick html json phyloxml rss1) ]
  Args    : NONE
 
 =cut
 
-    sub get_supported_formats { [qw(nexml nexus newick html json phyloxml)] }
+    sub get_supported_formats { [qw(nexml nexus newick html json phyloxml rss1)] }
 
 =item get_authority()
 
