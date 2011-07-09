@@ -17,7 +17,7 @@ our %MIMETYPE = (
     'fasta'    => 'text/plain',
 );
 {
-    my @fields = \( my (%uri, %format, %section, %query, %authority) );
+    my @fields = \( my (%format, %section, %query, %authority) );
 
 =head1 NAME
 
@@ -39,25 +39,6 @@ its children.
 =head2 MUTATORS
 
 =over
-
-=item set_url()
-
-Sets invocant url.
-
- Type    : Mutator
- Title   : set_url
- Usage   : $obj->set_url($url);
- Function: Assigns an object's url.
- Returns : Modified object.
- Args    : Argument must be a string.
-
-=cut
-
-    sub set_url {
-        my ( $self, $url ) = @_;
-        $uri{ $self->get_id } = $url;
-        return $self;
-    }
 
 =item set_format()
 
@@ -176,7 +157,7 @@ Gets invocant's url.
 
     sub get_url {
         my $self = shift;
-        my $uri  = $uri{ $self->get_id };
+        my $uri  = $self->get_base_uri;
         if ( my %args = looks_like_hash @_ ) {
 	    
 	    # the section prefix, e.g. 'taxon'
@@ -186,7 +167,7 @@ Gets invocant's url.
 	    # the interaction is a query
 	    if ( my $query = $self->get_query ) {
 		$uri .= 'find';
-		$uri = $build_query_string->( $uri, %args );
+		$uri = $build_query_string->( $uri, %args, '-query' => $query );
 	    }
 	    
 	    # the interaction is a record lookup
