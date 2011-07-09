@@ -84,7 +84,7 @@ Gets a tolweb record by its id
                     '-as_project' => 1,
                 );
                 $proj->set_guid($args{'-guid'});
-                $proj->set_xml_base($self->get_url);
+                $proj->set_base_uri($self->get_base_uri);
                 return $proj;
             }
             else {
@@ -150,8 +150,12 @@ Gets a query result and returns it as a project object
 
     sub get_query_result {
         my ( $self, $query ) = @_;
-        my $proj = $fac->create_project( '-xml_base' => $self->get_url );
-        my $taxa = $fac->create_taxa( '-namespaces' => { 'tba' => _NS_TWA_ } );
+        my $proj = $fac->create_project(
+            '-base_uri'   => $self->get_base_uri,
+            '-guid'       => $query,
+            '-namespaces' => { 'tba' => _NS_TWA_ },
+        );
+        my $taxa = $fac->create_taxa;
         $proj->insert( $taxa );
         XML::Twig->new(
             'twig_handlers' => {
@@ -170,7 +174,6 @@ Gets a query result and returns it as a project object
                 }
             }
         )->parseurl( XML_SRCH . $query );
-        $proj->set_guid($query);
         return $proj;
     }
 
