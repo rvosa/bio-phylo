@@ -189,6 +189,21 @@ Gets an array ref of supported formats
 
     sub get_supported_formats { [qw(nexml nexus newick html json phyloxml)] }
 
+=item get_authority()
+
+Gets the authority prefix (e.g. TB2) for the implementing service
+
+ Type    : Abstract Accessor
+ Title   : get_authority
+ Usage   : my $auth = $obj->get_authority;
+ Function: Gets authority prefix
+ Returns : 'ToL'
+ Args    : None
+
+=cut
+
+    sub get_authority { 'ToL' }
+
 =back
 
 =cut
