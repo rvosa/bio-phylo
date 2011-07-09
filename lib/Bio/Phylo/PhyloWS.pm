@@ -146,7 +146,7 @@ prefix, uid and query string.
                 $key =~ s/^-//;
                 if ( $uri =~ m/\?/ ) {
                     if ( $uri !~ m/[&\?]$/ ) {
-                        $uri .= '&';
+                        $uri .= '&amp;';
                     }
                     $uri .= "${key}=${value}";
                 }
