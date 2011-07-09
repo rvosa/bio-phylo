@@ -11,7 +11,7 @@ use base 'Bio::Phylo::Forest::Node';
             %node_shape,        %node_image,      %branch_color,
             %branch_shape,      %branch_width,    %branch_style,
             %collapsed,         %collapsed_width, %font_face,
-            %font_size,         %font_style,      %url,
+            %font_size,         %font_style,      
             %text_horiz_offset, %text_vert_offset,
         )
     );
@@ -355,24 +355,6 @@ Sets collapsed clade width.
         my ( $self, $font_style ) = @_;
         my $id = $self->get_id;
         $font_style{$id} = $font_style;
-        return $self;
-    }
-
-=item set_url()
-
- Type    : Mutator
- Title   : set_url
- Usage   : $node->set_url($url);
- Function: Sets url
- Returns : $self
- Args    : url
-
-=cut
-
-    sub set_url {
-        my ( $self, $url ) = @_;
-        my $id = $self->get_id;
-        $url{$id} = $url;
         return $self;
     }
 
@@ -770,23 +752,6 @@ Gets collapsed clade width.
         return $font_style{$id};
     }
 
-=item get_url()
-
- Type    : Accessor
- Title   : get_url
- Usage   : my $url = $node->get_url();
- Function: Gets url
- Returns : url
- Args    : NONE
-
-=cut
-
-    sub get_url {
-        my $self = shift;
-        my $id   = $self->get_id;
-        return $url{$id};
-    }
-
 =item get_text_horiz_offset()
 
  Type    : Accessor
@@ -857,7 +822,7 @@ Serializes object to JSON string
             'get_font_face'         => 'font_face',
             'get_font_size'         => 'font_size',
             'get_font_style'        => 'font_style',
-            'get_url'               => 'url',
+            'get_link'              => 'link',
             'get_text_horiz_offset' => 'horiz_offset',
             'get_text_vert_offset'  => 'vert_offset',
         );
