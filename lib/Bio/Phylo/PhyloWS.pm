@@ -161,26 +161,34 @@ prefix, uid and query string.
     sub get_url {
         my $self = shift;
         my $uri  = $self->get_base_uri;
-        if ( my %args = looks_like_hash @_ ) {
 	    
-	    # the section prefix, e.g. 'taxon'
-	    $uri .= '/' if $uri !~ m|/$|;
-	    $uri .= $self->get_section . '/';
+	# the section prefix, e.g. 'taxon'
+	$uri .= '/' if $uri !~ m|/$|;
+	$uri .= $self->get_section . '/';
+	
+	# the interaction is a query
+	if ( my $query = $self->get_query ) {
+	    $logger->info("Constructing query URL");
+	    $uri .= 'find';
+	    $uri = $build_query_string->(
+		$uri,
+		'-query'  => $query,
+		'-format' => $self->get_format,
+		@_, 
+	    );
+	}
+	
+	# the interaction is a record lookup
+	else {
+	    $logger->info("Constructing lookup URL");
+	    $uri .= $self->get_authority . ':' . $self->get_guid;
+	    $uri = $build_query_string->(
+		$uri,
+		'-format' => $self->get_format,
+		@_
+	    );		
+	}
 	    
-	    # the interaction is a query
-	    if ( my $query = $self->get_query ) {
-		$logger->info("Constructing query URL");
-		$uri .= 'find';
-		$uri = $build_query_string->( $uri, %args, '-query' => $query );
-	    }
-	    
-	    # the interaction is a record lookup
-	    else {
-		$logger->info("Constructing lookup URL");
-		$uri .= $self->get_authority . ':' . $self->get_guid;
-                $uri = $build_query_string->( $uri, %args );		
-	    }
-        }
         return $uri;
     }
 
