@@ -45,7 +45,7 @@ sub _to_string {
     # this is the root channel description
     my $description = $fac->create_description(
         '-namespaces' => $obj->get_namespaces,
-        '-url'        => $obj->get_xml_base,
+        '-base_uri'   => $obj->get_base_uri,
         '-guid'       => $obj->get_guid,
         '-desc'       => $obj->get_desc,
     );
@@ -78,10 +78,10 @@ sub _visitor {
         
         # this creates an item in the feed, i.e. a resource
         my $resource = $fac->create_resource(
-            '-name' => $obj->get_name,
-            '-guid' => $obj->get_guid,
-            '-url'  => $obj->get_xml_base,
-            '-desc' => $obj->get_desc,
+            '-name'     => $obj->get_name,
+            '-guid'     => $obj->get_guid,
+            '-base_uri' => $obj->get_base_uri,
+            '-desc'     => $obj->get_desc,
         );
         
         # we attach all additional metadata, i.e. beyond the
