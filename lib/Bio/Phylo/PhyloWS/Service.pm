@@ -136,14 +136,17 @@ most standard HTTP servers.
             
         # a serialization format has been specified
         if ( my $f = $self->get_format ) {
-            $logger->info("Returning $f serialization");        
+            $logger->info("Returning $f serialization");
+            my %args = (
+                '-format' => $f,
+                '-phylo'  => $self->get_result,
+            );
+            if ( my $recordSchema = $cgi->param('recordSchema') ) {
+                $args{'-recordSchema'} = $recordSchema;
+            }
             print $cgi->header( $Bio::Phylo::PhyloWS::MIMETYPE{$f} );
             binmode STDOUT, ":utf8";
-            print unparse(
-                '-format'       => $f,
-                '-recordSchema' => $cgi->param('recordSchema'),
-                '-phylo'        => $self->get_result,
-            );
+            print unparse(%args);
         }
         
         # no serialization format has been specified, returning a
