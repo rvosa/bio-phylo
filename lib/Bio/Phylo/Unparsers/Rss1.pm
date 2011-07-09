@@ -45,9 +45,9 @@ sub _to_string {
     # this is the root channel description
     my $description = $fac->create_description(
         '-namespaces' => $obj->get_namespaces,
-        '-base_uri'   => $obj->get_base_uri,
-        '-guid'       => $obj->get_guid,
+        '-link'       => $obj->get_link,
         '-desc'       => $obj->get_desc,
+        '-name'       => $obj->get_name,
     );
     
     # here we start the recursion to find the items in the
@@ -78,10 +78,9 @@ sub _visitor {
         
         # this creates an item in the feed, i.e. a resource
         my $resource = $fac->create_resource(
-            '-name'     => $obj->get_name,
-            '-guid'     => $obj->get_guid,
-            '-base_uri' => $obj->get_base_uri,
-            '-desc'     => $obj->get_desc,
+            '-name' => $obj->get_name,
+            '-link' => $obj->get_link,
+            '-desc' => $obj->get_desc,
         );
         
         # we attach all additional metadata, i.e. beyond the
