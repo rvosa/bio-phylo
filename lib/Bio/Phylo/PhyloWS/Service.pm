@@ -136,49 +136,23 @@ most standard HTTP servers.
             
         # a serialization format has been specified
         if ( my $f = $self->get_format ) {
-            $logger->info("Returning $f serialization");
-            my %args = (
-                '-format'       => $f,
-                '-recordSchema' => $cgi->param('recordSchema'),
-            );
-            
-            # deal with lookup or query
-            if ( my $id = $self->get_guid ) {
-                $args{'-phylo'} = $self->get_record( '-guid' => $id );
-            }
-            elsif ( my $query = $self->get_query ) {
-                $args{'-phylo'} = $self->get_query_result($query);
-            }
-            else {
-                throw 'BadArgs' => "Neither GUID nor query provided!";
-            }
-            
-            # print result
+            $logger->info("Returning $f serialization");        
             print $cgi->header( $Bio::Phylo::PhyloWS::MIMETYPE{$f} );
             binmode STDOUT, ":utf8";
-            print unparse(%args);
+            print unparse(
+                '-format'       => $f,
+                '-recordSchema' => $cgi->param('recordSchema'),
+                '-phylo'        => $self->get_result,
+            );
         }
         
         # no serialization format has been specified, returning a
         # resource description instead
         else {
             $logger->info("Returning RDF description");
-            
-            my $description;
-            if ( my $id = $self->get_guid ) {
-                $description = $self->get_description('-guid'=>$id);
-            }
-            elsif ( my $query = $self->get_query ) {
-                $description = $self->get_description('-query'=>$query);
-            }
-            else {
-                throw 'BadArgs' => "Neither GUID nor query provided!";
-            }                
-            
-            # print result
             print $cgi->header( $Bio::Phylo::PhyloWS::MIMETYPE{'rdf'} );
             binmode STDOUT, ":utf8";
-            print $description->to_xml;
+            print $self->get_description->to_xml;
         }
             
         exit(0);
@@ -189,6 +163,34 @@ most standard HTTP servers.
 =head2 ACCESSORS
 
 =over
+
+=item get_result()
+
+Gets a phylows result, either a record lookup or a query result,
+depending on the internal state of the service object
+
+ Type    : Accessor
+ Title   : get_result
+ Usage   : my $proj = $obj->get_result;
+ Function: Gets a phylows result
+ Returns : Bio::Phylo::Project
+ Args    : None
+ Comments: 
+
+=cut
+
+    sub get_result {
+        my $self = shift;
+        if ( my $id = $self->get_guid ) {
+            return $self->get_record( '-guid' => $id );
+        }
+        elsif ( my $query = $self->get_query ) {
+            return $self->get_query_result($query);
+        }
+        else {
+            throw 'BadArgs' => "Neither GUID nor query provided!";
+        }        
+    }
 
 =item get_record()
 
@@ -309,7 +311,7 @@ Gets an RSS1.0/XML representation of a phylows record
         }
         else {
             $args{'-authority'} = $self->get_authority;
-            $args{-guid} = $self->get_guid;
+            $args{'-guid'} = $self->get_guid;
         }
         
         # create root description
