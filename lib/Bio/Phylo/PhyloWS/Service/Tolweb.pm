@@ -15,14 +15,6 @@ use constant XML_SRCH => TOL_BASE . 'onlinecontributors/app?service=external&pag
 {
     my $fac    = Bio::Phylo::Factory->new;
     my $logger = Bio::Phylo::Util::Logger->new;
-    
-    my $make_prefix = sub {
-        my $self = shift;
-        my $prefix = $self->get_base_uri;
-        $prefix .= '/' if $prefix !~ m|/$|;
-        $prefix .= $self->get_section . '/' . $self->get_authority . ':';
-        return $prefix;
-    };
 
 =head1 NAME
 
@@ -98,7 +90,7 @@ Gets a tolweb record by its id
                 $proj->set_desc("Results for ID $tolweb_id");
                 
                 # post processing to make nice local links back to this service
-                my $prefix = $make_prefix->($self);
+                my $prefix = $self->get_url_prefix;
                 my ($forest) = @{ $proj->get_forests };
                 my ($tree) = @{ $forest->get_entities };
                 my $taxa = $forest->make_taxa;
@@ -188,7 +180,7 @@ Gets a query result and returns it as a project object
             '-name'       => 'Tree of Life web project PhyloWS search service',
         );
         my $taxa   = $fac->create_taxa;
-        my $prefix = $make_prefix->($self);
+        my $prefix = $self->get_url_prefix;
         $proj->insert( $taxa );        
         XML::Twig->new(
             'twig_handlers' => {
