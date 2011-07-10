@@ -64,6 +64,7 @@ sub _parse {
                 
                 # copy namebank LSID to guid field
                 if ( my $id = $taxon->get_meta_object('dc:identifier' ) ) {
+                    $id =~ s/.+://;
                     $taxon->set_guid( $id );
                     $logger->info("Copied dc:identifier to guid field: $id");
                 }
