@@ -188,6 +188,30 @@ prefix, uid and query string.
         return $build_query_string->($uri,%args,@_);
     }
 
+=item get_url_prefix()
+
+Constructs a url prefix to which an ID can be appended in order to resolve
+to some resource. Combined with get_authority these form the moving parts
+for how PhyloWS services could be plugged into the L<http://lsrn.org>
+system.
+
+ Type    : Accessor
+ Title   : get_url_prefix
+ Usage   : my $prefix = $obj->get_url_prefix;
+ Function: Returns the object's url prefix.
+ Returns : A string
+ Args    :
+
+=cut
+
+    sub get_url_prefix {
+        my $self = shift;
+        my $prefix = $self->get_base_uri;
+        $prefix .= '/' if $prefix !~ m|/$|;
+        $prefix .= $self->get_section . '/' . $self->get_authority . ':';
+        return $prefix;
+    }
+
 =item get_format()
 
 Gets invocant's preferred serialization format
