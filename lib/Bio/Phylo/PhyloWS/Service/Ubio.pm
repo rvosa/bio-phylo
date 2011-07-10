@@ -148,7 +148,7 @@ Gets an array ref of supported formats
 
 =cut
     
-    sub get_supported_formats { [ 'nexml', 'html', 'json', 'nexus' ] }
+    sub get_supported_formats { [ 'nexml', 'html', 'json', 'nexus', 'rss1' ] }
 
 =item get_redirect()
 
