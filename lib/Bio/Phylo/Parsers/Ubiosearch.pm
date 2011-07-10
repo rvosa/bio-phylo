@@ -56,6 +56,7 @@ sub _parse {
                 # copy record title to name field
                 if ( my $name = $taxon->get_meta_object('dc:subject') ) {
                     $taxon->set_name( $name );
+                    $logger->info("Copied dc:subject to name field: $name");
                 }
                 else {
                     $logger->warn("Couldn't find dc:subject");
@@ -64,6 +65,7 @@ sub _parse {
                 # copy namebank LSID to guid field
                 if ( my $id = $taxon->get_meta_object('dc:identifier' ) ) {
                     $taxon->set_guid( $id );
+                    $logger->info("Copied dc:identifier to guid field: $id");
                 }
                 else {
                     $logger->warn("Couldn't find dc:identifier");
@@ -81,7 +83,7 @@ sub _elt_handler {
         my ( $key, $val ) = ( $child->tag, $child->text );
         my $predicate = $predicate_for{$key} || "ubio:${key}";
         my $object = $object_for{$key} ? $object_for{$key}->($val) : $val;
-        $logger->info("Setting annotation $predicate => $object");
+        $logger->debug("Setting annotation $predicate => $object");
         $obj->add_meta(
             $self->_factory->create_meta(
                 '-triple' => { $predicate => $object }
