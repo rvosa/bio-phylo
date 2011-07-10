@@ -109,6 +109,8 @@ Gets a uBio record by its id
                 $taxa->visit(sub{
                     my $taxon = shift;
                     $taxon->set_link( $prefix . $taxon->get_guid );
+                    $taxon->set_name( $taxon->get_meta_object('dc:title') );
+                    $taxon->set_desc( $taxon->get_meta_object('dc:type') );
                 })
             }
             else {
