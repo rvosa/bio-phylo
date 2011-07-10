@@ -207,40 +207,38 @@ Gets a query result and returns it as a project object
     
     sub get_query_result {
         my ( $self, $query ) = @_;
-        throw 'System' => "No UBIO_KEYCODE env var specified" unless $ENV{'UBIO_KEYCODE'};
+        throw 'System' => "No UBIO_KEYCODE env var" unless $ENV{'UBIO_KEYCODE'};
+        my $prefix = $self->get_url_prefix;
+        
+        # do the search query
         my $proj = parse(
             '-url'        => sprintf( UBIOWS, $query, $ENV{'UBIO_KEYCODE'} ),
             '-format'     => 'ubiosearch',
             '-as_project' => 1,
         );
-        my $prefix = $self->get_url_prefix;
+        
+        # visit the taxon objects
         my ($taxa) = @{ $proj->get_taxa };
         $taxa->visit( sub {
             my $taxon = shift;
             
             # fetch additional RDF metadata for namebank record
-            my $lsid  = $taxon->get_guid;
-            if ( my $lsid =~ /(\d+)$/ ) {
-                my $namebankID = $1;
-                $logger->info("Going to fold metadata into search result $namebankID");
-                
-                # getting metadata record
-                my $meta_proj = $self->get_record( '-guid' => $namebankID );        
-                my $meta_taxon = $meta_proj->get_taxa->[0]->first;
-                
-                # copy namespaces, in case there are additional annotation vocabularies
-                $proj->set_namespaces( $meta_proj->get_namespaces );                
-                $taxon->add_meta($_) for @{ $meta_taxon->get_meta };
-                if ( my $name = $meta_taxon->get_meta_object('dc:subject') ) {
-                    $taxon->set_name($name);
-                }
-                
-                # copy over the url
-                $taxon->set_link( $prefix . $namebankID );
+            my $namebankID  = $taxon->get_guid;
+            $logger->info("Going to fold metadata into search result $namebankID");
+            
+            # getting metadata record
+            my $meta_proj = $self->get_record( '-guid' => $namebankID );        
+            my $meta_taxon = $meta_proj->get_taxa->[0]->first;
+            
+            # copy namespaces, in case there are additional annotation vocabularies
+            $proj->set_namespaces( $meta_proj->get_namespaces );                
+            $taxon->add_meta($_) for @{ $meta_taxon->get_meta };
+            if ( my $name = $meta_taxon->get_meta_object('dc:subject') ) {
+                $taxon->set_name($name);
             }
-            else {
-                $logger->warn("Couldn't find namebank ID in $lsid");
-            }
+            
+            # copy over the url
+            $taxon->set_link( $prefix . $namebankID );
         } );
         
         # prettify output for RSS
