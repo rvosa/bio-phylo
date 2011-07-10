@@ -232,6 +232,9 @@ Gets a query result and returns it as a project object
                     $taxon->set_name($name);
                 }
             }
+            else {
+                $logger->warn("Couldn't find namebank ID in $lsid");
+            }
         } );
         $proj->set_link($self->get_url);
         $proj->set_desc('Results for query: ' . $self->get_query);
