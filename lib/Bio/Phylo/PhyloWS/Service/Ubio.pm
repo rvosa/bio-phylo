@@ -219,7 +219,7 @@ Gets a query result and returns it as a project object
             my $taxon = shift;
             
             # fetch additional RDF metadata for namebank record
-            my $lsid  = $taxon->get_meta_object('dc:identifier');
+            my $lsid  = $taxon->get_guid;
             if ( my $lsid =~ /(\d+)$/ ) {
                 my $namebankID = $1;
                 $logger->info("Going to fold metadata into search result $namebankID");
