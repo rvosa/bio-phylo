@@ -101,8 +101,15 @@ Gets a uBio record by its id
                     '-format'     => 'ubiometa',
                     '-as_project' => 1,
                 );
-                $proj->set_guid($namebank_id);
-                $proj->set_base_uri($self->get_base_uri);                
+                $proj->set_link($self->get_url);
+                $proj->set_name('Tree of Life web project lookup service');
+                $proj->set_desc("Results for ID $namebank_id");
+                my $prefix = $self->get_url_prefix;
+                my ($taxa) = @{ $proj->get_taxa };
+                $taxa->visit(sub{
+                    my $taxon = shift;
+                    $taxon->set_link( $prefix . $taxon->get_guid );
+                })
             }
             else {
                 throw 'BadArgs' => "No parseable GUID: '$args{-guid}'";
@@ -204,21 +211,29 @@ Gets a query result and returns it as a project object
             '-format'     => 'ubiosearch',
             '-as_project' => 1,
         );
+        my $prefix = $self->get_url_prefix;
         my ($taxa) = @{ $proj->get_taxa };
         $taxa->visit( sub {
             my $taxon = shift;
+            
+            # fetch additional RDF metadata for namebank record
             my $lsid  = $taxon->get_meta_object('dc:identifier');
-            $logger->info("Going to fold metadata into search result $lsid");
-            my $meta_proj = $self->get_record( '-guid' => $lsid );        
-            my $meta_taxon = $meta_proj->get_taxa->[0]->first;
-            $proj->set_namespaces( $meta_proj->get_namespaces );
-            $taxon->add_meta($_) for @{ $meta_taxon->get_meta };
-            if ( my $name = $meta_taxon->get_meta_object('dc:subject') ) {
-                $taxon->set_name($name);
+            if ( my $lsid =~ /(\d+)$/ ) {
+                my $namebankID = $1;
+                $logger->info("Going to fold metadata into search result $namebankID");
+                my $meta_proj = $self->get_record( '-guid' => $namebankID );        
+                my $meta_taxon = $meta_proj->get_taxa->[0]->first;
+                $proj->set_namespaces( $meta_proj->get_namespaces );
+                $taxon->set_link( $prefix . $namebankID );
+                $taxon->add_meta($_) for @{ $meta_taxon->get_meta };
+                if ( my $name = $meta_taxon->get_meta_object('dc:subject') ) {
+                    $taxon->set_name($name);
+                }
             }
         } );
-        $proj->set_base_uri($self->get_base_uri);
-        $proj->set_guid($query);
+        $proj->set_link($self->get_url);
+        $proj->set_desc('Results for query: ' . $self->get_query);
+        $proj->set_name('uBio PhyloWS search service');
         return $proj;
     }
 
