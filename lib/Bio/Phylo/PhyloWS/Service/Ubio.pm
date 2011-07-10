@@ -223,19 +223,27 @@ Gets a query result and returns it as a project object
             if ( my $lsid =~ /(\d+)$/ ) {
                 my $namebankID = $1;
                 $logger->info("Going to fold metadata into search result $namebankID");
+                
+                # getting metadata record
                 my $meta_proj = $self->get_record( '-guid' => $namebankID );        
                 my $meta_taxon = $meta_proj->get_taxa->[0]->first;
-                $proj->set_namespaces( $meta_proj->get_namespaces );
-                $taxon->set_link( $prefix . $namebankID );
+                
+                # copy namespaces, in case there are additional annotation vocabularies
+                $proj->set_namespaces( $meta_proj->get_namespaces );                
                 $taxon->add_meta($_) for @{ $meta_taxon->get_meta };
                 if ( my $name = $meta_taxon->get_meta_object('dc:subject') ) {
                     $taxon->set_name($name);
                 }
+                
+                # copy over the url
+                $taxon->set_link( $prefix . $namebankID );
             }
             else {
                 $logger->warn("Couldn't find namebank ID in $lsid");
             }
         } );
+        
+        # prettify output for RSS
         $proj->set_link($self->get_url);
         $proj->set_desc('Results for query: ' . $self->get_query);
         $proj->set_name('uBio PhyloWS search service');

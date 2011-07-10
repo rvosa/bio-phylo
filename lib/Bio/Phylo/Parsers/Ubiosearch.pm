@@ -52,11 +52,21 @@ sub _parse {
                 my ( $twig, $elt ) = @_;
                 my $taxon = $fac->create_taxon;
                 $self->_elt_handler( $elt, $taxon );
+                
+                # copy record title to name field
                 if ( my $name = $taxon->get_meta_object('dc:subject') ) {
                     $taxon->set_name( $name );
                 }
+                else {
+                    $logger->warn("Couldn't find dc:subject");
+                }
+                
+                # copy namebank LSID to guid field
                 if ( my $id = $taxon->get_meta_object('dc:identifier' ) ) {
                     $taxon->set_guid( $id );
+                }
+                else {
+                    $logger->warn("Couldn't find dc:identifier");
                 }
                 $taxa->insert($taxon);
             }
