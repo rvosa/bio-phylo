@@ -2,6 +2,7 @@ package Bio::Phylo::Parsers::Ubiosearch;
 use strict;
 use base 'Bio::Phylo::Parsers::Abstract';
 use Bio::Phylo::Util::Dependency 'XML::Twig';
+use Bio::Phylo::Util::Logger;
 
 =head1 NAME
 
@@ -34,6 +35,8 @@ my %namespaces = (
     'ubio' => 'urn:lsid:ubio.org:predicates:',
     'gla'  => 'urn:lsid:lsid.zoology.gla.ac.uk:predicates:',
 );
+
+my $logger = Bio::Phylo::Util::Logger->new;
 
 sub _parse {
     my $self = shift;
@@ -68,6 +71,7 @@ sub _elt_handler {
         my ( $key, $val ) = ( $child->tag, $child->text );
         my $predicate = $predicate_for{$key} || "ubio:${key}";
         my $object = $object_for{$key} ? $object_for{$key}->($val) : $val;
+        $logger->info("Setting annotation $predicate => $object");
         $obj->add_meta(
             $self->_factory->create_meta(
                 '-triple' => { $predicate => $object }
