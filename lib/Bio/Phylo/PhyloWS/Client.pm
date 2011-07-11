@@ -77,27 +77,6 @@ the PhyloWS (L<http://evoinfo.nescent.org/PhyloWS>) recommendations.
     my $ua = sub {
         return $ua{ shift->get_id };
     };
-    my $itemhandler = sub {
-        my ( $self, $elt, $twig ) = @_;
-        my $raw = $twig->att('rdf:about');
-        if ( $raw =~ m|(.*phylows/)(.+)| ) {
-            my ( $url, $guid ) = ( $1, $2 );
-            my $res = $fac->create_resource(
-                '-guid' => $guid,
-                '-url'  => $url,
-            );
-            for my $title ( $twig->children('title') ) {
-                $res->set_name( $title->text() );
-            }
-            for my $desc ( $twig->children('description') ) {
-                $res->set_desc( $desc->text() );
-            }
-            $self->insert($res);
-        }
-        else {
-            die "no match: $raw";
-        }
-    };
 
 =back
 
@@ -115,35 +94,76 @@ Gets search query result
  Function: Returns Bio::Phylo::PhyloWS::Description object
  Returns : A string
  Args    : Required: -query => $cql_query
-           Optional: -format, -section, -recordSchema
+           Optional: -section, -recordSchema
 
 =cut
+
+    my $rss_handler = sub {
+	my ($create_method,$self,$twig,$elt) = @_;
+	my %known = (
+	    'title'       => '-name',
+	    'description' => '-desc',
+	    'link'        => '-link',
+	);
+	my  ( %args, @meta );
+	for my $child ( $elt->children ) {
+	    my $tag = $child->tag;
+	    if ( my $key = $known{$tag} ) {
+		$args{$key} = $child->text;
+	    }
+	    elsif ( $tag ne 'items' ) {
+		my $predicate = $tag;
+		my ( $prefix, $namespace, $object );
+		if ( $tag =~ /(.+?):/ ) {
+		    $prefix = $1;
+		    $namespace = $child->namespace;
+		}
+		if ( ! ( $object = $child->att('rdf:about') ) ) {
+		    $object = $child->text;
+		}
+		push @meta, $fac->create_meta(
+		    '-namespaces' => { $prefix => $namespace },
+		    '-triple'     => { $predicate => $object },
+		);
+	    }
+	}
+	my $obj = $fac->$create_method(%args);
+	$obj->add_meta($_) for @meta;
+	my $pre  = $self->get_url_prefix;
+	my $link = $obj->get_link;
+	$link =~ s/^\Q$pre\E(.+?)?/$1/i;
+	$obj->set_guid($link);
+	return $obj;
+    };
 
     sub get_query_result {
         my $self = shift;
         if ( my %args = looks_like_hash @_ ) {
-            my $query = $args{'-query'}
-              || throw 'BadArgs' => "Need query argument";
-            my $format  = $args{'-format'}       || 'rss1';
-            my $section = $args{'-section'}      || 'taxon';
-            my $schema  = $args{'-recordSchema'} || $section;
-            my $url     = $self->get_url(
-                '-query'        => $query,
-                '-format'       => $format,
-                '-section'      => $section,
-                '-recordSchema' => $schema,
-            );
+	    
+	    # these fields need to be set first before get_url returns
+	    # a sane response
+            $self->set_query( $args{'-query'} || throw 'BadArgs' => "Need query argument" );
+            $self->set_section( $args{'-section'} || 'taxon' );
+	    $self->set_format( 'rss1' );
+            my $url = $self->get_url(
+		'-recordSchema' => $args{'-recordSchema'}  || $args{'-section'} || 'taxon'
+	    );
+	    
+	    # do the request
             my $response = $ua->($self)->get($url);
             if ( $response->is_success ) {
-                my $desc =
-                  $fac->create_description( '-url' => $url, '-guid' => 'find' );
-                my $t = XML::Twig->new(
+                my $desc;
+                XML::Twig->new(
                     'TwigHandlers' => {
-                        'item' => sub { $itemhandler->( $desc, @_ ) }
+			'channel' => sub {
+			    $desc = $rss_handler->('create_description',$self,@_);
+			},
+                        'item' => sub {
+			    my $res = $rss_handler->('create_resource',$self,@_);
+			    $desc->insert($res);
+			},
                     }
-                );
-                my $content = $response->content;
-                $t->parse($content);
+                )->parse($response->content);
                 return $desc;
             }
             else {
@@ -162,47 +182,21 @@ Gets a PhyloWS database record
  Function: Gets a PhyloWS database record
  Returns : Bio::Phylo::Project object
  Args    : Required: -guid => $guid
-           Optional: -format (default: nexml)
 
 =cut
 
     sub get_record {
         my $self = shift;
         if ( my %args = looks_like_hash @_ ) {
-            my $guid = $args{'-guid'}
-              || throw 'BadArgs' => "Need -guid argument";
-            my $format = $args{'-format'} || 'nexml';
-            $logger->debug("format => $format, guid => $guid");
-            my $url = $self->get_url(
-                '-guid'   => $guid,
-                '-format' => $format,
-            );
+	    $self->set_guid( $args{'-guid'} || throw 'BadArgs' => "Need -guid argument" );
+	    $self->set_query();
+            my $url = $self->get_url( '-format' => 'nexml' );
             $logger->debug($url);
-            my $response = $ua->($self)->get($url);
-            if ( $response->is_success ) {
-                $logger->debug("HTTP response is success");
-                my $content = $response->content;
-                $logger->debug($content);
-                if ( my $project = $args{'-project'} ) {
-                    $logger->debug("have defined project to populate");
-                    return parse(
-                        '-format'  => $format,
-                        '-string'  => $content,
-                        '-project' => $project,
-                    );
-                }
-                else {
-                    $logger->debug("will create new project");
-                    return parse(
-                        '-format'     => $format,
-                        '-string'     => $content,
-                        '-as_project' => 1,
-                    );
-                }
-            }
-            else {
-                throw 'NetworkError' => $response->status_line;
-            }
+            return parse(
+                '-format'     => 'nexml',
+                '-url'        => $url,
+                '-as_project' => 1,
+            );
         }
     }
 
