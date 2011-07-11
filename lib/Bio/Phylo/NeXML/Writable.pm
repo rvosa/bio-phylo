@@ -716,6 +716,8 @@ until such time that a base URI has been found.
 		$logger->info("Found xml:base attribute on $self: $base");
 		return $base;
 	    }
+	    
+	    $logger->info("Traversing up to $self to locate xml:base");
 	    # we do this because node objects are contained inside their
 	    # parents, recursively, but node nexml elements aren't. it
 	    # would be inefficient to traverse all the parent nodes when,
@@ -727,8 +729,7 @@ until such time that a base URI has been found.
 	    }
 	    else {
 		$self = $self->_get_container;
-	    }
-	    $logger->info("Traversing up to $self to locate xml:base");
+	    }	    
 	}
 	$logger->info("No xml:base attribute was found anywhere");
 	return undef;
