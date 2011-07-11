@@ -175,7 +175,7 @@ Gets a query result and returns it as a project object
         my ( $self, $query ) = @_;
         my $proj = $fac->create_project(
             '-link'       => $self->get_url,
-            '-namespaces' => { 'tba' => _NS_TWA_ },
+            '-namespaces' => { 'dc' => _NS_DC_ },
             '-desc'       => 'Results for query: ' . $self->get_query,
             '-name'       => 'Tree of Life web project PhyloWS search service',
         );
@@ -194,7 +194,7 @@ Gets a query result and returns it as a project object
                             '-guid' => $id,
                             '-link' => $prefix . $id,
                         )->add_meta(
-                            $fac->create_meta( '-triple' => { 'tba:id' => $id } )
+                            $fac->create_meta( '-triple' => { 'dc:identifier' => $id } )
                         )
                     );
                 }
