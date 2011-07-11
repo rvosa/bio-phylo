@@ -82,7 +82,7 @@ Project constructor.
 
 Getter for taxa objects
 
- Type    : Constructor
+ Type    : Accessor
  Title   : get_taxa
  Usage   : my $taxa = $proj->get_taxa;
  Function: Getter for taxa objects
@@ -100,7 +100,7 @@ Getter for taxa objects
 
 Getter for forest objects
 
- Type    : Constructor
+ Type    : Accessor
  Title   : get_forests
  Usage   : my $forest = $proj->get_forests;
  Function: Getter for forest objects
@@ -118,7 +118,7 @@ Getter for forest objects
 
 Getter for matrix objects
 
- Type    : Constructor
+ Type    : Accessor
  Title   : get_matrices
  Usage   : my $matrix = $proj->get_matrices;
  Function: Getter for matrix objects
@@ -130,6 +130,43 @@ Getter for matrix objects
     sub get_matrices {
         my $self = shift;
         return $get_object->( $self, $MATRIX );
+    }
+
+=item get_items()
+
+Gets all items of the specified type, recursively. This method can be used
+to get things like all the trees in all the forest objects as one flat list
+(or, indeed, all nodes, all taxon objects, etc.)
+
+ Type    : Accessor
+ Title   : get_items
+ Usage   : my @nodes = @{ $proj->get_items(_NODE_) };
+ Function: Getter for items of specified type
+ Returns : An array reference of objects
+ Args    : A type constant as defined in Bio::Phylo::Util::CONSTANT
+
+=cut	
+
+    sub _item_finder {
+        my ( $item, $const, $array ) = @_;
+        if ( UNIVERSAL::can($item,'_type') ) {
+            if ( $item->_type == $const ) {
+                push @{ $array }, $item;
+            }
+            elsif ( UNIVERSAL::can($item,'get_entities') ) {
+                _item_finder( $_, $const, $array ) for @{ $item->get_entities };
+            }
+        }
+    }
+    
+    sub get_items {
+        my ( $self, $const ) = @_;
+        if ( $const !~ /^\d+/ ) {
+            throw 'BadArgs' => 'Constant must be an integer';
+        }
+        my $result = [];
+        _item_finder( $self, $const, $result );
+        return $result;
     }
 
 =item get_document()
