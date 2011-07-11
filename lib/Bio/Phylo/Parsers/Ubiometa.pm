@@ -59,6 +59,9 @@ sub _parse {
                     else {
                         $val = $XMLEntityEncode->($val);
                     }
+                    if ( $key eq 'dc:identifier' ) {
+                        $key = 'ubio:namebankIdentifier';
+                    }
                     $taxon->add_meta( $fac->create_meta(
                         '-triple' => { $key => $val }                    
                     ) );
@@ -66,6 +69,9 @@ sub _parse {
                 if ( $child->att('rdf:about') =~ /(\d+)$/ ) {
                     my $namebankID = $1;
                     $taxon->set_guid($namebankID);
+                    $taxon->add_meta( $fac->create_meta(
+                        '-triple' => { 'dc:identifier' => $namebankID }                    
+                    ) );
                 }                
                 $taxa->insert($taxon);
             }
