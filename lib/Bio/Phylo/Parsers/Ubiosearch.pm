@@ -62,14 +62,21 @@ sub _parse {
                     $logger->warn("Couldn't find dc:subject");
                 }
                 
-                # copy namebank LSID to guid field
-                if ( my $id = $taxon->get_meta_object('dc:identifier' ) ) {
+                # copy namebank LSID to guid field and ubio:namebankIdentifier,
+                # set local namebank ID as value of dc:identifier
+                if ( my ($meta) = $taxon->get_meta('dc:identifier') ) {
+                    my $lsid = $meta->get_object;
+                    $taxon->add_meta( $fac->create_meta(
+                        '-triple' => { 'ubio:namebankIdentifier' => $lsid }    
+                    ) );
+                    my $id = $lsid;
                     $id =~ s/.+://;
                     $taxon->set_guid( $id );
-                    $logger->info("Copied dc:identifier to guid field: $id");
+                    $meta->set_object( $id );
+                    $logger->info("Processed dc:identifier annotation: $id");                    
                 }
                 else {
-                    $logger->warn("Couldn't find dc:identifier");
+                    $logger->warn("Couldn't find dc:identifier annotation");
                 }
                 $taxa->insert($taxon);
             }
