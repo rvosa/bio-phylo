@@ -92,18 +92,21 @@ Serializes resource to RSS1.0 XML representation
 =cut
 
     sub to_xml {
-        my $self = shift;
+        my $self  = shift;
+        my $link  = $self->get_link;
+        my $title = $self->get_name || $self->get_guid || 'Untitled';
+        my $desc  = $self->get_desc || '';
         my $xml  = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
         $xml .= $self->get_xml_tag(0);
-        $xml .= '<channel rdf:about="' . $self->get_link . '">';
-        $xml .= '<title>' . ( $self->get_name || $self->get_guid ) . '</title>';
-        $xml .= '<link>' . $self->get_link . '</link>';
-        $xml .= '<description>' . $self->get_desc . '</description>';
-        $xml .= '<items><rdf:Seq>';
-        $xml .= '<rdf:li rdf:resource="' . $_->get_link . '"/>' for @{ $self->get_entities };
-        $xml .= '</rdf:Seq></items></channel>';
+        $xml .= "<channel rdf:about='$link'>";
+        $xml .= "<title>$title</title>";
+        $xml .= "<link>$link</link>";
+        $xml .= "<description>$desc</description>";
+        $xml .= "<items><rdf:Seq>";
+        $xml .= "<rdf:li rdf:resource='" . $_->get_link . "'/>" for @{ $self->get_entities };
+        $xml .= "</rdf:Seq></items></channel>";
         $xml .= $_->to_xml for @{ $self->get_entities };
-        $xml .= '</' . $self->get_tag . '>';
+        $xml .= sprintf('</%s>', $self->get_tag );
         return $xml;
     }
     sub _container { _NONE_ }
