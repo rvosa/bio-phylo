@@ -708,7 +708,10 @@ sub _process_listnode {
 sub _process_meta {
     my ( $self, $meta_elt ) = @_;
     my $predicate = $meta_elt->att('property') || $meta_elt->att('rel');
-    my $object    = $meta_elt->att('content')  || $meta_elt->att('href');
+    my $object    = defined $meta_elt->att('content') # content can be 0
+                        ? $meta_elt->att('content')
+                        : $meta_elt->att('href');
+
     if ( $meta_elt->att('href') && $meta_elt->att('href') !~ m|http://|i ) {
         $object = $self->_get_base_uri($meta_elt) . $object;
     }
