@@ -80,9 +80,8 @@ sub _parse {
     $self->_logger->debug("going to parse xml");
     $self->{'_tree'} = $self->_factory->create_tree(
         '-namespaces' => {
-            'tbe' => _NS_TWE_,
+            'tol' => _NS_TOL_,
             'dc'  => _NS_DC_,
-            'tba' => _NS_TWA_
         }    
     );
     $self->{'_twig'}->parse( $self->_string );
@@ -111,6 +110,9 @@ sub _handle_node {
     # once we've processed all NODE elements
     my $id = $node_elt->att('ID');
     $node_obj->set_guid($id);
+    $node_obj->add_meta(
+        $fac->create_meta( '-triple' => { 'dc:identifier' => $id } )
+    );
     $self->{'_node_of'}->{$id} = $node_obj;    
     if ( my $parent = $node_elt->parent->parent ) {
         $self->{'_parent_of'}->{$id} = $parent->att('ID');
@@ -125,7 +127,7 @@ sub _handle_node {
         for my $othername_elt ( $othernames_elt->children ) {
             my ($name_elt) = $othername_elt->children('NAME');
             my $text = $name_elt->text;
-            my $meta_obj = $fac->create_meta( '-triple' => { 'tbe:othername' => $text } );
+            my $meta_obj = $fac->create_meta( '-triple' => { 'tol:othername' => $text } );
             $node_obj->add_meta( $meta_obj );
             $self->_process_metadata( $othername_elt, $meta_obj );        
         }
@@ -151,13 +153,13 @@ sub _process_metadata {
             $obj->set_desc( $text );
         }
         elsif ( $text && $child_tag ne 'NODES' && $child_tag ne 'OTHERNAMES' ) {
-            $obj->add_meta( $fac->create_meta( '-triple' => { 'tbe:' . lc( $child_tag ) => $text } ) );
+            $obj->add_meta( $fac->create_meta( '-triple' => { 'tol:' . lc( $child_tag ) => $text } ) );
         }
     }
     
     for my $att_name ( $elt->att_names ) {
         if ( defined $elt->att($att_name) ) {
-            $obj->add_meta( $fac->create_meta( '-triple' => { 'tba:' . lc($att_name) => $elt->att($att_name) } ) );
+            $obj->add_meta( $fac->create_meta( '-triple' => { 'tol:' . lc($att_name) => $elt->att($att_name) } ) );
         }
     }
     
