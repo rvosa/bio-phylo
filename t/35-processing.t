@@ -16,7 +16,7 @@ my $tree = parse(
 $tree->visit(
     sub {
         my $node = shift;
-        $node->set_url( 'http://google.com/search?q=' . $node->get_id );
+        $node->set_link( 'http://google.com/search?q=' . $node->get_id );
         my $c = sub { int rand 255 };
         $node->set_generic(
             'pie' => {
