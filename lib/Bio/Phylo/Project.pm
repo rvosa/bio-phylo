@@ -55,6 +55,33 @@ Project constructor.
         return parse( '-project' => $self, @_ );
     }
 
+=item reset_xml_ids()
+
+Resets all xml ids to default values
+
+ Type    : Mutator
+ Title   : reset_xml_ids
+ Usage   : $project->reset_xml_ids
+ Function: Resets all xml ids to default values
+ Returns : A Bio::Phylo::Project object.
+ Args    : None
+
+=cut
+
+    sub reset_xml_ids {
+        my $self = shift;        
+        if ( UNIVERSAL::can($self,'set_xml_id') ) {
+            my $xml_id = $self->get_tag;
+	    my $obj_id = $self->get_id;
+            $xml_id =~ s/^(.).+(.)$/$1$2$obj_id/;
+            $self->set_xml_id($xml_id);
+        }
+        if ( UNIVERSAL::can($self,'get_entities') ) {
+            reset_xml_ids($_) for @{ $self->get_entities };
+        }
+        return $self;
+    }
+
 =back
 
 =head2 ACCESSORS
@@ -306,6 +333,7 @@ Serializes invocant to XML.
 
     sub to_xml {
         my $self = shift;
+        $self->reset_xml_ids;
 
         # creating opening tags
         $self->_add_project_metadata;
