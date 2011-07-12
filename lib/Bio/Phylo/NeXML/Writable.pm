@@ -300,6 +300,7 @@ the purpose of round-tripping nexml info sets.
         my ( $self, $id ) = @_;
         if ( $id =~ qr/^[a-zA-Z][a-zA-Z0-9\-_\.]*$/ ) {
             $id{ $self->get_id } = $id;
+	    $self->set_attributes( 'id' => $id, 'about' => "#$id" );
             return $self;
         }
         else {
@@ -650,6 +651,7 @@ Retrieves attributes for the element.
             }
             else {
                 $logger->info("No linked taxon found");
+		delete $attrs->{'otu'};
             }
         }
 	
