@@ -20,9 +20,12 @@ annotated with the metadata for each search result.
 
 =cut
 
+my $DCID = 'dc:identifier';
+my $DCSUB = 'dc:subject';
+
 my %predicate_for = (
-    'namebankID'     => 'dc:identifier',
-    'packageName'    => 'dc:subject',
+    'namebankID'     => $DCID,
+    'packageName'    => $DCSUB,
     'rankName'       => 'gla:rank',
 );
 
@@ -54,18 +57,18 @@ sub _parse {
                 $self->_elt_handler( $elt, $taxon );
                 
                 # copy record title to name field
-                if ( my $name = $taxon->get_meta_object('dc:subject') ) {
+                if ( my $name = $taxon->get_meta_object($DCSUB) ) {
                     $taxon->set_name( $name );
-                    $logger->info("Copied dc:subject to name field: $name");
+                    $logger->info("Copied $DCSUB to name field: $name");
                 }
                 else {
-                    $logger->warn("Couldn't find dc:subject");
+                    $logger->warn("Couldn't find $DCSUB");
                 }
                 
                 # copy namebank LSID to guid field and ubio:namebankIdentifier,
                 # set local namebank ID as value of dc:identifier
-                if ( my ($meta) = @{ $taxon->get_meta('dc:identifier') } ) {
-                    $logger->info("Meta object for dc:identifier is $meta");
+                if ( my ($meta) = @{ $taxon->get_meta($DCID) } ) {
+                    $logger->info("Meta object for $DCID is $meta");
                     my $lsid = $meta->get_object;
                     $taxon->add_meta( $fac->create_meta(
                         '-triple' => { 'ubio:namebankIdentifier' => $lsid }    
@@ -73,11 +76,11 @@ sub _parse {
                     my $id = $lsid;
                     $id =~ s/.+://;
                     $taxon->set_guid( $id );
-                    $meta->set_object( $id );
-                    $logger->info("Processed dc:identifier annotation: $id");                    
+                    $meta->set_triple( $DCID => $id );
+                    $logger->info("Processed $DCID annotation: $id");                    
                 }
                 else {
-                    $logger->warn("Couldn't find dc:identifier annotation");
+                    $logger->warn("Couldn't find $DCID annotation");
                 }
                 $taxa->insert($taxon);
             }
