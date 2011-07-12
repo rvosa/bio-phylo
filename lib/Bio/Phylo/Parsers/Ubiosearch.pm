@@ -76,7 +76,8 @@ sub _parse {
                     my $id = $lsid;
                     $id =~ s/.+://;
                     $taxon->set_guid( $id );
-                    $meta->set_triple( $DCID => $id );
+                    $taxon->remove_meta( $meta );
+                    $taxon->add_meta( $fac->create_meta( '-triple' => { $DCID => $id } ) );
                     $logger->info("Processed $DCID annotation: $id");                    
                 }
                 else {
