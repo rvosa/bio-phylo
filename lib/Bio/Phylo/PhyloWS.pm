@@ -94,9 +94,9 @@ Sets invocant's query parameter
 =cut
 
     sub set_query {
-	my ( $self, $query ) = @_;
-	$query{ $self->get_id } = $query;
-	return $self;
+		my ( $self, $query ) = @_;
+		$query{ $self->get_id } = $query;
+		return $self;
     }
 
 =item set_authority()
@@ -116,7 +116,7 @@ Sets the authority prefix (e.g. TB2) for the implementing service
     sub set_authority {
         my ( $self, $auth ) = @_;
         $authority{ $self->get_id } = $auth;
-	return $self;
+		return $self;
     }
 
 =back
@@ -161,29 +161,29 @@ prefix, uid and query string.
     sub get_url {
         my $self = shift;
         my $uri  = $self->get_base_uri;
-	my %args;
+		my %args;
 	
-	# add format flag, if one is specified
-	if ( my $format = $self->get_format ) {
-	    $args{'-format'} = $format;
-	}
+		# add format flag, if one is specified
+		if ( my $format = $self->get_format ) {
+			$args{'-format'} = $format;
+		}
 	    
-	# the section prefix, e.g. 'taxon'
-	$uri .= '/' if $uri !~ m|/$|;
-	$uri .= $self->get_section . '/';
+		# the section prefix, e.g. 'taxon'
+		$uri .= '/' if $uri !~ m|/$|;
+		$uri .= $self->get_section . '/';
 	
-	# the interaction is a query
-	if ( my $query = $self->get_query ) {
-	    $logger->info("Constructing query URL");
-	    $uri .= 'find';
-	    $args{'-query'} = $query;
-	}
+		# the interaction is a query
+		if ( my $query = $self->get_query ) {
+			$logger->info("Constructing query URL");
+			$uri .= 'find';
+			$args{'-query'} = $query;
+		}
 	
-	# the interaction is a record lookup
-	else {
-	    $logger->info("Constructing lookup URL");
-	    $uri .= $self->get_authority . ':' . $self->get_guid;
-	}
+		# the interaction is a record lookup
+		else {
+			$logger->info("Constructing lookup URL");
+			$uri .= $self->get_authority . ':' . $self->get_guid;
+		}
 	    
         return $build_query_string->($uri,%args,@_);
     }
