@@ -152,19 +152,27 @@ Gets search query result
 	    # do the request
             my $response = $ua->($self)->get($url);
             if ( $response->is_success ) {
+		my $content = $response->content;
                 my $desc;
-                XML::Twig->new(
-                    'TwigHandlers' => {
-			'channel' => sub {
-			    $desc = $rss_handler->('create_description',$self,@_);
-			},
-                        'item' => sub {
-			    my $res = $rss_handler->('create_resource',$self,@_);
-			    $desc->insert($res);
-			},
-                    }
-                )->parse($response->content);
-                return $desc;
+		eval {
+		    XML::Twig->new(
+			'TwigHandlers' => {
+			    'channel' => sub {
+				$desc = $rss_handler->('create_description',$self,@_);
+			    },
+			    'item' => sub {
+				my $res = $rss_handler->('create_resource',$self,@_);
+				$desc->insert($res);
+			    },
+			}
+		    )->parse($content);
+		    return $desc;
+		};
+		if ( $@ ) {
+		    $logger->fatal("Error fetching from $url");
+		    $logger->fatal($content);
+		    throw 'NetworkError' => $@;		    
+		}
             }
             else {
                 throw 'NetworkError' => $response->status_line;
