@@ -50,8 +50,7 @@ L<http://www.ubio.org/authority/metadata.php?lsid=urn:lsid:ubio.org:namebank:248
 Queries on this service run namebank searches and return project objects
 that capture the namebank search XML (an example is shown here:
 L<http://www.ubio.org/webservices/examples/namebank_search.xml>)
-as semantic annotations to taxon objects, combined with the RDF as returned
-by a single record lookup.
+as semantic annotations to taxon objects.
 
 URLs to this service that specify format=html in the query string redirect
 to web pages on the uBio site at L<http://www.ubio.org>. The redirect
@@ -224,18 +223,18 @@ Gets a query result and returns it as a project object
             
             # fetch additional RDF metadata for namebank record
             my $namebankID  = $taxon->get_guid;
-            $logger->info("Going to fold metadata into search result $namebankID");
-            
-            # getting metadata record
-            my $meta_proj = $self->get_record( '-guid' => $namebankID );        
-            my $meta_taxon = $meta_proj->get_taxa->[0]->first;
-            
-            # copy namespaces, in case there are additional annotation vocabularies
-            $proj->set_namespaces( $meta_proj->get_namespaces );                
-            $taxon->add_meta($_) for @{ $meta_taxon->get_meta };
-            if ( my $name = $meta_taxon->get_meta_object('dc:subject') ) {
-                $taxon->set_name($name);
-            }
+            #$logger->info("Going to fold metadata into search result $namebankID");
+            #
+            ## getting metadata record
+            #my $meta_proj = $self->get_record( '-guid' => $namebankID );        
+            #my $meta_taxon = $meta_proj->get_taxa->[0]->first;
+            #
+            ## copy namespaces, in case there are additional annotation vocabularies
+            #$proj->set_namespaces( $meta_proj->get_namespaces );                
+            #$taxon->add_meta($_) for @{ $meta_taxon->get_meta };
+            #if ( my $name = $meta_taxon->get_meta_object('dc:subject') ) {
+            #    $taxon->set_name($name);
+            #}
             
             # copy over the url
             $taxon->set_link( $prefix . $namebankID );
