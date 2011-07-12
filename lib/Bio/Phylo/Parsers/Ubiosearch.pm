@@ -65,6 +65,7 @@ sub _parse {
                 # copy namebank LSID to guid field and ubio:namebankIdentifier,
                 # set local namebank ID as value of dc:identifier
                 if ( my ($meta) = @{ $taxon->get_meta('dc:identifier') } ) {
+                    $logger->info("Meta object for dc:identifier is $meta");
                     my $lsid = $meta->get_object;
                     $taxon->add_meta( $fac->create_meta(
                         '-triple' => { 'ubio:namebankIdentifier' => $lsid }    
