@@ -166,13 +166,15 @@ Gets search query result
 			    },
 			}
 		    )->parse($content);
-		    return $desc;
 		};
 		if ( $@ ) {
 		    $logger->fatal("Error fetching from $url");
 		    $logger->fatal($content);
 		    throw 'NetworkError' => $@;		    
 		}
+		else {
+		    return $desc;   
+		}		
             }
             else {
                 throw 'NetworkError' => $response->status_line;
