@@ -99,86 +99,88 @@ Gets search query result
 =cut
 
     my $rss_handler = sub {
-	my ($create_method,$self,$twig,$elt) = @_;
-	my %known = (
-	    'title'       => '-name',
-	    'description' => '-desc',
-	    'link'        => '-link',
-	);
-	my  ( %args, @meta );
-	for my $child ( $elt->children ) {
-	    my $tag = $child->tag;
-	    if ( my $key = $known{$tag} ) {
-		$args{$key} = $child->text;
-	    }
-	    elsif ( $tag ne 'items' ) {
-		my $predicate = $tag;
-		my ( $prefix, $namespace, $object );
-		if ( $tag =~ /(.+?):/ ) {
-		    $prefix = $1;
-		    $namespace = $child->namespace;
-		}
-		if ( ! ( $object = $child->att('rdf:about') ) ) {
-		    $object = $child->text;
-		}
-		push @meta, $fac->create_meta(
-		    '-namespaces' => { $prefix => $namespace },
-		    '-triple'     => { $predicate => $object },
+		my ($create_method,$self,$twig,$elt) = @_;
+		my %known = (
+			'title'       => '-name',
+			'description' => '-desc',
+			'link'        => '-link',
 		);
-	    }
-	}
-	my $obj = $fac->$create_method(%args);
-	$obj->add_meta($_) for @meta;
-	my $pre  = $self->get_url_prefix;
-	my $link = $obj->get_link;
-	$link =~ s/^\Q$pre\E(.+?)?/$1/i;
-	$obj->set_guid($link);
-	return $obj;
+		my  ( %args, @meta );
+		for my $child ( $elt->children ) {
+			my $tag = $child->tag;
+			if ( my $key = $known{$tag} ) {
+				$args{$key} = $child->text;
+			}
+			elsif ( $tag ne 'items' ) {
+				my $predicate = $tag;
+				my ( $prefix, $namespace, $object );
+				if ( $tag =~ /(.+?):/ ) {
+					$prefix = $1;
+					$namespace = $child->namespace;
+				}
+				if ( ! ( $object = $child->att('rdf:about') ) ) {
+					$object = $child->text;
+				}
+				push @meta, $fac->create_meta(
+					'-namespaces' => { $prefix => $namespace },
+					'-triple'     => { $predicate => $object },
+				);
+			}
+		}
+		my $obj = $fac->$create_method(%args);
+		$obj->add_meta($_) for @meta;
+		my $pre  = $self->get_url_prefix;
+		my $link = $obj->get_link;
+		$link =~ s/^\Q$pre\E(.+?)?/$1/i;
+		$obj->set_guid($link);
+		return $obj;
     };
 
     sub get_query_result {
         my $self = shift;
         if ( my %args = looks_like_hash @_ ) {
-	    
-	    # these fields need to be set first before get_url returns
-	    # a sane response
-            $self->set_query( $args{'-query'} || throw 'BadArgs' => "Need query argument" );
-            $self->set_section( $args{'-section'} || 'taxon' );
-	    $self->set_format( 'rss1' );
-            my $url = $self->get_url(
-		'-recordSchema' => $args{'-recordSchema'}  || $args{'-section'} || 'taxon'
-	    );
-	    
-	    # do the request
-            my $response = $ua->($self)->get($url);
-            if ( $response->is_success ) {
-		my $content = $response->content;
-                my $desc;
-		eval {
-		    XML::Twig->new(
-			'TwigHandlers' => {
-			    'channel' => sub {
-				$desc = $rss_handler->('create_description',$self,@_);
-			    },
-			    'item' => sub {
-				my $res = $rss_handler->('create_resource',$self,@_);
-				$desc->insert($res);
-			    },
+			
+			# these fields need to be set first before get_url returns
+			# a sane response
+			$self->set_query( $args{'-query'} || throw 'BadArgs' => "Need query argument" );
+			$self->set_section( $args{'-section'} || 'taxon' );
+			$self->set_format( 'rss1' );
+			my $rs  = $args{'-recordSchema'}  || $args{'-section'} || 'taxon';
+			my $url = $self->get_url( '-recordSchema' => $rs );
+			$url =~ s/&amp;/&/g;
+			
+			# do the request
+			my $response = $ua->($self)->get($url);
+			if ( $response->is_success ) {
+				my $content = $response->content;
+				$self->set_section($rs);
+				my $desc;
+				eval {
+					XML::Twig->new(
+						'TwigHandlers' => {
+							'channel' => sub {
+								$desc = $rss_handler->('create_description',$self,@_);
+							},
+							'item' => sub {
+								my $res = $rss_handler->('create_resource',$self,@_);
+								$desc->insert($res);
+							},
+						}
+					)->parse($content);
+				};
+				if ( $@ ) {
+					$logger->fatal("Error fetching from $url");
+					$logger->fatal($content);
+					throw 'NetworkError' => $@;		    
+				}
+				else {
+					$self->set_section( $args{'-section'} || 'taxon' );
+					return $desc;   
+				}		
 			}
-		    )->parse($content);
-		};
-		if ( $@ ) {
-		    $logger->fatal("Error fetching from $url");
-		    $logger->fatal($content);
-		    throw 'NetworkError' => $@;		    
-		}
-		else {
-		    return $desc;   
-		}		
-            }
-            else {
-                throw 'NetworkError' => $response->status_line;
-            }
+			else {
+				throw 'NetworkError' => $response->status_line;
+			}
         }
     }
 
@@ -198,8 +200,8 @@ Gets a PhyloWS database record
     sub get_record {
         my $self = shift;
         if ( my %args = looks_like_hash @_ ) {
-	    $self->set_guid( $args{'-guid'} || throw 'BadArgs' => "Need -guid argument" );
-	    $self->set_query();
+		    $self->set_guid( $args{'-guid'} || throw 'BadArgs' => "Need -guid argument" );
+			$self->set_query();
             my $url = $self->get_url( '-format' => 'nexml' );
             $logger->debug($url);
             return parse(
