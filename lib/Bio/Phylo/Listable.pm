@@ -644,6 +644,7 @@ Returns the current internal index of the container.
  Args    : none.
 
 =cut
+
     sub current_index { $index{ ${ $_[0] } } || 0 }
 
 =item last_index()
@@ -659,6 +660,7 @@ Returns the highest valid index of the container.
  Args    : none.
 
 =cut
+
     sub last_index { $#{ $entities{ ${ $_[0] } } } }
 
 =back
@@ -1148,27 +1150,27 @@ Returns string representation of sets
 =cut
 
     sub sets_to_xml {
-	my $self = shift;
-	my $xml = '';
-	if ( $self->can('get_sets') ) {
-	    for my $set ( @{ $self->get_sets } ) {
-		my %contents;
-		for my $ent ( @{ $self->get_entities } ) {
-		    if ( $self->is_in_set($ent,$set) ) {
-			my $tag = $ent->get_tag;
-			$contents{$tag} = [] if not $contents{$tag};
-			push @{ $contents{$tag} }, $ent->get_xml_id;
-		    }
-		}
-		for my $key ( keys %contents ) {
-		    my @ids = @{ $contents{$key} };
-		    $contents{$key} = join ' ', @ids;
-		}
-		$set->set_attributes(%contents);
-		$xml .= "\n" . $set->to_xml;
-	    }
-	}
-	return $xml;
+        my $self = shift;
+        my $xml = '';
+        if ( $self->can('get_sets') ) {
+            for my $set ( @{ $self->get_sets } ) {
+                my %contents;
+                for my $ent ( @{ $self->get_entities } ) {
+                    if ( $self->is_in_set($ent,$set) ) {
+                        my $tag = $ent->get_tag;
+                        $contents{$tag} = [] if not $contents{$tag};
+                        push @{ $contents{$tag} }, $ent->get_xml_id;
+                    }
+                }
+                for my $key ( keys %contents ) {
+                    my @ids = @{ $contents{$key} };
+                    $contents{$key} = join ' ', @ids;
+                }
+                $set->set_attributes(%contents);
+                $xml .= "\n" . $set->to_xml;
+            }
+        }
+        return $xml;
     }
 
 
@@ -1184,6 +1186,7 @@ Returns string representation of sets
 =end comment
 
 =cut
+
     {
         no warnings 'recursion';
 
