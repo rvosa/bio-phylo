@@ -109,7 +109,7 @@ most standard HTTP servers.
         if ( $path !~ /find/ && $path =~ m|/phylows/$section/(.+?):(.+)$|) {
             my ( $authority, $guid ) = ( $1, $2 );
             if ( $authority ne $self->get_authority ) {
-                throw 'BadArgs' => ref($self) . "Can't process identifiers "
+                throw 'BadArgs' => ref($self) . " can't process identifiers "
                     ."with the $authority prefix";
             }
             $self->set_guid($guid);
