@@ -184,15 +184,17 @@ depending on the internal state of the service object
 
     sub get_result {
         my $self = shift;
+        my $name = ref($self);
+        $name =~ s/.+://;
         my $proj;
         if ( my $id = $self->get_guid ) {
             $proj = $self->get_record( '-guid' => $id );
-            $proj->set_name(ref($self) . ' PhyloWS record lookup service');
+            $proj->set_name("$name PhyloWS record lookup service");
             $proj->set_desc("Results for ID: $id");
         }
         elsif ( my $query = $self->get_query ) {
             $proj = $self->get_query_result($query);
-            $proj->set_name(ref($self) . ' PhyloWS query service');
+            $proj->set_name("$name PhyloWS query service");
             $proj->set_desc("Results for query: $query");
         }
         else {
