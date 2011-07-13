@@ -72,7 +72,15 @@ sub _parse {
                     $taxon->add_meta( $fac->create_meta(
                         '-triple' => { 'dc:identifier' => $namebankID }                    
                     ) );
-                }                
+                }
+                $taxon->set_name( $taxon->get_meta_object('dc:subject') );
+                $taxon->set_desc(
+                    $taxon->get_meta_object('dc:type')
+                    . ', Rank: '
+                    . $taxon->get_meta_object('gla:rank')
+                    . ', Status: '
+                    . $taxon->get_meta_object('ubio:lexicalStatus')
+                );                
                 $taxa->insert($taxon);
             }
         }
