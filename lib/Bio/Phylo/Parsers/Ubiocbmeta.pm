@@ -51,11 +51,10 @@ sub _rss_prettify {
     my ( $self, $obj ) = @_;
     $obj->set_name( $obj->get_meta_object('dc:title') );
     $obj->set_desc(
-        $obj->get_meta_object('dc:type')
-        . ', Rank: '
+        'Rank: '
         . $obj->get_meta_object('gla:rank')
-        . ', Status: '
-        . $obj->get_meta_object('ubio:lexicalStatus')
+        . ', Classification: '
+        . $obj->get_meta_object('ubio:classificationName')
     );    
 }
 
