@@ -105,12 +105,12 @@ Gets an array ref of supported formats
  Title   : get_supported_formats
  Usage   : my @formats = @{ $obj->get_supported_formats };
  Function: Gets an array ref of supported formats
- Returns : [ 'nexml', 'json', 'nexus', 'newick', 'rss1' ]
+ Returns : [ 'nexml', 'json', 'nexus', 'rss1' ]
  Args    : NONE
 
 =cut    
     
-    sub get_supported_formats { [ 'nexml', 'json', 'nexus', 'newick', 'rss1' ] }
+    sub get_supported_formats { [ 'nexml', 'json', 'nexus', 'rss1' ] }
 
 =item get_authority()
 
