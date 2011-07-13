@@ -1,7 +1,7 @@
 package Bio::Phylo::PhyloWS::Service::UbioClassificationBank;
 use strict;
 use base 'Bio::Phylo::PhyloWS::Service';
-use constant RDFURL => 'http://www.ubio.org/authority/metadata.php?lsid=';
+use constant RDFURL => 'http://www.ubio.org/authority/metadata.php?lsid=urn:lsid:ubio.org:classificationbank:';
 use Bio::Phylo::IO 'parse';
 use Bio::Phylo::Util::Logger;
 use Bio::Phylo::Util::Exceptions 'throw';
