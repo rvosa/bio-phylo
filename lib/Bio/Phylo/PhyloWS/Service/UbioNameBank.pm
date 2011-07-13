@@ -20,7 +20,8 @@ use Bio::Phylo::Factory;
 
 =head1 NAME
 
-Bio::Phylo::PhyloWS::Service::UbioNameBank - PhyloWS service wrapper for uBio NameBank records
+Bio::Phylo::PhyloWS::Service::UbioNameBank - PhyloWS service wrapper for uBio
+NameBank records
 
 =head1 SYNOPSIS
 
@@ -73,18 +74,18 @@ code must be provided in an environment variable called C<UBIO_KEYCODE>.
 
 =item get_record()
 
-Gets a uBio record by its id
+Gets a uBio namebank record by its id
 
  Type    : Accessor
  Title   : get_record
  Usage   : my $record = $obj->get_record( -guid => $guid );
- Function: Gets a uBio record by its id
+ Function: Gets a uBio namebank record by its id
  Returns : Bio::Phylo::Project
  Args    : Required: -guid => $guid
  Comments: For the $guid argument, this method only cares
            whether the last part of the argument is a series
-           of integers, which are understood to be the node
-           identifier in the Tree of Life
+           of integers, which are understood to be namebank
+           identifiers
 
 =cut
 
@@ -93,6 +94,8 @@ Gets a uBio record by its id
         my $proj;
         if ( my %args = looks_like_hash @_ ) {
             if ( my $guid = $args{'-guid'} && $args{'-guid'} =~ m|(\d+)$| ) {
+                
+                # fetch and parse the metadata record
                 my $namebank_id = $1;
                 $logger->info("Going to fetch metadata for record $namebank_id");
                 $proj = parse(
@@ -100,22 +103,13 @@ Gets a uBio record by its id
                     '-format'     => 'ubiometa',
                     '-as_project' => 1,
                 );
-                $proj->set_link($self->get_url);
-                $proj->set_name('Tree of Life web project lookup service');
-                $proj->set_desc("Results for ID $namebank_id");
+
+                # attach links back for rss
                 my $prefix = $self->get_url_prefix;
                 my ($taxa) = @{ $proj->get_taxa };
                 $taxa->visit(sub{
                     my $taxon = shift;
                     $taxon->set_link( $prefix . $taxon->get_guid );
-                    $taxon->set_name( $taxon->get_meta_object('dc:subject') );
-                    $taxon->set_desc(
-                        $taxon->get_meta_object('dc:type')
-                        . ', Rank: '
-                        . $taxon->get_meta_object('gla:rank')
-                        . ', Status: '
-                        . $taxon->get_meta_object('ubio:lexicalStatus')
-                    );
                 })
             }
             else {
@@ -133,12 +127,12 @@ Gets the authority prefix (e.g. TB2) for the implementing service
  Title   : get_authority
  Usage   : my $auth = $obj->get_authority;
  Function: Gets authority prefix
- Returns : 'uBio'
+ Returns : 'uBioNB'
  Args    : None
 
 =cut
 
-    sub get_authority { 'uBio' }
+    sub get_authority { 'uBioNB' }
 
 =item get_supported_formats()
 
@@ -222,22 +216,13 @@ Gets a query result and returns it as a project object
             '-as_project' => 1,
         );
         
-        # visit the taxon objects
+        # construct links relative to the current service
         my ($taxa) = @{ $proj->get_taxa };
         $taxa->visit( sub {
             my $taxon = shift;
-            
-            # fetch additional RDF metadata for namebank record
-            my $namebankID  = $taxon->get_guid;
-            
-            # copy over the url
-            $taxon->set_link( $prefix . $namebankID );
+            $taxon->set_link( $prefix . $taxon->get_guid );
         } );
         
-        # prettify output for RSS
-        $proj->set_link($self->get_url);
-        $proj->set_desc('Results for query: ' . $self->get_query);
-        $proj->set_name('uBio PhyloWS search service');
         return $proj;
     }
 
