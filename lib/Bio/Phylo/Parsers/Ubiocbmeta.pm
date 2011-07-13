@@ -49,7 +49,7 @@ sub _copy_namespaces {
 # prettify the output, make sure there is a name and description
 sub _rss_prettify {
     my ( $self, $obj ) = @_;
-    $obj->set_name( $obj->get_meta_object('dc:subject') );
+    $obj->set_name( $obj->get_meta_object('dc:title') );
     $obj->set_desc(
         $obj->get_meta_object('dc:type')
         . ', Rank: '
@@ -104,13 +104,16 @@ sub _parse {
                 
                 # $child contains all the metadata to parse
                 my ($child) = $elt->children('rdf:Description');
-                for my $meta_elt ( $child->children ) {
-                    my $val = $self->_process_value($meta_elt);
+                KEY: for my $meta_elt ( $child->children ) {
                     my $key = $meta_elt->tag;
+                    next KEY if $key eq '#PCDATA';
+                    
+                    # process annotation value
+                    my $val = $self->_process_value($meta_elt);                    
                     
                     # we will use the numerical part as dc:identifier
                     if ( $key eq 'dc:identifier' ) {
-                        $key = 'ubio:namebankIdentifier';
+                        $key = 'ubio:classificationbankIdentifier';
                     }
                     $taxon->add_meta( $fac->create_meta(
                         '-triple' => { $key => $val }                    
