@@ -184,15 +184,22 @@ depending on the internal state of the service object
 
     sub get_result {
         my $self = shift;
+        my $proj;
         if ( my $id = $self->get_guid ) {
-            return $self->get_record( '-guid' => $id );
+            $proj = $self->get_record( '-guid' => $id );
+            $proj->set_name(ref($self) . ' PhyloWS record lookup service');
+            $proj->set_desc("Results for ID: $id");
         }
         elsif ( my $query = $self->get_query ) {
-            return $self->get_query_result($query);
+            $proj = $self->get_query_result($query);
+            $proj->set_name(ref($self) . ' PhyloWS query service');
+            $proj->set_desc("Results for query: $query");
         }
         else {
             throw 'BadArgs' => "Neither GUID nor query provided!";
-        }        
+        }
+        $proj->set_link($self->get_url);
+        return $proj;
     }
 
 =item get_record()
