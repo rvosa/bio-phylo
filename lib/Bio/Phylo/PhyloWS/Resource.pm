@@ -2,7 +2,7 @@ package Bio::Phylo::PhyloWS::Resource;
 use strict;
 use base qw'Bio::Phylo::PhyloWS Bio::Phylo::NeXML::Writable';
 use Bio::Phylo::Util::Exceptions 'throw';
-use Bio::Phylo::Util::CONSTANT qw'_DESCRIPTION_ _RESOURCE_';
+use Bio::Phylo::Util::CONSTANT qw'_DESCRIPTION_ _RESOURCE_ /looks_like/';
 use Bio::Phylo::Util::Logger;
 {
     my @fields;
@@ -43,15 +43,15 @@ recommendations.
 
     sub new {
         my $self = shift->SUPER::new( '-tag' => 'item', @_ );
-	if ( not $self->get_link ) {
-	    my $has_guid_and_auth = $self->get_guid && $self->get_authority;
-	    if ( not $has_guid_and_auth and not $self->get_query ) {
-		throw 'BadArgs' => 'Need -guid and -authority or -query argument';
-	    }
-	    if ( not $self->get_section ) {
-		throw 'BadArgs' => 'Need -section argument';
-	    }
-	}
+		if ( not $self->get_link ) {
+			my $has_guid_and_auth = $self->get_guid && $self->get_authority;
+			if ( not $has_guid_and_auth and not $self->get_query ) {
+				throw 'BadArgs' => 'Need -guid and -authority or -query argument';
+			}
+			if ( not $self->get_section ) {
+				throw 'BadArgs' => 'Need -section argument';
+			}
+		}
         return $self;
     }
 
@@ -107,37 +107,55 @@ Serializes resource to RSS1.0 XML representation
         my $self = shift;
         my $tag  = $self->get_tag;
 	
-	# create the link URL
-	my $link;
-	if ( $link = $self->get_link ) {
-	    $logger->info("Using link field: $link");
-	}
-	else {	    
-	    $link = $self->get_url;
-	    $logger->info("Computed URL: $link");
-	}
+		# create the link URL
+		my $link;
+		if ( $link = $self->get_link ) {
+			$logger->info("Using link field: $link");
+		}
+		else {	    
+			$link = $self->get_url;
+			$logger->info("Computed URL: $link");
+		}
 	
-	# generating xml
+		# generating default elements
         my $xml = '<' . $tag . ' rdf:about="' . $link . '">';
         $xml .= '<title>' . $self->get_name . '</title>';
         $xml .= '<link>' . $link . '</link>';
         $xml .= '<description>' . $self->get_desc . '</description>';
+		
+		# specify output format
         if ( my $format = $self->get_format ) {
             $xml .= '<dc:format>' . $Bio::Phylo::PhyloWS::MIMETYPE{$format} . '</dc:format>';
         }
-	for my $meta ( @{ $self->get_meta } ) {
-	    my $predicate = $meta->get_predicate;
-	    my $object = $meta->get_object;
-	    if ( $object =~ /http:/ or $object =~ /urn:/ ) {
-		$xml .= "<$predicate rdf:resource=\"$object\"/>";
-	    }
-	    else {
-		$xml .= "<$predicate>$object</$predicate>";
-	    }
-	}
+		
+		# serialize additional annotations
+		for my $meta ( @{ $self->get_meta } ) {
+			my $predicate = $meta->get_predicate;
+			my $object = $meta->get_object;
+			if ( $object =~ /http:/ or $object =~ /urn:/ ) {
+				$xml .= "<$predicate rdf:resource=\"$object\"/>";
+			}
+			elsif ( ref $object ) {
+				my @methods = qw(to_xml toString sprint _as_string code xmlify as_xml dump_tree as_XML);
+				SERIALIZER: for my $method (@methods) {
+					  if ( looks_like_implementor( $object, $method ) ) {
+						  $xml .= "<$predicate>";
+						  $xml .= $object->$method;
+						  $xml .= "</$predicate>";
+						  last SERIALIZER;
+					  }
+				  }
+			}
+			else {
+				$xml .= "<$predicate>$object</$predicate>";
+			}
+		}
+		
+		# done!
         $xml .= '</' . $tag . '>';
         return $xml;
     }
+	
     sub _container { _DESCRIPTION_ }
     sub _type      { _RESOURCE_ }
 
