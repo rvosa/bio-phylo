@@ -16,13 +16,14 @@ This package is subclassed by all other packages within Bio::Phylo::Parsers::.*.
 There is no direct usage.
 
 =cut
+
 my $factory = Bio::Phylo::Factory->new;
 my $logger  = Bio::Phylo::Util::Logger->new;
 
 # argument is a file name, which we open
 sub _open_file {
     my $file_name = shift;
-    open my $handle, '<', $file_name or throw 'FileError' => $!;
+    open my $handle, '<:utf8', $file_name or throw 'FileError' => $!;
     return $handle;
 }
 
@@ -30,7 +31,7 @@ sub _open_file {
 # we can treat as a handle by opening it by reference
 sub _open_string {
     my $string_value = shift;
-    open my $handle, '<', \$string_value or throw 'FileError' => $!;
+    open my $handle, '<:utf8', \$string_value or throw 'FileError' => $!;
     return $handle;
 }
 
@@ -45,8 +46,9 @@ sub _open_url {
     eval { require LWP::UserAgent };
     if ($@) {
         throw 'ExtensionError' =>
-"Providing a -url argument requires\nsuccesful loading of LWP::UserAgent.\n"
-          . "However, there was an error when I\ntried that:\n"
+            "Providing a -url argument requires\nsuccesful loading "
+          . "of LWP::UserAgent.\nHowever, there was an error when "
+          . "I\ntried that:\n"
           . $@;
     }
 
@@ -76,6 +78,7 @@ sub _open_url {
 sub _open_handle {
     my %args = @_;
     if ( $args{'-handle'} ) {
+        binmode $args{'-handle'}, ":utf8";
         return $args{'-handle'};
     }
     elsif ( $args{'-file'} ) {
