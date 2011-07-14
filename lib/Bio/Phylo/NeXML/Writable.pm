@@ -2,8 +2,9 @@
 package Bio::Phylo::NeXML::Writable;
 use strict;
 use base 'Bio::Phylo';
-use Bio::Phylo::Util::Exceptions 'throw';
 use Bio::Phylo::NeXML::DOM;
+use Bio::Phylo::NeXML::Entities '/entities/';
+use Bio::Phylo::Util::Exceptions 'throw';
 use Bio::Phylo::Util::CONSTANT qw'/looks_like/ :namespaces :objecttypes';
 {
     my $logger              = __PACKAGE__->get_logger;
@@ -270,9 +271,7 @@ Assigns attributes for the element.
             if ( $key =~ $fully_qualified_attribute_regex ) {
                 my ( $prefix, $attribute ) = ( $1, $2 );
                 if ( $prefix ne 'xmlns' and not exists $namespaces{$prefix} ) {
-                    $logger->warn(
-"Attribute '${prefix}:${attribute}' is not bound to a namespace"
-                    );
+                    $logger->warn("Unbound attribute prefix '${prefix}'");
                 }
             }
             $hash->{$key} = $attrs{$key};
@@ -300,7 +299,7 @@ the purpose of round-tripping nexml info sets.
         my ( $self, $id ) = @_;
         if ( $id =~ qr/^[a-zA-Z][a-zA-Z0-9\-_\.]*$/ ) {
             $id{ $self->get_id } = $id;
-	    $self->set_attributes( 'id' => $id, 'about' => "#$id" );
+            $self->set_attributes( 'id' => $id, 'about' => "#$id" );
             return $self;
         }
         else {
@@ -324,9 +323,9 @@ the physical location of the containing document.
 =cut
 
     sub set_base_uri {
-	my ( $self, $uri ) = @_;
-	$self->set_attributes( 'xml:base' => $uri );
-	return $self;
+        my ( $self, $uri ) = @_;
+        $self->set_attributes( 'xml:base' => $uri );
+        return $self;
     }
 
 =item set_link()
@@ -419,14 +418,14 @@ Retrieves the metadata for the element.
 =cut
 
     sub get_meta {
-	my $self = shift;
-	my $metas = $meta{ $self->get_id } || [];
-        if ( @_ ) {
-	    my %predicates = map { $_ => 1 } @_;
-	    my @matches = grep { $predicates{$_->get_predicate} } @{ $metas };
-	    return \@matches;
-	}
-	return $metas;        
+		my $self = shift;
+		my $metas = $meta{ $self->get_id } || [];
+		if ( @_ ) {
+			my %predicates = map { $_ => 1 } @_;
+			my @matches = grep { $predicates{$_->get_predicate} } @{ $metas };
+			return \@matches;
+		}
+		return $metas;        
     }
 
 =item get_meta_object()
@@ -448,15 +447,15 @@ Retrieves the metadata annotation object for the provided predicate
 =cut
     
     sub get_meta_object {
-	my ( $self, $predicate ) = @_;
-	throw 'BadArgs' => "No CURIE provided" unless $predicate;
-	my ( $meta ) = @{ $self->get_meta($predicate) };
-	if ( $meta ) {
-	    return $meta->get_object;
-	}
-	else {
-	    return undef;
-	}
+		my ( $self, $predicate ) = @_;
+		throw 'BadArgs' => "No CURIE provided" unless $predicate;
+		my ( $meta ) = @{ $self->get_meta($predicate) };
+		if ( $meta ) {
+			return $meta->get_object;
+		}
+		else {
+			return undef;
+		}
     }
 
 =item get_tag()
@@ -531,7 +530,7 @@ Retrieves tag string
         my $tag   = $self->get_tag;
         my $xml   = '<' . $tag;
         for my $key ( keys %attrs ) {
-            $xml .= ' ' . $key . '="' . $attrs{$key} . '"';
+            $xml .= ' ' . $key . '="' . encode_entities($attrs{$key}) . '"';
         }
         my $has_contents = 0;
         my $meta         = $self->get_meta;
@@ -563,19 +562,7 @@ Retrieves attributes for the element.
            can be found
 
 =cut
-    my $SAFE_CHARACTERS_REGEX = qr/(?:[a-zA-Z0-9]|-|_|\.)/;
-    my $XMLEntityEncode       = sub {
-        my $buf = '';
-        for my $c ( split //, shift ) {
-            if ( $c =~ $SAFE_CHARACTERS_REGEX ) {
-                $buf .= $c;
-            }
-            else {
-                $buf .= '&#' . ord($c) . ';';
-            }
-        }
-        return $buf;
-    };
+
     my $add_namespaces_to_attributes = sub {
         my ( $self, $attrs ) = @_;
         my $i                       = 0;
@@ -613,18 +600,18 @@ Retrieves attributes for the element.
         my ( $self, $arg ) = @_;
         my $attrs = $flatten_attributes->($self);
 	
-	# process the 'label' attribute: encode if there's anything there,
-	# otherwise delete the attribute
-	if ( $attrs->{'label'} ) {
-	    $attrs->{'label'} = $XMLEntityEncode->($attrs->{'label'});
-	}
-	else {
-	    delete $attrs->{'label'};
-	}
+		# process the 'label' attribute: encode if there's anything there,
+		# otherwise delete the attribute
+		if ( $attrs->{'label'} ) {
+			$attrs->{'label'} = encode_entities($attrs->{'label'});
+		}
+		else {
+			delete $attrs->{'label'};
+		}
 	
-	# process the id attribute: if it's not there, autogenerate it, unless
-	# the object is explicitly not identifiable, in which case delete the
-	# attribute
+		# process the id attribute: if it's not there, autogenerate it, unless
+		# the object is explicitly not identifiable, in which case delete the
+		# attribute
         if ( not $attrs->{'id'} ) {
             $attrs->{'id'} = $self->get_xml_id;
         }
@@ -632,7 +619,7 @@ Retrieves attributes for the element.
             delete $attrs->{'id'};
         }
 	
-	# set the otus attribute
+		# set the otus attribute
         if ( $self->can('get_taxa') ) {
             if ( my $taxa = $self->get_taxa ) {
                 $attrs->{'otus'} = $taxa->get_xml_id
@@ -644,25 +631,25 @@ Retrieves attributes for the element.
             }
         }
 	
-	# set the otu attribute
+		# set the otu attribute
         if ( $self->can('get_taxon') ) {
             if ( my $taxon = $self->get_taxon ) {
                 $attrs->{'otu'} = $taxon->get_xml_id;
             }
             else {
                 $logger->info("No linked taxon found");
-		delete $attrs->{'otu'};
+				delete $attrs->{'otu'};
             }
         }
 	
-	# add the namespace attributes unless explicitly supressed
-	if ( not $self->is_ns_suppressed ) {
-	    $attrs = $add_namespaces_to_attributes->( $self, $attrs )
-	}
-	
-	# now either return the whole hash or just one value if a
-	# key/attribute name was provided
-	return $arg ? $attrs->{$arg} : $attrs;
+		# add the namespace attributes unless explicitly supressed
+		if ( not $self->is_ns_suppressed ) {
+			$attrs = $add_namespaces_to_attributes->( $self, $attrs )
+		}
+		
+		# now either return the whole hash or just one value if a
+		# key/attribute name was provided
+		return $arg ? $attrs->{$arg} : $attrs;
     }
 
 =item get_xml_id()
@@ -685,7 +672,7 @@ Retrieves xml id for the element.
         }
         else {
             my $xml_id = $self->get_tag;
-	    my $obj_id = $self->get_id;
+			my $obj_id = $self->get_id;
             $xml_id =~ s/^(.).+(.)$/$1$2$obj_id/;
             return $id{$obj_id} = $xml_id;
         }
@@ -711,30 +698,30 @@ until such time that a base URI has been found.
 =cut
 
     sub get_base_uri {
-	my $self = shift;
-	while ( $self ) {
-	    my $attrs = $flatten_attributes->($self);
-	    if ( my $base = $attrs->{'xml:base'} ) {
-		$logger->info("Found xml:base attribute on $self: $base");
-		return $base;
-	    }
-	    
-	    $logger->info("Traversing up to $self to locate xml:base");
-	    # we do this because node objects are contained inside their
-	    # parents, recursively, but node nexml elements aren't. it
-	    # would be inefficient to traverse all the parent nodes when,
-	    # logically, none of them could have an xml:base attribute
-	    # that could apply to the original invocant. in fact, doing
-	    # so could yield spurious results.
-	    if ( $self->_type == _NODE_ ) {
-		$self = $self->get_tree;
-	    }
-	    else {
-		$self = $self->_get_container;
-	    }	    
-	}
-	$logger->info("No xml:base attribute was found anywhere");
-	return undef;
+		my $self = shift;
+		while ( $self ) {
+			my $attrs = $flatten_attributes->($self);
+			if ( my $base = $attrs->{'xml:base'} ) {
+				$logger->info("Found xml:base attribute on $self: $base");
+				return $base;
+			}
+			
+			$logger->info("Traversing up to $self to locate xml:base");
+			# we do this because node objects are contained inside their
+			# parents, recursively, but node nexml elements aren't. it
+			# would be inefficient to traverse all the parent nodes when,
+			# logically, none of them could have an xml:base attribute
+			# that could apply to the original invocant. in fact, doing
+			# so could yield spurious results.
+			if ( $self->_type == _NODE_ ) {
+				$self = $self->get_tree;
+			}
+			else {
+				$self = $self->_get_container;
+			}	    
+		}
+		$logger->info("No xml:base attribute was found anywhere");
+		return undef;
     }
 
 =item get_link()
@@ -903,11 +890,10 @@ Serializes invocant to XML.
                     $xml .= "\n" . $ent->to_xml;
                 }
             }
-	    $xml .= $self->sets_to_xml;
+			$xml .= $self->sets_to_xml;
         }
         if ($xml) {
-            $xml =
-              $self->get_xml_tag . $xml . sprintf('</%s>', $self->get_tag);
+            $xml = $self->get_xml_tag . $xml . sprintf('</%s>', $self->get_tag);
         }
         else {
             $xml = $self->get_xml_tag(1);
