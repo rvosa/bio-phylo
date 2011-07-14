@@ -1,6 +1,7 @@
 package Bio::Phylo::Parsers::Ubiocbmeta;
 use base 'Bio::Phylo::Parsers::Abstract';
 use Bio::Phylo::Util::Dependency 'XML::Twig';
+use Bio::Phylo::NeXML::Entities '/entities/';
 use strict;
 
 =head1 NAME
@@ -19,20 +20,6 @@ embedded in a taxa block, or optionally in a L<Bio::Phylo::Project> object
 if the C<-as_project> flag was provided to the call to C<parse()>.
 
 =cut
-
-my $SAFE_CHARACTERS_REGEX = qr/(?:[a-zA-Z0-9]|-|_|\.|;|,|:|\(|\)| )/;
-my $XMLEntityEncode       = sub {
-    my $buf = '';
-    for my $c ( split //, shift ) {
-        if ( $c =~ $SAFE_CHARACTERS_REGEX ) {
-            $buf .= $c;
-        }
-        else {
-            $buf .= '&#' . ord($c) . ';';
-        }
-    }
-    return $buf;
-};
 
 # attach namespaces from element to object
 sub _copy_namespaces {
@@ -76,15 +63,13 @@ sub _process_value {
     my ( $self, $elt ) = @_;
     my $val;
     if ( $val = $elt->att('rdf:resource') ) {
-        $val =~ s/&/&amp;/g;
-        return $val;
+        return encode_entities($val);
     }
     elsif ( ($val) = $elt->children('rdf:Seq') ) {
         return $val;
     }
     else {
-        $val = $elt->text;
-        return $XMLEntityEncode->($val);
+        return encode_entities($elt->text);
     }
 }
 
