@@ -1,11 +1,13 @@
 package Bio::Phylo::Parsers::Ubiometa;
 use base 'Bio::Phylo::Parsers::Abstract';
 use Bio::Phylo::Util::Dependency 'XML::Twig';
+use Bio::Phylo::NeXML::Entities '/entities/';
 use strict;
 
 =head1 NAME
 
-Bio::Phylo::Parsers::Ubiometa - Parser used by Bio::Phylo::IO, no serviceable parts inside
+Bio::Phylo::Parsers::Ubiometa - Parser used by Bio::Phylo::IO, no serviceable
+parts inside
 
 =head1 DESCRIPTION
 
@@ -19,19 +21,42 @@ if the C<-as_project> flag was provided to the call to C<parse()>.
 
 =cut
 
-my $SAFE_CHARACTERS_REGEX = qr/(?:[a-zA-Z0-9]|-|_|\.|;|,|:|\(|\)| )/;
-my $XMLEntityEncode       = sub {
-    my $buf = '';
-    for my $c ( split //, shift ) {
-        if ( $c =~ $SAFE_CHARACTERS_REGEX ) {
-            $buf .= $c;
+# prettify the output, make sure there is a name and description
+sub _rss_prettify {
+    my ( $self, $taxon ) = @_;
+    $taxon->set_name( $taxon->get_meta_object('dc:subject') );
+    $taxon->set_desc(
+        $taxon->get_meta_object('dc:type')
+        . ', Rank: '
+        . $taxon->get_meta_object('gla:rank')
+        . ', Status: '
+        . $taxon->get_meta_object('ubio:lexicalStatus')
+    );     
+}
+
+# copy the local part of the LSID to the guid field and dc:identifier
+sub _copy_identifiers {
+    my ( $self, $elt, $obj ) = @_;
+    if ( $elt->att('rdf:about') =~ /(\d+)$/ ) {
+        my $namebankID = $1;
+        $obj->set_guid($namebankID);
+        $obj->add_meta( $self->_factory->create_meta(
+            '-triple' => { 'dc:identifier' => $namebankID }                    
+        ) );
+    }    
+}
+
+# attach namespaces from element to object
+sub _copy_namespaces {
+    my ( $self, $elt, $obj ) = @_;
+    for my $att_name ( $elt->att_names ) {
+        if ( $att_name =~ /xmlns:(\S+)/ ) {
+            my $prefix = $1;
+            my $ns = $elt->att($att_name);
+            $obj->set_namespaces( $prefix => $ns );
         }
-        else {
-            $buf .= '&#' . ord($c) . ';';
-        }
-    }
-    return $buf;
-};
+    }    
+}
 
 sub _parse {
     my $self = shift;
@@ -42,23 +67,15 @@ sub _parse {
             'rdf:RDF' => sub {
                 my ( $twig, $elt ) = @_;
                 my $taxon = $fac->create_taxon;
-                for my $att_name ( $elt->att_names ) {
-                    if ( $att_name =~ /xmlns:(\S+)/ ) {
-                        my $prefix = $1;
-                        my $ns = $elt->att($att_name);
-                        $taxon->set_namespaces( $prefix => $ns );
-                    }
-                }
+                
+                # attach namespaces from root element to taxon
+                $self->_copy_namespaces($elt,$taxon);
+                
+                # attach metadata
                 my ($child) = $elt->children('rdf:Description');
                 for my $meta_elt ( $child->children ) {
-                    my $val = $meta_elt->att('rdf:resource') || $meta_elt->text;
+                    my $val = encode_entities( $meta_elt->att('rdf:resource') || $meta_elt->text );
                     my $key = $meta_elt->tag;
-                    if ( $val =~ /^http:/ || $val =~ /^urn:/ ) {
-                        $val =~ s/&/&amp;/g;
-                    }
-                    else {
-                        $val = $XMLEntityEncode->($val);
-                    }
                     if ( $key eq 'dc:identifier' ) {
                         $key = 'ubio:namebankIdentifier';
                     }
@@ -66,21 +83,14 @@ sub _parse {
                         '-triple' => { $key => $val }                    
                     ) );
                 }
-                if ( $child->att('rdf:about') =~ /(\d+)$/ ) {
-                    my $namebankID = $1;
-                    $taxon->set_guid($namebankID);
-                    $taxon->add_meta( $fac->create_meta(
-                        '-triple' => { 'dc:identifier' => $namebankID }                    
-                    ) );
-                }
-                $taxon->set_name( $taxon->get_meta_object('dc:subject') );
-                $taxon->set_desc(
-                    $taxon->get_meta_object('dc:type')
-                    . ', Rank: '
-                    . $taxon->get_meta_object('gla:rank')
-                    . ', Status: '
-                    . $taxon->get_meta_object('ubio:lexicalStatus')
-                );                
+                
+                # parse the rdf:about lsid, use the numerical part as
+                # guid and dc:identifier                
+                $self->_copy_identifiers($child,$taxon);
+                
+                # prettify the output, make sure there is a name and description
+                $self->_rss_prettify($taxon);
+                
                 $taxa->insert($taxon);
             }
         }
