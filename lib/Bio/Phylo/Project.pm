@@ -385,6 +385,46 @@ Serializes invocant to NEXUS.
 
 =cut
 
+    my $write_notes = sub {
+        my ( $self, $nexus, @taxa ) = @_;
+        $nexus .= 'BEGIN NOTES;' . "\n";
+        my $version = $self->VERSION;
+        my $class   = ref $self;
+        my $time    = localtime();
+        $nexus .= "[! Notes block written by $class $version on $time ]";
+        for my $taxa ( @taxa ) {
+            my $name = $taxa->get_nexus_name;
+            my ( $i, $j ) = ( 1, 0 );
+            for my $taxon ( @{ $taxa->get_entities } ) {
+                if ( my $link = $taxon->get_link ) {
+                    if ( $link =~ m|/phylows/| ) {
+                        
+                        # link has no query string, append one
+                        if ( $link !~ /\?/ ) {
+                            $link .= '?';
+                        }
+                        
+                        # link has a format statement, replace format
+                        if ( $link =~ /\?.*format=/ ) {
+                            $link =~ s/(\?.*format=)\s+/$1nexus/;
+                        }
+                        
+                        # append format statement
+                        else {
+                            $link .= '&' if $link !~ /\?$/ && $link !~ /&$/;
+                            $link .= 'format=nexus';
+                        }
+                    }
+                    $nexus .= "\tSUT TAXA = $name TAXON = $i NAME = hyperlink STRING = '$link';\n";
+                    $nexus .= "\tHYPERLINK TAXA = $name TAXON = $j URL = '$link';\n";
+                }
+                $i++;
+                $j++;
+            }
+        }
+        $nexus .= 'END;' . "\n";        
+    };
+
     sub to_nexus {
         my $self   = shift;
         my $nexus  = "#NEXUS\n";
@@ -394,6 +434,7 @@ Serializes invocant to NEXUS.
         for ( values %taxa, @linked ) {
             $nexus .= $_->to_nexus(@_);
         }
+        $nexus .= $write_notes->($self,$nexus,values %taxa);
         return $nexus;
     }
 
