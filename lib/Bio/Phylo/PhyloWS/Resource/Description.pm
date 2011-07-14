@@ -97,7 +97,14 @@ Serializes resource to RSS1.0 XML representation
         my $title = $self->get_name || $self->get_guid || 'Untitled';
         my $desc  = $self->get_desc || '';
         my $xml  = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+        
+        # this workaround is needed so we don't add a label
+        # attribute to the rdf:RDF root element
+        my $name = $self->get_name;        
+        $self->set_name if defined $name;
         $xml .= $self->get_xml_tag(0);
+        $self->set_name($name) if defined $name;
+        
         $xml .= "<channel rdf:about='$link'>";
         $xml .= "<title>$title</title>";
         $xml .= "<link>$link</link>";
