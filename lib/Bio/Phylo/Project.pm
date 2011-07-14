@@ -386,12 +386,12 @@ Serializes invocant to NEXUS.
 =cut
 
     my $write_notes = sub {
-        my ( $self, $nexus, @taxa ) = @_;
-        $nexus .= 'BEGIN NOTES;' . "\n";
+        my ( $self, @taxa ) = @_;
+        my $nexus = 'BEGIN NOTES;' . "\n";
         my $version = $self->VERSION;
         my $class   = ref $self;
         my $time    = localtime();
-        $nexus .= "[! Notes block written by $class $version on $time ]";
+        $nexus .= "[! Notes block written by $class $version on $time ]\n";
         for my $taxa ( @taxa ) {
             my $name = $taxa->get_nexus_name;
             my ( $i, $j ) = ( 1, 0 );
@@ -434,7 +434,7 @@ Serializes invocant to NEXUS.
         for ( values %taxa, @linked ) {
             $nexus .= $_->to_nexus(@_);
         }
-        $nexus .= $write_notes->($self,$nexus,values %taxa);
+        $nexus .= $write_notes->($self,values %taxa);
         return $nexus;
     }
 
