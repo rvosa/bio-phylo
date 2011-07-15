@@ -756,7 +756,7 @@ Tests if argument can be inserted in container.
 
     sub can_contain {
         my ( $self, @obj ) = @_;
-        $logger->info("checking if '$self' can contain '@obj'");
+        $logger->debug("checking if '$self' can contain '@obj'");
         for my $obj (@obj) {
             my ( $self_type, $obj_container );
             eval {
