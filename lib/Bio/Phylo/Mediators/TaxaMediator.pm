@@ -178,7 +178,7 @@ Creates link between objects.
         my ( $one_id, $many_id ) = ( $one->get_id, $many->get_id );
 
         # notify user
-        $logger->info("setting link between '$one' and '$many'");
+        $logger->debug("setting link between '$one' and '$many'");
 
         # delete any previously existing link
       LINK_SEARCH: for my $relation (@relationship) {
@@ -186,7 +186,7 @@ Creates link between objects.
                 delete $relation->{$many_id};
 
                 # notify user
-                $logger->info("deleting previous link");
+                $logger->debug("deleting previous link");
                 last LINK_SEARCH;
             }
         }
