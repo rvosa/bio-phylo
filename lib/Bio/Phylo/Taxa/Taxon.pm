@@ -232,7 +232,7 @@ Retrieves associated datum objects.
         return $mediator->get_link(
             '-source' => $self,
             '-type'   => $DATUM_CONSTANT,
-        );
+        ) || [];
     }
 
 =item get_nodes()
@@ -255,7 +255,7 @@ Retrieves associated node objects.
         return $mediator->get_link(
             '-source' => $self,
             '-type'   => $NODE_CONSTANT,
-        );
+        ) || [];
     }
 
 =begin comment
