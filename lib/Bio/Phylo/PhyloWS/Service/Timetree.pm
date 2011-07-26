@@ -7,13 +7,11 @@ use Bio::Phylo::Factory;
 use Bio::Phylo::Util::Logger;
 use Bio::Phylo::Util::Exceptions 'throw';
 use Bio::Phylo::Util::CONSTANT qw'looks_like_hash looks_like_instance';
-use Bio::Phylo::Util::Dependency
-  qw'CQL::Parser LWP::UserAgent URI::Escape HTML::TreeBuilder::XPath HTML::Entities';
+use Bio::Phylo::Util::Dependency qw'LWP::UserAgent HTML::TreeBuilder::XPath URI::Escape';
 use constant URL => 'http://timetree.org/time_query.php?';
 
 # http://localhost/nexml/service/timetree/phylows/tree/find?query=dcterms.identifier=9606%20and%20dcterms.identifier=9597
 {
-    my $pubmed = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&list_uids=';
     my $fac    = Bio::Phylo::Factory->new;
     my $logger = Bio::Phylo::Util::Logger->new;
     
@@ -35,11 +33,7 @@ use constant URL => 'http://timetree.org/time_query.php?';
     my $get_query_result_raw = sub {
         my ( $self, $taxon_a, $taxon_b ) = @_;
         my $lua = LWP::UserAgent->new;
-        my $url = URL
-              . 'taxon_a='
-              . URI::Escape::uri_escape($taxon_a) . '&'
-              . 'taxon_b='
-              . URI::Escape::uri_escape($taxon_b);              
+        my $url = URL . "taxon_a=${taxon_a}&taxon_b=${taxon_b}";
         my $response = $lua->get($url);
         if ( $response->is_success ) {
             my $content = $response->content;
@@ -49,24 +43,6 @@ use constant URL => 'http://timetree.org/time_query.php?';
         else {
             throw 'NetworkError' => $response->status_line;
         }
-    };
-    
-    my $normalize_query = sub {
-        my ( $node, $taxon_a_ref, $taxon_b_ref, $sub ) = @_;
-        if ( looks_like_instance( $node, 'CQL::BooleanNode' ) ) {
-            $node->{'left'}  = $sub->( $node->{'left'}, $taxon_a_ref, $taxon_b_ref, $sub );
-            $node->{'right'} = $sub->( $node->{'right'}, $taxon_a_ref, $taxon_b_ref, $sub );
-            return $node;
-        }
-        elsif ( looks_like_instance( $node, 'CQL::TermNode' ) ) {
-            if ( not $$taxon_a_ref ) {
-                $$taxon_a_ref = $node->getTerm();
-            }
-            elsif ( not $$taxon_b_ref ) {
-                $$taxon_b_ref = $node->getTerm();
-            }
-        }
-        return $node;
     };
     
     my $create_project = sub {
@@ -124,11 +100,13 @@ Gets a phylows cql query result
 
     sub get_query_result {
         my ( $self, $query ) = @_;
-
-        # clean up CQL query
-        my $root = CQL::Parser->new->parse($query);
         my ( $taxon_a, $taxon_b );
-        $normalize_query->( $root, \$taxon_a, \$taxon_b, $normalize_query );
+        
+        # clean up CQL query
+        $query = URI::uri_unescape($query);
+        if ( $query =~ m/^\D*(\d+)\D+(\d+)/ ) {
+            ( $taxon_a, $taxon_b ) = ( $1, $2 );    
+        }                
 
         # download timetree result
         my $content = $get_query_result_raw->( $self, $taxon_a, $taxon_b );
@@ -198,15 +176,12 @@ Gets a redirect URL if relevant
         my ( $self, $cgi ) = @_;
         if ( $cgi->param('format') eq 'html' ) {
             my $query = $cgi->param('query');
-            my $root  = CQL::Parser->new->parse($query);
+            $query = URI::uri_unescape($query);
             my ( $taxon_a, $taxon_b );
-            $normalize_query->( $root, \$taxon_a, \$taxon_b, $normalize_query );
-            my $url =
-                URL
-              . 'taxon_a='
-              . URI::Escape::uri_escape($taxon_a) . '&'
-              . 'taxon_b='
-              . URI::Escape::uri_escape($taxon_b);
+            if ( $query =~ m/^\D*(\d+)\D+(\d+)/ ) {
+                ( $taxon_a, $taxon_b ) = ( $1, $2 );    
+            }            
+            my $url = URL . "taxon_a=${taxon_a}&taxon_b=${taxon_b}";
             return $url;
         }
         return;
