@@ -11,7 +11,7 @@ use Bio::Phylo::Util::Dependency
   qw'CQL::Parser LWP::UserAgent URI::Escape HTML::TreeBuilder::XPath HTML::Entities';
 use constant URL => 'http://timetree.org/time_query.php?';
 
-# http://localhost/nexml/service/timetree/phylows/tree/find?query=dcterms.title=Homo%20and%20dcterms.title=Pan
+# http://localhost/nexml/service/timetree/phylows/tree/find?query=dcterms.identifier=9606%20and%20dcterms.identifier=9597
 {
     my $pubmed = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&list_uids=';
     my $fac    = Bio::Phylo::Factory->new;
