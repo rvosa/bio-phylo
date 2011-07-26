@@ -123,12 +123,14 @@ Gets a phylows cql query result
             '-branch_length' => $age,
             '-parent'        => $tree_root,
             '-taxon'         => $taxona,
+            '-name'          => $taxona->get_name,
         );
         
         my $node_b = $fac->create_node(
             '-branch_length' => $age,
             '-parent'        => $tree_root,
             '-taxon'         => $taxonb,
+            '-name'          => $taxonb->get_name,
         );
         
         $tree->insert( $tree_root, $node_a, $node_b );
