@@ -103,7 +103,7 @@ Gets a phylows cql query result
         my ( $taxon_a, $taxon_b );
         
         # clean up CQL query
-        $query = URI::uri_unescape($query);
+        $query = URI::Escape::uri_unescape($query);
         if ( $query =~ m/^\D*(\d+)\D+(\d+)/ ) {
             ( $taxon_a, $taxon_b ) = ( $1, $2 );    
         }                
@@ -176,7 +176,7 @@ Gets a redirect URL if relevant
         my ( $self, $cgi ) = @_;
         if ( $cgi->param('format') eq 'html' ) {
             my $query = $cgi->param('query');
-            $query = URI::uri_unescape($query);
+            $query = URI::Escape::uri_unescape($query);
             my ( $taxon_a, $taxon_b );
             if ( $query =~ m/^\D*(\d+)\D+(\d+)/ ) {
                 ( $taxon_a, $taxon_b ) = ( $1, $2 );    
