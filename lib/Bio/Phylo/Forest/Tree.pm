@@ -2047,8 +2047,9 @@ Visits nodes depth first
 
     sub visit_depth_first {
         my $self = shift;
-        my %args = looks_like_hash @_;
-        $self->get_root->visit_depth_first(%args);
+        if ( my $root = $self->get_root ) {
+        	$root->visit_depth_first(looks_like_hash @_);
+        }
         return $self;
     }
 
