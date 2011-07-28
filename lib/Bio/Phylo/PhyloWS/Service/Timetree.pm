@@ -9,6 +9,7 @@ use Bio::Phylo::Util::Exceptions 'throw';
 use Bio::Phylo::Util::CONSTANT qw'looks_like_hash looks_like_instance';
 use Bio::Phylo::Util::Dependency qw'LWP::UserAgent HTML::TreeBuilder::XPath URI::Escape';
 use constant URL => 'http://timetree.org/time_query.php?';
+use constant NCBI => 'http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=';
 
 # http://localhost/nexml/service/timetree/phylows/tree/find?query=dcterms.identifier=9606%20and%20dcterms.identifier=9597
 {
@@ -50,8 +51,16 @@ use constant URL => 'http://timetree.org/time_query.php?';
         my $project = $fac->create_project;
         my $forest  = $fac->create_forest;
         my $taxa    = $fac->create_taxa;        
-        my $taxona  = $fac->create_taxon( '-name' => $name_a );        
-        my $taxonb  = $fac->create_taxon( '-name' => $name_b );
+        my $taxona  = $fac->create_taxon(
+            '-name' => $name_a,
+            '-link' => NCBI . $name_a,
+            '-guid' => $name_a,
+        );        
+        my $taxonb  = $fac->create_taxon(
+            '-name' => $name_b,
+            '-link' => NCBI . $name_b,
+            '-guid' => $name_b,
+        );
         
         $project->insert( $taxa, $forest );
         $taxa->insert( $taxona, $taxonb );
@@ -124,6 +133,8 @@ Gets a phylows cql query result
             '-parent'        => $tree_root,
             '-taxon'         => $taxona,
             '-name'          => $taxona->get_name,
+            '-link'          => NCBI . $taxona->get_name,
+            '-guid'          => $taxona->get_name,
         );
         
         my $node_b = $fac->create_node(
@@ -131,6 +142,8 @@ Gets a phylows cql query result
             '-parent'        => $tree_root,
             '-taxon'         => $taxonb,
             '-name'          => $taxonb->get_name,
+            '-link'          => NCBI . $taxonb->get_name,
+            '-guid'          => $taxonb->get_name,
         );
         
         $tree->insert( $tree_root, $node_a, $node_b );
