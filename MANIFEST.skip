@@ -23,7 +23,6 @@ deleteme*
 \.project
 \.includepath
 script\/
-lib\/Bio\/Phylo\/PhyloWS*
 lib\/Bio\/Phylo\/Models*
 t\/27-phylows\.t
 t\/33-models\.t
