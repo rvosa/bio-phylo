@@ -72,8 +72,8 @@ SETS1
         }
     )->parse($xml1);
     my @ids1 = keys %ids1;
-    ok(exists $ids1{'t1'});
-    ok(exists $ids1{'t2'});
+    # ok(exists $ids1{'t1'}); # we no longer try to round-trip ids in projects
+    # ok(exists $ids1{'t2'});
     ok(scalar(@ids1)==2);
 }
 
@@ -147,7 +147,7 @@ SETS2
         }
     )->parse($xml2);
     my @ids2 = keys %ids2;
-    ok(exists $ids2{'tree1'});
+    # ok(exists $ids2{'tree1'}); # we no longer try to roundtrip ids in projects
     ok(scalar(@ids2)==1);
 }
 
@@ -225,8 +225,8 @@ SETS3
         }
     )->parse($xml3);
     my @ids3 = keys %ids3;
-    ok(exists $ids3{'n1'});
-    ok(exists $ids3{'n2'});
+    # ok(exists $ids3{'n1'}); # we no longer try to roundtrip ids in projects
+    # ok(exists $ids3{'n2'});
     ok(scalar(@ids3)==2);
 }
 
