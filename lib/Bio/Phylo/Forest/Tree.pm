@@ -1755,7 +1755,8 @@ Calculates lineage-through-time data points.
 =item calc_symdiff()
 
 Calculates the symmetric difference metric between invocant and argument. This
-metric is identical to the Roubinson-Foulds tree comparison distance.
+metric is identical to the Robinson-Foulds tree comparison distance. See
+L<http://dx.doi.org/10.1016/0025-5564(81)90043-2>
 
  Type    : Calculation
  Title   : calc_symdiff
