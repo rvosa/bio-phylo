@@ -325,9 +325,9 @@ Taxon destructor.
 
 =over
 
-=item L<Bio::Phylo>
+=item L<Bio::Phylo::NeXML::Writable>
 
-The taxon objects inherits from the L<Bio::Phylo> object. The methods defined
+The taxon objects inherits from the L<Bio::Phylo::NeXML::Writable> object. The methods defined
 there are also applicable to the taxon object.
 
 =item L<Bio::Phylo::Manual>
