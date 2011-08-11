@@ -143,7 +143,12 @@ sub _meta_to_xml {
             # object is an array of annotations
             elsif ( UNIVERSAL::isa( $obj, 'ARRAY' ) ) {
                 for my $inner ( @{$obj} ) {
-                    $xml .= $self->_meta_to_xml($inner);
+                	if ( UNIVERSAL::can( $inner, 'sprint' ) ) {
+                		$xml .= $inner->sprint;
+                	}
+                	else {
+                    	$xml .= $self->_meta_to_xml($inner);
+                    }
                 }
             }
             else {
