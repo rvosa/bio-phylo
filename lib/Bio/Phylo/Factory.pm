@@ -161,6 +161,9 @@ sub register_class {
     return $self;
 }
 
+# need empty destructor here so we don't autoload it
+sub DESTROY {}
+
 sub AUTOLOAD {
     my $self   = shift;
     my $method = $AUTOLOAD;
