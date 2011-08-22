@@ -1,4 +1,13 @@
-use Test::More 'no_plan';
+use Test::More;
+
+BEGIN {
+    if ( not $ENV{'TEST_CDAO_RDF_GENERATION'} ) {
+        plan 'skip_all' => 'env var TEST_CDAO_RDF_GENERATION not set';
+    }
+    else {
+        Test::More->import('no_plan');
+    }
+}
 use strict;
 use Bio::Phylo;
 use Bio::Phylo::Factory;
