@@ -64,13 +64,13 @@ $VERSION .= "_$rev";
     # like this as well.
     my @fields = \(
         my (
-	    %guid,
+			%guid,
             %desc,
             %score,
             %generic,
             %cache,
             %container,    # XXX weak reference
-            %objects       # XXX strong reference
+            %objects       # XXX weak reference
         )
     );
 
