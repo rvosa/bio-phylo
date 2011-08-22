@@ -63,7 +63,7 @@ sub _to_string {
 
 =item L<Bio::Phylo::IO>
 
-The phylip unparser is called by the L<Bio::Phylo::IO> object.
+The fasta unparser is called by the L<Bio::Phylo::IO> object.
 Look there to learn how to create phylip formatted files.
 
 =item L<Bio::Phylo::Manual>
