@@ -2,6 +2,7 @@
 package Bio::Phylo::NeXML::Writable;
 use strict;
 use base 'Bio::Phylo';
+use Bio::Phylo::IO 'unparse';
 use Bio::Phylo::NeXML::DOM;
 use Bio::Phylo::NeXML::Entities '/entities/';
 use Bio::Phylo::Util::Exceptions 'throw';
@@ -951,6 +952,27 @@ Serializes object to JSON string
     sub to_json {
         looks_like_class('XML::XML2JSON')->new->convert( shift->to_xml );
     }
+
+=item to_cdao()
+
+Serializes object to CDAO RDF/XML string
+
+ Type    : Serializer
+ Title   : to_cdao()
+ Usage   : print $obj->to_cdao();
+ Function: Serializes object to CDAO RDF/XML string
+ Returns : String 
+ Args    : None
+ Comments:
+
+=cut	
+	
+	sub to_cdao {
+		return unparse(
+			'-phylo'  => shift,
+			'-format' => 'cdao',
+		);
+	}
 
     sub _cleanup {
         my $self = shift;
