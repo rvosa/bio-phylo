@@ -52,7 +52,6 @@ BEGIN {
       _NS_XSD_
       _NS_XML_
       _NS_TOL_
-      _NS_DC_
       _NS_CDAO_
       _NEXML_VERSION_
     );
@@ -112,7 +111,6 @@ BEGIN {
               _NS_XSD_
               _NS_XML_
               _NS_TOL_
-              _NS_DC_
               _NS_CDAO_
               )
         ]
@@ -134,7 +132,7 @@ sub _NS_XSI_ ()     { 'http://www.w3.org/2001/XMLSchema-instance' }
 sub _NS_XSD_ ()     { 'http://www.w3.org/2001/XMLSchema#' }
 sub _NS_XML_ ()     { 'http://www.w3.org/XML/1998/namespace' }
 sub _NS_TOL_ ()     { 'http://tolweb.org/tree/home.pages/downloadtree.html#' }
-sub _NS_CDAO_ ()    { 'http://www.evolutionaryontology.org/cdao.owl#' }
+sub _NS_CDAO_ ()    { 'http://www.evolutionaryontology.org/cdao/1.0/cdao.owl#' }
 
 sub _NEXML_VERSION_ () { '0.9' }
 sub _NONE_ ()          { 1 }
