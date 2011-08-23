@@ -18,14 +18,15 @@ xml-writable subject
 =head1 SYNOPSIS
 
  use Bio::Phylo::Factory;
+ use Bio::Phylo::Util::CONSTANT ':namespaces';
  my $fac = Bio::Phylo::Factory->new;
  my $url = 'http://purl.org/phylo/treebase/phylows/study/TB2:S1787';
  my $proj = $fac->create_project->add_meta(
      $fac->create_meta(
-         '-namespaces' => { 'cdao' => 'http://evolutionaryontology.org#' },
+         '-namespaces' => { 'cdao' => _NS_CDAO_ },
          '-triple'     => { 
              'cdao:hasMeta' => $fac->create_meta(
-                 '-namespaces' => { 'cdao' => 'http://evolutionaryontology.org#' },
+                 '-namespaces' => { 'cdao' => _NS_CDAO_ },
                  '-triple'     => { 'cdao:has_External_Reference' => $url }
              )
          }
