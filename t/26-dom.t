@@ -119,7 +119,7 @@ __DATA__
     xmlns:xml="http://www.w3.org/XML/1998/namespace" 
     xmlns:xsd="http://www.w3.org/2001/XMLSchema#" 
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:cdao="http://www.evolutionaryontology.org/cdao.owl#"
+    xmlns:cdao="http://www.evolutionaryontology.org/cdao/1.0/cdao.owl#"
     xsi:schemaLocation="http://www.nexml.org/2009 ../xsd/nexml.xsd">
 <!-- this is a simple test file generated from a NEXUS file -->
 <otus id="otus1">
