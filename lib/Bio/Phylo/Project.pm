@@ -333,7 +333,10 @@ Serializes invocant to XML.
 
     sub to_xml {
         my $self = shift;
-        $self->reset_xml_ids;
+        if ( @_ ) {
+            my %args = @_;
+            $self->reset_xml_ids if $args{'-reset'};
+        }
 
         # creating opening tags
         $self->_add_project_metadata;
