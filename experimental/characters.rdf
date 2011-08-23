@@ -1,0 +1,1854 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:cdao="http://www.evolutionaryontology.org/cdao.owl#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:nex="http://www.nexml.org/2009" xmlns:owl="http://www.w3.org/2002/07/owl#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <rdf:Description rdf:ID="ou3">
+    <rdfs:label>Homo sapiens</rdfs:label>
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#TU"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="ou4">
+    <rdfs:label>Pan paniscus</rdfs:label>
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#TU"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="ou5">
+    <rdfs:label>Pan troglodytes</rdfs:label>
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#TU"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="ou6">
+    <rdfs:label>Gorilla gorilla</rdfs:label>
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#TU"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="ou7">
+    <rdfs:label>Pongo pygmaeus</rdfs:label>
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#TU"/>
+  </rdf:Description>
+  <owl:Class rdf:about="#ss12">
+    <rdfs:subClassOf rdf:resource="http://www.evolutionaryontology.org/cdao.owl#Standard"/>
+  </owl:Class>
+  <rdf:Description rdf:about="#s1">
+    <rdf:type rdf:resource="#ss12"/>
+    <rdfs:label>0</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s2">
+    <rdf:type rdf:resource="#ss12"/>
+    <rdfs:label>1</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:ID="Site1">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#Character"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="Site2">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#Character"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="Site3">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#Character"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="Site4">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#Character"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="cs11">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDataMatrix"/>
+    <cdao:has_Character rdf:resource="#Site1"/>
+    <cdao:has_Character rdf:resource="#Site2"/>
+    <cdao:has_Character rdf:resource="#Site3"/>
+    <cdao:has_Character rdf:resource="#Site4"/>
+    <cdao:has_TU rdf:resource="#ou3"/>
+    <cdao:has_TU rdf:resource="#ou4"/>
+    <cdao:has_TU rdf:resource="#ou5"/>
+    <cdao:has_TU rdf:resource="#ou6"/>
+    <cdao:has_TU rdf:resource="#ou7"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#Site1"/>
+    <cdao:has_State rdf:resource="#s1"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#Site2"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#Site3"/>
+    <cdao:has_State rdf:resource="#s1"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#Site4"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#Site1"/>
+    <cdao:has_State rdf:resource="#s1"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#Site2"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#Site3"/>
+    <cdao:has_State rdf:resource="#s1"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#Site4"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#Site1"/>
+    <cdao:has_State rdf:resource="#s1"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#Site2"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#Site3"/>
+    <cdao:has_State rdf:resource="#s1"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#Site4"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou6"/>
+    <cdao:belongs_to_Character rdf:resource="#Site1"/>
+    <cdao:has_State rdf:resource="#s1"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou6"/>
+    <cdao:belongs_to_Character rdf:resource="#Site2"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou6"/>
+    <cdao:belongs_to_Character rdf:resource="#Site3"/>
+    <cdao:has_State rdf:resource="#s1"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou6"/>
+    <cdao:belongs_to_Character rdf:resource="#Site4"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou7"/>
+    <cdao:belongs_to_Character rdf:resource="#Site1"/>
+    <cdao:has_State rdf:resource="#s1"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou7"/>
+    <cdao:belongs_to_Character rdf:resource="#Site2"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou7"/>
+    <cdao:belongs_to_Character rdf:resource="#Site3"/>
+    <cdao:has_State rdf:resource="#s1"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou7"/>
+    <cdao:belongs_to_Character rdf:resource="#Site4"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <owl:Class rdf:about="#ss26">
+    <rdfs:subClassOf rdf:resource="http://www.evolutionaryontology.org/cdao.owl#Standard"/>
+  </owl:Class>
+  <rdf:Description rdf:about="#s1">
+    <rdf:type rdf:resource="#ss26"/>
+    <rdfs:label>1</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s2">
+    <rdf:type rdf:resource="#ss26"/>
+    <rdfs:label>2</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s3">
+    <rdf:type rdf:resource="#ss26"/>
+    <rdfs:label>3</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s4">
+    <rdf:type rdf:resource="#ss26"/>
+    <rdfs:label>4</rdfs:label>
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#UncertainStateDomain"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s5">
+    <rdf:type rdf:resource="#ss26"/>
+    <rdfs:label>5</rdfs:label>
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#UncertainStateDomain"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s6">
+    <rdf:type rdf:resource="#ss26"/>
+    <rdfs:label>-</rdfs:label>
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#UncertainStateDomain"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s7">
+    <rdf:type rdf:resource="#ss26"/>
+    <rdfs:label>?</rdfs:label>
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#UncertainStateDomain"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="StandardCharacter1">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#StandardCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="StandardCharacter2">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#StandardCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="cs25">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDataMatrix"/>
+    <cdao:has_Character rdf:resource="#StandardCharacter1"/>
+    <cdao:has_Character rdf:resource="#StandardCharacter2"/>
+    <cdao:has_TU rdf:resource="#ou3"/>
+    <cdao:has_TU rdf:resource="#ou4"/>
+    <cdao:has_TU rdf:resource="#ou5"/>
+    <cdao:has_TU rdf:resource="#ou6"/>
+    <cdao:has_TU rdf:resource="#ou7"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#StandardStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#StandardCharacter1"/>
+    <cdao:has_Standard_State rdf:resource="#s1"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#StandardStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#StandardCharacter2"/>
+    <cdao:has_Standard_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#StandardStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#StandardCharacter1"/>
+    <cdao:has_Standard_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#StandardStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#StandardCharacter2"/>
+    <cdao:has_Standard_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#StandardStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#StandardCharacter1"/>
+    <cdao:has_Standard_State rdf:resource="#s3"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#StandardStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#StandardCharacter2"/>
+    <cdao:has_Standard_State rdf:resource="#s4"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#StandardStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou6"/>
+    <cdao:belongs_to_Character rdf:resource="#StandardCharacter1"/>
+    <cdao:has_Standard_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#StandardStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou6"/>
+    <cdao:belongs_to_Character rdf:resource="#StandardCharacter2"/>
+    <cdao:has_Standard_State rdf:resource="#s3"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#StandardStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou7"/>
+    <cdao:belongs_to_Character rdf:resource="#StandardCharacter1"/>
+    <cdao:has_Standard_State rdf:resource="#s4"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#StandardStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou7"/>
+    <cdao:belongs_to_Character rdf:resource="#StandardCharacter2"/>
+    <cdao:has_Standard_State rdf:resource="#s1"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="ContinuousCharacter1">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="ContinuousCharacter2">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="ContinuousCharacter3">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="ContinuousCharacter4">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="ContinuousCharacter5">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="cs37">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDataMatrix"/>
+    <cdao:has_Character rdf:resource="#ContinuousCharacter1"/>
+    <cdao:has_Character rdf:resource="#ContinuousCharacter2"/>
+    <cdao:has_Character rdf:resource="#ContinuousCharacter3"/>
+    <cdao:has_Character rdf:resource="#ContinuousCharacter4"/>
+    <cdao:has_Character rdf:resource="#ContinuousCharacter5"/>
+    <cdao:has_TU rdf:resource="#ou3"/>
+    <cdao:has_TU rdf:resource="#ou4"/>
+    <cdao:has_TU rdf:resource="#ou5"/>
+    <cdao:has_TU rdf:resource="#ou6"/>
+    <cdao:has_TU rdf:resource="#ou7"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#ContinuousCharacter1"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>-1.545414144070023</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#ContinuousCharacter2"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>-2.3905621575431044</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#ContinuousCharacter3"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>-2.9610221833467265</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#ContinuousCharacter4"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>0.7868662069161243</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#ContinuousCharacter5"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>0.22968509237534918</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#ContinuousCharacter1"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>-1.6259836379710066</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#ContinuousCharacter2"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>3.649352410850134</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#ContinuousCharacter3"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>1.778885099660406</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#ContinuousCharacter4"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>-1.2580877968480846</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#ContinuousCharacter5"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>0.22335354995610862</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#ContinuousCharacter1"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>-1.5798979984134964</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#ContinuousCharacter2"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>2.9548251411133157</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#ContinuousCharacter3"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>1.522005675256233</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#ContinuousCharacter4"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>-0.8642016921755289</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#ContinuousCharacter5"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>-0.938129801832388</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou6"/>
+    <cdao:belongs_to_Character rdf:resource="#ContinuousCharacter1"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>2.7436692306788086</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou6"/>
+    <cdao:belongs_to_Character rdf:resource="#ContinuousCharacter2"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>-0.7151148143399818</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou6"/>
+    <cdao:belongs_to_Character rdf:resource="#ContinuousCharacter3"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>4.592207937774776</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou6"/>
+    <cdao:belongs_to_Character rdf:resource="#ContinuousCharacter4"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>-0.6898841440534845</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou6"/>
+    <cdao:belongs_to_Character rdf:resource="#ContinuousCharacter5"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>0.5769509574453064</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou7"/>
+    <cdao:belongs_to_Character rdf:resource="#ContinuousCharacter1"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>3.1060827493657683</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou7"/>
+    <cdao:belongs_to_Character rdf:resource="#ContinuousCharacter2"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>-1.0453787389160105</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou7"/>
+    <cdao:belongs_to_Character rdf:resource="#ContinuousCharacter3"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>2.67416332763427</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou7"/>
+    <cdao:belongs_to_Character rdf:resource="#ContinuousCharacter4"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>-1.4045634106692808</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou7"/>
+    <cdao:belongs_to_Character rdf:resource="#ContinuousCharacter5"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>0.019890469925520196</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <owl:Class rdf:about="#ss53">
+    <rdfs:subClassOf rdf:resource="http://www.evolutionaryontology.org/cdao.owl#Standard"/>
+  </owl:Class>
+  <rdf:Description rdf:about="#s1">
+    <rdf:type rdf:resource="#ss53"/>
+    <rdfs:label>A</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s2">
+    <rdf:type rdf:resource="#ss53"/>
+    <rdfs:label>C</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s3">
+    <rdf:type rdf:resource="#ss53"/>
+    <rdfs:label>G</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s4">
+    <rdf:type rdf:resource="#ss53"/>
+    <rdfs:label>T</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s5">
+    <rdf:type rdf:resource="#ss53"/>
+    <rdfs:label>K</rdfs:label>
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#UncertainStateDomain"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s6">
+    <rdf:type rdf:resource="#ss53"/>
+    <rdfs:label>M</rdfs:label>
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#UncertainStateDomain"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s7">
+    <rdf:type rdf:resource="#ss53"/>
+    <rdfs:label>R</rdfs:label>
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#UncertainStateDomain"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s8">
+    <rdf:type rdf:resource="#ss53"/>
+    <rdfs:label>S</rdfs:label>
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#UncertainStateDomain"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s9">
+    <rdf:type rdf:resource="#ss53"/>
+    <rdfs:label>W</rdfs:label>
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#UncertainStateDomain"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s10">
+    <rdf:type rdf:resource="#ss53"/>
+    <rdfs:label>Y</rdfs:label>
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#UncertainStateDomain"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s11">
+    <rdf:type rdf:resource="#ss53"/>
+    <rdfs:label>B</rdfs:label>
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#UncertainStateDomain"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s12">
+    <rdf:type rdf:resource="#ss53"/>
+    <rdfs:label>D</rdfs:label>
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#UncertainStateDomain"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s13">
+    <rdf:type rdf:resource="#ss53"/>
+    <rdfs:label>H</rdfs:label>
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#UncertainStateDomain"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s14">
+    <rdf:type rdf:resource="#ss53"/>
+    <rdfs:label>V</rdfs:label>
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#UncertainStateDomain"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s15">
+    <rdf:type rdf:resource="#ss53"/>
+    <rdfs:label>N</rdfs:label>
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#UncertainStateDomain"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s16">
+    <rdf:type rdf:resource="#ss53"/>
+    <rdfs:label>X</rdfs:label>
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#UncertainStateDomain"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s17">
+    <rdf:type rdf:resource="#ss53"/>
+    <rdfs:label>-</rdfs:label>
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#UncertainStateDomain"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s18">
+    <rdf:type rdf:resource="#ss53"/>
+    <rdfs:label>?</rdfs:label>
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#UncertainStateDomain"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="ResidueCol1">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#NucleotideResidueCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="ResidueCol2">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#NucleotideResidueCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="ResidueCol3">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#NucleotideResidueCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="ResidueCol4">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#NucleotideResidueCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="ResidueCol5">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#NucleotideResidueCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="ResidueCol6">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#NucleotideResidueCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="ResidueCol7">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#NucleotideResidueCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="ResidueCol8">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#NucleotideResidueCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="ResidueCol9">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#NucleotideResidueCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="ResidueCol10">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#NucleotideResidueCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="ResidueCol11">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#NucleotideResidueCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="ResidueCol12">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#NucleotideResidueCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="ResidueCol13">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#NucleotideResidueCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="ResidueCol14">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#NucleotideResidueCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="ResidueCol15">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#NucleotideResidueCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="ResidueCol16">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#NucleotideResidueCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="cs52">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDataMatrix"/>
+    <cdao:has_Character rdf:resource="#ResidueCol1"/>
+    <cdao:has_Character rdf:resource="#ResidueCol2"/>
+    <cdao:has_Character rdf:resource="#ResidueCol3"/>
+    <cdao:has_Character rdf:resource="#ResidueCol4"/>
+    <cdao:has_Character rdf:resource="#ResidueCol5"/>
+    <cdao:has_Character rdf:resource="#ResidueCol6"/>
+    <cdao:has_Character rdf:resource="#ResidueCol7"/>
+    <cdao:has_Character rdf:resource="#ResidueCol8"/>
+    <cdao:has_Character rdf:resource="#ResidueCol9"/>
+    <cdao:has_Character rdf:resource="#ResidueCol10"/>
+    <cdao:has_Character rdf:resource="#ResidueCol11"/>
+    <cdao:has_Character rdf:resource="#ResidueCol12"/>
+    <cdao:has_Character rdf:resource="#ResidueCol13"/>
+    <cdao:has_Character rdf:resource="#ResidueCol14"/>
+    <cdao:has_Character rdf:resource="#ResidueCol15"/>
+    <cdao:has_Character rdf:resource="#ResidueCol16"/>
+    <cdao:has_TU rdf:resource="#ou3"/>
+    <cdao:has_TU rdf:resource="#ou4"/>
+    <cdao:has_TU rdf:resource="#ou5"/>
+    <cdao:has_TU rdf:resource="#ou6"/>
+    <cdao:has_TU rdf:resource="#ou7"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol1"/>
+    <cdao:has_State rdf:resource="#s1"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol2"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol3"/>
+    <cdao:has_State rdf:resource="#s3"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol4"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol5"/>
+    <cdao:has_State rdf:resource="#s4"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol6"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol7"/>
+    <cdao:has_State rdf:resource="#s3"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol8"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol9"/>
+    <cdao:has_State rdf:resource="#s1"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol10"/>
+    <cdao:has_State rdf:resource="#s4"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol11"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol12"/>
+    <cdao:has_State rdf:resource="#s3"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol13"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol14"/>
+    <cdao:has_State rdf:resource="#s1"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol15"/>
+    <cdao:has_State rdf:resource="#s4"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol16"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol1"/>
+    <cdao:has_State rdf:resource="#s1"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol2"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol3"/>
+    <cdao:has_State rdf:resource="#s3"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol4"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol5"/>
+    <cdao:has_State rdf:resource="#s4"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol6"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol7"/>
+    <cdao:has_State rdf:resource="#s3"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol8"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol9"/>
+    <cdao:has_State rdf:resource="#s1"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol10"/>
+    <cdao:has_State rdf:resource="#s4"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol11"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol12"/>
+    <cdao:has_State rdf:resource="#s3"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol13"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol14"/>
+    <cdao:has_State rdf:resource="#s1"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol15"/>
+    <cdao:has_State rdf:resource="#s4"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol16"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol1"/>
+    <cdao:has_State rdf:resource="#s1"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol2"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol3"/>
+    <cdao:has_State rdf:resource="#s3"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol4"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol5"/>
+    <cdao:has_State rdf:resource="#s4"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol6"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol7"/>
+    <cdao:has_State rdf:resource="#s3"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol8"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol9"/>
+    <cdao:has_State rdf:resource="#s1"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol10"/>
+    <cdao:has_State rdf:resource="#s4"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol11"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol12"/>
+    <cdao:has_State rdf:resource="#s3"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol13"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol14"/>
+    <cdao:has_State rdf:resource="#s1"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol15"/>
+    <cdao:has_State rdf:resource="#s4"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#ResidueCol16"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <owl:Class rdf:about="#ss77">
+    <rdfs:subClassOf rdf:resource="http://www.evolutionaryontology.org/cdao.owl#Standard"/>
+  </owl:Class>
+  <rdf:Description rdf:about="#s1">
+    <rdf:type rdf:resource="#ss77"/>
+    <rdfs:label>A</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s2">
+    <rdf:type rdf:resource="#ss77"/>
+    <rdfs:label>C</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s3">
+    <rdf:type rdf:resource="#ss77"/>
+    <rdfs:label>G</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s4">
+    <rdf:type rdf:resource="#ss77"/>
+    <rdfs:label>U</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s5">
+    <rdf:type rdf:resource="#ss77"/>
+    <rdfs:label>K</rdfs:label>
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#UncertainStateDomain"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s6">
+    <rdf:type rdf:resource="#ss77"/>
+    <rdfs:label>M</rdfs:label>
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#UncertainStateDomain"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s7">
+    <rdf:type rdf:resource="#ss77"/>
+    <rdfs:label>R</rdfs:label>
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#UncertainStateDomain"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s8">
+    <rdf:type rdf:resource="#ss77"/>
+    <rdfs:label>S</rdfs:label>
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#UncertainStateDomain"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s9">
+    <rdf:type rdf:resource="#ss77"/>
+    <rdfs:label>W</rdfs:label>
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#UncertainStateDomain"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s10">
+    <rdf:type rdf:resource="#ss77"/>
+    <rdfs:label>Y</rdfs:label>
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#UncertainStateDomain"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s11">
+    <rdf:type rdf:resource="#ss77"/>
+    <rdfs:label>B</rdfs:label>
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#UncertainStateDomain"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s12">
+    <rdf:type rdf:resource="#ss77"/>
+    <rdfs:label>D</rdfs:label>
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#UncertainStateDomain"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s13">
+    <rdf:type rdf:resource="#ss77"/>
+    <rdfs:label>H</rdfs:label>
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#UncertainStateDomain"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s14">
+    <rdf:type rdf:resource="#ss77"/>
+    <rdfs:label>V</rdfs:label>
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#UncertainStateDomain"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s15">
+    <rdf:type rdf:resource="#ss77"/>
+    <rdfs:label>N</rdfs:label>
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#UncertainStateDomain"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s16">
+    <rdf:type rdf:resource="#ss77"/>
+    <rdfs:label>X</rdfs:label>
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#UncertainStateDomain"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s17">
+    <rdf:type rdf:resource="#ss77"/>
+    <rdfs:label>-</rdfs:label>
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#UncertainStateDomain"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s18">
+    <rdf:type rdf:resource="#ss77"/>
+    <rdfs:label>?</rdfs:label>
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#UncertainStateDomain"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="rnachar1">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#RNAResidueCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="rnachar2">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#RNAResidueCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="rnachar3">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#RNAResidueCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="rnachar4">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#RNAResidueCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="rnachar5">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#RNAResidueCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="rnachar6">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#RNAResidueCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="rnachar7">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#RNAResidueCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="rnachar8">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#RNAResidueCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="rnachar9">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#RNAResidueCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="rnachar10">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#RNAResidueCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="rnachar11">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#RNAResidueCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="rnachar12">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#RNAResidueCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="rnachar13">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#RNAResidueCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="rnachar14">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#RNAResidueCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="rnachar15">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#RNAResidueCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="rnachar16">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#RNAResidueCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="cs76">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDataMatrix"/>
+    <cdao:has_Character rdf:resource="#rnachar1"/>
+    <cdao:has_Character rdf:resource="#rnachar2"/>
+    <cdao:has_Character rdf:resource="#rnachar3"/>
+    <cdao:has_Character rdf:resource="#rnachar4"/>
+    <cdao:has_Character rdf:resource="#rnachar5"/>
+    <cdao:has_Character rdf:resource="#rnachar6"/>
+    <cdao:has_Character rdf:resource="#rnachar7"/>
+    <cdao:has_Character rdf:resource="#rnachar8"/>
+    <cdao:has_Character rdf:resource="#rnachar9"/>
+    <cdao:has_Character rdf:resource="#rnachar10"/>
+    <cdao:has_Character rdf:resource="#rnachar11"/>
+    <cdao:has_Character rdf:resource="#rnachar12"/>
+    <cdao:has_Character rdf:resource="#rnachar13"/>
+    <cdao:has_Character rdf:resource="#rnachar14"/>
+    <cdao:has_Character rdf:resource="#rnachar15"/>
+    <cdao:has_Character rdf:resource="#rnachar16"/>
+    <cdao:has_TU rdf:resource="#ou3"/>
+    <cdao:has_TU rdf:resource="#ou4"/>
+    <cdao:has_TU rdf:resource="#ou5"/>
+    <cdao:has_TU rdf:resource="#ou6"/>
+    <cdao:has_TU rdf:resource="#ou7"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar1"/>
+    <cdao:has_State rdf:resource="#s1"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar2"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar3"/>
+    <cdao:has_State rdf:resource="#s3"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar4"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar5"/>
+    <cdao:has_State rdf:resource="#s4"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar6"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar7"/>
+    <cdao:has_State rdf:resource="#s3"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar8"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar9"/>
+    <cdao:has_State rdf:resource="#s1"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar10"/>
+    <cdao:has_State rdf:resource="#s4"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar11"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar12"/>
+    <cdao:has_State rdf:resource="#s3"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar13"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar14"/>
+    <cdao:has_State rdf:resource="#s1"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar15"/>
+    <cdao:has_State rdf:resource="#s4"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar16"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar1"/>
+    <cdao:has_State rdf:resource="#s1"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar2"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar3"/>
+    <cdao:has_State rdf:resource="#s3"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar4"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar5"/>
+    <cdao:has_State rdf:resource="#s4"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar6"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar7"/>
+    <cdao:has_State rdf:resource="#s3"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar8"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar9"/>
+    <cdao:has_State rdf:resource="#s1"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar10"/>
+    <cdao:has_State rdf:resource="#s4"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar11"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar12"/>
+    <cdao:has_State rdf:resource="#s3"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar13"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar14"/>
+    <cdao:has_State rdf:resource="#s1"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar15"/>
+    <cdao:has_State rdf:resource="#s4"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar16"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar1"/>
+    <cdao:has_State rdf:resource="#s1"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar2"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar3"/>
+    <cdao:has_State rdf:resource="#s3"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar4"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar5"/>
+    <cdao:has_State rdf:resource="#s4"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar6"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar7"/>
+    <cdao:has_State rdf:resource="#s3"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar8"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar9"/>
+    <cdao:has_State rdf:resource="#s1"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar10"/>
+    <cdao:has_State rdf:resource="#s4"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar11"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar12"/>
+    <cdao:has_State rdf:resource="#s3"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar13"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar14"/>
+    <cdao:has_State rdf:resource="#s1"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar15"/>
+    <cdao:has_State rdf:resource="#s4"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#rnachar16"/>
+    <cdao:has_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="contchar1">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="contchar2">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="contchar3">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="contchar4">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="contchar5">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="cs100">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDataMatrix"/>
+    <cdao:has_Character rdf:resource="#contchar1"/>
+    <cdao:has_Character rdf:resource="#contchar2"/>
+    <cdao:has_Character rdf:resource="#contchar3"/>
+    <cdao:has_Character rdf:resource="#contchar4"/>
+    <cdao:has_Character rdf:resource="#contchar5"/>
+    <cdao:has_TU rdf:resource="#ou3"/>
+    <cdao:has_TU rdf:resource="#ou4"/>
+    <cdao:has_TU rdf:resource="#ou5"/>
+    <cdao:has_TU rdf:resource="#ou6"/>
+    <cdao:has_TU rdf:resource="#ou7"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#contchar1"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>-1.545414144070023</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#contchar2"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>-2.3905621575431044</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#contchar3"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>-2.9610221833467265</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#contchar4"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>0.7868662069161243</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#contchar5"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>0.22968509237534918</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#contchar1"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>-1.6259836379710066</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#contchar2"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>3.649352410850134</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#contchar3"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>1.778885099660406</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#contchar4"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>-1.2580877968480846</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#contchar5"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>0.22335354995610862</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#contchar1"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>-1.5798979984134964</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#contchar2"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>2.9548251411133157</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#contchar3"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>1.522005675256233</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#contchar4"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>-0.8642016921755289</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#contchar5"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>-0.938129801832388</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou6"/>
+    <cdao:belongs_to_Character rdf:resource="#contchar1"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>2.7436692306788086</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou6"/>
+    <cdao:belongs_to_Character rdf:resource="#contchar2"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>-0.7151148143399818</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou6"/>
+    <cdao:belongs_to_Character rdf:resource="#contchar3"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>4.592207937774776</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou6"/>
+    <cdao:belongs_to_Character rdf:resource="#contchar4"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>-0.6898841440534845</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou6"/>
+    <cdao:belongs_to_Character rdf:resource="#contchar5"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>0.5769509574453064</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou7"/>
+    <cdao:belongs_to_Character rdf:resource="#contchar1"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>3.1060827493657683</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou7"/>
+    <cdao:belongs_to_Character rdf:resource="#contchar2"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>-1.0453787389160105</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou7"/>
+    <cdao:belongs_to_Character rdf:resource="#contchar3"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>2.67416332763427</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou7"/>
+    <cdao:belongs_to_Character rdf:resource="#contchar4"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>-1.4045634106692808</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#ContinuousStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou7"/>
+    <cdao:belongs_to_Character rdf:resource="#contchar5"/>
+    <cdao:has_Continuous_State>
+      <cdao:Continuous>
+        <cdao:has_Value>0.019890469925520196</cdao:has_Value>
+      </cdao:Continuous>
+    </cdao:has_Continuous_State>
+  </rdf:Description>
+  <owl:Class rdf:about="#ss116">
+    <rdfs:subClassOf rdf:resource="http://www.evolutionaryontology.org/cdao.owl#Standard"/>
+  </owl:Class>
+  <rdf:Description rdf:about="#s1">
+    <rdf:type rdf:resource="#ss116"/>
+    <rdfs:label>1</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s2">
+    <rdf:type rdf:resource="#ss116"/>
+    <rdfs:label>2</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s3">
+    <rdf:type rdf:resource="#ss116"/>
+    <rdfs:label>3</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s4">
+    <rdf:type rdf:resource="#ss116"/>
+    <rdfs:label>4</rdfs:label>
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#UncertainStateDomain"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s5">
+    <rdf:type rdf:resource="#ss116"/>
+    <rdfs:label>5</rdfs:label>
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#UncertainStateDomain"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s6">
+    <rdf:type rdf:resource="#ss116"/>
+    <rdfs:label>-</rdfs:label>
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#UncertainStateDomain"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s7">
+    <rdf:type rdf:resource="#ss116"/>
+    <rdfs:label>?</rdfs:label>
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#UncertainStateDomain"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="standardc1">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#StandardCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="standardc2">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#StandardCharacter"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="cs115">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#CharacterStateDataMatrix"/>
+    <cdao:has_Character rdf:resource="#standardc1"/>
+    <cdao:has_Character rdf:resource="#standardc2"/>
+    <cdao:has_TU rdf:resource="#ou3"/>
+    <cdao:has_TU rdf:resource="#ou4"/>
+    <cdao:has_TU rdf:resource="#ou5"/>
+    <cdao:has_TU rdf:resource="#ou6"/>
+    <cdao:has_TU rdf:resource="#ou7"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#StandardStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#standardc1"/>
+    <cdao:has_Standard_State rdf:resource="#s1"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#StandardStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou3"/>
+    <cdao:belongs_to_Character rdf:resource="#standardc2"/>
+    <cdao:has_Standard_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#StandardStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#standardc1"/>
+    <cdao:has_Standard_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#StandardStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou4"/>
+    <cdao:belongs_to_Character rdf:resource="#standardc2"/>
+    <cdao:has_Standard_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#StandardStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#standardc1"/>
+    <cdao:has_Standard_State rdf:resource="#s3"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#StandardStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou5"/>
+    <cdao:belongs_to_Character rdf:resource="#standardc2"/>
+    <cdao:has_Standard_State rdf:resource="#s4"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#StandardStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou6"/>
+    <cdao:belongs_to_Character rdf:resource="#standardc1"/>
+    <cdao:has_Standard_State rdf:resource="#s2"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#StandardStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou6"/>
+    <cdao:belongs_to_Character rdf:resource="#standardc2"/>
+    <cdao:has_Standard_State rdf:resource="#s3"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#StandardStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou7"/>
+    <cdao:belongs_to_Character rdf:resource="#standardc1"/>
+    <cdao:has_Standard_State rdf:resource="#s4"/>
+  </rdf:Description>
+  <rdf:Description rdf:ID="">
+    <rdf:type rdf:resource="http://www.evolutionaryontology.org/cdao.owl#StandardStateDatum"/>
+    <cdao:belongs_to_TU rdf:resource="#ou7"/>
+    <cdao:belongs_to_Character rdf:resource="#standardc2"/>
+    <cdao:has_Standard_State rdf:resource="#s1"/>
+  </rdf:Description>
+</rdf:RDF>
