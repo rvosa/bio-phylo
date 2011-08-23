@@ -31,11 +31,11 @@ sub _to_string {
     my $self = shift;
     my $project = $self->{'PHYLO'};
     if ( looks_like_object $project, _PROJECT_ ) {
-        my $stylesheet = $self->{'XSLT'} || 'http://nexml.org/nexml/xslt/nexml2cdao.xsl';
+        my $stylesheet = $self->{'XSLT'}   || $ENV{'NEXML_ROOT'} ? $ENV{'NEXML_ROOT'} . '/xslt/nexml2cdao.xsl' : 'http://nexml.org/nexml/xslt/nexml2cdao.xsl';
         my $xsltproc = $self->{'XSLTPROC'} || 'xsltproc';
         my ( $fh, $file ) = tempfile();
         print $fh $project->to_xml;
-        my $result = `$xsltproc $stylesheet $file 2> /dev/null`;
+        my $result = `$xsltproc $stylesheet $file`;
         if ( $? ) {
             throw 'System' => "Error running xsltproc - exited with $?";
         }
