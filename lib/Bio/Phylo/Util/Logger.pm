@@ -127,10 +127,20 @@ CODE_TEMPLATE
                     );
                 }
                 elsif ( $opt{'-method'} ) {
-                    $VERBOSE{ $opt{'-method'} } = $opt{'-level'};
-                    $self->info(
-"Changed verbosity for method $opt{'-method'} to $opt{'-level'}"
-                    );
+					if ( ref $opt{'-method'} eq 'ARRAY' ) {
+						for my $method ( @{ $opt{'-method'} } ) {
+							$VERBOSE{$method} = $opt{'-level'};
+							$self->info(
+	"Changed verbosity for method $method to $opt{'-level'}"
+							);							
+						}
+					}
+					else {
+						$VERBOSE{ $opt{'-method'} } = $opt{'-level'};
+						$self->info(
+	"Changed verbosity for method $opt{'-method'} to $opt{'-level'}"
+						);
+					}
                 }
                 else {
                     $VERBOSE = $opt{'-level'};
