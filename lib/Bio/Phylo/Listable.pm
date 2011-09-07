@@ -93,16 +93,14 @@ Pushes an object into its container.
  Args    : A Bio::Phylo::* object.
 
 =cut
+
     sub insert {
         my ( $self, @obj ) = @_;
         if ( @obj and $self->can_contain(@obj) ) {
-            $logger->info("inserting '@obj' in '$self'");
             my $id = $self->get_id;
             push @{ $entities{$id} }, @obj;
-            for my $obj (@obj) {
-                if ( looks_like_implementor( $obj, '_set_container' ) ) {
-                    $obj->_set_container($self);
-                }
+            for (@obj) {
+                ref $_ && UNIVERSAL::can($_,'_set_container') && $_->_set_container($self);
             }
             $self->notify_listeners( 'insert', @obj )
               if $listeners{$id} and @{ $listeners{$id} };
@@ -756,7 +754,7 @@ Tests if argument can be inserted in container.
 
     sub can_contain {
         my ( $self, @obj ) = @_;
-        $logger->debug("checking if '$self' can contain '@obj'");
+        # $logger->debug("checking if '$self' can contain '@obj'");
         for my $obj (@obj) {
             my ( $self_type, $obj_container );
             eval {
