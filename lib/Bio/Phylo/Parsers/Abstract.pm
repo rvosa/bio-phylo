@@ -23,7 +23,8 @@ my $logger  = Bio::Phylo::Util::Logger->new;
 # argument is a file name, which we open
 sub _open_file {
     my $file_name = shift;
-    open my $handle, '<:utf8', $file_name or throw 'FileError' => $!;
+    my $encoding  = shift || '';
+    open my $handle, "<${encoding}", $file_name or throw 'FileError' => $!;
     return $handle;
 }
 
@@ -31,13 +32,15 @@ sub _open_file {
 # we can treat as a handle by opening it by reference
 sub _open_string {
     my $string_value = shift;
-    open my $handle, '<:utf8', \$string_value or throw 'FileError' => $!;
+    my $encoding     = shift || '';    
+    open my $handle, "<${encoding}", \$string_value or throw 'FileError' => $!;
     return $handle;
 }
 
 # argument is a url,
 sub _open_url {
     my $url = shift;
+    my $encoding = shift || '';
     my $handle;
 
     # we need to use LWP::UserAgent to fetch the resource, but
@@ -65,7 +68,7 @@ sub _open_url {
 
         # content is a string, so we create a handle in the same way
         # as when the argument was a string
-        $handle = _open_string( $response->content );
+        $handle = _open_string( $response->content, $encoding );
     }
     else {
         throw 'NetworkError' => $response->status_line;
@@ -82,13 +85,13 @@ sub _open_handle {
         return $args{'-handle'};
     }
     elsif ( $args{'-file'} ) {
-        return _open_file( $args{'-file'} );
+        return _open_file( $args{'-file'}, $args{'-encoding'} );
     }
     elsif ( $args{'-string'} ) {
-        return _open_string( $args{'-string'} );
+        return _open_string( $args{'-string'}, $args{'-encoding'} );
     }
     elsif ( $args{'-url'} ) {
-        return _open_url( $args{'-url'} );
+        return _open_url( $args{'-url'}, $args{'-encoding'} );
     }
     else {
         throw 'BadArgs' => 'No data source provided!';
@@ -124,10 +127,11 @@ sub _new {
     # by child classes through the appropriate protected
     # getters
     return bless {
-        '_fac'    => $fac,
-        '_handle' => _open_handle(%args),
-        '_proj'   => _open_project( $fac, %args ),
-        '_args'   => \%args,                      # for child-specific arguments
+        '_fac'      => $fac,
+        '_handle'   => _open_handle(%args),
+        '_proj'     => _open_project( $fac, %args ),
+        '_args'     => \%args,                      # for child-specific arguments
+        '_encoding' => $args{'-encoding'},
     }, $class;
 }
 
@@ -171,11 +175,12 @@ sub _string {
     my $string = do { local $/; <$handle> };
     return $string;
 }
-sub _logger  { $logger }
-sub _project { shift->{'_proj'} }
-sub _handle  { shift->{'_handle'} }
-sub _factory { shift->{'_fac'} }
-sub _args    { shift->{'_args'} }
+sub _logger   { $logger }
+sub _project  { shift->{'_proj'} }
+sub _handle   { shift->{'_handle'} }
+sub _factory  { shift->{'_fac'} }
+sub _args     { shift->{'_args'} }
+sub _encoding { shift->{'_encoding'} }
 
 # podinherit_insert_token
 
