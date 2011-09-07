@@ -19,8 +19,9 @@ Bio::Phylo::IO - Front end for parsers and serializers
  # returns an unblessed array reference of block objects,
  # i.e. taxa, matrix or forest objects
  my $blocks = parse(
-    '-file'   => $file,
-    '-format' => 'nexus',
+    '-file'     => $file,
+    '-format'   => 'nexus',
+    '-encoding' => ':encoding(UTF-8)', # optional, default is system-dependent
  );
  
  for my $block ( @{ $blocks } ) {
