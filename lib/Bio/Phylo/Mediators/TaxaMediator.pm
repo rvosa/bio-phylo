@@ -242,19 +242,12 @@ Retrieves link between objects.
         if ( defined $opt{'-type'} ) {
             my $relation = $relationship[$id];
             return if not $relation;
-            my @result;
-            for my $key ( keys %{$relation} ) {
-                push @result, $object[$key]
-                  if $relation->{$key} == $opt{'-type'};
-            }
+            my @result = map { $object[$_] } grep { $relation->{$_} == $opt{'-type'} } keys %{ $relation };
             return \@result;
         }
         else {
-          LINK_SEARCH: for my $i ( 0 .. $#relationship ) {
-                my $relation = $relationship[$i];
-                if ( exists $relation->{$id} ) {
-                    return $object[$i];
-                }
+            for ( 0 .. $#relationship ) {
+                exists $relationship[$_]->{$id} && return $object[$_];
             }
         }
     }
