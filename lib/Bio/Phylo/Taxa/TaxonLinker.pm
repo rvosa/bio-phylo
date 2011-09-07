@@ -113,17 +113,7 @@ Retrieves the Bio::Phylo::Taxa::Taxon object linked to the invocant.
 =cut
 
     sub get_taxon {
-        my $self = shift;        
-        my $taxon = Bio::Phylo::Mediators::TaxaMediator->get_link(
-            '-source' => $self
-        );
-        if ( $taxon ) {
-            $logger->info("getting taxon $taxon");
-        }
-        else {
-            $logger->info("no taxon linked to $self")
-        }
-        return $taxon;
+        return Bio::Phylo::Mediators::TaxaMediator->get_link( '-source' => shift );
     }
 
     sub _cleanup {
