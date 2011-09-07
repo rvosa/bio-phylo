@@ -962,7 +962,10 @@ Serializes datum to nexml format.
         }
         else {
             my @tmp = map { uc $_ } @char;
-            my $seq = Bio::Phylo::NeXML::Writable->new( -tag => 'seq' );
+            my $seq = Bio::Phylo::NeXML::Writable->new(
+                '-tag'          => 'seq',
+                '-identifiable' => 0,
+            );
             my $seq_text = $self->get_type_object->join( \@tmp );
             $xml .=
               $seq->get_xml_tag . "\n$seq_text\n" . "</" . $seq->get_tag . ">";
