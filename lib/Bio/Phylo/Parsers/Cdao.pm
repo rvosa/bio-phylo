@@ -20,6 +20,7 @@ my %objects;
 my $prefixes = <<"PREFIXES";
 PREFIX rdf: <${ns_rdf}>
 PREFIX cdao: <${ns_cdao}>
+PREFIX rdfs: <${ns_rdfs}>
 PREFIXES
 
 my $query = <<"QUERY";
@@ -30,6 +31,28 @@ WHERE {
 	?subject rdf:type cdao:%s
 }
 QUERY
+
+my $subclass = <<"SUBCLASS";
+${prefixes}
+SELECT
+	?subject
+WHERE {
+	?subject rdfs:subClassOf cdao:%s
+}
+SUBCLASS
+
+my $states = <<"STATES";
+${prefixes}
+SELECT
+	?subject ?stateset ?state ?label
+WHERE {
+    ?subject cdao:belongs_to_TU <%s> .
+    ?subject cdao:belongs_to_Character <%s> .
+    ?subject cdao:has_%sState ?state .
+    ?state rdfs:label ?label .
+    ?state rdf:type ?stateset
+}
+STATES
 
 sub _parse {
     my $self = shift;
@@ -45,6 +68,7 @@ sub _parse {
     $self->_process_trees;
     $self->_process_nodes;
     $self->_process_edges;
+    $self->_process_matrices;
     
     my $proj = $self->_project;
     my @objects = ( @{ $proj->get_taxa }, @{ $proj->get_forests }, @{ $proj->get_matrices } );
@@ -65,8 +89,7 @@ sub _object_from_resource {
         my ( $predicate, $value ) = ( $inner->predicate, $inner->object );
         $self->_process_annotation( $predicate->value, $value->value, $object );
 
-    }    
-    $self->_logger->info($object->to_xml);
+    }
     $objects{$uri} = $object;    
 }
 
@@ -138,9 +161,100 @@ sub _process_annotation {
 }
 
 sub _do_query {
-    my ( $self, $type ) = @_;
-    my $sth = RDF::Query->new( sprintf($query, $type), $self->_args->{'-opts'} );
+    my ( $self, $type, $type_query ) = @_;
+    $type_query = $query unless $type_query;
+    my $sth = RDF::Query->new( sprintf($type_query, $type), $self->_args->{'-opts'} );
     return $sth->execute( $self->_args->{'-model'} );
+}
+
+sub _process_matrices {
+    my $self = shift;
+    my $fac = $self->_factory;
+    my $model = $self->_args->{'-model'};
+    my $iter = $self->_do_query('CharacterStateDataMatrix');
+    while( my $row = $iter->next ) {
+        my $subject = $row->{'subject'};
+        my $matrix = $self->_object_from_resource( $subject, 'create_matrix' );
+        my ($taxa) = @{ $self->_project->get_taxa };
+        $matrix->set_taxa($taxa);
+        
+        # create rows for taxa
+        my ( $rowlist, %row ) = $self->_create_rows($matrix);
+        
+        # create columns
+        my ( $charlist, %char ) = $self->_create_characters($matrix);
+        
+        # maps CDAO state type predicates to Bio::Phylo matrix types
+        my %types = (
+            'Nucleotide_' => 'dna',
+            'Continuous_' => 'continuous',
+            'Standard_'   => 'standard',
+            ''            => 'standard',            
+        );
+        my $datatype;
+        
+        for my $row_uri ( @{ $rowlist } ) {
+            for my $col_uri ( @{ $charlist } ) {
+                if ( not $datatype ) {
+                    TYPE_SEARCH : for my $predicate ( keys %types ) {
+                        my $state_query = sprintf($states, $row_uri, $col_uri, $predicate );
+                        my $sth = RDF::Query->new( $state_query, $self->_args->{'-opts'} );
+                        my $state_iterator = $sth->execute( $self->_args->{'-model'} );
+                        if ( my $state = $state_iterator->next ) {
+                            $datatype = $predicate;
+                            $matrix->set_type($types{$predicate});
+                            last TYPE_SEARCH;
+                        }
+                    }
+                }
+                else {
+                    my $state_query = sprintf($states, $row_uri, $col_uri, $datatype );
+                    my $sth = RDF::Query->new( $state_query, $self->_args->{'-opts'} );
+                    my $state_iterator = $sth->execute( $self->_args->{'-model'} );
+                    while ( my $state = $state_iterator->next ) {
+                        if ( my $val = $state->{label}->value ) {
+                            $row{$row_uri}->insert($val);
+                        }
+                    }                    
+                }
+            }
+        }
+        $self->_logger->debug($matrix->to_nexus);
+    }
+}
+
+sub _create_rows {
+    my ( $self, $matrix ) = @_;
+    my $fac = $self->_factory;
+    my ( %row, @rowlist );
+    my $tu_metas = $matrix->get_meta('cdao:has_TU');
+    for my $tu_meta ( @{ $tu_metas } ) {
+        my $tu_uri = $tu_meta->get_object;
+        my $row = $fac->create_datum(
+            '-taxon' => $objects{$tu_uri},
+            '-name'  => $objects{$tu_uri}->get_name,
+        );
+        $row{$tu_uri} = $row;
+        $matrix->insert( $row );
+        push @rowlist, $tu_uri;
+    }
+    return \@rowlist, %row;
+}
+
+sub _create_characters {
+    my ( $self, $matrix ) = @_;
+    my ( %char, @charlist );
+    my $characters = $matrix->get_characters;
+    my $char_metas = $matrix->get_meta('cdao:has_Character');
+    for my $char_meta ( @{ $char_metas } ) {
+        my $char_uri = $char_meta->get_object;
+        my $char_resource = RDF::Trine::Node::Resource->new( $char_uri );
+        my $char = $self->_object_from_resource( $char_resource, 'create_character' );
+        $char{$char_uri} = $char;
+        $characters->insert($char);
+        push @charlist, $char_uri;
+    }
+    return \@charlist, %char;
 }
 
 sub _process_tus {
