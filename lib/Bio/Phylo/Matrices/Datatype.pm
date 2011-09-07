@@ -535,11 +535,11 @@ Validates argument.
     sub is_valid {
         my $self = shift;
         my @data;
-        for my $arg (@_) {
+        ARG: for my $arg (@_) {
             if ( ref $arg eq 'ARRAY' ) {
                 push @data, @{$arg};
             }
-            elsif ( looks_like_implementor $arg, 'get_char' ) {
+            elsif ( UNIVERSAL::can( $arg, 'get_char' ) ) {
                 push @data, $arg->get_char;
             }
             else {
@@ -547,7 +547,8 @@ Validates argument.
                     push @data, @{ $self->split($arg) };
                 }
                 else {
-                    push @data, $arg;
+                    @data = @_;
+                    last ARG;
                 }
             }
         }
