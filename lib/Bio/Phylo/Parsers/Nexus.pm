@@ -1161,7 +1161,7 @@ sub _semicolon {
         my @range;
         while ( @{ $range } ) {
             my $index = shift @{ $range };
-            if ( $range->[0] eq '-' ) {
+            if ( $range->[0] && $range->[0] eq '-' ) {
                 shift @{ $range };
                 my $end = shift @{ $range };
                 push @range, ( $index - 1 ) .. ( $end - 1 );
