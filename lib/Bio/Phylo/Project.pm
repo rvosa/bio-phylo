@@ -72,7 +72,7 @@ Resets all xml ids to default values
         my $self = shift;        
         if ( UNIVERSAL::can($self,'set_xml_id') ) {
             my $xml_id = $self->get_tag;
-	    my $obj_id = $self->get_id;
+            my $obj_id = sprintf("%x",$self->get_id);
             $xml_id =~ s/^(.).+(.)$/$1$2$obj_id/;
             $self->set_xml_id($xml_id);
         }
@@ -284,6 +284,7 @@ method indicates whether that is the case.
  Args    : NONE
 
 =cut
+
     sub is_identifiable { 0 }
 
 =back
@@ -358,21 +359,22 @@ Serializes invocant to XML.
 
         # done creating xml strings
         $logger->debug($xml);
-        eval { require XML::Twig };
-        if ( not $@ ) {
-            my $twig = XML::Twig->new( 'pretty_print' => 'indented' );
-            eval { $twig->parse($xml) };
-            if ($@) {
-                throw 'API' => "Couldn't build xml: " . $@ . "\n\n$xml";
-            }
-            else {
-                return $twig->sprint;
-            }
-        }
-        else {
-            undef $@;
-            return $xml;
-        }
+        #eval { require XML::Twig };
+        #if ( not $@ ) {
+        #    my $twig = XML::Twig->new( 'pretty_print' => 'indented' );
+        #    eval { $twig->parse($xml) };
+        #    if ($@) {
+        #        throw 'API' => "Couldn't build xml: " . $@ . "\n\n$xml";
+        #    }
+        #    else {
+        #        return $twig->sprint;
+        #    }
+        #}
+        #else {
+        #    undef $@;
+        #    return $xml;
+        #}
+        return $xml;
     }
 
 =item to_nexus()
