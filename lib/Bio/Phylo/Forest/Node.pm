@@ -112,9 +112,6 @@ Node constructor.
         # could be child class
         my $class = shift;
 
-        # notify user
-        $logger->info("constructor called for '$class'");
-
         # process bioperl args
         my %args = looks_like_hash @_;
         if ( exists $args{'-leaf'} ) {
