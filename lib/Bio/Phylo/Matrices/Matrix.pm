@@ -1019,11 +1019,7 @@ the supplied (zero-based) indices.
                 $seq->set_annotations(@re_anno);
             }
         }
-        my @labels = @{ $clone->get_charlabels };
-        if (@labels) {
-            my @re_labels = @labels[@indices];
-            $clone->set_charlabels( \@re_labels );
-        }
+		$clone->get_characters->keep_entities(\@indices);
         return $clone;
     }
 
@@ -1054,6 +1050,92 @@ the supplied (zero-based) indices.
         return $self->keep_chars( \@keep );
     }
 
+=item prune_invariant()
+
+Creates a cloned matrix that omits the characters for which all taxa
+have the same state (or missing);
+
+ Type    : Utility method
+ Title   : prune_invariant
+ Usage   : my $clone = $object->prune_invariant;
+ Function: Creates spliced clone.
+ Returns : A spliced clone of the invocant.
+ Args    : None
+ Comments: The columns are retained in the order in 
+           which they were supplied.
+
+=cut
+
+	sub prune_invariant {
+		my $self = shift;
+		my $nchar = $self->get_nchar;
+		my $missing = $self->get_missing;
+		my @indices;
+		for my $i ( 0 .. ( $nchar - 1 ) ) {
+			my %seen;
+			ROW: for my $row ( @{ $self->get_entities } ) {
+				my $state = $row->get_by_index($i);
+				next ROW if $state eq $missing;
+				$seen{ $state } = 1;
+			}
+			my @states = keys %seen;
+			push @indices, $i if scalar(@states) <= 1;
+		}
+		return $self->prune_chars(\@indices);
+	}
+
+=item prune_uninformative()
+
+Creates a cloned matrix that omits all uninformative characters. Uninformative
+are considered characters where all non-missing values are either invariant
+or autapomorphies.
+
+ Type    : Utility method
+ Title   : prune_uninformative
+ Usage   : my $clone = $object->prune_uninformative;
+ Function: Creates spliced clone.
+ Returns : A spliced clone of the invocant.
+ Args    : None
+ Comments: The columns are retained in the order in 
+           which they were supplied.
+
+=cut
+	
+	sub prune_uninformative {
+		my $self = shift;
+		my $nchar = $self->get_nchar;
+		my $ntax = $self->get_ntax;
+		my $missing = $self->get_missing;
+		my @indices;
+		for my $i ( 0 .. ( $nchar - 1 ) ) {
+			my %seen;
+			for my $row ( @{ $self->get_entities } ) {
+				my $state = $row->get_by_index($i);
+				$seen{ $state }++;
+			}
+			my @states = keys %seen;
+			push @indices, $i if scalar(@states) <= 1;
+			if ( scalar(@states) > 1 ) {
+				my $seen_informative;
+				my $non_missing = $ntax - $seen{$missing};
+				my @informative_maybe;
+				for my $state ( @states ) {
+					if ( $seen{$state} == 1 ) {
+						$non_missing--;
+					}
+					else {
+						push @informative_maybe, $state;
+					}
+				}
+				for my $state ( @informative_maybe ) {
+					$seen_informative++ if $seen{$state} < $non_missing;
+				}
+				push @indices, $i unless $seen_informative;
+			}
+		}
+		return $self->prune_chars(\@indices);		
+	}
+	
 =item bootstrap()
 
 Creates bootstrapped clone.
@@ -1151,9 +1233,13 @@ Clones invocant.
         $subs{'set_raw'} = sub { };
 
         # we'll use the set/get_special_symbols method
-        $subs{'set_missing'}   = sub { };
-        $subs{'set_gap'}       = sub { };
-        $subs{'set_matchchar'} = sub { };
+        $subs{'set_missing'}    = sub { };
+        $subs{'set_gap'}        = sub { };
+        $subs{'set_matchchar'}  = sub { };
+		$subs{'set_characters'} = sub {
+            my ( $obj, $clone ) = @_;
+			$clone->set_characters( $obj->get_characters->clone );
+		};
         return $self->SUPER::clone(%subs);
     }
 
