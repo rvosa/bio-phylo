@@ -1117,7 +1117,7 @@ or autapomorphies.
 			push @indices, $i if scalar(@states) <= 1;
 			if ( scalar(@states) > 1 ) {
 				my $seen_informative;
-				my $non_missing = $ntax - $seen{$missing};
+				my $non_missing = $ntax - ( $seen{$missing} || 0 );
 				my @informative_maybe;
 				for my $state ( @states ) {
 					if ( $seen{$state} == 1 ) {
