@@ -9,6 +9,7 @@ use Bio::Phylo::Util::Exceptions 'throw';
 
 # TODO: handle mixed? distances, splits, bipartitions
 my $TAXA = _TAXA_;
+my $MATRIX = _MATRIX_;
 
 # useful regular expressions
 my $COMMENT = qr|^\[|;    # crude, only checks first char, use after tokenizing!
@@ -52,6 +53,7 @@ my %defaults = (
     '_treenames'       => [],
     '_matrixrowlabels' => [],
     '_matrix'          => {},
+    '_charset'         => {},
     'begin'            => \&_begin,
     'taxa'             => \&_taxa,
     'title'            => \&_title,
@@ -72,6 +74,7 @@ my %defaults = (
     'symbols'          => \&_symbols,
     'items'            => \&_items,
     'matrix'           => \&_matrix,
+    'charset'          => \&_charset,
     'trees'            => \&_trees,
     'translate'        => \&_translate,
     'tree'             => \&_tree,
@@ -539,6 +542,31 @@ sub _taxa {
     }
 }
 
+sub _charset {
+    my $self = shift;
+    my $token = shift;
+    
+    # first thing after the CHARSET token is the set name
+    if ( $token !~ /CHARSET/i && ! $self->{'_charset'}->{'name'} ) {
+        $self->{'_charset'}->{'name'} = $token;
+        $self->{'_charset'}->{'range'} = [];
+    }
+    
+    # then there might be a mesquite-style matrix reference, e.g. (CHARACTERS = matrix_name)
+    elsif ( $token =~ m/^\(/ ) {
+        $self->{'_charset'}->{'matrix'} = '';        
+    }
+    elsif ( defined $self->{'_charset'}->{'matrix'} && ! $self->{'_charset'}->{'matrix'} && $token !~ /(?:\(?CHARACTERS|=)/i ) {
+        $token =~ s/\)$//;
+        $self->{'_charset'}->{'matrix'} = $token;
+    }
+    
+    # then come the indices
+    elsif ( $token =~ /(?:\d+|-)/ ) {
+        push @{ $self->{'_charset'}->{'range'} }, $token;
+    }
+}
+
 sub _interleave {
     my $self  = shift;
     my $token = shift;
@@ -812,6 +840,24 @@ sub _find_last_seen_taxa_block {
         }
     }
     return;
+}
+
+sub _find_last_seen_matrix {
+    my $self = shift;
+    my $name = shift;
+    for ( my $i = $#{ $self->{'_context'} } ; $i >= 0 ; $i-- ) {
+        if ( $self->{'_context'}->[$i]->_type == $MATRIX ) {
+            if ( $name ) {
+                if ( $self->{'_context'}->[$i]->get_name eq $name ) {
+                    return $self->{'_context'}->[$i];
+                }
+            }
+            else {
+                return $self->{'_context'}->[$i];
+            }
+        }
+    }
+    return;    
 }
 
 sub _set_taxon {
@@ -1105,6 +1151,35 @@ sub _semicolon {
             }
             my $ntax = scalar keys %{$taxon};
         }
+    }
+    elsif ( uc $self->{'_previous'} eq 'CHARSET' ) {
+        my $matrix = $self->_find_last_seen_matrix( $self->{'_charset'}->{'matrix'} );
+        my $characters = $matrix->get_characters;
+        my $set = $self->_factory->create_set( '-name' => $self->{'_charset'}->{'name'} );
+        $characters->add_set($set);
+        my $range = $self->{'_charset'}->{'range'};
+        my @range;
+        while ( @{ $range } ) {
+            my $index = shift @{ $range };
+            if ( $range->[0] eq '-' ) {
+                shift @{ $range };
+                my $end = shift @{ $range };
+                push @range, ( $index - 1 ) .. ( $end - 1 );
+            }
+            else {
+                push @range, ( $index - 1 );
+            }
+        }
+        for my $i ( @range ) {
+            my $character = $characters->get_by_index($i);
+            if ( $character ) {
+                $characters->add_to_set($character,$set);
+            }
+            else {
+                throw 'API' => "No character at index $i";
+            }
+        }
+        $self->{'_charset'} = {};        
     }
     elsif ( uc $self->{'_previous'} eq 'TAXLABELS' ) {
         foreach my $name ( @{ $self->{'_taxlabels'} } ) {
