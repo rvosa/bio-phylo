@@ -194,3 +194,32 @@ ok( $pruned->get_nchar == 1, '29 keeping on char' );
         );
     }
 }
+{
+    my $matrix = Bio::Phylo::Matrices::Matrix->new(
+        '-type'   => 'standard',
+        '-matrix' => [
+            [qw'taxon_1 ? 1 1 1 1'],
+            [qw'taxon_2 ? ? 2 1 1'],
+            [qw'taxon_3 ? ? 2 2 2'],
+            [qw'taxon_4 ? ? 2 2 2'],
+            [qw'taxon_5 ? ? ? 2 ?'],
+        ],
+        '-charlabels' => [
+            qw'allmissing autapomorphy autapomorphy2 informative informative2'
+        ],
+    );
+    {
+        my $informative = $matrix->prune_uninformative;    
+        my @expected_informative_labels = qw'informative informative2';
+        my @observed_informative_labels = @{ $informative->get_charlabels };
+        is( $informative->get_nchar, 2, '40 pruned uninformative');
+        is_deeply( \@expected_informative_labels, \@observed_informative_labels, '41 pruned character labels match');
+    }
+    {
+        my $variant = $matrix->prune_invariant;
+        my @expected_variant_labels = qw'autapomorphy2 informative informative2';
+        my @observed_variant_labels = @{ $variant->get_charlabels };
+        is( $variant->get_nchar, 3, '42 pruned invariant');
+        is_deeply( \@expected_variant_labels, \@observed_variant_labels, '43 pruned character labels match');
+    }
+}
