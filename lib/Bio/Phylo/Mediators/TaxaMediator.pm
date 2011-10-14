@@ -10,7 +10,7 @@ use Bio::Phylo::Util::CONSTANT ':objecttypes';
 {
     my $logger = Bio::Phylo::get_logger();
     my $self;
-    my ( @object, @relationship );
+    my ( @object, %id_by_type, %one_to_one, %one_to_many );
 
 =head1 NAME
 
@@ -96,8 +96,11 @@ Stores argument in invocant's cache.
             # node, forest, matrix, datum, taxon, taxa
             if ( $type == _NODE_ || $type == _TAXON_ || $type == _DATUM_ || $type == _TAXA_ || $type == _FOREST_ || $type == _MATRIX_ ) {
     
-                # notify user
-                $logger->debug("registering object $obj ($id)");
+                # index by type
+                $id_by_type{$type} = {} unless $id_by_type{$type};
+                $id_by_type{$type}->{$id} = 1;
+
+                # store in object cache
                 $object[$id] = $obj;
                 weaken $object[$id];
                 return $self;
@@ -122,27 +125,22 @@ Removes argument from invocant's cache.
     sub unregister {
         my ( $self, $obj ) = @_;
 
-        # notify user
-        #$logger->info("unregistering object '$obj'"); # XXX
         my $id = $obj->get_id;
         if ( defined $id ) {
+            
+            # remove from object cache
             if ( exists $object[$id] ) {
-
-                # one-to-many relationship
-                if ( exists $relationship[$id] ) {
-                    delete $relationship[$id];
-                }
-                else {
-
-                    # one-to-one relationship
-                  LINK_SEARCH: for my $relation (@relationship) {
-                        if ( exists $relation->{$id} ) {
-                            delete $relation->{$id};
-                            last LINK_SEARCH;
-                        }
-                    }
-                }
                 delete $object[$id];
+            }            
+            
+            # remove from one-to-one mapping
+            if ( exists $one_to_one{$id} ) {
+                delete $one_to_one{$id};
+            }
+            
+            # remove from one-to-many mapping
+            if ( exists $one_to_many{$id} ) {
+                delete $one_to_many{$id};    
             }
         }
         return $self;
@@ -176,27 +174,9 @@ Creates link between objects.
         my %opt  = @_;
         my ( $one, $many ) = ( $opt{'-one'}, $opt{'-many'} );
         my ( $one_id, $many_id ) = ( $one->get_id, $many->get_id );
-
-        # notify user
-        $logger->debug("setting link between '$one' and '$many'");
-
-        # delete any previously existing link
-      LINK_SEARCH: for my $relation (@relationship) {
-            if ( exists $relation->{$many_id} ) {
-                delete $relation->{$many_id};
-
-                # notify user
-                $logger->debug("deleting previous link");
-                last LINK_SEARCH;
-            }
-        }
-
-        # initialize new hash if not exist
-        $relationship[$one_id] = {} if not $relationship[$one_id];
-        my $relation = $relationship[$one_id];
-
-        # value is type so that can retrieve in get_link
-        $relation->{$many_id} = $many->_type;
+        $one_to_one{$many_id} = $one_id;
+        $one_to_many{$one_id} = {} unless $one_to_many{$one_id};
+        $one_to_many{$one_id}->{$many_id} = $many->_type;
         return $self;
     }
 
@@ -238,17 +218,19 @@ Retrieves link between objects.
         my %opt  = @_;
         my $id   = $opt{'-source'}->get_id;
 
-        # have to get many objects
-        if ( defined $opt{'-type'} ) {
-            my $relation = $relationship[$id];
-            return if not $relation;
-            my @result = map { $object[$_] } grep { $relation->{$_} == $opt{'-type'} } keys %{ $relation };
+        # have to get many objects,
+        # i.e. source was a taxon/taxa
+        if ( defined $opt{'-type'} ) {            
+            my $type = $opt{'-type'};
+            my @ids = grep { $one_to_many{$id}->{$_} == $type } keys %{ $one_to_many{$id} };
+            my @result = @object[@ids];
             return \@result;
         }
+        
+        # have to get one object, i.e. source
+        # was something that links to taxon/taxa
         else {
-            for ( 0 .. $#relationship ) {
-                exists $relationship[$_]->{$id} && return $object[$_];
-            }
+            return exists $one_to_one{$id} ? $object[$one_to_one{$id}] : undef;
         }
     }
 
@@ -283,21 +265,17 @@ Removes link between objects.
         my $self = shift;
         my %opt  = @_;
         my ( $one, $many ) = ( $opt{'-one'}, $opt{'-many'} );
+        my $many_id = $many->get_id;
+        my $one_id;
         if ($one) {
-            my $id       = $one->get_id;
-            my $relation = $relationship[$id];
-            return if not $relation;
-            delete $relation->{ $many->get_id };
+            $one_id = $one->get_id;            
         }
         else {
-            my $id = $many->get_id;
-          LINK_SEARCH: for my $relation (@relationship) {
-                if ( exists $relation->{$id} ) {
-                    delete $relation->{$id};
-                    last LINK_SEARCH;
-                }
-            }
+            my $target = $self->get_link( '-source' => $many );
+            $one_id = $target->get_id if $target;
         }
+        delete $one_to_many{$one_id}->{$many_id} if $one_to_many{$one_id};          
+        delete $one_to_one{$many_id};
     }
 
 =back
