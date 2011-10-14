@@ -51,7 +51,7 @@ sub to_xml {
 sub _validate  { 1 }
 sub _container { _NONE_ }
 sub _type      { _CHARACTERS_ }
-sub _tag       { undef }
+sub _tag       { '' }
 
 =back
 
