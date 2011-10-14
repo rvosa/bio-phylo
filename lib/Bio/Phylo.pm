@@ -153,9 +153,6 @@ argument "-name" in the constructor.
             $class = $reference;
         }
 
-        # notify user
-        $logger->info("constructor called for '$class'");
-
         # happens only and exactly once because this
         # root class is visited from every constructor
         my $self = $class->SUPER::new();
@@ -164,6 +161,9 @@ argument "-name" in the constructor.
         my $id = $self->get_id;
         $objects{$id} = $self;
         weaken( $objects{$id} );
+		
+		# notify user
+        $logger->info("constructor called for '$class' - $id");
 
         # processing arguments
         if ( @_ and @_ = looks_like_hash @_ ) {
