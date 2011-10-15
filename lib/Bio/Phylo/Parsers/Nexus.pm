@@ -54,6 +54,7 @@ my %defaults = (
     '_matrixrowlabels' => [],
     '_matrix'          => {},
     '_charset'         => {},
+    '_taxset'          => {},
     'begin'            => \&_begin,
     'taxa'             => \&_taxa,
     'title'            => \&_title,
@@ -75,6 +76,7 @@ my %defaults = (
     'items'            => \&_items,
     'matrix'           => \&_matrix,
     'charset'          => \&_charset,
+    'taxset'           => \&_taxset,
     'trees'            => \&_trees,
     'translate'        => \&_translate,
     'tree'             => \&_tree,
@@ -567,6 +569,31 @@ sub _charset {
     }
 }
 
+sub _taxset {
+    my $self = shift;
+    my $token = shift;
+    
+    # first thing after the TAXSET token is the set name
+    if ( $token !~ /TAXSET/i && ! $self->{'_taxset'}->{'name'} ) {
+        $self->{'_taxset'}->{'name'} = $token;
+        $self->{'_taxset'}->{'range'} = [];
+    }
+    
+    # then there might be a mesquite-style taxa reference, e.g. (TAXA = matrix_name)
+    elsif ( $token =~ m/^\(/ ) {
+        $self->{'_taxset'}->{'taxa'} = '';
+    }
+    elsif ( defined $self->{'_taxset'}->{'taxa'} && ! $self->{'_taxset'}->{'taxa'} && $token !~ /(?:\(?TAXA|=)/ ) {        
+        $token =~ s/\)$//;
+        $self->{'_taxset'}->{'taxa'} = $token;
+    }
+    
+    # then come the indices
+    elsif ( $token =~ /(?:\d+|-)/ ) {
+        push @{ $self->{'_taxset'}->{'range'} }, $token;
+    }
+}
+
 sub _interleave {
     my $self  = shift;
     my $token = shift;
@@ -834,9 +861,17 @@ sub _add_tokens_to_row {
 
 sub _find_last_seen_taxa_block {
     my $self = shift;
+    my $name = shift;
     for ( my $i = $#{ $self->{'_context'} } ; $i >= 0 ; $i-- ) {
         if ( $self->{'_context'}->[$i]->_type == $TAXA ) {
-            return $self->{'_context'}->[$i];
+            if ( $name ) {
+                if ( $self->{'_context'}->[$i]->get_name eq $name ) {
+                    return $self->{'_context'}->[$i];
+                }                
+            }
+            else {
+                return $self->{'_context'}->[$i];
+            }
         }
     }
     return;
@@ -1152,6 +1187,8 @@ sub _semicolon {
             my $ntax = scalar keys %{$taxon};
         }
     }
+    
+    # finalize character set
     elsif ( uc $self->{'_previous'} eq 'CHARSET' ) {
         my $matrix = $self->_find_last_seen_matrix( $self->{'_charset'}->{'matrix'} );
         my $characters = $matrix->get_characters;
@@ -1181,6 +1218,38 @@ sub _semicolon {
         }
         $self->{'_charset'} = {};        
     }
+    
+    # finalize taxon set
+    elsif ( uc $self->{'_previous'} eq 'TAXSET' ) {
+        my $taxa = $self->_find_last_seen_taxa_block( $self->{'_taxset'}->{'taxa'} );
+        my $set = $self->_factory->create_set( '-name' => $self->{'_taxset'}->{'name'} );
+        $taxa->add_set($set);
+        my $range = $self->{'_taxset'}->{'range'};
+        my @range;
+        while ( @{ $range } ) {
+            my $index = shift @{ $range };
+            if ( $range->[0] && $range->[0] eq '-' ) {
+                shift @{ $range };
+                my $end = shift @{ $range };
+                push @range, ( $index - 1 ) .. ( $end - 1 );
+            }
+            else {
+                push @range, ( $index - 1 );
+            }
+        }
+        for my $i ( @range ) {
+            my $taxon = $taxa->get_by_index($i);
+            if ( $taxon ) {
+                $taxa->add_to_set($taxon,$set);
+            }
+            else {
+                throw 'API' => "No taxon at index $i";
+            }
+        }
+        $self->{'_taxset'} = {};        
+    }
+    
+    # finalize taxa labels
     elsif ( uc $self->{'_previous'} eq 'TAXLABELS' ) {
         foreach my $name ( @{ $self->{'_taxlabels'} } ) {
             my $taxon = $self->_factory->create_taxon( '-name' => $name );
@@ -1199,17 +1268,23 @@ sub _semicolon {
         $self->{'_ntax'}      = undef;
         $self->{'_taxlabels'} = [];
     }
+    
+    # finalize symbols list
     elsif ( uc $self->{'_previous'} eq 'SYMBOLS' ) {
         my $logsymbols = join( ' ', @{ $self->{'_symbols'} } );
         $self->_logger->info("symbols: $logsymbols");
         $self->{'_symbols'} = [];
     }
+    
+    # finalize character labels
     elsif ( uc $self->{'_previous'} eq 'CHARLABELS' ) {
         if ( @{ $self->{'_charlabels'} } ) {
             my $logcharlabels = join( ' ', @{ $self->{'_charlabels'} } );
             $self->_logger->info("charlabels: $logcharlabels");
         }
     }
+    
+    # finalize state labels
     elsif ( uc $self->{'_previous'} eq 'STATELABELS' ) {
         if ( @{ $self->{'_statelabels'} } ) {
             my $logstatelabels = join( ' ', @{ $self->{'_statelabels'} } );
