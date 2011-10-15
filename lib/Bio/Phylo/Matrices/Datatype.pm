@@ -347,6 +347,33 @@ Gets state-to-id mapping
         return {};
     }
 
+=item get_states_for_symbol()
+
+Gets set of fundamental states for an ambiguity symbol
+
+ Type    : Accessor
+ Title   : get_states_for_symbol
+ Usage   : my @states = @{ $obj->get_states_for_symbol('N') };
+ Function: Returns the set of states for an ambiguity symbol
+ Returns : An array ref of symbols
+ Args    : An ambiguity symbol
+ Comments: If supplied argument is a fundamental state, an array
+           ref with just that state is returned, e.g. 'A' returns
+           ['A'] for DNA and RNA
+
+=cut
+
+    sub get_states_for_symbol {
+        my ( $self, $symbol ) = @_;
+        my @states;
+        if ( my $lookup = $self->get_lookup ) {
+            if ( my $map = $lookup->{uc $symbol} ) {
+                @states = @{ $map };
+            }
+        }
+        return \@states;
+    }
+
 =item get_symbol_for_states()
 
 Gets ambiguity symbol for a set of states
@@ -516,6 +543,36 @@ Gets metadata annotations (if any) for the provided state symbol
 =head2 TESTS
 
 =over
+
+=item is_ambiguous()
+
+Tests whether the supplied state symbol represents an ambiguous (polymorphic
+or uncertain) state. For example, for the most commonly-used alphabet for
+DNA states, the symbol 'N' represents complete uncertainty, the actual state
+could be any of 'A', 'C', 'G' or 'T', and so this method would return a true
+value.
+
+ Type    : Test
+ Title   : is_ambiguous
+ Usage   : if ( $obj->is_ambiguous('N') ) {
+              # do something
+           }
+ Function: Returns true if argument is an ambiguous state symbol
+ Returns : BOOLEAN
+ Args    : A state symbol
+
+=cut
+
+    sub is_ambiguous {
+        my ( $self, $symbol ) = @_;
+        if ( my $lookup = $self->get_lookup ) {
+            my $mapping = $lookup->{uc $symbol};
+            if ( $mapping and ref $mapping eq 'ARRAY' ) {
+                return scalar(@{$mapping}) > 1;
+            }
+        }
+        return 0;
+    }
 
 =item is_valid()
 
