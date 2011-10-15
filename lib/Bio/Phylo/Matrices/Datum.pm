@@ -713,10 +713,12 @@ Calculates occurrences of states.
         my $self = shift;
 
         # maybe there should be an option to bin continuous values
-        # in X categories, and return the frequencies of those?
-        if ( $self->get_type =~ /^continuous$/i ) {
-            throw 'BadArgs' => 'Matrix holds continuous values';
-        }
+        # in X categories, and return the frequencies of those? Anyway,
+        # Hennig86 seems to want continuous values to be counted as well,
+        # so not throwing an exception here.
+        #if ( $self->get_type =~ /^continuous$/i ) {
+        #    throw 'BadArgs' => 'Matrix holds continuous values';
+        #}
         my %counts;
         if (@_) {
             my %focus = map { $_ => 1 } @_;
