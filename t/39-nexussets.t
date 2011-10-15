@@ -108,3 +108,77 @@ MESQUITE_SETS
         }
     }
 }
+
+{
+    my $taxonset = <<'TAXON_SET';
+#NEXUS
+BEGIN TAXA;
+	DIMENSIONS NTAX=6;
+	TAXLABELS
+		taxon_1 taxon_2 taxon_3 taxon_4 taxon_5 taxon_6 
+	;
+END;
+BEGIN SETS;
+	TAXSET Stored_taxon_set =  1 -  2 4 6;
+END;
+TAXON_SET
+
+    my $project = parse(
+        '-format' => 'nexus',
+        '-string' => $taxonset,
+        '-as_project' => 1,
+    );
+    my ($taxa) = @{ $project->get_items(_TAXA_) };
+    my ($set) = @{ $taxa->get_sets };
+    is( $set->get_name, 'Stored_taxon_set', 'set has right name' );
+    for my $i ( 0 .. $#{ $taxa->get_entities } ) {
+        my $taxon = $taxa->get_by_index($i);
+        if ( $i == 0 || $i == 1 || $i == 3 || $i == 5 ) {
+            ok( $taxa->is_in_set($taxon,$set), 'taxon is in set' );
+        }
+        else {
+            ok( ! $taxa->is_in_set($taxon,$set), 'taxon is not in set' );
+        }
+    }
+}
+{
+my $mesquite_taxon_set = <<'MESQUITE_TAXON_SET';
+#NEXUS
+BEGIN TAXA;
+	TITLE Taxa1;
+	DIMENSIONS NTAX=6;
+	TAXLABELS
+		taxon_1 taxon_2 taxon_3 taxon_4 taxon_5 taxon_6 
+	;
+END;
+BEGIN TAXA;
+	TITLE Taxa2;
+	DIMENSIONS NTAX=3;
+	TAXLABELS
+		taxon_1 taxon_2 taxon_3 
+	;
+END;
+BEGIN SETS;
+	TAXSET Stored_taxon_set  (TAXA = Taxa1) =  1 -  2 4 6;
+END;
+MESQUITE_TAXON_SET
+
+    my $project = parse(
+        '-format' => 'nexus',
+        '-string' => $mesquite_taxon_set,
+        '-as_project' => 1,
+    );
+    my ($taxa) = @{ $project->get_items(_TAXA_) };
+    my ($set) = @{ $taxa->get_sets };
+    is( $set->get_name, 'Stored_taxon_set', 'set has right name' );
+    for my $i ( 0 .. $#{ $taxa->get_entities } ) {
+        my $taxon = $taxa->get_by_index($i);
+        if ( $i == 0 || $i == 1 || $i == 3 || $i == 5 ) {
+            ok( $taxa->is_in_set($taxon,$set), 'taxon is in set' );
+        }
+        else {
+            ok( ! $taxa->is_in_set($taxon,$set), 'taxon is not in set' );
+        }
+    }
+
+}
