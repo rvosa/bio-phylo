@@ -129,10 +129,10 @@ Look there to learn how to unparse objects.
 
 Also see the manual: L<Bio::Phylo::Manual> and L<http://rutgervos.blogspot.com>.
 
-=item L<http://www.json.org>
+=item Hennig86 file format
 
-To learn more about the JavaScript Object Notation (JSON) format, visit
-L<http://www.json.org>.
+To learn more about the Hennig86 format, visit
+L<http://www.phylo.org/tools/hennig.html>.
 
 =back
 
