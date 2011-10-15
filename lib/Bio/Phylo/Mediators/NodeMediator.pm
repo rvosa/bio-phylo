@@ -1,4 +1,3 @@
-# $Id: NodeMediator.pm 1593 2011-02-27 15:26:04Z rvos $
 package Bio::Phylo::Mediators::NodeMediator;
 use strict;
 use Scalar::Util qw(weaken);

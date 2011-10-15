@@ -1,4 +1,3 @@
-# $Id: Generator.pm 1660 2011-04-02 18:29:40Z rvos $
 package Bio::Phylo::Generator;
 use strict;
 use Bio::Phylo::Util::CONSTANT 'looks_like_hash';

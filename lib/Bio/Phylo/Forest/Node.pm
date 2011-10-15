@@ -1,4 +1,3 @@
-# $Id: Node.pm 1660 2011-04-02 18:29:40Z rvos $
 package Bio::Phylo::Forest::Node;
 use strict;
 use base qw'Bio::Phylo::Taxa::TaxonLinker Bio::Phylo::Listable';

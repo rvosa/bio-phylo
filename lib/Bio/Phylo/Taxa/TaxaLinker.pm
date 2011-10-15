@@ -1,4 +1,3 @@
-# $Id: TaxaLinker.pm 1660 2011-04-02 18:29:40Z rvos $
 package Bio::Phylo::Taxa::TaxaLinker;
 use Bio::Phylo;
 use Bio::Phylo::Mediators::TaxaMediator;

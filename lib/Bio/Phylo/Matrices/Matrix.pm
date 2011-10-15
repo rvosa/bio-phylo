@@ -1,4 +1,3 @@
-# $Id: Matrix.pm 1660 2011-04-02 18:29:40Z rvos $
 package Bio::Phylo::Matrices::Matrix;
 use strict;
 use base qw'Bio::Phylo::Matrices::TypeSafeData Bio::Phylo::Taxa::TaxaLinker';

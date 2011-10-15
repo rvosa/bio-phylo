@@ -1,4 +1,3 @@
-# $Id: Mrp.pm 1660 2011-04-02 18:29:40Z rvos $
 package Bio::Phylo::Unparsers::Hennig86;
 use strict;
 use base 'Bio::Phylo::Unparsers::Abstract';

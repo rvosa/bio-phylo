@@ -1,4 +1,3 @@
-# $Id: Nexml.pm 1660 2011-04-02 18:29:40Z rvos $
 # Subversion: $Rev: 190 $
 package Bio::Phylo::Unparsers::Nexml;
 use strict;

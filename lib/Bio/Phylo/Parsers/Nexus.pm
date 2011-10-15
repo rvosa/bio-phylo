@@ -1,4 +1,3 @@
-# $Id: Nexus.pm 1660 2011-04-02 18:29:40Z rvos $
 package Bio::Phylo::Parsers::Nexus;
 use strict;
 use base 'Bio::Phylo::Parsers::Abstract';

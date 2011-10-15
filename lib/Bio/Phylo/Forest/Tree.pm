@@ -1,4 +1,3 @@
-# $Id: Tree.pm 1660 2011-04-02 18:29:40Z rvos $
 package Bio::Phylo::Forest::Tree;
 use strict;
 use base 'Bio::Phylo::Listable';

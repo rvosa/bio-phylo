@@ -1,4 +1,3 @@
-# $Id: Element.pm 1660 2011-04-02 18:29:40Z rvos $
 package Bio::Phylo::NeXML::DOM::Element;
 use strict;
 use Bio::Phylo::Util::Exceptions 'throw';
