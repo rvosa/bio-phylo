@@ -1038,9 +1038,8 @@ implemented, must likely using BioPerl tools.
 
 =item Databases
 
-Implement access to TreeBASE, TolWeb and other databases. This could
-probably be done most elegantly by expanding the mediator system
-(Bio::Phylo::Mediators::* classes).
+Implement/improve access to TreeBASE, TolWeb and other databases. This could
+probably be done best using PhyloWS.
 
 =item Tests
 
@@ -1067,11 +1066,7 @@ Please report any bugs or feature requests to C<< bug-bio-phylo@rt.cpan.org >>,
 or through the web interface at
 L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Bio-Phylo>. I will be notified,
 and then you'll automatically be notified of progress on your bug as I make
-changes. If you can localize the bug to particular package file (i.e. a *.pm file
-from this release), please include the REVISION tag for that file in your bug
-report. It is a string such as this one:
-
-  $Id: Manual.pod 1593 2011-02-27 15:26:04Z rvos $
+changes.
 
 =head1 AUTHORS
 
