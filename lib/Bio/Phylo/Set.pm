@@ -56,6 +56,7 @@ for more information on how to use this feature.
  		   in the constructor, you would pass -value => $val
 
 =cut
+
 {
     my $NONE = _NONE_;
     my $TYPE = _SET_;
@@ -81,7 +82,8 @@ Tests if argument can be inserted in invocant.
  Returns : BOOL
  Args    : An $obj to test
 
-=cut    
+=cut
+
     sub can_contain {
         my ( $self, @obj ) = @_;
         for my $obj (@obj) {
@@ -127,8 +129,6 @@ and B<Chase Miller>, 2011. Bio::Phylo - phyloinformatic analysis using Perl.
 I<BMC Bioinformatics> B<12>:63.
 L<http://dx.doi.org/10.1186/1471-2105-12-63>
 
-=head1 REVISION
-
-
 =cut
+
 1;

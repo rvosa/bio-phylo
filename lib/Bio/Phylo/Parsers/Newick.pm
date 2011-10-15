@@ -14,6 +14,7 @@ format. It is called by the L<Bio::Phylo::IO> facade,
 don't call it directly.
 
 =cut
+
 sub _return_is_scalar { 1 }
 
 sub _parse {
@@ -262,8 +263,6 @@ and B<Chase Miller>, 2011. Bio::Phylo - phyloinformatic analysis using Perl.
 I<BMC Bioinformatics> B<12>:63.
 L<http://dx.doi.org/10.1186/1471-2105-12-63>
 
-=head1 REVISION
-
-
 =cut
+
 1;

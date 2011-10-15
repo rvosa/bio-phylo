@@ -10,6 +10,7 @@ This class has no internal state, no cleanup is necessary.
 =end comment
 
 =cut
+
 {
     my $TYPE      = _MATRICES_;
     my $CONTAINER = _NONE_;
@@ -81,6 +82,7 @@ Matrices constructor.
 =end comment
 
 =cut
+
     sub _container { $CONTAINER }
 
 =begin comment
@@ -95,6 +97,7 @@ Matrices constructor.
 =end comment
 
 =cut
+
     sub _type { $TYPE }
 
 =back
@@ -127,9 +130,7 @@ and B<Chase Miller>, 2011. Bio::Phylo - phyloinformatic analysis using Perl.
 I<BMC Bioinformatics> B<12>:63.
 L<http://dx.doi.org/10.1186/1471-2105-12-63>
 
-=head1 REVISION
-
-
 =cut
+
 }
 1;

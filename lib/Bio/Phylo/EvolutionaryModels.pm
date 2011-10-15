@@ -201,6 +201,7 @@ From a code perspective this function (sample):
  Reformats data
 
 =cut
+
 my @threads;
 
 sub sample {

@@ -321,6 +321,7 @@ obtained from the C<Element> and C<Document> POD.
  Args    : none
 
 =cut
+
     sub get_dom { $DOM ||= __PACKAGE__->new }
 
 =begin comment
@@ -335,6 +336,7 @@ obtained from the C<Element> and C<Document> POD.
 =end comment
 
 =cut
+
     sub _type { $CONSTANT_TYPE }
 
 =begin comment
@@ -382,5 +384,6 @@ Mark A. Jensen  (maj -at- fortinbras -dot- us), refactored by Rutger Vos
 The C<Bio::Phylo::Annotation> class is not yet DOMized.
 
 =cut
+
 }
 1;

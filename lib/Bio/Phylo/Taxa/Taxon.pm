@@ -120,6 +120,7 @@ Associates argument data with invocant.
            Bio::Phylo::Matrices::Datum
 
 =cut
+
     sub set_data {
         my ( $self, $datum ) = @_;
         if ( looks_like_object $datum, $DATUM_CONSTANT ) {
@@ -297,6 +298,7 @@ Taxon destructor.
 =end comment
 
 =cut
+
     sub _container { $CONTAINER_CONSTANT }
 
 =begin comment
@@ -311,6 +313,7 @@ Taxon destructor.
 =end comment
 
 =cut
+
     sub _type { $TYPE_CONSTANT }
     sub _tag  { 'otu' }
 
@@ -344,9 +347,7 @@ and B<Chase Miller>, 2011. Bio::Phylo - phyloinformatic analysis using Perl.
 I<BMC Bioinformatics> B<12>:63.
 L<http://dx.doi.org/10.1186/1471-2105-12-63>
 
-=head1 REVISION
-
-
 =cut
+
 }
 1;

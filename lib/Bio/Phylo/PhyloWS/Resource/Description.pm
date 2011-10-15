@@ -69,6 +69,7 @@ Tests if invocant has an xml id attribute
  Args    : NONE
 
 =cut
+
     sub is_identifiable { 0 }
 
 =back
@@ -131,9 +132,7 @@ and B<Chase Miller>, 2011. Bio::Phylo - phyloinformatic analysis using Perl.
 I<BMC Bioinformatics> B<12>:63.
 L<http://dx.doi.org/10.1186/1471-2105-12-63>
 
-=head1 REVISION
-
-
 =cut
+
 }
 1;

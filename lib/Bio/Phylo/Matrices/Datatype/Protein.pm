@@ -48,10 +48,8 @@ using this module the discussion forum is a good place to start
 posting questions (NOT bug reports, see below):
 L<http://www.cpanforum.com/dist/Bio-Phylo>
 
-=head1 REVISION
-
-
 =cut
+
 $LOOKUP = {
     'A' => ['A'],
     'B' => [ 'D', 'N' ],

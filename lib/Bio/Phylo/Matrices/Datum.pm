@@ -412,6 +412,7 @@ Gets the matrix (if any) this datum belongs to
  Args    : NONE
 
 =cut
+
     sub get_matrix { shift->_get_container }
 
 =item get_weight()
@@ -1078,6 +1079,7 @@ Analog to to_xml.
  Not implemented!
 
 =cut
+
     sub copy_atts { }    # XXX not implemented
 
 =item complement()
@@ -1085,6 +1087,7 @@ Analog to to_xml.
  Not implemented!
 
 =cut
+
     sub complement { }   # XXX not implemented
 
 =item slice()
@@ -1158,10 +1161,8 @@ and B<Chase Miller>, 2011. Bio::Phylo - phyloinformatic analysis using Perl.
 I<BMC Bioinformatics> B<12>:63.
 L<http://dx.doi.org/10.1186/1471-2105-12-63>
 
-=head1 REVISION
-
-
 =cut
+
 1;
 __DATA__
 

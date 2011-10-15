@@ -565,6 +565,7 @@ Gets a logger object.
  Args    : None
 
 =cut
+
     sub get_logger { $logger }
 
 =back
@@ -809,6 +810,7 @@ Gets version number (including revision number).
  Comments:
 
 =cut
+
     sub VERSION { $VERSION }
 
 =begin comment
@@ -829,6 +831,7 @@ Invocant destructor.
 =end comment
 
 =cut
+
     {
         no warnings 'recursion';
         my %isa_for_class;
@@ -992,9 +995,7 @@ and B<Chase Miller>, 2011. Bio::Phylo - phyloinformatic analysis using Perl.
 I<BMC Bioinformatics> B<12>:63.
 L<http://dx.doi.org/10.1186/1471-2105-12-63>
 
-=head1 REVISION
-
-
 =cut
+
 }
 1;

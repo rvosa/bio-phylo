@@ -12,6 +12,7 @@ This class has no internal state, no cleanup is necessary.
 =end comment
 
 =cut
+
 {
     my $logger             = __PACKAGE__->get_logger;
     my $factory            = Bio::Phylo::Factory->new;
@@ -93,6 +94,7 @@ Calculates frequency of provided split
  Comment :
 
 =cut
+
     sub calc_split_frequency {
         my ( $self, $arg ) = @_;
         my @trees  = @{ $self->get_entities };
@@ -676,6 +678,7 @@ Serializer to nexus format.
 =end comment
 
 =cut
+
     sub _container { $CONTAINER_CONSTANT }
 
 =begin comment
@@ -690,6 +693,7 @@ Serializer to nexus format.
 =end comment
 
 =cut
+
     sub _type { $CONSTANT_TYPE }
     sub _tag  { 'trees' }
 
@@ -728,9 +732,7 @@ and B<Chase Miller>, 2011. Bio::Phylo - phyloinformatic analysis using Perl.
 I<BMC Bioinformatics> B<12>:63.
 L<http://dx.doi.org/10.1186/1471-2105-12-63>
 
-=head1 REVISION
-
-
 =cut
+
 }
 1;

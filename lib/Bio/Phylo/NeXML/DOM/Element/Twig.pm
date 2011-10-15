@@ -211,23 +211,6 @@ sub clear_attributes {
 
 =back
 
-=head2 Namespace accessors/mutators
-
-=over
-
-=item
-
- Type    : 
- Title   :
- Usage   :
- Function:
- Returns :
- Args    :
-
-=cut
-
-=back
-
 =head2 Content mutators/accessors
 
 =over

@@ -584,6 +584,7 @@ Gets image format.
  Args    : None.
 
 =cut
+
 sub get_format { shift->{'FORMAT'} }
 
 =item get_width()
@@ -598,6 +599,7 @@ Gets image width.
  Args    : None.
 
 =cut
+
 sub get_width { shift->{'WIDTH'} }
 
 =item get_height()
@@ -612,6 +614,7 @@ Gets image height.
  Args    : None.
 
 =cut
+
 sub get_height { shift->{'HEIGHT'} }
 
 =item get_mode()
@@ -626,6 +629,7 @@ Gets tree drawing mode.
  Args    : None.
 
 =cut
+
 sub get_mode { shift->{'MODE'} }
 
 =item get_shape()
@@ -641,6 +645,7 @@ Gets tree drawing shape.
  Args    : None.
 
 =cut
+
 sub get_shape { shift->{'SHAPE'} }
 
 =item get_padding()
@@ -655,6 +660,7 @@ Gets image padding.
  Args    : None.
 
 =cut
+
 sub get_padding { shift->{'PADDING'} }
 
 =item get_text_horiz_offset()
@@ -671,6 +677,7 @@ Gets text horizontal offset.
  Args    : None.
 
 =cut
+
 sub get_text_horiz_offset { shift->{'TEXT_HORIZ_OFFSET'} }
 
 =item get_text_vert_offset()
@@ -687,6 +694,7 @@ Gets text vertical offset.
  Args    : None.
 
 =cut
+
 sub get_text_vert_offset { shift->{'TEXT_VERT_OFFSET'} }
 
 =item get_text_width()
@@ -703,6 +711,7 @@ Gets text width.
  Args    : None.
 
 =cut
+
 sub get_text_width { shift->{'TEXT_WIDTH'} }
 
 =item get_tree()
@@ -718,6 +727,7 @@ Gets tree to draw.
  Args    : None.
 
 =cut
+
 sub get_tree { shift->{'TREE'} }
 
 =item get_scale_options()
@@ -735,6 +745,7 @@ Gets time scale option.
  Args    : None.
 
 =cut
+
 sub get_scale_options { shift->{'SCALE'} }
 
 =back
@@ -1036,8 +1047,6 @@ and B<Chase Miller>, 2011. Bio::Phylo - phyloinformatic analysis using Perl.
 I<BMC Bioinformatics> B<12>:63.
 L<http://dx.doi.org/10.1186/1471-2105-12-63>
 
-=head1 REVISION
-
-
 =cut
+
 1;

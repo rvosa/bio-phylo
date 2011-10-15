@@ -738,7 +738,8 @@ Sets what tree invocant belongs to
            when inserting or deleting nodes in
            trees.
 
-=cut 
+=cut
+
     sub set_tree {
         my ( $self, $tree ) = @_;
         my $id = $self->get_id;
@@ -775,6 +776,7 @@ Gets invocant's parent.
  Args    : NONE
 
 =cut
+
     sub get_parent { return $get_parent->(shift) }
 
 =item get_first_daughter()
@@ -883,6 +885,7 @@ Gets invocant's branch length.
            yields false for zero-but-defined branches!
 
 =cut
+
     sub get_branch_length { return $get_branch_length->(shift) }
 
 =item get_ancestors()
@@ -1007,6 +1010,7 @@ Gets invocant's immediate children.
  Args    : NONE
 
 =cut
+
     sub get_children { return $get_children->(shift) }
 
 =item get_child()
@@ -2273,7 +2277,8 @@ Serializes subtree subtended by invocant to newick string.
  Args    : takes same arguments as Bio::Phylo::Unparsers::Newick
  Comments: takes same arguments as Bio::Phylo::Unparsers::Newick
 
-=cut    
+=cut
+
     {
         my ( $root_id, $string );
 
@@ -2473,6 +2478,7 @@ Serializes subtree subtended by invocant to newick string.
 =end comment
 
 =cut
+
     sub _type { $TYPE_CONSTANT }
     sub _tag  { 'node' }
 
@@ -2488,6 +2494,7 @@ Serializes subtree subtended by invocant to newick string.
 =end comment
 
 =cut
+
     sub _container { $CONTAINER_CONSTANT }
 
 =back
@@ -2525,10 +2532,8 @@ and B<Chase Miller>, 2011. Bio::Phylo - phyloinformatic analysis using Perl.
 I<BMC Bioinformatics> B<12>:63.
 L<http://dx.doi.org/10.1186/1471-2105-12-63>
 
-=head1 REVISION
-
-
 =cut
+
 }
 1;
 __DATA__

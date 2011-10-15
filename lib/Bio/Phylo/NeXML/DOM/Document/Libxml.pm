@@ -19,6 +19,7 @@ package.
 Mark A. Jensen ( maj -at- fortinbras -dot- us )
 
 =cut
+
 package Bio::Phylo::NeXML::DOM::Document::Libxml;
 use strict;
 use Bio::Phylo::Util::Exceptions 'throw';
@@ -228,5 +229,6 @@ and B<Chase Miller>, 2011. Bio::Phylo - phyloinformatic analysis using Perl.
 I<BMC Bioinformatics> B<12>:63.
 L<http://dx.doi.org/10.1186/1471-2105-12-63>
 
-=cut    
+=cut
+
 1;

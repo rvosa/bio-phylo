@@ -25,7 +25,6 @@ This module creates a scalable vector graphic from a Bio::Phylo::Forest::DrawTre
 object. It is called by the L<Bio::Phylo::Treedrawer> object, so look there to
 learn how to create tree drawings.
 
-
 =begin comment
 
  Type    : Constructor
@@ -427,8 +426,6 @@ and B<Chase Miller>, 2011. Bio::Phylo - phyloinformatic analysis using Perl.
 I<BMC Bioinformatics> B<12>:63.
 L<http://dx.doi.org/10.1186/1471-2105-12-63>
 
-=head1 REVISION
-
-
 =cut
+
 1;
