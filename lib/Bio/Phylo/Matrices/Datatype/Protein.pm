@@ -50,7 +50,6 @@ L<http://www.cpanforum.com/dist/Bio-Phylo>
 
 =head1 REVISION
 
- $Id: Protein.pm 1660 2011-04-02 18:29:40Z rvos $
 
 =cut
 $LOOKUP = {

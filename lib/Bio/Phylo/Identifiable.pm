@@ -90,7 +90,6 @@ L<http://dx.doi.org/10.1186/1471-2105-12-63>
 
 =head1 REVISION
 
- $Id: Identifiable.pm 1593 2011-02-27 15:26:04Z rvos $
 
 =cut
 1;

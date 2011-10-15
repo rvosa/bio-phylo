@@ -311,7 +311,6 @@ L<http://dx.doi.org/10.1186/1471-2105-12-63>
 
 =head1 REVISION
 
- $Id: PhyloWS.pm 1660 2011-04-02 18:29:40Z rvos $
 
 =cut
 }
