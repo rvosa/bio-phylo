@@ -1233,36 +1233,59 @@ sub _semicolon {
     elsif ( uc $self->{'_previous'} eq 'CHARSTATELABELS' ) {
         my $matrix = $self->_find_last_seen_matrix;
         my @labels = @{ $self->{'_charstatelabels'} };
-        my ( @charlabels, @statelabels );
-        my $charnum = 1;
-        while (@labels) {
-            my $index = shift @labels;
-            if ( $index != $charnum ) {
-                throw 'API' => "Expecting character number $charnum, observed $index in CHARSTATELABELS";
-            }
-            push @charlabels, shift @labels;
-            my $slash = shift @labels;
-            if ( $slash ne '/' ) {
-                throw 'API' => "Expecting /, observed $slash in CHARSTATELABELS";
-            }
-            my @stateset;
-            while(@labels and $labels[0] ne ',') {
-                push @stateset, shift @labels;
-            }
-            push @statelabels, \@stateset;
-            if ( @labels ) {
-                if ( $labels[0] eq ',' ) {
-                    shift @labels;
+        if ( $matrix->get_type =~ m/continuous/i ) {
+            my ( @charlabels, @statelabels );
+            my $charnum = 1;
+            while (@labels) {
+                
+                # expecting an index at the beginning of the statement
+                my $index = shift @labels;
+                $index != $charnum && throw 'API' => "Expecting character number $charnum, observed $index in CHARSTATELABELS";
+                
+                # then the character label
+                push @charlabels, shift @labels;
+                
+                # then a comma
+                if ( @labels ) {
+                    $labels[0] eq ',' ? shift @labels : throw 'API' => "Expecting , observed $labels[0] in CHARSTATELABELS";
                 }
-                else {
-                    throw 'API' => "Expecting , observed $labels[0] in CHARSTATELABELS";
-                }
+                $charnum++;
             }
-            $charnum++;
+            $matrix->set_charlabels(\@charlabels);
+            $matrix->set_statelabels(\@statelabels);
+            $self->{'_charstatelabels'} = [];            
         }
-        $matrix->set_charlabels(\@charlabels);
-        $matrix->set_statelabels(\@statelabels);
-        $self->{'_charstatelabels'} = [];
+        else {
+            my ( @charlabels, @statelabels );
+            my $charnum = 1;
+            while (@labels) {
+                
+                # expecting an index at the beginning of the statement
+                my $index = shift @labels;
+                $index != $charnum && throw 'API' => "Expecting character number $charnum, observed $index in CHARSTATELABELS";
+                
+                # then the character label
+                push @charlabels, shift @labels;
+                
+                # then a forward slash
+                my $slash = shift @labels;
+                $slash ne '/' && throw 'API' => "Expecting /, observed $slash in CHARSTATELABELS";
+                
+                # then a list of state labels
+                my @stateset;
+                push @stateset, shift @labels while(@labels and $labels[0] ne ',');
+                push @statelabels, \@stateset;
+                
+                # then a comma
+                if ( @labels ) {
+                    $labels[0] eq ',' ? shift @labels : throw 'API' => "Expecting , observed $labels[0] in CHARSTATELABELS";
+                }
+                $charnum++;
+            }
+            $matrix->set_charlabels(\@charlabels);
+            $matrix->set_statelabels(\@statelabels);
+            $self->{'_charstatelabels'} = [];
+        }
     }
     
     # finalize taxon set
