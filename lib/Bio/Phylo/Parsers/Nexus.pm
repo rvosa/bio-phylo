@@ -47,6 +47,7 @@ my %defaults = (
     '_symbols'         => [],
     '_charlabels'      => [],
     '_statelabels'     => [],
+    '_charstatelabels' => [],
     '_tmpstatelabels'  => [],
     '_comments'        => [],
     '_treenames'       => [],
@@ -71,6 +72,7 @@ my %defaults = (
     'missing'          => \&_missing,
     'charlabels'       => \&_charlabels,
     'statelabels'      => \&_statelabels,
+    'charstatelabels'  => \&_charstatelabels,
     'symbols'          => \&_symbols,
     'items'            => \&_items,
     'matrix'           => \&_matrix,
@@ -765,6 +767,15 @@ sub _charlabels {
     }
 }
 
+sub _charstatelabels {
+    my $self = shift;
+    my $token = shift;
+    $self->_logger->debug($token);
+    if ( defined $token and uc $token ne 'CHARSTATELABELS' ) {
+        push @{ $self->{'_charstatelabels'} }, $token; 
+    }    
+}
+
 sub _statelabels {
     my $self  = shift;
     my $token = shift;
@@ -1216,6 +1227,42 @@ sub _semicolon {
             }
         }
         $self->{'_charset'} = {};        
+    }
+    
+    # finalize character state labels
+    elsif ( uc $self->{'_previous'} eq 'CHARSTATELABELS' ) {
+        my $matrix = $self->_find_last_seen_matrix;
+        my @labels = @{ $self->{'_charstatelabels'} };
+        my ( @charlabels, @statelabels );
+        my $charnum = 1;
+        while (@labels) {
+            my $index = shift @labels;
+            if ( $index != $charnum ) {
+                throw 'API' => "Expecting character number $charnum, observed $index in CHARSTATELABELS";
+            }
+            push @charlabels, shift @labels;
+            my $slash = shift @labels;
+            if ( $slash ne '/' ) {
+                throw 'API' => "Expecting /, observed $slash in CHARSTATELABELS";
+            }
+            my @stateset;
+            while(@labels and $labels[0] ne ',') {
+                push @stateset, shift @labels;
+            }
+            push @statelabels, \@stateset;
+            if ( @labels ) {
+                if ( $labels[0] eq ',' ) {
+                    shift @labels;
+                }
+                else {
+                    throw 'API' => "Expecting , observed $labels[0] in CHARSTATELABELS";
+                }
+            }
+            $charnum++;
+        }
+        $matrix->set_charlabels(\@charlabels);
+        $matrix->set_statelabels(\@statelabels);
+        $self->{'_charstatelabels'} = [];
     }
     
     # finalize taxon set

@@ -422,9 +422,17 @@ Sets argument character labels.
         {
             throw 'BadArgs' => "charlabels must be an array ref of scalars";
         }
+		
+		# there might be more labels than currently existing characters.
+		# here we add however more are needed
+		my $characters = $self->get_characters;
+		my $missing = scalar(@{$charlabels}) - scalar(@{$characters->get_entities});
+		for my $i ( 1 .. $missing ) {
+			$characters->insert($factory->create_character);
+		}
 
         # it's either a valid array ref, or nothing, i.e. a reset
-        my @characters = @{ $self->get_characters->get_entities };
+        my @characters = @{ $characters->get_entities };
         for my $i ( 0 .. $#{$charlabels} ) {
             $characters[$i]->set_name( $charlabels->[$i] );
         }
