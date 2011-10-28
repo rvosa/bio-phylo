@@ -1234,7 +1234,7 @@ sub _semicolon {
         my $matrix = $self->_find_last_seen_matrix;
         my @labels = @{ $self->{'_charstatelabels'} };
         if ( $matrix->get_type =~ m/continuous/i ) {
-            my ( @charlabels, @statelabels );
+            my @charlabels;
             my $charnum = 1;
             while (@labels) {
                 
@@ -1252,7 +1252,6 @@ sub _semicolon {
                 $charnum++;
             }
             $matrix->set_charlabels(\@charlabels);
-            $matrix->set_statelabels(\@statelabels);
             $self->{'_charstatelabels'} = [];            
         }
         else {
