@@ -1240,14 +1240,14 @@ sub _semicolon {
                 
                 # expecting an index at the beginning of the statement
                 my $index = shift @labels;
-                $index != $charnum && throw 'API' => "Expecting character number $charnum, observed $index in CHARSTATELABELS";
+                $index != $charnum && _bad_format( "Expecting character number $charnum, observed $index in CHARSTATELABELS" );
                 
                 # then the character label
                 push @charlabels, shift @labels;
                 
                 # then a comma
                 if ( @labels ) {
-                    $labels[0] eq ',' ? shift @labels : throw 'API' => "Expecting , observed $labels[0] in CHARSTATELABELS";
+                    $labels[0] eq ',' ? shift @labels : _bad_format( "Expecting , observed $labels[0] in CHARSTATELABELS" );
                 }
                 $charnum++;
             }
@@ -1261,14 +1261,14 @@ sub _semicolon {
                 
                 # expecting an index at the beginning of the statement
                 my $index = shift @labels;
-                $index != $charnum && throw 'API' => "Expecting character number $charnum, observed $index in CHARSTATELABELS";
+                $index != $charnum && _bad_format( "Expecting character number $charnum, observed $index in CHARSTATELABELS" );
                 
                 # then the character label
                 push @charlabels, shift @labels;
                 
                 # then a forward slash
                 my $slash = shift @labels;
-                $slash ne '/' && throw 'API' => "Expecting /, observed $slash in CHARSTATELABELS";
+                $slash ne '/' && _bad_format( "Expecting /, observed $slash in CHARSTATELABELS" );
                 
                 # then a list of state labels
                 my @stateset;
@@ -1277,7 +1277,7 @@ sub _semicolon {
                 
                 # then a comma
                 if ( @labels ) {
-                    $labels[0] eq ',' ? shift @labels : throw 'API' => "Expecting , observed $labels[0] in CHARSTATELABELS";
+                    $labels[0] eq ',' ? shift @labels : _bad_format( "Expecting , observed $labels[0] in CHARSTATELABELS" );
                 }
                 $charnum++;
             }
@@ -1311,7 +1311,7 @@ sub _semicolon {
                 $taxa->add_to_set($taxon,$set);
             }
             else {
-                throw 'API' => "No taxon at index $i";
+                _bad_format( "No taxon at index $i" );
             }
         }
         $self->{'_taxset'} = {};        
