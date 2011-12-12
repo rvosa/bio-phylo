@@ -36,7 +36,16 @@ Please report any bugs or feature requests to bug-bio-phylo@rt.cpan.org, or thro
  
 ACKNOWLEDGEMENTS
 
-The author would like to thank the BioPerl project for providing the community with a terrific toolkit that other software, such as this, can be built on (http://www.bioperl.org); Jason Caravas, Klaas Hartmann, Mark A. Jensen, Chase Miller and Aki Mimoto for their contributions (code and otherwise) to this project; and Arne Mooers from the FAB* lab (http://www.sfu.ca/~fabstar) for comments and requests. 
+The author would like to thank the BioPerl project for providing the community
+with a terrific toolkit that other software, such as this, can be built on
+(http://www.bioperl.org); Jason Caravas, Klaas Hartmann, Mark A. Jensen,
+Chase Miller and Aki Mimoto for their contributions (code and otherwise) to this
+project; and Arne Mooers from the FAB* lab (http://www.sfu.ca/~fabstar) for
+comments and requests.
+
+The research leading to these results has received funding from the [European
+Community's] Seventh Framework Programme ([FP7/2007-2013] under grant agreement
+n¡ [237046].
 
 SEE ALSO
 
