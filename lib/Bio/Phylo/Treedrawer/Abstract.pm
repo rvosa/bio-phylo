@@ -112,6 +112,11 @@ sub _draw_line {
     throw 'NotImplemented' => ref($self) . " can't draw line";
 }
 
+sub _draw_arc {
+    my $self = shift;
+    throw 'NotImplemented' => ref($self) . " can't draw arc";    
+}
+
 sub _draw_curve {
     my $self = shift;
     throw 'NotImplemented' => ref($self) . " can't draw curve";
