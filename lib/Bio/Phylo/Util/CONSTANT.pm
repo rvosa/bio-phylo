@@ -53,6 +53,7 @@ BEGIN {
       _NS_TOL_
       _NS_CDAO_
       _NEXML_VERSION_
+      _PI_
     );
     %EXPORT_TAGS = (
         'all'         => [@EXPORT_OK],
@@ -164,6 +165,9 @@ sub _SET_ ()           { 26 }
 
 # for PhyloWS
 sub _HTTP_SC_SEE_ALSO_ () { '303 See Other' }
+
+# for tree drawing
+sub _PI_ () { 4 * atan2(1,1) }
 
 # this is a drop in replacement for Scalar::Util's function
 my $looks_like_number;
