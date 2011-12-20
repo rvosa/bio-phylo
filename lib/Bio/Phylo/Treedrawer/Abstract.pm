@@ -50,6 +50,8 @@ sub _draw {
     $self->_tree->visit_depth_first(
         '-post' => sub {
             my $node        = shift;
+            my $x           = $node->get_x;
+            my $y           = $node->get_y;            
             my $is_terminal = $node->is_terminal;
             my $r = $is_terminal ? $td->get_tip_radius : $td->get_node_radius;
             $self->_draw_branch($node);
@@ -62,18 +64,21 @@ sub _draw {
                     $name =~ s/^'(.*)'$/$1/;
                     $name =~ s/^"(.*)"$/$1/;
                     $self->_draw_text(
-                        '-x' =>
-                          int( $node->get_x + $td->get_text_horiz_offset ),
-                        '-y' => int( $node->get_y + $td->get_text_vert_offset ),
-                        '-text' => $name,
-                        'class' => $is_terminal ? 'taxon_text' : 'node_text',
+                        '-x'          => int( $x + $td->get_text_horiz_offset ),
+                        '-y'          => int( $y + $td->get_text_vert_offset ),
+                        '-text'       => $name,
+                        '-rotation'   => [ $node->get_rotation, $x, $y ],
+                        '-font_face'  => $node->get_font_face,
+                        '-font_size'  => $node->get_font_size,
+                        '-font_style' => $node->get_font_style,
+                        'class'       => $is_terminal ? 'taxon_text' : 'node_text',
                     );
                 }
             }
             $self->_draw_circle(
                 '-radius' => $r,
-                '-x'      => $node->get_x,
-                '-y'      => $node->get_y,
+                '-x'      => $x,
+                '-y'      => $y,
                 '-width'  => $node->get_branch_width,
                 '-stroke' => $node->get_branch_color,
                 '-fill'   => $node->get_node_colour,
@@ -342,12 +347,13 @@ sub _draw_radial_branch {
         $x2 += $center_x;
         $y2 += $center_y;
         $self->_draw_line(
-            '-x1'    => int $x1,
-            '-y1'    => int $y1,
-            '-x2'    => int $x2,
-            '-y2'    => int $y2,
-            '-width' => $self->_drawer->get_branch_width($node),
-            '-color' => $node->get_branch_color,
+            '-x1'      => int $x1,
+            '-y1'      => int $y1,
+            '-x2'      => int $x2,
+            '-y2'      => int $y2,
+            '-width'   => $self->_drawer->get_branch_width($node),
+            '-color'   => $node->get_branch_color,
+            '-linecap' => 'square'
         );
                     
         # then the arc
@@ -357,13 +363,14 @@ sub _draw_radial_branch {
             ( $y2, $y3 ) = ( $y3, $y2 );
         }
         $self->_draw_arc(
-            '-x1'     => int $x2,
-            '-y1'     => int $y2,
-            '-x2'     => int $x3,
-            '-y2'     => int $y3,
-            '-radius' => int $parent_radius,
-            '-width'  => $self->_drawer->get_branch_width($node),
-            '-color'  => $node->get_branch_color,            
+            '-x1'      => int $x2,
+            '-y1'      => int $y2,
+            '-x2'      => int $x3,
+            '-y2'      => int $y3,
+            '-radius'  => int $parent_radius,
+            '-width'   => $self->_drawer->get_branch_width($node),
+            '-color'   => $node->get_branch_color,
+            '-linecap' => 'square'
         )
     }
 }

@@ -1001,9 +1001,14 @@ sub _compute_unrooted_coordinates {
     my $center_x = $self->get_width / 2;
     my $center_y = $self->get_height / 2;
     
+    my $horiz_offset = $self->get_text_horiz_offset;
+    my $text_width   = $self->get_text_width;
+    my $padding      = $self->get_padding;
+    my $range = $center_x - ( $horiz_offset + $text_width + $padding );
+    
     # cladogram branch length
-    $self->_set_scalex( $center_x / $total_depth );
-    $self->_set_scaley( $center_y / $total_depth );
+    $self->_set_scalex( $range / $total_depth );
+    $self->_set_scaley( $range / $total_depth );
     
     for my $n ( @{ $tre->get_entities } ) {
         if ( $n->is_root ) {
