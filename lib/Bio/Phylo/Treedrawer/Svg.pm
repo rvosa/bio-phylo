@@ -128,8 +128,9 @@ sub _draw_triangle {
 # -text => $text,
 #
 # optional:
-# -api  => $api,
-# -url  => $url,
+# -api      => $api,
+# -url      => $url,
+# -rotation => [ $rotation, $x, $y ]
 
 =end comment
 
@@ -139,13 +140,31 @@ sub _draw_text {
     my $self = shift;
     my %args = @_;
     my ( $x, $y, $text ) = @args{qw(-x -y -text)};
-    my $api = $args{'-api'} || $self->_api;
-    my $url = $args{'-url'};
-    delete @args{qw(-x -y -text -api -url)};
-    if ($url) {
+    my $url      = $args{'-url'};
+	my $rotation = $args{'-rotation'} || [];
+    my $api      = $args{'-api'} || $self->_api;	
+    delete @args{qw(-x -y -text -api -url -rotation)};
+    if ( $url ) {
         $api = $api->tag( 'a', 'xlink:href' => $url );
     }
-    return $api->tag( 'text', 'x' => $x, 'y' => $y, %args )->cdata($text);
+	my @style;
+	if ( my $face = $args{'-font_face'} ) {
+		push @style, "font-family: ${face}";
+	}
+	if ( my $size = $args{'-font_size'} ) {
+		push @style, "font-size: ${size}"
+	}
+	if ( my $style = $args{'-font_style'} ) {
+		push @style, "font-style: ${style}";
+	}
+    return $api->tag(
+		'text',
+		'x'         => $x,
+		'y'         => $y,
+		'style'     => join('; ',@style),
+		'transform' => "rotate(@${rotation})",
+		%args
+	)->cdata($text);
 }
 
 =begin comment
@@ -235,8 +254,8 @@ sub _draw_arc {
     
     # process method arguments
     my %args = @_;
-    my @keys = qw(-x1 -y1 -x2 -y2 -radius);
-    my ( $x1, $y1, $x2, $y2, $radius, $width, $stroke ) = @args{@keys};
+    my @keys = qw(-x1 -y1 -x2 -y2 -radius -width -color -linecap);
+    my ($x1, $y1, $x2, $y2, $radius, $width, $stroke, $linecap) = @args{@keys};
 	
 	# M = "moveto", i.e. the starting coordinates
 	# A = "elliptical Arc", The size and orientation of the ellipse are
@@ -250,9 +269,10 @@ sub _draw_arc {
     $self->_api->path(
         'd' => "M $x1 $y1 A $radius $radius 0 0 1 $x2 $y2",		
         'style' => {
-			'fill'         => 'none',			
-			'stroke'       => $stroke || 'black',
-			'stroke-width' => $width || 1,			
+			'fill'           => 'none',			
+			'stroke'         => $stroke  || 'black',
+			'stroke-width'   => $width   || 1,
+			'stroke-linecap' => $linecap || 'butt',
 		},
     );
 }
@@ -303,8 +323,8 @@ sub _draw_multi {
 sub _draw_line {
     my $self = shift;
     my %args = @_;
-    my @keys = qw(-x1  -y1  -x2  -y2  -width  -color );
-    my ( $x1, $y1, $x2, $y2, $width, $color ) = @args{@keys};
+    my @keys = qw( -x1  -y1  -x2  -y2  -width  -color -linecap );
+    my ( $x1, $y1, $x2, $y2, $width, $color, $linecap ) = @args{@keys};
     delete @args{@keys};
     return $self->_api->line(
         'x1'    => $x1,
@@ -312,8 +332,9 @@ sub _draw_line {
         'x2'    => $x2,
         'y2'    => $y2,
         'style' => {
-            'stroke'       => $color || 'black',
-            'stroke-width' => $width || 1,
+            'stroke'         => $color   || 'black',
+            'stroke-width'   => $width   || 1,
+			'stroke-linecap' => $linecap || 'butt',
         },
         %args
     );
