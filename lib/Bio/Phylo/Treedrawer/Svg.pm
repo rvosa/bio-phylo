@@ -1,7 +1,7 @@
 package Bio::Phylo::Treedrawer::Svg;
 use strict;
 use base 'Bio::Phylo::Treedrawer::Abstract';
-use Bio::Phylo::Util::CONSTANT 'looks_like_hash';
+use Bio::Phylo::Util::CONSTANT qw'looks_like_hash _PI_';
 use Bio::Phylo::Util::Exceptions 'throw';
 use Bio::Phylo::Util::Dependency 'SVG';
 use Bio::Phylo::Util::Logger;
@@ -11,7 +11,7 @@ SVG->import(
     '-indent'    => '    ',
 );
 my $logger = Bio::Phylo::Util::Logger->new;
-my $PI     = 4 * atan2(1, 1);
+my $PI     = _PI_;
 my %colors;
 
 =head1 NAME
