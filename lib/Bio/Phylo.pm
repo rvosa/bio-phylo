@@ -520,8 +520,8 @@ Gets generic hashref or hash value(s).
            for which the associated value is returned.
            Without arguments, a reference to the whole
            hash is returned.
- Returns : A string or hash reference.
- Args    : None
+ Returns : A value or an array reference of values
+ Args    : A key (string) or an array reference of keys
 
 =cut
 
@@ -539,9 +539,15 @@ Gets generic hashref or hash value(s).
         # have an argument
         if ( defined $key ) {
 
-            # notify user
-            $logger->debug("getting value for key '$key'");
-            return $generic{$id}->{$key};
+			if ( ref($key) eq 'ARRAY' ) {
+				my @result = @generic{@$key};
+				return \@result;
+			}
+			else {
+				# notify user
+				$logger->debug("getting value for key '$key'");
+				return $generic{$id}->{$key};
+			}
         }
 
         # no argument, wants whole hash
