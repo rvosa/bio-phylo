@@ -296,6 +296,12 @@ sub _draw_branch {
         elsif ( $shape =~ m/DIAG/i ) {
             $drawer = '_draw_line';
         }
+        elsif ( $shape =~ m/UNROOTED/i ) {
+            $drawer = '_draw_line';
+        }
+        elsif ( $shape =~ m/RADIAL/i ) {
+            return $self->_draw_radial_branch($node);
+        }
         return $self->$drawer(
             '-x1'    => $x1,
             '-y1'    => $y1,
@@ -304,6 +310,61 @@ sub _draw_branch {
             '-width' => $width,
             '-color' => $node->get_branch_color
         );
+    }
+}
+
+=begin comment
+
+ Type    : Internal method.
+ Title   : _draw_radial_branch
+ Usage   : $svg->_draw_radial_branch($node);
+ Function: Draws radial internode between $node and $node->get_parent, if any
+ Returns :
+ Args    : 
+
+=end comment
+
+=cut
+
+sub _draw_radial_branch {
+    my ( $self, $node ) = @_;
+    
+    if ( my $parent = $node->get_parent ) {
+        my $td = $self->_drawer;
+        my $center_x = $td->get_width / 2;
+        my $center_y = $td->get_height / 2;
+    
+        # first the straight piece up to the arc
+        my ( $x1, $y1 ) = ( $node->get_x, $node->get_y );
+        my $rotation = $node->get_rotation;        
+        my $parent_radius = $parent->get_generic('radius');
+        my ( $x2, $y2 ) = $td->polar_to_cartesian( $parent_radius, $rotation );
+        $x2 += $center_x;
+        $y2 += $center_y;
+        $self->_draw_line(
+            '-x1'    => int $x1,
+            '-y1'    => int $y1,
+            '-x2'    => int $x2,
+            '-y2'    => int $y2,
+            '-width' => $self->_drawer->get_branch_width($node),
+            '-color' => $node->get_branch_color,
+        );
+                    
+        # then the arc
+        my ( $x3, $y3 ) = ( $parent->get_x, $parent->get_y );
+        if ( $parent->get_rotation < $rotation ) {
+            ( $x2, $x3 ) = ( $x3, $x2 );
+            ( $y2, $y3 ) = ( $y3, $y2 );
+        }
+        $self->_draw_arc(
+            '-x1'     => int $x2,
+            '-y1'     => int $y2,
+            '-x2'     => int $x3,
+            '-y2'     => int $y3,
+            '-radius' => int $parent_radius,
+            '-width'  => $self->_drawer->get_branch_width($node),
+            '-color'  => $node->get_branch_color,            
+        )
     }
 }
 

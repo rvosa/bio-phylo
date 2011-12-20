@@ -222,6 +222,47 @@ sub _draw_curve {
 # -x2 => $x2,
 # -y1 => $y1,
 # -y2 => $y2,
+# -radius => $radius
+# -width => $width,
+# -color => $color
+
+=end comment
+
+=cut
+
+sub _draw_arc {
+    my $self = shift;
+    
+    # process method arguments
+    my %args = @_;
+    my @keys = qw(-x1 -y1 -x2 -y2 -radius);
+    my ( $x1, $y1, $x2, $y2, $radius, $width, $stroke ) = @args{@keys};
+	
+	# M = "moveto", i.e. the starting coordinates
+	# A = "elliptical Arc", The size and orientation of the ellipse are
+	#      defined by two radii ($radius,$radius) and an x-axis-rotation
+	#      (0.000), which indicates how the ellipse as a whole is rotated
+	#      relative to the current coordinate system. The center of the
+	#      ellipse is calculated automatically to satisfy the constraints
+	#      imposed by the other parameters. large_arc_flag (0) and
+	#      sweep-flag (1) contribute to the automatic calculations and
+	#      help determine how the arc is drawn
+    $self->_api->path(
+        'd' => "M $x1 $y1 A $radius $radius 0 0 1 $x2 $y2",		
+        'style' => {
+			'fill'         => 'none',			
+			'stroke'       => $stroke || 'black',
+			'stroke-width' => $width || 1,			
+		},
+    );
+}
+
+=begin comment
+
+# -x1 => $x1,
+# -x2 => $x2,
+# -y1 => $y1,
+# -y2 => $y2,
 # -width => $width,
 # -color => $color
 

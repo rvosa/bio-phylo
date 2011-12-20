@@ -12,7 +12,7 @@ use base 'Bio::Phylo::Forest::Node';
             %branch_shape,      %branch_width,    %branch_style,
             %collapsed,         %collapsed_width, %font_face,
             %font_size,         %font_style,      
-            %text_horiz_offset, %text_vert_offset,
+            %text_horiz_offset, %text_vert_offset, %rotation
         )
     );
 
@@ -391,6 +391,24 @@ Sets collapsed clade width.
         my ( $self, $text_vert_offset ) = @_;
         my $id = $self->get_id;
         $text_vert_offset{$id} = $text_vert_offset;
+        return $self;
+    }
+
+=item set_rotation()
+
+ Type    : Mutator
+ Title   : set_rotation
+ Usage   : $node->set_rotation($rotation);
+ Function: Sets rotation
+ Returns : $self
+ Args    : rotation
+
+=cut
+
+    sub set_rotation {
+        my ( $self, $rotation ) = @_;
+        my $id = $self->get_id;
+        $rotation{$id} = $rotation;
         return $self;
     }
 
@@ -784,6 +802,23 @@ Gets collapsed clade width.
         my $self = shift;
         my $id   = $self->get_id;
         return $text_vert_offset{$id};
+    }
+
+=item get_rotation()
+
+ Type    : Accessor
+ Title   : get_rotation
+ Usage   : my $rotation = $node->get_rotation();
+ Function: Gets rotation
+ Returns : rotation
+ Args    : NONE
+
+=cut
+
+    sub get_rotation {
+        my $self = shift;
+        my $id   = $self->get_id;
+        return $rotation{$id};
     }
 
 =back

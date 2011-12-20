@@ -4,6 +4,8 @@ use Bio::Phylo::Util::Logger;
 use Bio::Phylo::Forest::DrawTree;
 use Bio::Phylo::Util::Exceptions 'throw';
 use Bio::Phylo::Util::CONSTANT qw'_TREE_ /looks_like/';
+use constant PI => 4 * atan2(1, 1);
+
 my @fields = qw(
   WIDTH
   BRANCH_WIDTH
@@ -23,6 +25,7 @@ my @fields = qw(
   FORMAT
   COLLAPSED_CLADE_WIDTH
 );
+
 my $tips   = 0.000_000_000_000_01;
 my $logger = Bio::Phylo::Util::Logger->new;
 
@@ -42,7 +45,7 @@ Bio::Phylo::Treedrawer - Visualizer of tree shapes
     -width  => 800,
     -height => 600,
     -shape  => 'CURVY', # curvogram
-    -mode   => 'PHYLO', # cladogram
+    -mode   => 'PHYLO', # phylogram
     -format => 'SVG'
  );
 
@@ -260,15 +263,15 @@ Sets tree drawing shape.
  Title   : set_shape
  Usage   : $treedrawer->set_shape('rect');
  Function: Sets the tree shape, i.e. 
-           rectangular, diagonal or curvy.
+           rectangular, diagonal, curvy or radial.
  Returns : Invocant.
- Args    : String, [rect|diag|curvy]
+ Args    : String, [rect|diag|curvy|radial]
 
 =cut
 
 sub set_shape {
     my ( $self, $shape ) = @_;
-    if ( $shape =~ m/^(?:rect|diag|curvy)/i ) {
+    if ( $shape =~ m/^(?:rect|diag|curvy|radial|unrooted)/i ) {
         $self->{'SHAPE'} = uc $shape;
     }
     else {
@@ -587,6 +590,34 @@ Gets image format.
 
 sub get_format { shift->{'FORMAT'} }
 
+=item get_format_mime()
+
+Gets image format as MIME type.
+
+ Type    : Accessor
+ Title   : get_format_mime
+ Usage   : print "Content-type: ", $treedrawer->get_format_mime, "\n\n";
+ Function: Gets the image format as MIME type.
+ Returns :
+ Args    : None.
+
+=cut
+
+sub get_format_mime {
+	my $self = shift;
+	my %mapping = (
+		'canvas'     => 'text/html',
+		'gif'        => 'image/gif',
+		'jpeg'       => 'image/jpeg',
+		'pdf'        => 'application/pdf',
+		'png'        => 'image/png',
+		'processing' => 'text/plain',
+		'svg'        => 'image/svg+xml',
+		'swf'        => 'application/x-shockwave-flash',
+	);
+	return $mapping{ lc $self->get_format };
+}
+
 =item get_width()
 
 Gets image width.
@@ -640,7 +671,7 @@ Gets tree drawing shape.
  Title   : get_shape
  Usage   : my $shape = $treedrawer->get_shape;
  Function: Gets the tree shape, i.e. rectangular, 
-           diagonal or curvy.
+           diagonal, curvy or radial.
  Returns :
  Args    : None.
 
@@ -903,10 +934,94 @@ sub draw {
     }
     my $root = $self->get_tree->get_root;
 
-    #Reset the stored data in the tree
+    # Reset the stored data in the tree
     $self->_reset_internal($root);
-    $self->_compute_rooted_coordinates;
+    
+    if ( $self->get_shape =~ m/(?:radial|unrooted)/i ) {
+        $self->_compute_unrooted_coordinates;
+    }
+    else {
+        $self->_compute_rooted_coordinates;
+    }
     return $self->render;
+}
+
+sub polar_to_cartesian {
+    my ( $self, $radius, $angleInDegrees ) = @_;
+    my $angleInRadians = $angleInDegrees * PI / 180.0;
+    my $x = $radius * cos($angleInRadians);
+    my $y = $radius * sin($angleInRadians);
+    return $x, $y;
+}
+
+sub _compute_unrooted_coordinates {
+    my $self = shift;
+    my $tre  = $self->get_tree;
+    
+    # compute unscaled rotation, depth and tip count
+    my ( %unscaled_rotation, %depth );
+    my ( $total_tips, $total_depth ) = ( 0, 0 );
+    
+    $tre->visit_depth_first(
+        # process tips first
+        '-no_daughter' => sub {	
+            my $node = shift;
+            my $id = $node->get_id;
+            ( $unscaled_rotation{$id}, $depth{$id} ) = ( $total_tips, 0 );
+            $total_tips++;
+        },
+        
+        # then process internals
+        '-post_daughter' => sub {
+            my $node = shift;
+            my $id   = $node->get_id;		
+            
+            # get deepest child and average rotation
+            my @child = @{ $node->get_children };
+            my ( $unscaled_rotation, $depth ) = ( 0, 0 );		
+            for my $c ( @child ) {
+                my $cid = $c->get_id;
+                my $c_depth = $depth{$cid};
+                $unscaled_rotation += $unscaled_rotation{$cid};
+                $depth = $c_depth if $c_depth > $depth;
+            }
+            $depth++;
+            $unscaled_rotation /= scalar(@child);
+            
+            # check to see if current depth is overal deepest
+            $total_depth = $depth if $depth > $total_depth;
+            
+            # store results
+            ( $unscaled_rotation{$id}, $depth{$id} ) =
+            ( $unscaled_rotation,      $depth );
+        },        
+    );
+
+    # root, exactly centered on the canvas
+    my $center_x = $self->get_width / 2;
+    my $center_y = $self->get_height / 2;
+    
+    # cladogram branch length
+    $self->_set_scalex( $center_x / $total_depth );
+    $self->_set_scaley( $center_y / $total_depth );
+    
+    for my $n ( @{ $tre->get_entities } ) {
+        if ( $n->is_root ) {
+            $n->set_x( $center_x );
+            $n->set_y( $center_y );
+        }
+        else {
+            my $id = $n->get_id;
+            my ( $unscaled_rotation, $depth ) = ( $unscaled_rotation{$id}, $depth{$id} );
+            my $radius    = $self->_get_scalex * ( $depth - $total_depth ) * -1;
+            my $rotation  = $unscaled_rotation / $total_tips * 360;
+            my ( $x, $y ) = $self->polar_to_cartesian( $radius, $rotation );
+            $n->set_x( $x + $center_x );
+            $n->set_y( $y + $center_y );
+            $n->set_rotation( $rotation );
+            $n->set_generic( 'radius' => $radius );
+        }
+    }    
 }
 
 sub _compute_rooted_coordinates {
@@ -914,11 +1029,13 @@ sub _compute_rooted_coordinates {
     my $tree    = $td->get_tree;
     my $phylo   = $td->get_mode =~ /^p/i ? 1 : 0;    # phylogram or cladogram
     my $padding = $td->get_padding;
-    my $width  = $td->get_width - ( $td->get_text_width + ( $padding * 2 ) );
-    my $height = $td->get_height - ( $padding * 2 );
-    my $cladew = $td->get_collapsed_clade_width;
+    my $width   = $td->get_width - ( $td->get_text_width + ( $padding * 2 ) );
+    my $height  = $td->get_height - ( $padding * 2 );
+    my $cladew  = $td->get_collapsed_clade_width;
     my ( $tip_counter, $tallest_tip ) = ( 0, 0 );
     $tree->visit_depth_first(
+        
+        # preprocess each node
         '-pre' => sub {
             my $node = shift;
             if ( my $parent = $node->get_parent ) {
@@ -930,6 +1047,8 @@ sub _compute_rooted_coordinates {
                 $node->set_x(0);    # root
             }
         },
+        
+        # process this only on tips
         '-no_daughter' => sub {
             my $node = shift;
             if ( $node->get_collapsed ) {
@@ -943,6 +1062,8 @@ sub _compute_rooted_coordinates {
             my $x = $node->get_x;
             $tallest_tip = $x if $x > $tallest_tip;
         },
+        
+        # process this only on internal nodes
         '-post_daughter' => sub {
             my $node = shift;
             my ( $child_count, $child_y ) = ( 0, 0 );
