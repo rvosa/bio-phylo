@@ -3,8 +3,7 @@ use strict;
 use Bio::Phylo::Util::Logger;
 use Bio::Phylo::Forest::DrawTree;
 use Bio::Phylo::Util::Exceptions 'throw';
-use Bio::Phylo::Util::CONSTANT qw'_TREE_ /looks_like/';
-use constant PI => 4 * atan2(1, 1);
+use Bio::Phylo::Util::CONSTANT qw'_TREE_ /looks_like/ _PI_';
 
 my @fields = qw(
   WIDTH
@@ -26,6 +25,7 @@ my @fields = qw(
   COLLAPSED_CLADE_WIDTH
 );
 
+my $PI     = _PI_;
 my $tips   = 0.000_000_000_000_01;
 my $logger = Bio::Phylo::Util::Logger->new;
 
@@ -948,10 +948,17 @@ sub draw {
 
 sub polar_to_cartesian {
     my ( $self, $radius, $angleInDegrees ) = @_;
-    my $angleInRadians = $angleInDegrees * PI / 180.0;
+    my $angleInRadians = $angleInDegrees * $PI / 180.0;
     my $x = $radius * cos($angleInRadians);
     my $y = $radius * sin($angleInRadians);
     return $x, $y;
+}
+
+sub cartesian_to_polar {
+    my ( $self, $x, $y ) = @_;
+    my $angleInDegrees = atan2( $y, $x ) / $PI * 180;
+    my $radius = sqrt( $y ** 2 + $x ** 2 );
+    return $radius, $angleInDegrees;
 }
 
 sub _compute_unrooted_coordinates {
