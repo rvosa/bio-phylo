@@ -11,7 +11,7 @@ SVG->import(
     '-indent'    => '    ',
 );
 my $logger = Bio::Phylo::Util::Logger->new;
-my $PI     = '3.14159265358979323846';
+my $PI     = 4 * atan2(1, 1);
 my %colors;
 
 =head1 NAME
