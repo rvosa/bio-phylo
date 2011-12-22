@@ -2,13 +2,15 @@ package Bio::Phylo::Treedrawer::Png;
 use strict;
 use base 'Bio::Phylo::Treedrawer::Abstract';
 use Bio::Phylo::Util::Exceptions 'throw';
-use Bio::Phylo::Util::CONSTANT 'looks_like_hash';
+use Bio::Phylo::Util::CONSTANT qw'looks_like_hash _PI_';
 use Bio::Phylo::Util::Dependency qw'GD::Simple GD::Polyline GD::Polygon GD';
 use Bio::Phylo::Util::Logger;
-my $logger = Bio::Phylo::Util::Logger->new;
-my $PI     = '3.14159265358979323846';
-my %colors;
+
+my $logger   = Bio::Phylo::Util::Logger->new;
+my $PI       = _PI_;
 my $whiteHex = 'FFFFFF';
+my $blackHex = '000000';
+my %colors;
 
 =head1 NAME
 
@@ -47,18 +49,42 @@ sub _hex2rgb ($) {
     return $r, $g, $b;
 }
 
+sub _make_color {
+    my ( $self, $hex ) = @_;
+    $hex = uc $hex;
+    if ( exists $colors{$hex} ) {
+        return $colors{$hex};
+    }
+    if ( not $hex ) {
+        if ( not $colors{$blackHex} ) {
+            $colors{$blackHex} = $self->_api->colorAllocate( _hex2rgb $blackHex );
+        }
+        return $colors{$blackHex};
+    }
+    my $colorObj = $self->_api->colorAllocate( _hex2rgb $hex );
+    $colors{$hex} = $colorObj;
+    return $colorObj;
+}
+
 sub _new {
     my $class = shift;
     my %opt   = looks_like_hash @_;
-    my $img   = GD::Simple->new(
-        $opt{'-drawer'}->get_width,
-        $opt{'-drawer'}->get_height,
+    
+    # instantiate object
+    my $self = $class->SUPER::_new(
+        %opt,
+        '-api' => GD::Image->new(
+            $opt{'-drawer'}->get_width,
+            $opt{'-drawer'}->get_height,
+        )
     );
-    my $white = $img->colorAllocate( 255, 255, 255 );
-    $img->transparent($white);
-    $img->interlaced('true');
-    my $self = $class->SUPER::_new( %opt, '-api' => $img );
-    return bless $self, $class;
+    bless $self, $class;
+    
+    # set background color
+    $self->_api->fill( 0,0,$self->_make_color( $whiteHex ) );
+    $self->_api->interlaced('true');
+    
+    return $self;    
 }
 
 =begin comment
@@ -93,7 +119,7 @@ sub _draw_curve {
     my $self = shift;
     my %args = @_;
     my @keys = qw(-x1 -y1 -x2 -y2 -width -color -api);
-    my ( $x1, $y1, $x3, $y3, $linewidth, $color, $api ) = @args{@keys};
+    my ( $x1, $y1, $x3, $y3, $linewidth, $color, $api ) = @args{@keys};        
     my ( $x2, $y2 ) = ( $x1, $y3 );
     my $poly = GD::Polyline->new();
     my $img = $api || $self->_api;
@@ -102,7 +128,54 @@ sub _draw_curve {
     $poly->addPt( $x1, ( $y1 + $y3 ) / 2 );
     $poly->addPt( ( $x1 + $x3 ) / 2, $y3 );
     $poly->addPt( $x3, $y3 );
-    $img->polydraw( $poly->toSpline(), $img->colorAllocate( _hex2rgb $color) );
+    $img->polydraw( $poly->toSpline(), $self->_make_color( $color ) );
+}
+
+=begin comment
+
+# -x1 => $x1,
+# -x2 => $x2,
+# -y1 => $y1,
+# -y2 => $y2,
+# -width => $width,
+# -color => $color
+
+=end comment
+
+=cut
+
+sub _draw_arc {    
+    my $self = shift;
+    
+    # process arguments
+    my %args = @_;
+    my @keys = qw(-x1 -y1 -x2 -y2 -radius -width -color -api);
+    my ($x1,$y1,$x2,$y2,$radius,$linewidth,$linecolor,$api) = @args{@keys};
+
+    # get center of arc
+    my $drawer = $self->_drawer;
+    my ( $cx, $cy ) = ( $drawer->get_width / 2, $drawer->get_height / 2 );
+    $logger->debug("cx: $cx cy: $cy");
+    
+    # get width and height (are equal for arcs)
+    my ( $width, $height );
+    $width = $height = $radius * 2;
+    $logger->debug("radius: $radius");
+    
+    # change line thickness
+    my $img = $api || $self->_api;
+    $img->setThickness( $linewidth || 1 );
+    
+    # compute start and end
+    my ( $r1, $start ) = $drawer->cartesian_to_polar( $x1 - $cx, $y1 - $cy );
+    my ( $r2, $end )   = $drawer->cartesian_to_polar( $x2 - $cx, $y2 - $cy );
+    $start += 360 if $start < 0;
+    $end   += 360 if $end < 0;
+    $logger->debug("start: $start");
+    $logger->debug("end: $end");
+    
+    # draw
+    $img->arc( $cx, $cy, $width, $height, $start, $end, $self->_make_color( $linecolor )  );
 }
 
 =begin comment
@@ -138,7 +211,7 @@ sub _draw_triangle {
     }
     my $img = $api || $self->_api;
 
-    # create polygone
+    # create polygon
     my $poly = GD::Polygon->new();
     $poly->addPt( $x1, $y1 );
     $poly->addPt( $x2, $y2 );
@@ -149,10 +222,10 @@ sub _draw_triangle {
     $img->setThickness( $width || 1 );
 
     # create stroke color
-    my $strokeColorObj = $img->colorAllocate( _hex2rgb $stroke);
+    my $strokeColorObj = $self->_make_color( $stroke || $blackHex );
 
     # create fill color
-    my $fillColorObj = $img->colorAllocate( _hex2rgb( $fill || $whiteHex ) );
+    my $fillColorObj = $self->_make_color( $fill || $whiteHex );
 
     # draw polygon
     $img->polydraw( $poly, $strokeColorObj );
@@ -182,13 +255,11 @@ sub _draw_line {
     $logger->debug("drawing line");
     my $self = shift;
     my %args = @_;
-    my @keys = qw(-x1 -y1 -x2 -y2 -width -color);
-    my ( $x1, $y1, $x2, $y2, $width, $color ) = @args{@keys};
-    my $img            = $self->_api;
-    my $strokeColorObj = $img->colorAllocate( _hex2rgb $color);
+    my @keys = qw(-x1 -y1 -x2 -y2 -width -color -api);
+    my ( $x1, $y1, $x2, $y2, $width, $color, $api ) = @args{@keys};
+    my $img = $api || $self->_api;
     $img->setThickness( $width || 1 );
-    $img->moveTo( $x1, $y1 );
-    $img->lineTo( $x2, $y2 );
+    $img->line( $x1, $y1, $x2, $y2, $self->_make_color( $color )  );
 }
 
 =begin comment
@@ -208,16 +279,16 @@ sub _draw_multi {
     $logger->debug("drawing multi line");
     my $self = shift;
     my %args = @_;
-    my @keys = qw(-x1 -y1 -x2 -y2 -width -color);
-    my ( $x1, $y1, $x3, $y3, $linewidth, $color ) = @args{@keys};
+    my @keys = qw(-x1 -y1 -x2 -y2 -width -color -api);
+    my ( $x1, $y1, $x3, $y3, $linewidth, $color, $api ) = @args{@keys};
     my ( $x2, $y2 ) = ( $x1, $y3 );
+    my $img = $api || $self->_api;
     my $poly = GD::Polyline->new();
     $poly->addPt( $x1, $y1 );
     $poly->addPt( $x2, $y2 );
     $poly->addPt( $x3, $y3 );
-    $self->_api->setThickness( $linewidth || 1 );
-    my $colorObj = $self->_api->colorAllocate( _hex2rgb $color);
-    $self->_api->polydraw( $poly, $colorObj );
+    $img->setThickness( $linewidth || 1 );
+    $img->polydraw( $poly, $self->_make_color( $color ) );
 }
 
 =begin comment
@@ -238,13 +309,41 @@ sub _draw_text {
     $logger->debug("drawing text");
     my $self = shift;
     my %args = @_;
-    my ( $x, $y, $text, $url, $size ) = @args{qw(-x -y -text -url -size)};
+    my @keys = qw(-x -y -text -url -size -api -rotation);
+    my ( $x, $y, $text, $url, $size, $api, $rotation ) = @args{@keys};
     if ($url) {
         $logger->warn( ref($self) . " can't embed links" );
     }
-    $self->_api->moveTo( $x, $y );
-    $self->_api->fontsize( $size || 12 );
-    $self->_api->string($text);
+    
+    # to place the text, we need to calculate where the vertical and horizontal
+    # offsets end up given the rotation. We compute these offsets by taking the
+    # difference between the provided $x,$y coordinates (which include the
+    # offsets) and those in $rotation->[1],$rotation->[2], which normally is
+    # the location of the terminal node next to which the text is placed and
+    # around which it is rotated.
+    my $radius_x = $x - $rotation->[1];
+    my $radius_y = $y - $rotation->[2];
+    
+    # for the vertical offset we need to add 90 degrees
+    my $rotation1 = $rotation->[0] + 90;
+    $rotation1 -= 360 if $rotation1 > 360;
+    my ( $x1, $y1 ) = $self->_drawer->polar_to_cartesian( $radius_x, $rotation->[0] );
+    my ( $x2, $y2 ) = $self->_drawer->polar_to_cartesian( $radius_y, $rotation1 );
+    
+    # rotations in GD are counter-clockwise, so need to be "inverted"
+    my $gdrotation = ( $rotation->[0] - 360 ) * - 1;
+    $gdrotation -= 360 if $gdrotation > 360;
+    
+    my $img = $api || $self->_api;
+    $img->stringFT(
+        $self->_make_color($blackHex),
+        '/System/Library/Fonts/Thonburi.ttf',
+        $size || 12,
+        $gdrotation / 180 * _PI_,
+        $rotation->[1] + $x1 + $x2,
+        $rotation->[2] + $y1 + $y2,
+        $text
+    );
 }
 
 =begin comment
@@ -268,15 +367,12 @@ sub _draw_circle {
     my %args = @_;
     my @keys = qw(-x -y -width -stroke -radius -fill -api -url);
     my ( $x, $y, $width, $stroke, $radius, $fill, $api, $url ) = @args{@keys};
-    my $height = $self->_drawer->get_height;
     if ($url) {
         $logger->warn( ref($self) . " can't embed links" );
     }
     my $img = $api || $self->_api;
-    $img->fgcolor( $img->colorAllocate( _hex2rgb $stroke) );
-    $img->bgcolor( $img->colorAllocate( _hex2rgb( $fill || $whiteHex ) ) );
-    $img->moveTo( $x, $y );
-    $img->ellipse( $radius, $radius );
+    $img->filledEllipse( $x, $y, $radius, $radius, $self->_make_color( $fill || $whiteHex )  );
+    $img->ellipse( $x, $y, $radius, $radius, $self->_make_color( $stroke )  );
 }
 
 =head1 SEE ALSO
