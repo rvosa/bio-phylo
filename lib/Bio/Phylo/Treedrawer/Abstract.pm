@@ -289,8 +289,7 @@ sub _draw_branch {
     if ( my $parent = $node->get_parent ) {
         my ( $x1, $x2 ) = ( int $parent->get_x, int $node->get_x );
         my ( $y1, $y2 ) = ( int $parent->get_y, int $node->get_y );
-        my $width  = $self->_drawer->get_branch_width($node);
-        my $shape  = $self->_drawer->get_shape;
+        my $shape = $self->_drawer->get_shape;
         my $drawer = '_draw_curve';
         if ( $shape =~ m/CURVY/i ) {
             $drawer = '_draw_curve';
@@ -312,7 +311,7 @@ sub _draw_branch {
             '-y1'    => $y1,
             '-x2'    => $x2,
             '-y2'    => $y2,
-            '-width' => $width,
+            '-width' => $self->_drawer->get_branch_width($node),
             '-color' => $node->get_branch_color
         );
     }
@@ -338,6 +337,7 @@ sub _draw_radial_branch {
         my $td = $self->_drawer;
         my $center_x = $td->get_width / 2;
         my $center_y = $td->get_height / 2;
+        my $width    = $td->get_branch_width($node);
     
         # first the straight piece up to the arc
         my ( $x1, $y1 ) = ( $node->get_x, $node->get_y );
@@ -351,7 +351,7 @@ sub _draw_radial_branch {
             '-y1'      => int $y1,
             '-x2'      => int $x2,
             '-y2'      => int $y2,
-            '-width'   => $self->_drawer->get_branch_width($node),
+            '-width'   => $width,
             '-color'   => $node->get_branch_color,
             '-linecap' => 'square'
         );
@@ -368,7 +368,7 @@ sub _draw_radial_branch {
             '-x2'      => int $x3,
             '-y2'      => int $y3,
             '-radius'  => int $parent_radius,
-            '-width'   => $self->_drawer->get_branch_width($node),
+            '-width'   => $width,
             '-color'   => $node->get_branch_color,
             '-linecap' => 'square'
         )

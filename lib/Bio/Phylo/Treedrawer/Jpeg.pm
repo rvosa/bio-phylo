@@ -27,7 +27,7 @@ learn how to create tree drawings.
 sub _finish {
     my $self = shift;
     my $jpg;
-    eval { $jpg = $self->_api->jpeg };
+    eval { $jpg = $self->_downsample->jpeg };
     if ( not $@ ) {
         return $jpg;
     }

@@ -8,6 +8,7 @@ use Bio::Phylo::Util::Logger;
 
 my $logger   = Bio::Phylo::Util::Logger->new;
 my $PI       = _PI_;
+my $AA       = 3;
 my $whiteHex = 'FFFFFF';
 my $blackHex = '000000';
 my %colors;
@@ -66,23 +67,34 @@ sub _make_color {
     return $colorObj;
 }
 
+sub _aa { shift->{'AA'} || $AA }
+
+sub _upsample {
+    my ( $self, @value ) = @_;
+    my $aa = $self->_aa;
+    my @result;
+    push @result, $_ * $aa for @value;
+    return @result;
+}
+
 sub _new {
     my $class = shift;
     my %opt   = looks_like_hash @_;
     
     # instantiate object
-    my $self = $class->SUPER::_new(
-        %opt,
-        '-api' => GD::Image->new(
-            $opt{'-drawer'}->get_width,
-            $opt{'-drawer'}->get_height,
-        )
+    my $aa = $opt{'-aa'} || $AA;
+    my $td = $opt{'-drawer'};
+    delete $opt{'-aa'};
+    my $self = $class->SUPER::_new( %opt );
+    $self->{'AA'}  = $aa;
+    $self->{'TXT'} = [];
+    $self->{'API'} = GD::Image->new(
+        $self->_upsample( $td->get_width, $td->get_height ),
+        1,
     );
-    bless $self, $class;
     
     # set background color
-    $self->_api->fill( 0,0,$self->_make_color( $whiteHex ) );
-    $self->_api->interlaced('true');
+    $self->_api->fill( 0,0, $self->_make_color( $whiteHex ) );
     
     return $self;    
 }
@@ -95,10 +107,21 @@ sub _new {
 
 =cut
 
-sub _finish {
-    $logger->debug("finishing drawing");
+sub _downsample {
+    $logger->debug("downsampling");
     my $self = shift;
-    $self->_api->png;
+    my ( $w, $h ) = ( $self->_drawer->get_width, $self->_drawer->get_height );
+    my $aa = $self->_aa;
+    my $result = GD::Image->new( $w, $h, 1 );
+    $result->copyResampled( $self->_api, 0, 0, 0, 0, $w, $h, $w * $aa, $h * $aa);
+    for my $txtargs ( @{ $self->{'TXT'} } ) {
+        $result->stringFT( @{ $txtargs } );
+    }   
+    return $result;
+}
+
+sub _finish {
+    return shift->_downsample->png;
 }
 
 =begin comment
@@ -119,15 +142,22 @@ sub _draw_curve {
     my $self = shift;
     my %args = @_;
     my @keys = qw(-x1 -y1 -x2 -y2 -width -color -api);
-    my ( $x1, $y1, $x3, $y3, $linewidth, $color, $api ) = @args{@keys};        
+    my ( $x1, $y1, $x3, $y3, $linewidth, $color, $api ) = @args{@keys};
+    
+    # create upsampled coordinates
+    ($x1,$y1,$x3,$y3,$linewidth) = $self->_upsample($x1,$y1,$x3,$y3,$linewidth); 
     my ( $x2, $y2 ) = ( $x1, $y3 );
+    
+    my $img  = $api || $self->_api;
+    $img->setThickness( $linewidth || $self->_aa );
+    
+    # set control points
     my $poly = GD::Polyline->new();
-    my $img = $api || $self->_api;
-    $img->setThickness( $linewidth || 1 );
     $poly->addPt( $x1, $y1 );
     $poly->addPt( $x1, ( $y1 + $y3 ) / 2 );
     $poly->addPt( ( $x1 + $x3 ) / 2, $y3 );
     $poly->addPt( $x3, $y3 );
+    
     $img->polydraw( $poly->toSpline(), $self->_make_color( $color ) );
 }
 
@@ -145,37 +175,36 @@ sub _draw_curve {
 =cut
 
 sub _draw_arc {    
+    $logger->debug("drawing arc");
     my $self = shift;
     
     # process arguments
     my %args = @_;
     my @keys = qw(-x1 -y1 -x2 -y2 -radius -width -color -api);
     my ($x1,$y1,$x2,$y2,$radius,$linewidth,$linecolor,$api) = @args{@keys};
+    ($x1,$y1,$x2,$y2,$radius,$linewidth) = $self->_upsample($x1,$y1,$x2,$y2,$radius,$linewidth);
 
     # get center of arc
     my $drawer = $self->_drawer;
-    my ( $cx, $cy ) = ( $drawer->get_width / 2, $drawer->get_height / 2 );
-    $logger->debug("cx: $cx cy: $cy");
+    my $cx = $drawer->get_width  * $self->_aa / 2;
+    my $cy = $drawer->get_height * $self->_aa / 2;
     
     # get width and height (are equal for arcs)
     my ( $width, $height );
     $width = $height = $radius * 2;
-    $logger->debug("radius: $radius");
     
     # change line thickness
     my $img = $api || $self->_api;
-    $img->setThickness( $linewidth || 1 );
+    $img->setThickness( $linewidth || $self->_aa );
     
     # compute start and end
     my ( $r1, $start ) = $drawer->cartesian_to_polar( $x1 - $cx, $y1 - $cy );
     my ( $r2, $end )   = $drawer->cartesian_to_polar( $x2 - $cx, $y2 - $cy );
     $start += 360 if $start < 0;
     $end   += 360 if $end < 0;
-    $logger->debug("start: $start");
-    $logger->debug("end: $end");
     
     # draw
-    $img->arc( $cx, $cy, $width, $height, $start, $end, $self->_make_color( $linecolor )  );
+    $img->arc($cx,$cy,$width,$height,$start,$end,$self->_make_color($linecolor));
 }
 
 =begin comment
@@ -221,14 +250,15 @@ sub _draw_triangle {
     # set line thickness
     $img->setThickness( $width || 1 );
 
-    # create stroke color
+    # create antialiased stroke color
     my $strokeColorObj = $self->_make_color( $stroke || $blackHex );
+    $img->setAntiAliased($strokeColorObj);
 
     # create fill color
     my $fillColorObj = $self->_make_color( $fill || $whiteHex );
 
     # draw polygon
-    $img->polydraw( $poly, $strokeColorObj );
+    $img->polydraw( $poly, GD::gdAntiAliased );
 
     # fill polygon
     $img->fill(
@@ -257,9 +287,10 @@ sub _draw_line {
     my %args = @_;
     my @keys = qw(-x1 -y1 -x2 -y2 -width -color -api);
     my ( $x1, $y1, $x2, $y2, $width, $color, $api ) = @args{@keys};
+    ( $x1, $y1, $x2, $y2, $width ) = $self->_upsample( $x1, $y1, $x2, $y2, $width );
     my $img = $api || $self->_api;
-    $img->setThickness( $width || 1 );
-    $img->line( $x1, $y1, $x2, $y2, $self->_make_color( $color )  );
+    $img->setThickness( $width || $self->_aa );
+    $img->line( $x1, $y1, $x2, $y2, $self->_make_color( $color ) );
 }
 
 =begin comment
@@ -281,13 +312,14 @@ sub _draw_multi {
     my %args = @_;
     my @keys = qw(-x1 -y1 -x2 -y2 -width -color -api);
     my ( $x1, $y1, $x3, $y3, $linewidth, $color, $api ) = @args{@keys};
-    my ( $x2, $y2 ) = ( $x1, $y3 );
-    my $img = $api || $self->_api;
+    ($x1,$y1,$x3,$y3,$linewidth) = $self->_upsample($x1,$y1,$x3,$y3,$linewidth);
+    my ( $x2, $y2 ) = ( $x1, $y3 );    
+    my $img = $api || $self->_api;    
     my $poly = GD::Polyline->new();
     $poly->addPt( $x1, $y1 );
     $poly->addPt( $x2, $y2 );
     $poly->addPt( $x3, $y3 );
-    $img->setThickness( $linewidth || 1 );
+    $img->setThickness( $linewidth || $self->_aa );
     $img->polydraw( $poly, $self->_make_color( $color ) );
 }
 
@@ -335,15 +367,24 @@ sub _draw_text {
     $gdrotation -= 360 if $gdrotation > 360;
     
     my $img = $api || $self->_api;
-    $img->stringFT(
+    #$img->stringFT(
+    #    $self->_make_color($blackHex),
+    #    '/System/Library/Fonts/Thonburi.ttf',
+    #    $size || 12,
+    #    $gdrotation / 180 * _PI_,
+    #    $rotation->[1] + $x1 + $x2,
+    #    $rotation->[2] + $y1 + $y2,
+    #    $text
+    #);
+    push @{ $self->{'TXT'} }, [
         $self->_make_color($blackHex),
         '/System/Library/Fonts/Thonburi.ttf',
         $size || 12,
         $gdrotation / 180 * _PI_,
         $rotation->[1] + $x1 + $x2,
         $rotation->[2] + $y1 + $y2,
-        $text
-    );
+        $text        
+    ];
 }
 
 =begin comment
@@ -370,9 +411,10 @@ sub _draw_circle {
     if ($url) {
         $logger->warn( ref($self) . " can't embed links" );
     }
-    my $img = $api || $self->_api;
-    $img->filledEllipse( $x, $y, $radius, $radius, $self->_make_color( $fill || $whiteHex )  );
-    $img->ellipse( $x, $y, $radius, $radius, $self->_make_color( $stroke )  );
+    ( $x, $y, $width, $radius ) = $self->_upsample( $x, $y, $width, $radius );
+    my $img = $api || $self->_api;    
+    $img->filledEllipse( $x, $y, $radius, $radius, $self->_make_color($fill || $whiteHex) );
+    $img->ellipse( $x, $y, $radius, $radius, $self->_make_color($stroke) );
 }
 
 =head1 SEE ALSO

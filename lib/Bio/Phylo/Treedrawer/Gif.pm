@@ -27,7 +27,7 @@ learn how to create tree drawings.
 sub _finish {
     my $self = shift;
     my $gif;
-    eval { $gif = $self->_api->gif };
+    eval { $gif = $self->_downsample->gif };
     if ( not $@ ) {
         return $gif;
     }
