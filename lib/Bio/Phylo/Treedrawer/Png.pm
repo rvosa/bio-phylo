@@ -13,6 +13,16 @@ my $whiteHex = 'FFFFFF';
 my $blackHex = '000000';
 my %colors;
 
+#This module does all the heavy lifting for PNG, GIF and JPEG bitmap images. It
+#achieves anti-aliasing by first multiplying all coordinates, radii and line-
+#widths with a constant (default is $AA), then in the last-before-final step
+#the entire bitmap is downsampled, during which GD averages adjacent pixels,
+#which has the effect of anti-aliasing. This approach is taken because GD
+#doesn't seem to recognize line-widths if anti-aliasing has been turned on.
+#Because TrueType fonts are already anti-aliased we record where text needs to
+#end up after downsampling, and then in the last step we add the text into the
+#downsampled image.
+
 =head1 NAME
 
 Bio::Phylo::Treedrawer::Png - Graphics format writer used by treedrawer, no
@@ -27,13 +37,7 @@ learn how to create tree drawings.
 
 =begin comment
 
- Type    : Constructor
- Title   : _new
- Usage   : my $pdf = Bio::Phylo::Treedrawer::Png->_new(%args);
- Function: Initializes a Bio::Phylo::Treedrawer::Png object.
- Alias   :
- Returns : A Bio::Phylo::Treedrawer::Png object.
- Args    : none.
+Translates a six-letter HEX code to rgb, i.e. three numbers between 0 and 255
 
 =end comment
 
@@ -49,6 +53,14 @@ sub _hex2rgb ($) {
     }
     return $r, $g, $b;
 }
+
+=begin comment
+
+Allocates colors in the index, uses caching
+
+=end comment
+
+=cut
 
 sub _make_color {
     my ( $self, $hex ) = @_;
@@ -77,6 +89,20 @@ sub _upsample {
     return @result;
 }
 
+=begin comment
+
+ Type    : Constructor
+ Title   : _new
+ Usage   : my $png = Bio::Phylo::Treedrawer::Png->_new(%args);
+ Function: Initializes a Bio::Phylo::Treedrawer::Png object.
+ Alias   :
+ Returns : A Bio::Phylo::Treedrawer::Png object.
+ Args    : none.
+
+=end comment
+
+=cut
+
 sub _new {
     my $class = shift;
     my %opt   = looks_like_hash @_;
@@ -101,7 +127,9 @@ sub _new {
 
 =begin comment
 
-# finish drawing
+Downsamples the bitmap that has been created so far, in order to achieve an
+anti-aliasing effect. Then adds the text strings in the correct coordinates
+for the downsampled image.
 
 =end comment
 
@@ -119,6 +147,14 @@ sub _downsample {
     }   
     return $result;
 }
+
+=begin comment
+
+# finish drawing, export PNG
+
+=end comment
+
+=cut
 
 sub _finish {
     return shift->_downsample->png;
