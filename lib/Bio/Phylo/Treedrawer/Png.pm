@@ -79,7 +79,11 @@ sub _make_color {
     return $colorObj;
 }
 
+# returns multiplication factor for anti-aliasing
+
 sub _aa { shift->{'AA'} || $AA }
+
+# multiplies all arguments by the anti-aliasing upsampling factor
 
 sub _upsample {
     my ( $self, @value ) = @_;
@@ -402,16 +406,6 @@ sub _draw_text {
     my $gdrotation = ( $rotation->[0] - 360 ) * - 1;
     $gdrotation -= 360 if $gdrotation > 360;
     
-    my $img = $api || $self->_api;
-    #$img->stringFT(
-    #    $self->_make_color($blackHex),
-    #    '/System/Library/Fonts/Thonburi.ttf',
-    #    $size || 12,
-    #    $gdrotation / 180 * _PI_,
-    #    $rotation->[1] + $x1 + $x2,
-    #    $rotation->[2] + $y1 + $y2,
-    #    $text
-    #);
     push @{ $self->{'TXT'} }, [
         $self->_make_color($blackHex),
         '/System/Library/Fonts/Thonburi.ttf',
