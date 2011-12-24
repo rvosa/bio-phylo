@@ -13,15 +13,19 @@ my $whiteHex = 'FFFFFF';
 my $blackHex = '000000';
 my %colors;
 
-#This module does all the heavy lifting for PNG, GIF and JPEG bitmap images. It
-#achieves anti-aliasing by first multiplying all coordinates, radii and line-
-#widths with a constant (default is $AA), then in the last-before-final step
-#the entire bitmap is downsampled, during which GD averages adjacent pixels,
-#which has the effect of anti-aliasing. This approach is taken because GD
-#doesn't seem to recognize line-widths if anti-aliasing has been turned on.
-#Because TrueType fonts are already anti-aliased we record where text needs to
-#end up after downsampling, and then in the last step we add the text into the
-#downsampled image.
+=begin comment
+
+This module does all the heavy lifting for PNG, GIF and JPEG bitmap images. It
+achieves anti-aliasing by first multiplying all coordinates, radii and line-
+widths with a constant (default is $AA), then in the last-before-final step
+the entire bitmap is downsampled, during which GD averages adjacent pixels,
+which has the effect of anti-aliasing. This approach is taken because GD
+doesn't seem to recognize line-widths if anti-aliasing has been turned on.
+Because TrueType fonts are already anti-aliased we record where text needs to
+end up after downsampling, and then in the last step we add the text into the
+downsampled image.
+
+=end comment
 
 =head1 NAME
 
@@ -194,8 +198,8 @@ sub _draw_curve {
     # set control points
     my $poly = GD::Polyline->new();
     $poly->addPt( $x1, $y1 );
-    $poly->addPt( $x1, ( $y1 + $y3 ) / 2 );
-    $poly->addPt( ( $x1 + $x3 ) / 2, $y3 );
+    $poly->addPt( $x1, ( $y1 + $y3 + $y3 ) / 3 );
+    $poly->addPt( ( $x1 + $x1 + $x3 ) / 3, $y3 );
     $poly->addPt( $x3, $y3 );
     
     $img->polydraw( $poly->toSpline(), $self->_make_color( $color ) );
@@ -305,6 +309,65 @@ sub _draw_triangle {
         ( ( $x1 + $x2 + $x3 ) / 3 ),
         ( ( $y1 + $y2 + $y3 ) / 3 ),
         $fillColorObj
+    );
+}
+
+=begin comment
+
+ Type    : Internal method.
+ Title   : _draw_pies
+ Usage   : $svg->_draw_pies();
+ Function: Draws likelihood pies
+ Returns :
+ Args    : None.
+ Comments:
+
+=end comment
+
+=cut
+
+sub _draw_pies {
+    my $self = shift;
+    my %piecolors;
+    $self->_tree->visit_level_order(
+        sub {
+            my $node = shift;
+            if ( not $node->get_collapsed and my $values = $node->get_generic('pie') ) {
+                
+                # get center coordinates and radius
+                my ( $cx, $cy ) = ( $node->get_x, $node->get_y );
+                my $method = sprintf 'get_%s_radius', $node->is_internal ? 'node' : 'tip';
+                my $r = $self->_drawer->$method($node);
+                ( $cx, $cy, $r ) = $self->_upsample( $cx, $cy, $r );
+                
+                # calculate sum of all pie values
+                my @keys  = keys %{$values};                
+                my $total;
+                $total += $values->{$_} for @keys;
+                
+                my $start = 0;
+                for my $i ( 0 .. $#keys ) {
+                    my $key = $keys[$i];
+                    next if not $values->{$key};                                        
+                                        
+                    # allocate pie chunk color
+                    if ( not defined $piecolors{$key} ) {
+                        my $fraction = int($i / $#keys * 255);                        
+                        my $hex = uc(sprintf("%.2x",$fraction)) x 3;
+                        $logger->debug("$fraction = $hex");
+                        $piecolors{$key} = $self->_make_color($hex);
+                    }
+                    
+                    # calculate slice angle
+                    my $slice = $values->{$key} / $total * 360;
+                    $self->_api->filledArc( $cx, $cy, $r, $r, $start, $slice + $start, $piecolors{$key} );
+                    $start += $slice;
+                }
+                
+                # final circle around node
+                $self->_api->arc( $cx, $cy, $r, $r, 0, 360, $self->_make_color($blackHex) );
+            }
+        }
     );
 }
 
@@ -442,9 +505,12 @@ sub _draw_circle {
         $logger->warn( ref($self) . " can't embed links" );
     }
     ( $x, $y, $width, $radius ) = $self->_upsample( $x, $y, $width, $radius );
-    my $img = $api || $self->_api;    
-    $img->filledEllipse( $x, $y, $radius, $radius, $self->_make_color($fill || $whiteHex) );
-    $img->ellipse( $x, $y, $radius, $radius, $self->_make_color($stroke) );
+    my @args = ( $x, $y, $radius, $radius );
+    my $img = $api || $self->_api;
+    if ( defined $fill ) {
+        $img->filledEllipse( @args, $self->_make_color($fill || $whiteHex) );
+    }
+    $img->ellipse( @args, $self->_make_color($stroke) );
 }
 
 =head1 SEE ALSO
