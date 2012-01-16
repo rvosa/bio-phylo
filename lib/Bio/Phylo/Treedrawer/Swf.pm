@@ -2,12 +2,13 @@ package Bio::Phylo::Treedrawer::Swf;
 use strict;
 use base 'Bio::Phylo::Treedrawer::Abstract';
 use Bio::Phylo::Util::Exceptions 'throw';
-use Bio::Phylo::Util::CONSTANT 'looks_like_hash';
+use Bio::Phylo::Util::CONSTANT qw'looks_like_hash _PI_';
 use Bio::Phylo::Util::Dependency 'SWF::Builder';
 use Bio::Phylo::Util::Logger;
-our $FONT;
+
+our $FONT  = __PACKAGE__->_font_path;
 my $logger = Bio::Phylo::Util::Logger->new;
-my $PI     = '3.14159265358979323846';
+my $PI     = _PI_;
 my %colors;
 
 =head1 NAME
@@ -56,7 +57,10 @@ sub _finish {
     my $self = shift;
     require File::Temp;
     my ( $fh, $filename ) = File::Temp::tempfile();
-    $self->_api->save('file.swf');
+    $self->_api->save($filename);
+    my $result = do { local $/; <$fh> };
+    unlink $filename;
+    return $result;
 }
 
 # -x1 => $x1,
@@ -75,6 +79,45 @@ sub _draw_curve {
     return $self->_api->new_shape->linestyle( $width || 1, $color || '000000' )
       ->moveto( $x1, $y1 )->curveto( $x1, $y1, $x1, $y1, $x2, $y2, $x3, $y3 )
       ->place;
+}
+
+=begin comment
+
+# -x1 => $x1,
+# -x2 => $x2,
+# -y1 => $y1,
+# -y2 => $y2,
+# -radius => $radius
+# -width => $width,
+# -color => $color
+
+=end comment
+
+=cut
+
+sub _draw_arc {
+    $logger->debug("darwing arc");
+    my $self = shift;
+    my %args = @_;
+    my @keys = qw(-x1 -y1 -x2 -y2 -radius -width -color);
+    my ($x1, $y1, $x2, $y2, $radius, $width, $color) = @args{@keys};
+    
+    # get center of arc
+    my $drawer = $self->_drawer;
+    my $cx = $drawer->get_width  / 2;
+    my $cy = $drawer->get_height / 2;
+    
+    # compute start and end
+    my ( $r1, $start ) = $drawer->cartesian_to_polar( $x1 - $cx, $y1 - $cy );
+    my ( $r2, $end )   = $drawer->cartesian_to_polar( $x2 - $cx, $y2 - $cy );
+    $start += 360 if $start < 0;
+    $end   += 360 if $end < 0;
+    $end -= $start;    
+    
+    my $shape = $self->_api->new_shape->linestyle( $width || 1, $color || '000000' );
+    $shape->moveto( $x1, $y1 );
+    $shape->arcto( $start, $end, $r1, $r2 );      
+    $shape->place;    
 }
 
 # required:
@@ -144,8 +187,7 @@ sub _draw_multi {
 #
 # optional:
 # -url  => $url,
-sub _draw_text {
-    $logger->debug("drawing text");
+sub _draw_text {    
     my $self = shift;
     if ( not $self->{'FONT'} ) {
         $self->{'FONT'} =
@@ -153,6 +195,7 @@ sub _draw_text {
     }
     my %args = @_;
     my ( $x, $y, $text, $url, $size ) = @args{qw(-x -y -text -url -size)};
+    $logger->debug("drawing text $text");
     if ($url) {
         $text = sprintf( '<a href="%s">%s</a>', $url, $text );
     }
@@ -188,7 +231,7 @@ sub _draw_circle {
 
 =item L<Bio::Phylo::Treedrawer>
 
-The svg treedrawer is called by the L<Bio::Phylo::Treedrawer> object. Look there
+The SWF treedrawer is called by the L<Bio::Phylo::Treedrawer> object. Look there
 to learn how to create tree drawings.
 
 =item L<Bio::Phylo::Manual>
