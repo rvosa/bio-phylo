@@ -3,7 +3,10 @@ use strict;
 use base 'Bio::Phylo::Treedrawer::Abstract';
 use Bio::Phylo::Util::Exceptions 'throw';
 use Bio::Phylo::Util::Logger ':levels';
+use Bio::Phylo::Util::CONSTANT '_PI_';
+
 my $logger = Bio::Phylo::Util::Logger->new;
+my $PI = _PI_;
 
 =head1 NAME
 
@@ -34,14 +37,17 @@ sub _finish {
     my $self  = shift;
     my $api   = $self->_api;
     my $shape = $self->_drawer->get_shape;
-    if ( $shape =~ /^c/i ) {
+    if ( $shape =~ /^curvy/i ) {
         $$api .= "drawCurvedTree(branches);\n";
     }
-    elsif ( $shape =~ /^r/i ) {
+    elsif ( $shape =~ /^rect/i ) {
         $$api .= "drawRectangularTree(branches);\n";
     }
-    elsif ( $shape =~ /^d/i ) {
+    elsif ( $shape =~ /^diag/i ) {
         $$api .= "drawDiagonalTree(branches);\n";
+    }
+    elsif( $shape =~ /^radial/i ) {
+        $$api .= "drawRadialTree(branches);\n";
     }
     $$api .= '</script>';
     return $$api;
@@ -50,9 +56,9 @@ sub _finish {
 sub _draw_text {
     my $self = shift;
     my %args = @_;
-    my ( $x, $y, $text, $url ) = @args{qw(-x -y -text -url)};
+    my ($x,$y,$text,$url,$rotation) = @args{qw(-x -y -text -url -rotation)};
     my $api = $self->_api;
-    $$api .= "drawText(ctx,$x,$y,'$text');\n";
+    $$api .= "drawText(ctx,$x,$y,'$text',0);\n";
 }
 
 sub _draw_circle {
@@ -123,6 +129,9 @@ sub _draw_branch {
         }
         elsif ( $shape =~ m/DIAG/i ) {
             $drawer = '_draw_line';
+        }
+        elsif ( $shape =~ m/RADIAL/i ) {
+            $drawer = '_draw_arc';
         }
         my $api = $self->_api;
         $$api .= "branches.push({x1:$x1,y1:$y1,x2:$x2,y2:$y2});\n";
@@ -198,8 +207,43 @@ function drawCircle( ctx, x, y, radius ) {
     ctx.fill();
 }
 
-function drawText( ctx, x, y, text ) {
+function polarToCartesian( radius, angleInRadians ) {
+    var x = radius * Math.cos(angleInRadians);
+    var y = radius * Math.sin(angleInRadians);
+    return {x:x,y:y};
+}
+
+function cartesianToPolar( ctx, x, y ) {
+    var width = ctx.canvas.width;
+    var height = ctx.canvas.height;
+    var cx = width / 2;
+    var cy = height / 2;
+    var x1 = x - cx;
+    var y1 = y - cy;    
+    var radius = Math.sqrt( y1 * y1 + x1 * x1 );
+    var angleInDegrees = Math.atan2( y1, x1 );
+    if ( angleInDegrees < 0 ) {
+        angleInDegrees = angleInDegrees + 2 * Math.PI;
+    }
+    return {angle:angleInDegrees,radius:radius};
+}
+
+function drawArc( ctx, x1, y1, x2, y2 ) {
+    ctx.beginPath();
+    var width = ctx.canvas.width;
+    var height = ctx.canvas.height;
+    var cx = width / 2;
+    var cy = height / 2;    
+    var r1 = cartesianToPolar( ctx, x1, y1 );
+    var r2 = cartesianToPolar( ctx, x2, y2 );
+    ctx.arc( cx, cy, r1.radius, r1.angle, r2.angle, r1.angle > r2.angle );
+    ctx.stroke();
+}
+
+function drawText( ctx, x, y, text, rotation ) {
+    ctx.rotate(rotation);
     ctx.fillText( text, x, y );
+    ctx.rotate(0);
 }
 
 function drawCurvedTree (allBranches) {
@@ -220,6 +264,21 @@ function drawRectangularTree (allBranches) {
     for ( var i = 0; i < allBranches.length; i++ ) {
         var branch = allBranches[i];
         drawMulti(ctx,branch.x1,branch.y1,branch.x2,branch.y2);
+    }
+}
+
+function drawRadialTree (allBranches) {
+    for ( var i = 0; i < allBranches.length; i++ ) {
+        var branch = allBranches[i];
+        drawArc(ctx,branch.x1,branch.y1,branch.x2,branch.y2);
+        var r1 = cartesianToPolar(ctx,branch.x1,branch.y1);
+        var r2 = cartesianToPolar(ctx,branch.x2,branch.y2);
+        var r3 = polarToCartesian(r1.radius,r2.angle);
+        var width = ctx.canvas.width;
+        var height = ctx.canvas.height;
+        var cx = width / 2;
+        var cy = height / 2;            
+        drawLine(ctx,r3.x + cx,r3.y + cy,branch.x2,branch.y2);
     }
 }
 
