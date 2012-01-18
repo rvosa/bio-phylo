@@ -3,6 +3,7 @@ use strict;
 use base 'Bio::Phylo::Treedrawer::Abstract';
 use Bio::Phylo::Util::Logger;
 use Bio::Phylo::Util::Exceptions 'throw';
+use Bio::Phylo::Util::CONSTANT '_PI_';
 
 =head1 NAME
 
@@ -21,7 +22,7 @@ my $logger = Bio::Phylo::Util::Logger->new;
 my $black  = 0;
 my $white  = 255;
 my %colors;
-my $PI = 3.14159265;
+my $PI = _PI_;
 
 sub _new {
     my $class = shift;
@@ -135,7 +136,7 @@ sub _draw_line {
     $color = $black if not defined $color;
     $width = 1      if not defined $width;
     my $api = $self->_api;
-    $$api .= "    drawLine($x1,$y1,$x2,$y2,$color,$width);\n";
+    $$api .= sprintf("    drawLine(%u,%u,%u,%u,%u,%u);\n",$x1,$y1,$x2,$y2,$color,$width);
 }
 
 sub _draw_curve {
@@ -151,6 +152,36 @@ sub _draw_curve {
     $color = $black if not defined $color;
     $width = 1      if not defined $width;
     $$api .= "    drawCurve($x1,$y1,$x3,$y3,$color,$width);\n";
+}
+
+sub _draw_arc {
+    my $self = shift;
+    my $api  = $self->_api;
+    my %args = @_;
+    my @keys = qw(-x1 -y1 -x2 -y2 -radius -width -color);
+    my ( $x1, $y1, $x2, $y2, $radius, $lineWidth, $lineColor ) = @args{@keys};
+    $lineColor = $black if not defined $lineColor;
+    $lineWidth = 1      if not defined $lineWidth;
+    $radius = 0         if not defined $radius;
+    $radius *= 2;
+    my $fillColor = $white;    
+    
+    # get center of arc
+    my $drawer = $self->_drawer;
+    my $cx = $drawer->get_width  / 2;
+    my $cy = $drawer->get_height / 2;
+
+    # compute start and end
+    my ( $r1, $start ) = $drawer->cartesian_to_polar( $x1 - $cx, $y1 - $cy );
+    my ( $r2, $stop )  = $drawer->cartesian_to_polar( $x2 - $cx, $y2 - $cy );
+    $start += 360 if $start < 0;
+    $stop  += 360 if $stop < 0;
+    $start = ( $start / 360 ) * 2 * $PI;
+    $stop  = ( $stop / 360 ) * 2 * $PI;
+    $start = sprintf( "%.3f", $start );
+    $stop  = sprintf( "%.3f", $stop );    
+        
+    $$api .= "    drawArc($cx,$cy,$radius,$lineColor,$lineWidth,$fillColor,$start,$stop);\n";
 }
 
 sub _draw_multi {
