@@ -235,6 +235,46 @@ sub unparse {
     }
 }
 
+=item can_read()
+
+Tests whether L<Bio::Phylo::IO> can read provided syntax format.
+
+ Type    : Class method
+ Title   : can_read
+ Usage   : &do_something if Bio::Phylo::IO->can_read('foo');
+ Function: Tests whether Bio::Phylo::IO can read provided syntax format.
+ Returns : Boolean
+ Args    : A syntax format name, like "nexml"
+
+=cut
+
+sub can_read {
+    my ( $self, $format ) = @_;
+    my $package = 'Bio::Phylo::Parsers::' . ucfirst($format);
+    eval { looks_like_class $package };
+    return ! $@;
+}
+
+=item can_write()
+
+Tests whether L<Bio::Phylo::IO> can write provided syntax format.
+
+ Type    : Class method
+ Title   : can_write
+ Usage   : &do_something if Bio::Phylo::IO->can_write('foo');
+ Function: Tests whether Bio::Phylo::IO can write provided syntax format.
+ Returns : Boolean
+ Args    : A syntax format name, like "nexml"
+
+=cut
+
+sub can_write {
+    my ( $self, $format ) = @_;
+    my $package = 'Bio::Phylo::Unparsers::' . ucfirst($format);
+    eval { looks_like_class $package };
+    return ! $@;    
+}
+
 # this just to prevent from calling __PACKAGE__->SUPER::DESTROY
 sub DESTROY {
     return 1;
