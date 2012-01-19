@@ -132,6 +132,23 @@ This is the superclass for all objects that can be serialized to NeXML
         return $self;
     }
 
+=item remove_all_meta()
+
+ Type    : Mutator
+ Title   : remove_all_meta
+ Usage   : $obj->remove_all_meta();
+ Function: Removes all metadata attachments from the object
+ Returns : $self
+ Args    : None
+
+=cut
+
+	sub remove_all_meta {
+		my $self = shift;
+		$meta{$self->get_id} = [];
+		return $self;
+	}
+
 =item remove_meta()
 
  Type    : Mutator
