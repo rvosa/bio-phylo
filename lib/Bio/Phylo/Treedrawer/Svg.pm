@@ -50,9 +50,9 @@ sub _new {
         )
     );
     $self->_api->tag( 'style', type => 'text/css' )
-      ->CDATA( "\n\tpolyline { fill: none; stroke: black; stroke-width: 2 }\n"
-          . "\tpath { fill: none; stroke: black; stroke-width: 2 }\n"
-          . "\tline { fill: none; stroke: black; stroke-width: 2 }\n"
+      ->CDATA( "\n\tpolyline { fill: none; stroke: black; stroke-width: 1 }\n"
+          . "\tpath { fill: none; stroke: black; stroke-width: 1 }\n"
+          . "\tline { fill: none; stroke: black; stroke-width: 1 }\n"
           . "\tcircle.node_circle  {}\n"
           . "\tcircle.taxon_circle {}\n"
           . "\ttext.node_text      {}\n"
@@ -444,7 +444,7 @@ sub _draw_legend {
                 'style'  => {
                     'fill'         => $colors{$key},
                     'stroke'       => 'black',
-                    'stroke-width' => '2',
+                    'stroke-width' => '1',
                 },
             );
             $self->_draw_text(
