@@ -1,5 +1,5 @@
 package Bio::Phylo::Models::Substitution::Dna;
-use Bio::Phylo::Util::CONSTANT qw'looks_like_hash looks_like_class';
+use Bio::Phylo::Util::CONSTANT qw'looks_like_hash looks_like_class :objecttypes';
 use Bio::Phylo::Util::Exceptions qw'throw';
 use Data::Dumper;
 use strict;
@@ -283,4 +283,7 @@ sub _to_paup_string {
     }
     return $string . ';';
 }
+
+sub _type { _MODEL_ }
+
 1;
