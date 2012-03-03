@@ -26,26 +26,31 @@ make install
  
 (For platform specific information on what 'make' command to use, check "perl -V:make". On Windows this usually returns "make='nmake';", which means you'll need the free 'nmake' utility)
 
-AUTHOR
+AUTHORS
 
-Rutger Vos, rutgeraldo@gmail.com, http://rutgervos.blogspot.com
+Rutger Vos
+Jason Caravas
+Klaas Hartmann
+Mark A. Jensen
+Chase Miller
+Aki Mimoto
 
 BUGS
 
-Please report any bugs or feature requests to bug-bio-phylo@rt.cpan.org, or through the web interface at http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Bio-Phylo I will be notified, and then you'll automatically be notified of progress on your bug as I make changes. 
+Please report any bugs or feature requests to bug-bio-phylo@rt.cpan.org, or through the web 
+interface at http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Bio-Phylo I will be notified, 
+and then you'll automatically be notified of progress on your bug as I make changes. 
  
 ACKNOWLEDGEMENTS
 
-The author would like to thank the BioPerl project for providing the community
+The authors would like to thank the BioPerl project for providing the community
 with a terrific toolkit that other software, such as this, can be built on
-(http://www.bioperl.org); Jason Caravas, Klaas Hartmann, Mark A. Jensen,
-Chase Miller and Aki Mimoto for their contributions (code and otherwise) to this
-project; and Arne Mooers from the FAB* lab (http://www.sfu.ca/~fabstar) for
+(http://www.bioperl.org); and Arne Mooers from the FAB* lab (http://www.sfu.ca/~fabstar) for
 comments and requests.
 
 The research leading to these results has received funding from the [European
 Community's] Seventh Framework Programme ([FP7/2007-2013] under grant agreement
-n¡ [237046].
+nï¿½ [237046].
 
 SEE ALSO
 
@@ -62,5 +67,6 @@ doi:10.1186/1471-2105-12-63
 
 COPYRIGHT & LICENSE
 
-Copyright 2005-2011 Rutger Vos, All Rights Reserved. This program is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
+Copyright 2005-2011 Rutger Vos, All Rights Reserved. This program is free software; 
+you can redistribute it and/or modify it under the same terms as Perl itself.
 
