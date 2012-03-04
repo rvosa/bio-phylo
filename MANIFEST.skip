@@ -23,9 +23,7 @@ deleteme*
 \.project
 \.includepath
 script\/
-lib\/Bio\/Phylo\/Models*
 t\/27-phylows\.t
-t\/33-models\.t
 _Inline*
 Doxyfile
 lib\/Bio\/Tools\/Run\/MrBayes\.pm
