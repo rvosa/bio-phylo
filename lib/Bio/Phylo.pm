@@ -26,7 +26,7 @@ require Bio::Phylo::Mediators::TaxaMediator;
 # Include the revision number from subversion in $VERSION
 my $rev = '$Id: Phylo.pm 1660 2011-04-02 18:29:40Z rvos $';
 $rev =~ s/^[^\d]+(\d+)\b.*$/$1/;
-our $VERSION = "0.45";
+our $VERSION = "0.46";
 $VERSION .= "_$rev";
 {
     my $taxamediator = 'Bio::Phylo::Mediators::TaxaMediator';
