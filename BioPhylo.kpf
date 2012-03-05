@@ -34,7 +34,7 @@
   <boolean id="import_recursive">1</boolean>
   <string id="import_type">useFolders</string>
   <string id="lastTestPlanName_pref">test:plugins</string>
-  <string relative="path" id="perlExtraPaths">lib</string>
+  <string relative="path" id="perlExtraPaths">lib:/Users/rvosa/Dropbox/documents/projects/current/beagle/bio-phylo-beagle/lib</string>
   <boolean id="perl_lintOption_includeCurrentDirForLinter">1</boolean>
 <preference-set id="testPlans">
 <preference-set id="test all">
