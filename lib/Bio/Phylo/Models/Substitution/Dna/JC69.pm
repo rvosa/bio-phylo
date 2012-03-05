@@ -8,4 +8,6 @@ sub get_pi { 0.25 }
 # substitution rate
 sub get_rate { shift->get_mu / 4 }
 sub get_nst  { 1 }
+sub get_catweights { [1.0] }
+sub get_catrates { [1.0] }
 1;
