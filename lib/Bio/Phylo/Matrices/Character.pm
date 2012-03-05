@@ -1,7 +1,11 @@
 package Bio::Phylo::Matrices::Character;
 use strict;
 use base 'Bio::Phylo::Matrices::TypeSafeData';
-use Bio::Phylo::Util::CONSTANT qw'_CHARACTER_ _CHARACTERS_';
+use Bio::Phylo::Factory;
+use Bio::Phylo::Util::CONSTANT qw'_CHARACTER_ _CHARACTERS_ _NS_BIOPHYLO_ /looks_like/';
+use Bio::Phylo::Util::Exceptions 'throw';
+
+my $fac = Bio::Phylo::Factory->new;
 
 =head1 NAME
 
@@ -19,6 +23,65 @@ contents grow or shrink. The main function, at present, for objects of this
 type is to facilitate NeXML serialization of characters and their annotations.
 
 =head1 METHODS
+
+=head2 MUTATORS
+
+=over
+
+=item set_weight()
+
+ Type    : Mutator
+ Title   : set_weight
+ Usage   : $character->set_weight(2);
+ Function: Sets character weight
+ Returns : $self
+ Args    : A number
+
+=cut
+
+sub set_weight {
+    my ( $self, $weight ) = @_;
+    if ( looks_like_number $weight ) {
+        if ( my ($meta) = @{ $self->get_meta('bp:charWeight') } ) {
+            $meta->set_triple( 'bp:charWeight' => $weight );
+        }
+        else {
+            $self->add_meta(
+                $fac->create_meta(
+                    '-namespaces' => { 'bp' => _NS_BIOPHYLO_ },
+                    '-triple'     => { 'bp:charWeight' => $weight },
+                )
+            );
+        }
+        return $self;
+    }
+    throw 'BadNumber' => "'$weight' is not a number";
+}
+
+=back
+
+=head2 ACCESSORS
+
+=over
+
+=item get_weight()
+
+ Type    : Accessor
+ Title   : get_weight
+ Usage   : my $weight = $character->get_weight();
+ Function: Gets character weight
+ Returns : A number (default is 1)
+ Args    : NONE
+
+=cut
+
+sub get_weight {
+    my $self = shift;
+    my $weight = $self->get_meta_object('bp:charWeight');
+    return defined $weight ? $weight : 1;
+}
+
+=back
 
 =head2 SERIALIZERS
 
