@@ -460,6 +460,21 @@ Get root node.
         return;
     }
 
+=item get_ntax()
+
+Gets number of tips
+
+ Type    : Query
+ Title   : get_ntax
+ Usage   : my $ntax = $tree->get_ntax;
+ Function: Calculates the number of terminal nodes
+ Returns : Int
+ Args    : NONE
+
+=cut
+    
+    sub get_ntax { scalar(@{ shift->get_terminals } ) }
+
 =item get_tallest_tip()
 
 Retrieves the node furthest from the root. 
