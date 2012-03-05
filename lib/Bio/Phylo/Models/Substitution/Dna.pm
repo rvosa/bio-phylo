@@ -1,5 +1,5 @@
 package Bio::Phylo::Models::Substitution::Dna;
-use Bio::Phylo::Util::CONSTANT qw'looks_like_hash looks_like_class :objecttypes';
+use Bio::Phylo::Util::CONSTANT qw'/looks_like/ :objecttypes';
 use Bio::Phylo::Util::Exceptions qw'throw';
 use Data::Dumper;
 use strict;
@@ -19,6 +19,11 @@ sub new {
     }
     return $self;
 }
+
+sub get_catrates {
+    throw 'NotImplemented' => 'FIXME';
+}
+
 sub get_nst { 6 }
 
 # subst rate
@@ -38,8 +43,17 @@ sub get_rate {
     }
 }
 
+# number of states
+sub get_nstates {
+    my $states = _BASE_AT_;
+    return scalar @{ $states };
+}
+
 # number of categories for gamma distribution
 sub get_ncat { shift->{'_ncat'} }
+
+# weights for rate categories
+sub get_catweights { shift->{'_catweights'} }
 
 # ti/tv ratio
 sub get_kappa { shift->{'_kappa'} }
@@ -83,6 +97,12 @@ sub set_rate {
 sub set_ncat {
     my $self = shift;
     $self->{'_ncat'} = shift;
+    return $self;
+}
+
+sub set_catweights {
+    my $self = shift;
+    $self->{'_catweights'} = shift;
     return $self;
 }
 
