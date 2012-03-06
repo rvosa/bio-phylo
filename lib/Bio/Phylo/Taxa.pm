@@ -1,7 +1,7 @@
 package Bio::Phylo::Taxa;
 use strict;
 use base 'Bio::Phylo::Listable';
-use Bio::Phylo::Util::CONSTANT qw':objecttypes looks_like_object';
+use Bio::Phylo::Util::CONSTANT qw':objecttypes /looks_like/ :namespaces';
 use Bio::Phylo::Mediators::TaxaMediator;
 use Bio::Phylo::Factory;
 
@@ -272,15 +272,15 @@ Merges argument Bio::Phylo::Taxa object with invocant.
 
  Type    : Method
  Title   : merge_by_name
- Usage   : $taxa->merge_by_name($other_taxa);
- Function: Merges two taxa objects such that 
+ Usage   : $merged = $taxa->merge_by_name($other_taxa);
+ Function: Merges two or more taxa objects such that 
            internally different taxon objects 
            with the same name become a single
            object with the combined references 
            to datum objects and node objects 
            contained by the two.           
  Returns : A merged Bio::Phylo::Taxa object.
- Args    : A Bio::Phylo::Taxa object.
+ Args    : Bio::Phylo::Taxa objects.
 
 =cut
 
@@ -306,6 +306,66 @@ Merges argument Bio::Phylo::Taxa object with invocant.
                     $object_by_name{ $target->get_name } = $target;
                 }
             }
+        }
+        return $merged;
+    }
+
+=item merge_by_meta()
+
+Merges argument Bio::Phylo::Taxa object with invocant.
+
+ Type    : Method
+ Title   : merge_by_meta
+ Usage   : $taxa->merge_by_name('dc:identifier',$other_taxa);
+ Function: Merges two taxa objects such that 
+           internally different taxon objects 
+           with the same annotation value become
+           a single object with the combined references 
+           to datum objects, node objects and
+           metadata annotations contained by
+           the two.           
+ Returns : A merged Bio::Phylo::Taxa object.
+ Args    : a CURIE predicate and Bio::Phylo::Taxa objects.
+
+=cut
+
+    sub merge_by_meta {
+        my ( $self, $predicate, @others ) = @_;
+        push @others, $self;
+        my $merged = $factory->create_taxa;
+        for my $taxa ( @others ) {
+                        
+            my %object_by_value =
+                map { $_->get_meta_object($predicate) => $_ }
+                @{ $merged->get_entities };
+                
+            for my $taxon ( @{ $taxa->get_entities } ) {
+                
+                # instantiate or fetch taxon based on predicate value
+                my $value = $taxon->get_meta_object($predicate);
+                my $target = $object_by_value{$value} || $factory->create_taxon();
+                
+                # copy links and metadata
+                $_->set_taxon($target) for @{ $taxon->get_data };
+                $_->set_taxon($target) for @{ $taxon->get_nodes };
+                $target->add_meta($_) for @{ $taxon->get_meta };
+                
+                # copy name to bp:contributing_name
+                if ( my $name = $taxon->get_name ) {
+                    $target->add_meta(
+                        $factory->create_meta(
+                            '-namespaces' => { 'bp' => _NS_BIOPHYLO_ },
+                            '-triple' => { 'bp:contributing_name' => $name }
+                        )
+                    );
+                }
+                
+                # add to hash and block if newly created
+                if ( not exists $object_by_value{$value} ) {
+                    $merged->insert($target);
+                    $object_by_value{$value} = $target;
+                }
+            }            
         }
         return $merged;
     }
