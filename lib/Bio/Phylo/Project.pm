@@ -334,8 +334,9 @@ Serializes invocant to XML.
 
     sub to_xml {
         my $self = shift;
+        my %args;
         if ( @_ ) {
-            my %args = @_;
+            %args = @_;
             $self->reset_xml_ids if $args{'-reset'};
         }
 
@@ -353,7 +354,7 @@ Serializes invocant to XML.
           map { $_->make_taxa } @linked;
         for ( values %taxa, @linked ) {
             $logger->debug("writing $_ to xml");
-            $xml .= $_->to_xml(@_);
+            $xml .= $_->to_xml(%args);
         }
         $xml .= '</' . $self->get_tag . '>';
 
