@@ -71,15 +71,51 @@ the PhyloWS (L<http://evoinfo.nescent.org/PhyloWS>) recommendations.
         my $self = $class->SUPER::new(@_);
 
         # store a user agent object to delegate http stuff to
-        my $ua = LWP::UserAgent->new;
-        $ua->timeout(300);
-        $ua->env_proxy;
-        $ua{ $self->get_id } = $ua;
+        if ( not $self->get_ua ) {
+            my $ua = LWP::UserAgent->new;
+            $ua->timeout(300);
+            $ua->env_proxy;
+            $self->set_ua($ua);
+        }
         return $self;
     }
     my $ua = sub {
         return $ua{ shift->get_id };
     };
+
+=back
+
+=head2 MUTATORS
+
+=over
+
+=item set_ua()
+
+Assigns a new L<LWP::UserAgent> object that the client uses to communicate 
+with the service. Typically you don't have to use this unless you have to
+configure a user agent for things such as proxies. Normally a default user
+agent is instantiated when the client constructor is called.
+
+ Type    : Mutator
+ Title   : set_ua
+ Usage   : $obj->set_ua( LWP::UserAgent->new );
+ Function: Assigns another (non-default) user agent
+ Returns : $self
+ Args    : An LWP::UserAgent object (or child class)
+
+=cut
+
+    sub set_ua {
+    	my $self = shift;
+    	my $arg = shift;
+    	if ( UNIVERSAL::isa( $arg, 'LWP::UserAgent' ) ) {
+    	    $ua{ $self->get_id } = $arg;	
+    	}
+    	else {
+    	    throw 'BadArgs' => "'$arg' is not an LWP::UserAgent";	
+    	}
+    	return $self;
+    }
 
 =back
 
@@ -214,6 +250,21 @@ Gets a PhyloWS database record
             );
         }
     }
+
+=item get_ua()
+
+Gets the underlying L<LWP::UserAgent> object that the client uses to communicate with the service
+
+ Type    : Accessor
+ Title   : get_ua
+ Usage   : my $ua = $obj->get_ua;
+ Function: Gets user agent
+ Returns : LWP::UserAgent object
+ Args    : None
+
+=cut
+
+    sub get_ua { $ua{ shift->get_id } }
 
     sub _cleanup {
         my $self = shift;
