@@ -256,7 +256,7 @@ Keeps the container's contents specified by an array reference of indices.
     sub keep_entities {
         my ( $self, $indices_array_ref ) = @_;
         my $id       = $self->get_id;
-        my $ent      = $entities{$id};
+        my $ent      = $entities{$id} || [];
         my @contents = @{$ent};
         my @pruned   = @contents[ @{$indices_array_ref} ];
         $entities{$id} = \@pruned;
