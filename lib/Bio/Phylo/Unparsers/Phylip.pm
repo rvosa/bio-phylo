@@ -82,18 +82,32 @@ sub _to_string {
     }
     my $string = $matrix->get_ntax() . ' ' . $matrix->get_nchar() . "\n";
     my ( %seq_for_id, %phylip_name_for_id, @ids, %seen_name );
+    
+    # iterate over matrix rows
     for my $seq ( @{ $matrix->get_entities } ) {
+        
+        # store seq keyed on row id
         my $id = $seq->get_id;
         $seq_for_id{$id} = $seq->get_char;
         my $name = $seq->get_internal_name;
         push @ids, $id;
+        
+        
         if ( length($name) <= 10 ) {
+            
+            # pad name with spaces until 10 characters
             my $phylip_name = $name . ( ( 10 - length($name) ) x ' ' );
+            
+            # not yet seen name, use as as
             if ( !$seen_name{$phylip_name} ) {
                 $seen_name{$phylip_name}++;
                 $phylip_name_for_id{$id} = $phylip_name;
             }
+            
+            # have seen name
             else {
+                
+                # attach incrementing integer until name is new
                 my $counter = 1;
                 while ( $seen_name{$phylip_name} ) {
                     $phylip_name =
@@ -101,6 +115,7 @@ sub _to_string {
                     $phylip_name .= $counter;
                     $counter++;
                 }
+                $seen_name{$phylip_name}++;
                 $phylip_name_for_id{$id} = $phylip_name;
             }
         }
