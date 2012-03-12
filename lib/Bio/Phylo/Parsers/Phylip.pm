@@ -32,21 +32,27 @@ sub _parse {
     my $handle  = $self->_handle;
     my $matrix  = $factory->create_matrix( '-type' => $type );
     my ( $ntax, $nchar );
-    while (<$handle>) {
+    LINE: while (<$handle>) {
+        my ( $name, $seq );
         if ( /^\s*(\d+)\s+(\d+)\s*$/ && !$ntax && !$nchar ) {
             ( $ntax, $nchar ) = ( $1, $2 );
+            next LINE;
         }
-        elsif (/\S/) {
-            my $name = substr( $_, 0, 10 );
-            my $seq = substr( $_, 10 );
-            $matrix->insert(
-                $factory->create_datum(
-                    '-type' => $type,
-                    '-name' => $name,
-                    '-char' => $matrix->get_type_object->split($seq),
-                )
-            );
+        elsif ( /^\s*(\S+)\s+(.+)$/ ) {
+            ( $name, $seq ) = ( $1, $2 );
+            $seq =~ s/\s//g;
         }
+        else {
+            $name = substr( $_, 0, 10 );
+            $seq = substr( $_, 10 );            
+        }
+        $matrix->insert(
+            $factory->create_datum(
+                '-type' => $type,
+                '-name' => $name,
+                '-char' => $matrix->get_type_object->split($seq),
+            )
+        );        
     }
     my ( $my_nchar, $my_ntax ) = ( $matrix->get_nchar, $matrix->get_ntax );
     $nchar != $my_nchar
