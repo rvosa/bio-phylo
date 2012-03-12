@@ -395,7 +395,7 @@ Serializes invocant to nexus format.
             'ntax'      => $self->get_ntax,
             'class'     => ref $self,
             'time'      => my $time = localtime(),
-            'taxlabels' => join "\n\t\t",
+            'taxlabels' => join "\n\t\t\t",
             map { $_->get_nexus_name } @{ $self->get_entities }
         );
         return <<TEMPLATE;
