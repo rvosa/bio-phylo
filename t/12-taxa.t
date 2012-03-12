@@ -40,5 +40,3 @@ for my $i ( 1 .. 10 ) {
 
 my $merged = $ts1->merge_by_meta('dc:identifier', $ts2);
 ok( $merged->get_ntax == 10, "5 merge by predicate value" );
-
-warn $merged->to_xml;
