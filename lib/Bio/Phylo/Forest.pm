@@ -527,13 +527,22 @@ Serializer to nexus format.
            
            # to map taxon names to indices (default is true)
            -make_translate => 1 (autogenerate translation table, overrides -translate => {})
+		   
+		   # when making a translation table, which index to start (default is
+		   # 1, BayesTraits needs 0)
+		   -translate_start => 1
  Comments:
 
 =cut
 
     sub to_nexus {
         my $self = shift;
-        my %args = ( '-rooting' => 'comment', '-make_translate' => 1, @_ );
+        my %args = (
+			'-rooting'         => 'comment',
+			'-make_translate'  => 1,
+			'-translate_start' => 1,
+			@_
+		);
         my %translate;
         my $nexus;
 
@@ -562,7 +571,7 @@ Serializer to nexus format.
                     else {
                         $name = $node->get_generic( $args{'-tipnames'} );
                     }
-                    $translate{$name} = ( 1 + $i++ )
+                    $translate{$name} = ( $args{'-translate_start'} + $i++ )
                       if not exists $translate{$name};
                 }
             }
