@@ -355,6 +355,9 @@ Gets an RSS1.0/XML representation of a phylows record
 
 =head1 SEE ALSO
 
+There is a mailing list at L<https://groups.google.com/forum/#!forum/bio-phylo> 
+for any user or developer questions and discussions.
+
 Also see the manual: L<Bio::Phylo::Manual> and L<http://rutgervos.blogspot.com>
 
 =head1 CITATION

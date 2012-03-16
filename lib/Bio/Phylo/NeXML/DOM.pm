@@ -363,6 +363,9 @@ obtained from the C<Element> and C<Document> POD.
 
 =head1 SEE ALSO
 
+There is a mailing list at L<https://groups.google.com/forum/#!forum/bio-phylo> 
+for any user or developer questions and discussions.
+
 The DOM creator abstract classes: L<Bio::Phylo::NeXML::DOM::Element>,
 L<Bio::Phylo::NeXML::DOM::Document>
 

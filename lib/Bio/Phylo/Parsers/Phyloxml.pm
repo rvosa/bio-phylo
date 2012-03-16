@@ -24,6 +24,9 @@ xml directly from a url (-url => $phylows_output), provided you have L<LWP> inst
 
 =head1 SEE ALSO
 
+There is a mailing list at L<https://groups.google.com/forum/#!forum/bio-phylo> 
+for any user or developer questions and discussions.
+
 =over
 
 =item L<Bio::Phylo::IO>

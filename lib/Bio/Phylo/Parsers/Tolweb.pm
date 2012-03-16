@@ -22,6 +22,9 @@ xml directly from a url (-url => $tolweb_output), provided you have L<LWP> insta
 
 =head1 SEE ALSO
 
+There is a mailing list at L<https://groups.google.com/forum/#!forum/bio-phylo> 
+for any user or developer questions and discussions.
+
 =over
 
 =item L<Bio::Phylo::IO>

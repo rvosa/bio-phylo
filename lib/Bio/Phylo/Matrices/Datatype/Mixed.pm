@@ -314,6 +314,9 @@ Returns true if argument only contains valid characters
 
 =head1 SEE ALSO
 
+There is a mailing list at L<https://groups.google.com/forum/#!forum/bio-phylo> 
+for any user or developer questions and discussions.
+
 =over
 
 =item L<Bio::Phylo::Matrices::Datatype>
