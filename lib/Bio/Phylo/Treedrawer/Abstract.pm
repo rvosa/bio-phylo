@@ -146,52 +146,95 @@ sub _draw_collapsed {
     my $td = $self->_drawer;
     $node->set_collapsed(0);
 
-    # get the height of the tallest node inside the collapsed clade
+    # get the height of the tallest node inside the collapsed clade, for
+    # cladograms this is the number of internodes, for phylograms it's the
+    # sum of the branch lengths
     my $tallest = 0;
-    $node->visit_level_order(
-        sub {
-            my $n = shift;
-            my $height;
-            if ( $n == $node ) {
-                $height = 0;
+    my $clado = $td->get_mode =~ m/clado/i;
+    if ( $clado ) {
+        $tallest = 1;
+    }
+    else {
+        $node->visit_level_order(
+            sub {
+                my $n = shift;
+                my $height;
+                if ( $n == $node ) {
+                    $height = 0;
+                }
+                else {
+                    $height =
+                      $n->get_parent->get_generic('height') + $n->get_branch_length;
+                }
+                $n->set_generic( 'height' => $height );
+                $tallest = $height if $height > $tallest;
             }
-            else {
-                $height =
-                  $n->get_parent->get_generic('height') + $n->get_branch_length;
-            }
-            $n->set_generic( 'height' => $height );
-            $tallest = $height if $height > $tallest;
-        }
-    );
-    my ( $x1, $y1 ) = ( $node->get_x, $node->get_y );
-    my $x2      = ( $tallest * $td->_get_scalex + $node->get_x );
-    my $padding = $td->get_padding;
-    my $cladew  = $td->get_collapsed_clade_width($node);
-    $self->_draw_triangle(
-        '-x1'     => $x1,
-        '-y1'     => $y1,
-        '-x2'     => $x2,
-        '-y2'     => $y1 + $cladew / 2 * $td->_get_scaley - $padding,
-        '-x3'     => $x2,
-        '-y3'     => $y1 - $cladew / 2 * $td->_get_scaley + $padding,
-        '-fill'   => $node->get_node_colour,
-        '-stroke' => $node->get_branch_color,
-        '-width'  => $td->get_branch_width($node),
-        '-url'    => $node->get_link,
-        'id'      => 'collapsed' . $node->get_id,
-        'class'   => 'collapsed',
-    );
-    if ( my $name = $node->get_name ) {
-        $name =~ s/_/ /g;
-        $name =~ s/^'(.*)'$/$1/;
-        $name =~ s/^"(.*)"$/$1/;
-        $self->_draw_text(
-            '-x'    => int( $x2 + $td->get_text_horiz_offset ),
-            '-y'    => int( $y1 + $td->get_text_vert_offset ),
-            '-text' => $name,
-            'id'    => 'collapsed_text' . $node->get_id,
-            'class' => 'collapsed_text',
         );
+    }
+    
+    if ( $clado ) {
+        my ( $x1, $y1 ) = ( $node->get_x, $node->get_y );
+        my $x2      = $node->get_x;
+        my $padding = $td->get_padding;
+        my $cladew  = $td->get_collapsed_clade_width($node);
+        $self->_draw_triangle(
+            '-x1'     => $node->get_x - $tallest * $td->_get_scalex,
+            '-y1'     => $y1,
+            '-x2'     => $x2,
+            '-y2'     => $y1 + $cladew / 2.7 * $td->_get_scaley - $padding,
+            '-x3'     => $x2,
+            '-y3'     => $y1 - $cladew / 2.7 * $td->_get_scaley + $padding,
+            '-fill'   => $node->get_node_colour,
+            '-stroke' => $node->get_branch_color,
+            '-width'  => $td->get_branch_width($node),
+            '-url'    => $node->get_link,
+            'id'      => 'collapsed' . $node->get_id,
+            'class'   => 'collapsed',
+        );
+        if ( my $name = $node->get_name ) {
+            $name =~ s/_/ /g;
+            $name =~ s/^'(.*)'$/$1/;
+            $name =~ s/^"(.*)"$/$1/;
+            $self->_draw_text(
+                '-x'    => int( $x2 + $td->get_text_horiz_offset ),
+                '-y'    => int( $y1 + $td->get_text_vert_offset ),
+                '-text' => $name,
+                'id'    => 'collapsed_text' . $node->get_id,
+                'class' => 'collapsed_text',
+            );
+        }        
+    }
+    else {
+        my ( $x1, $y1 ) = ( $node->get_x, $node->get_y );
+        my $x2      = ( $tallest * $td->_get_scalex + $node->get_x );
+        my $padding = $td->get_padding;
+        my $cladew  = $td->get_collapsed_clade_width($node);
+        $self->_draw_triangle(
+            '-x1'     => $x1,
+            '-y1'     => $y1,
+            '-x2'     => $x2,
+            '-y2'     => $y1 + $cladew / 2 * $td->_get_scaley - $padding,
+            '-x3'     => $x2,
+            '-y3'     => $y1 - $cladew / 2 * $td->_get_scaley + $padding,
+            '-fill'   => $node->get_node_colour,
+            '-stroke' => $node->get_branch_color,
+            '-width'  => $td->get_branch_width($node),
+            '-url'    => $node->get_link,
+            'id'      => 'collapsed' . $node->get_id,
+            'class'   => 'collapsed',
+        );
+        if ( my $name = $node->get_name ) {
+            $name =~ s/_/ /g;
+            $name =~ s/^'(.*)'$/$1/;
+            $name =~ s/^"(.*)"$/$1/;
+            $self->_draw_text(
+                '-x'    => int( $x2 + $td->get_text_horiz_offset ),
+                '-y'    => int( $y1 + $td->get_text_vert_offset ),
+                '-text' => $name,
+                'id'    => 'collapsed_text' . $node->get_id,
+                'class' => 'collapsed_text',
+            );
+        }
     }
     $node->set_collapsed(1);
 }
