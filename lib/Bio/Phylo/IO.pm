@@ -2,10 +2,10 @@ package Bio::Phylo::IO;
 use strict;
 use base 'Exporter';
 use Bio::Phylo;
-use Bio::Phylo::Util::CONSTANT '/looks_like/';
+use Bio::Phylo::Util::CONSTANT qw'/looks_like/ :objecttypes';
 use Bio::Phylo::Util::Exceptions 'throw';
 use IO::File;
-our @EXPORT_OK = qw'parse unparse';
+our @EXPORT_OK = qw'parse unparse parse_matrix parse_tree';
 
 =head1 NAME
 
@@ -190,6 +190,58 @@ sub parse {
     # instantiate parser subclass and process data
     my $lib = 'Bio::Phylo::Parsers::' . ucfirst $opts{'-format'};
     return looks_like_class($lib)->_new(@_)->_process;
+}
+
+=item parse_matrix()
+
+Parses a file or string.
+
+ Type    : Class method
+ Title   : parse_matrix
+ Usage   : my $matrix = Bio::Phylo::IO->parse_matrix(%options);
+ Function: Creates (file) handle, 
+           instantiates appropriate parser.
+ Returns : A Bio::Phylo::Matrices::Matrix object
+ Args    : Same as parse()
+ Comments: This method is syntactical sugar to get the first matrix
+           out of a file/handle/string
+
+=cut
+
+sub parse_matrix {
+    my ($matrix) = @{
+        parse(
+            @_,
+            '-as_project' => 1,
+        )->get_items(_MATRIX_)
+    };
+    return $matrix;
+}
+
+=item parse_tree()
+
+Parses a file or string.
+
+ Type    : Class method
+ Title   : parse_tree
+ Usage   : my $tree = Bio::Phylo::IO->parse_tree(%options);
+ Function: Creates (file) handle, 
+           instantiates appropriate parser.
+ Returns : A Bio::Phylo::Forest::Tree object
+ Args    : Same as parse()
+ Comments: This method is syntactical sugar to get the first tree
+           out of a file/handle/string
+
+=cut
+
+sub parse_tree {
+    my ($tree) = @{
+        parse(
+            @_,
+            '-as_project' => 1,
+        )->get_items(_TREE_)
+    };
+    return $tree;
 }
 
 =item unparse()
