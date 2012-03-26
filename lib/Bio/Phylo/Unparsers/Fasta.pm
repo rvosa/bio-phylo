@@ -49,7 +49,7 @@ sub _to_string {
         my $def  = '>' . $name . "\n";
         my $char = $seq->get_char;
         my $n = 80;    # $n is group size.
-        my @groups = unpack "a$n" x ((length($char)/$n)-1) . "a*", $char;
+        my @groups = unpack "a$n" x (length($char)/$n) . "a*", $char;
         $string .= $def . join("\n", @groups) . "\n";
     }
     return $string;
