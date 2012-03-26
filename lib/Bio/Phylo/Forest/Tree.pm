@@ -2395,81 +2395,23 @@ Prunes argument nodes from invocant.
  Usage   : $tree->prune_tips(\@taxa);
  Function: Prunes specified taxa from invocant.
  Returns : A pruned Bio::Phylo::Forest::Tree object.
- Args    : A reference to an array of taxon names.
+ Args    : A reference to an array of taxon names, or a taxa block, or a
+           reference to an array of taxon objects, or a reference to an
+           array of node objects
  Comments:
 
 =cut
 
     sub prune_tips {
         my ( $self, $tips ) = @_;
-        if ( blessed $tips ) {
-            my @tmp = map { $_->get_name } @{ $tips->get_entities };
-            $tips = \@tmp;
-        }
-        my %names_to_delete;
-        for my $tip ( @{$tips} ) {
-            if ( blessed $tip ) {
-                $names_to_delete{ $tip->get_internal_name } = 1;
-            }
-            else {
-                $names_to_delete{$tip} = 1;
+        my %prune = map { $_->get_id => 1 } @{ $self->_get_tip_objects($tips) };
+        my @keep;
+        for my $tip ( @{ $self->get_terminals } ) {
+            if ( not $prune{$tip->get_id} ) {
+                push @keep, $tip;
             }
         }
-        my %names_to_keep;
-        for my $tip ( @{ $self->get_entities } ) {
-            my $name = $tip->get_internal_name;
-            if ( not $names_to_delete{$name} ) {
-                $names_to_keep{$name} = 1;
-            }
-        }
-        $self->visit_depth_first(
-            '-pre' => sub {
-                my $node = shift;
-                if ( $node->is_terminal
-                    && exists $names_to_delete{ $node->get_internal_name } )
-                {
-                    $node->set_generic( 'delete' => 1 );
-                }
-            },
-            '-post' => sub {
-                my $node = shift;
-                if ( $node->is_internal ) {
-                    my @terminals = @{ $node->get_terminals };
-                    my $parent    = $node->get_parent;
-                    my $remaining = 0;
-                    for my $tip (@terminals) {
-                        if ( $tip->get_generic('delete') ) {
-                            $node->prune_child($tip);
-                            $self->delete($tip);
-                        }
-                        else {
-                            $remaining++;
-                        }
-                    }
-                    if ( $remaining == 0 ) {
-                        if ($parent) {
-                            $parent->prune_child($node);
-                        }
-                        $self->delete($node);
-                    }
-                    elsif ( $remaining == 1 ) {
-                        my $child = $node->get_children->[0];
-                        if ($parent) {
-                            $parent->set_child($child);
-                            my $cbl = $child->get_branch_length;
-                            my $nbl = $node->get_branch_length;
-                            my $bl;
-                            $bl = $cbl if defined $cbl;
-                            $bl += $nbl if defined $nbl;
-                            $child->set_branch_length($bl) if defined $bl;
-                            $parent->prune_child($node);
-                            $self->delete($node);
-                        }
-                    }
-                }
-            }
-        );
-        return $self;
+        return $self->keep_tips(\@keep);
     }
 
 =item keep_tips()
@@ -2481,32 +2423,100 @@ Keeps argument nodes from invocant (i.e. prunes all others).
  Usage   : $tree->keep_tips(\@taxa);
  Function: Keeps specified taxa from invocant.
  Returns : The pruned Bio::Phylo::Forest::Tree object.
- Args    : An array ref of taxon names or a Bio::Phylo::Taxa object
+ Args    : Same as prune_tips, but with inverted meaning
  Comments:
 
 =cut
 
+    sub _get_tip_objects {
+        my ( $self, $arg ) = @_;
+        my @tips;
+        
+        # argument is a taxa block
+        if ( blessed $arg ) {
+            for my $taxon ( @{ $arg->get_entities } ) {
+                my @nodes = @{ $taxon->get_nodes };
+                for my $node ( @nodes ) {
+                    push @tips, $node if $self->contains($node);
+                }
+            }
+        }
+        
+        # arg is an array ref
+        else {
+            my $TAXON = _TAXON_;
+            my $NODE  = _NODE_;
+            for my $thing ( @{ $arg } ) {
+                
+                # thing is a taxon or node object
+                if ( blessed $thing ) {
+                    if ( $thing->_type == $TAXON ) {
+                        my @nodes = @{ $thing->get_nodes };
+                        for my $node ( @nodes ) {
+                            push @tips, $node if $self->contains($node);
+                        }                        
+                    }
+                    elsif ( $thing->_type == $NODE ) {
+                        push @tips, $thing if $self->contains($thing);
+                    }
+                }
+                
+                # thing is a name
+                else {
+                    if ( my $tip = $self->get_by_name($thing) ) {
+                        push @tips, $tip;
+                    }
+                }
+            }            
+        }
+        return \@tips;
+    }
+
     sub keep_tips {
-        my ( $tree, $tips ) = @_;
-        if ( blessed $tips ) {
-            my @tmp = map { $_->get_name } @{ $tips->get_entities };
-            $tips = \@tmp;
-        }
-        my %keep_taxa;
-        for my $tip ( @{$tips} ) {
-            if ( blessed $tip ) {
-                $keep_taxa{ $tip->get_internal_name } = 1;
+        my ( $self, $tip_names ) = @_;
+        
+        # get node objects for tips
+        my @tips = @{ $self->_get_tip_objects($tip_names) };
+        
+        # identify nodes that are somewhere on the path from tip to root
+        my %seen;
+        for my $tip ( @tips ) {
+            my $node = $tip;
+            PARENT: while ( $node ) {
+                my $id = $node->get_id;
+                if ( not $seen{$id} ) {
+                    $seen{$id} = $node;
+                    $node = $node->get_parent;
+                }
+                else {
+                    last PARENT;
+                }            
             }
-            else {
-                $keep_taxa{$tip} = 1;
+        }
+        
+        # now do the pruning
+        $self->visit_depth_first(
+            '-post' => sub {
+                my $n = shift;
+                my $p = $n->get_parent;
+                if ( not $seen{$n->get_id} ) {
+                    $p->delete($n) if $p;
+                    $self->delete($n);
+                    return;
+                }
+                my @children = @{ $n->get_children };
+                if ( scalar(@children) == 1 ) {
+                    my ($c) = @children;
+                    my $bl  = $n->get_branch_length;
+                    my $cbl = $c->get_branch_length;                
+                    $c->set_branch_length( $bl + $cbl ) if defined $cbl && defined $bl;
+                    $self->delete($n);                                
+                    $c->set_parent($p);
+                    $p->delete($n) if $p;
+                }
             }
-        }
-        my @taxa_to_prune;
-        for my $tip ( @{ $tree->get_entities } ) {
-            my $name = $tip->get_internal_name;
-            push @taxa_to_prune, $name if not exists $keep_taxa{$name};
-        }
-        return $tree->prune_tips( \@taxa_to_prune );
+        );        
+        return $self;
     }
 
 =item negative_to_zero()
