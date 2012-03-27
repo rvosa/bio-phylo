@@ -462,6 +462,38 @@ Gets characters.
             return wantarray ? () : '';
         }
     }
+    
+=item get_unaligned_char()
+
+Gets unaligned characters, i.e. without gap or missing symbols
+
+ Type    : Accessor
+ Title   : get_unaligned_char
+ Usage   : my $char = $datum->get_unaligned_char;
+ Function: Retrieves a datum's unaligned character sequence
+ Returns : In scalar context, returns a single
+           character, or a string of characters
+           (e.g. a DNA sequence, or a space
+           delimited series of continuous characters).
+           In list context, returns a list of characters
+           (of zero or more characters).
+ Args    : NONE
+
+=cut    
+    
+    sub get_unaligned_char {
+        my $self = shift;
+        my $gap = $self->get_gap;
+        my $missing = $self->get_missing;
+        my @char = $self->get_char;
+        my @data = grep { $_ ne $gap && $_ ne $missing } @char;
+        if (@data) {
+            return wantarray ? @data : $self->get_type_object->join( \@data );
+        }
+        else {
+            return wantarray ? () : '';
+        }        
+    }
 
 =item get_position()
 
