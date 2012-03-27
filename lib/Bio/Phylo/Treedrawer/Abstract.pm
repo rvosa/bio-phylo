@@ -67,14 +67,15 @@ sub _draw {
                     $name =~ s/^'(.*)'$/$1/;
                     $name =~ s/^"(.*)"$/$1/;
                     $self->_draw_text(
-                        '-x'          => int( $x + $td->get_text_horiz_offset ),
-                        '-y'          => int( $y + $td->get_text_vert_offset ),
-                        '-text'       => $name,
-                        '-rotation'   => [ $node->get_rotation, $x, $y ],
-                        '-font_face'  => $node->get_font_face,
-                        '-font_size'  => $node->get_font_size,
-                        '-font_style' => $node->get_font_style,
-                        'class'       => $is_terminal ? 'taxon_text' : 'node_text',
+                        '-x'           => int( $x + $td->get_text_horiz_offset ),
+                        '-y'           => int( $y + $td->get_text_vert_offset ),
+                        '-text'        => $name,
+                        '-rotation'    => [ $node->get_rotation, $x, $y ],
+                        '-font_face'   => $node->get_font_face,
+                        '-font_size'   => $node->get_font_size,
+                        '-font_style'  => $node->get_font_style,
+                        '-font_colour' => $node->get_font_colour,
+                        'class'        => $is_terminal ? 'taxon_text' : 'node_text',
                     );
                 }
             }
@@ -201,6 +202,10 @@ sub _draw_collapsed {
                 '-text' => $name,
                 'id'    => 'collapsed_text' . $node->get_id,
                 'class' => 'collapsed_text',
+                '-font_face'   => $node->get_font_face,
+                '-font_size'   => $node->get_font_size,
+                '-font_style'  => $node->get_font_style,
+                '-font_colour' => $node->get_font_colour,                
             );
         }        
     }
