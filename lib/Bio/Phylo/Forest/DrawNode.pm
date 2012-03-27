@@ -11,7 +11,7 @@ use base 'Bio::Phylo::Forest::Node';
             %node_shape,        %node_image,      %branch_color,
             %branch_shape,      %branch_width,    %branch_style,
             %collapsed,         %collapsed_width, %font_face,
-            %font_size,         %font_style,      
+            %font_size,         %font_style,      %font_color,      
             %text_horiz_offset, %text_vert_offset, %rotation
         )
     );
@@ -357,6 +357,27 @@ Sets collapsed clade width.
         $font_style{$id} = $font_style;
         return $self;
     }
+
+=item set_font_colour()
+
+ Type    : Mutator
+ Title   : set_font_colour
+ Usage   : $node->set_font_colour($color);
+ Function: Sets font_colour
+ Returns : font_colour
+ Args    : A color, which, depending on the underlying tree drawer, can either
+           be expressed as a word ('red'), a hex code ('#00CC00') or an rgb
+           statement ('rgb(0,255,0)')
+
+=cut
+    
+    sub set_font_colour {
+        my ($self, $colour) = @_;
+        my $id = $self->get_id;
+        $font_color{$id} = $colour;
+        return $self;
+    }
+    *set_font_color = \&set_font_colour;
 
 =item set_text_horiz_offset()
 
@@ -769,6 +790,24 @@ Gets collapsed clade width.
         my $id   = $self->get_id;
         return $font_style{$id};
     }
+
+=item get_font_colour()
+
+ Type    : Accessor
+ Title   : get_font_colour
+ Usage   : my $color = $node->get_font_colour();
+ Function: Gets font_colour
+ Returns : font_colour
+ Args    : NONE
+
+=cut
+    
+    sub get_font_colour {
+        my $self = shift;
+        my $id = $self->get_id;
+        return $font_color{$id};
+    }
+    *get_font_color = \&get_font_colour;
 
 =item get_text_horiz_offset()
 
