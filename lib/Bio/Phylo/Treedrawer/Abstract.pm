@@ -148,7 +148,7 @@ sub _draw_collapsed {
     $node->set_collapsed(0);
 
     # get the height of the tallest node inside the collapsed clade, for
-    # cladograms this is the number of internodes, for phylograms it's the
+    # cladograms this is 1, for phylograms it's the
     # sum of the branch lengths
     my $tallest = 0;
     my $clado = $td->get_mode =~ m/clado/i;
@@ -156,17 +156,10 @@ sub _draw_collapsed {
         $tallest = 1;
     }
     else {
-        $node->visit_level_order(
-            sub {
+        $node->visit_depth_first(
+            '-pre' => sub {
                 my $n = shift;
-                my $height;
-                if ( $n == $node ) {
-                    $height = 0;
-                }
-                else {
-                    $height =
-                      $n->get_parent->get_generic('height') + $n->get_branch_length;
-                }
+                my $height = $n->get_parent->get_generic('height') + $n->get_branch_length;
                 $n->set_generic( 'height' => $height );
                 $tallest = $height if $height > $tallest;
             }
