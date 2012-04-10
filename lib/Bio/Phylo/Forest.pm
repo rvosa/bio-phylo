@@ -431,10 +431,14 @@ Creates an MRP matrix object.
               for grep { $_->is_internal } @{ $node->get_children };
         };
         for my $tree ( @{ $self->get_entities } ) {
-            $recursion->( $tree->get_root, $tree, $taxa, $recursion );
+			if ( my $root = $tree->get_root ) {
+				$recursion->( $root, $tree, $taxa, $recursion );
+			}
         }
         for my $datum ( @{ $matrix->get_entities } ) {
-            $datum->set_char( $data{ $datum->get_name } );
+			if ( my $data = $data{ $datum->get_name } ) {
+				$datum->set_char( $data ) if @{ $data };
+			}
         }
         $matrix->set_charlabels( \@charlabels );
         $matrix->set_statelabels( \@statelabels );
