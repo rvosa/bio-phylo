@@ -59,6 +59,7 @@ BEGIN {
       _NEXML_VERSION_
       _PI_
       _NS_PHYLOXML_
+      _NS_TB2PURL_
     );
     %EXPORT_TAGS = (
         'all'         => [@EXPORT_OK],
@@ -122,6 +123,7 @@ BEGIN {
               _NS_BIOPHYLO_
               _NS_SKOS_
               _NS_PHYLOXML_
+              _NS_TB2PURL_
             )
         ]
     );
@@ -146,6 +148,7 @@ sub _NS_CDAO_ ()     { 'http://www.evolutionaryontology.org/cdao/1.0/cdao.owl#' 
 sub _NS_BIOPHYLO_ () { 'http://search.cpan.org/dist/Bio-Phylo/terms#' }
 sub _NS_SKOS_ ()     { 'http://www.w3.org/2004/02/skos/core#' }
 sub _NS_PHYLOXML_ () { 'http://www.phyloxml.org/1.10/terms#' }
+sub _NS_TB2PURL_ ()  { 'http://purl.org/phylo/treebase/phylows/' }
 
 sub _NEXML_VERSION_ () { '0.9' }
 sub _NONE_ ()          { 1 }
