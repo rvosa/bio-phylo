@@ -2,7 +2,7 @@ package Bio::Phylo::Parsers::Nexml;
 use strict;
 use base 'Bio::Phylo::Parsers::Abstract';
 use Bio::Phylo::Util::Exceptions 'throw';
-use Bio::Phylo::Util::CONSTANT qw'looks_like_instance _NEXML_VERSION_';
+use Bio::Phylo::Util::CONSTANT qw'looks_like_instance _NEXML_VERSION_ :objecttypes';
 use Bio::Phylo::Util::Dependency 'XML::Twig';
 use Bio::Phylo::Factory;
 use Bio::Phylo::NeXML::Writable;
@@ -152,6 +152,19 @@ sub _process_set {
 # here we create the object instance that will process the file/string
 sub _init {
     my $self = shift;
+    my ( $skipchars, $skiptrees ) = ( 0, 0 );
+    if ( $self->_args && $self->_args->{'-skip'} ) {
+        for my $skip ( @{ $self->_args->{'-skip'} } ) {
+            if ( $skip == _MATRIX_ ) {
+                $skipchars = 1;
+                $self->_logger->warn("skipping all characters elements");
+            }
+            if ( $skip == _FOREST_ ) {
+                $skiptrees = 1;
+                $self->_logger->warn("skipping all trees elements");
+            }
+        }
+    }
     $self->_logger->debug("initializing $self");
     $self->{'_blocks'}        = [];
     $self->{'_taxa'}          = {};
@@ -165,8 +178,8 @@ sub _init {
         # means we can traverse it
         'TwigHandlers' => {
             'otus'       => sub { &_handle_otus( @_,   $self ) },
-            'characters' => sub { &_handle_chars( @_,  $self ) },
-            'trees'      => sub { &_handle_forest( @_, $self ) },
+            'characters' => $skipchars ? sub {} : sub { &_handle_chars( @_,  $self ) },
+            'trees'      => $skiptrees ? sub {} : sub { &_handle_forest( @_, $self ) },
             'nex:nexml'  => sub { &_handle_nexml( @_,  $self ) },
         },
 
