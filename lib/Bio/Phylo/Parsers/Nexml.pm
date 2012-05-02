@@ -346,11 +346,10 @@ sub _handle_chars {
 
     # create character definitions, if any
     my ( $def_hash, $def_array ) = ( {}, [] );
-    my ( $lookup, $definitions_elt );
-    if ( $definitions_elt = $characters_elt->first_child('format') ) {
-        ( $def_hash, $def_array, $lookup ) =
-          $self->_process_definitions($definitions_elt);
-    }
+    my ( $lookup );
+    my $definitions_elt = $characters_elt->first_child('format');
+    ( $def_hash, $def_array, $lookup ) = $self->_process_definitions($definitions_elt);
+    
     $matrix_obj->get_type_object->set_lookup($lookup);
     delete $args{'-type'};
     $args{'-type_object'} = $matrix_obj->get_type_object;
@@ -396,9 +395,10 @@ sub _handle_chars {
     my $characters = $matrix_obj->get_characters;
     
     # assign original xml ids to character objects
-    my $chars = $characters->get_entities;
-    for my $i ( 0 .. $#{ $chars } ) {
-        $chars->[$i]->set_xml_id($def_array->[$i]);
+    my @char_elts = $definitions_elt->children('char');
+    for my $i ( 0 .. $#char_elts ) {
+        my ($char) = $self->_obj_from_elt( $char_elts[$i], 'character' );
+        $characters->insert_at_index($char,$i);
     }
     
     # now process character sets
