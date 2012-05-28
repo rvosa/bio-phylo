@@ -53,6 +53,13 @@ Bio::Phylo::IO - Front end for parsers and serializers
  # prints 'Bio::Phylo::Forest::Tree'
  print ref $tree, "\n";
 
+ # if the tree is very large and you need only some terminal nodes from it
+ $simplified_tree = Bio::Phylo::IO->parse(
+    '-string'   => $tree_string,
+    '-format'   => 'newick',
+    '-simplify' => ['A', 'D'], # nodes to keep
+ )->first;
+
  # parsing a table
  my $table_string = qq(A,1,2|B,1,2|C,2,2|D,2,1);
  my $matrix = Bio::Phylo::IO->parse(
