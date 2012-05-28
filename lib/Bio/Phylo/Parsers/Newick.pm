@@ -19,36 +19,32 @@ don't call it directly.
 sub _return_is_scalar { 1 }
 
 
-sub _prefilter {
+sub _simplify {
+    # Simplify a Newick tree string by removing unneeded nodes. The leaves to
+    # keep are given as $ids, an arrayref of terminal node IDs. Note that only
+    # cherries are simplified to keep the function fast.
     my ($string, $ids) = @_;   
     my %id_hash = map { $_ => undef } @$ids;
 
     # Setup some regular expressions:
     # 1/ ID is anything but : or , or ( or )
-    my $id_re   = qr/[^)(:,;]+?/;
+    my $id_re     = qr/[^)(:,;]+/;
     # 2/ Distance is a number (Regexp::Common $RE{num}{real} would be more stringent)
-    my $dist_re = qr/[0-9.]+/;
+    my $dist_re   = qr/[0-9.]+/;
     # 3/ A pair of ID and distance (both optional)
-    my $pair_re = qr/ \s* ($id_re)? \s* (?: \:\s* ($dist_re) )? \s* /x;
+    my $pair_re   = qr/ ($id_re)? (?: \: ($dist_re) )? /x;
     # 4/ Cherry
-    my $cherry_re        = qr/ (          \(        $pair_re , $pair_re        \) $pair_re ) /msx;
-    #my $binary_leaves_re = qr/ ( (,?) \s* \(        $pair_re , $pair_re        \) $pair_re ) /msx;
-    #my $left_leaves_re   = qr/ ( (,?) \s* \(        $pair_re , $pair_re (,.+?) \) $pair_re ) /msx;
-    #my $right_leaves_re  = qr/ ( (,?) \s* \( (.+?,) $pair_re , $pair_re        \) $pair_re ) /msx;
+    my $cherry_re = qr/ ( \( $pair_re , $pair_re \) $pair_re ) /x;
+    # 5/ Whitespaces 
+    my $ws_re     = qr/ \s+ /msx;
 
-    # Substitute in Newick string
+    # Remove spaces and newlines (no spaces allowed in node names)
+    $string =~ s/$ws_re//g;
+
+    # Prune cherries
     my $prev_string = $string;
     while (1) {
         $string =~ s/ $cherry_re / _prune_cherry($1, $2, $3, $4, $5, $6, $7, \%id_hash) /gex;
-        #$string =~ s/ $left_leaves_re   /
-        #              _prune_more_branch($1, $2, undef, $3, $4, $5, $6, $7, $8, $9, \%id_hash) /gex;
-        #$string =~ s/ $right_leaves_re  /
-        #              _prune_more_branch($1, $2, $3, $4, $5, $6, $7, undef, $8, $9, \%id_hash) /gex;
-        #$string =~ s/ $binary_leaves_re /
-        #              _prune_binary_branch($1, $2, $3, $4, $5, $6, $7, $8, \%id_hash) /gex;
-        #$string =~ s/^ \( ( [^,]* ) \) ; $/$1;/msx;
-        #$string =~ s/^ \( \s* ( \( .* \) $pair_re ) \s* \) ; $/$1;/msx;
-
         last if ( $string eq $prev_string );
         $prev_string = $string;
     }
@@ -59,10 +55,9 @@ sub _prefilter {
 sub _prune_cherry {
     my ($match, $id1, $dist1, $id2, $dist2, $idp, $distp, $id_hash) = @_;
     my $repl;
-    $id1 ||= '';
-    $id2 ||= '';
-    my $id1_exists = exists $id_hash->{$id1};
-    my $id2_exists = exists $id_hash->{$id2};
+
+    my $id1_exists = defined $id1 && exists $id_hash->{$id1};
+    my $id2_exists = defined $id2 && exists $id_hash->{$id2};
     if (          $id1_exists  &&     $id2_exists  ) {
         # Keep both leaves
         $repl = $match;
@@ -91,23 +86,15 @@ sub _parse {
         $string .= $_;
     }
 
-    my $prefilter_ids = $self->_args->{'-prefilter'};
+    my $ids = $self->_args->{'-simplify'};
 
     # remove comments, split on tree descriptions
     for my $newick ( $self->_split($string) ) {
 
-        ####
-        print "newick:\n$newick\n\n";
-        print "Prefiltering...\n\n";
-        ####
-
-        # prefilter tree
-        $newick = _prefilter($string, $prefilter_ids) if $prefilter_ids;
-
-        ####
-        print "newick:\n$newick\n\n";
-        print "Parsing...\n\n";
-        ####
+        # simplify tree
+        if ($ids) {
+            $newick = _simplify($string, $ids);
+        }
 
         # parse trees
         my $tree = $self->_parse_string($newick);
