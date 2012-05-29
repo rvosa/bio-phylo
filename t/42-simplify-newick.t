@@ -35,9 +35,9 @@ my $string = '(H:1,(G:1,(F:1,(E:1,(D:1,(C:1,(A:1,B):1):1):1):1):1):1):0;';
 ok( my $phylo = Bio::Phylo->new, 'Init' );
 ok( !Bio::Phylo->VERBOSE( -level => 0 ), 'Set terse' );
 ok( my $tree = Bio::Phylo::IO->parse(
-    -string   => $string,
-    -format   => 'newick',
-    -simplify => $id_sets[0]
+    -string => $string,
+    -format => 'newick',
+    -keep   => $id_sets[0]
 )->first, 'Parse' );
 is $tree->calc_number_of_terminals, 1;
 

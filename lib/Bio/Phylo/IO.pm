@@ -55,9 +55,9 @@ Bio::Phylo::IO - Front end for parsers and serializers
 
  # if the tree is very large and you need only some terminal nodes from it
  $simplified_tree = Bio::Phylo::IO->parse(
-    '-string'   => $tree_string,
-    '-format'   => 'newick',
-    '-simplify' => ['A', 'D'], # nodes to keep
+    '-string' => $tree_string,
+    '-format' => 'newick',
+    '-keep'   => ['A', 'D'], # nodes to keep
  )->first;
 
  # parsing a table

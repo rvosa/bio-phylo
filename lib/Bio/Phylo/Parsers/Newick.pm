@@ -86,7 +86,7 @@ sub _parse {
         $string .= $_;
     }
 
-    my $ids = $self->_args->{'-simplify'};
+    my $ids = $self->_args->{'-keep'};
 
     # remove comments, split on tree descriptions
     for my $newick ( $self->_split($string) ) {
