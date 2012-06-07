@@ -36,6 +36,7 @@ sub _parse {
     my $self = shift;
     my $fh   = $self->_handle;
     my $fac  = $self->_factory;
+	my $log  = $self->_logger;
     my $tree = $fac->create_tree;
 	my $ns   = $self->_args->{'-namespaces'};
 	if ( $ns ) {
@@ -82,10 +83,23 @@ sub _parse {
 		# now see if there are any node columns
 		for my $col ( keys %node_cols ) {
 			my $value = $record{$col};
-			my $predicate = $node_cols{$col};
-			$node->add_meta(
-				$fac->create_meta( '-triple' => { $predicate => $value } )
-			);
+			if ( $value ) {
+				my $predicate = $node_cols{$col};
+				if ( $predicate =~ /^(.+)?:.+$/ ) {
+					my $prefix = $1;
+					if ( my $ns = $Bio::Phylo::Util::CONSTANT::NS->{$prefix} ) {
+						$node->add_meta(
+							$fac->create_meta(
+								'-namespaces' => { $prefix    => $ns },
+								'-triple'     => { $predicate => $value }
+							)
+						);
+					}
+					else {
+						$log->warn("No namespace for prefix $prefix");
+					}
+				}
+			}
 		}
     }
 	my $forest = $fac->create_forest;
