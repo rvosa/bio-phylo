@@ -5,6 +5,7 @@ use Data::Dumper;
 use Bio::Phylo::Util::Exceptions 'throw';
 use Bio::Phylo::Util::CONSTANT qw'/looks_like/ :namespaces :objecttypes';
 use Bio::Phylo::Util::Dependency 'JSON';
+use Bio::Phylo::Util::Dependency 'URI';
 
 =head1 NAME
 
@@ -24,17 +25,7 @@ sub _parse {
     my $fac  = $self->_factory;
 	my $taxa = $fac->create_taxa( '-namespaces' => { 'tnrs' => _NS_TNRS_ } );
 	my $data_structure = JSON::decode_json( do { local $/; <$fh> } );
-	
-	# need to attach source Ids to taxa block
-	my $metadata = $data_structure->{'metadata'};
-	for my $source ( @{ $metadata->{'sources'} } ) {
-		my $sourceId = _clean_source_name($source->{'sourceId'} );
-		$taxa->add_meta(
-			$fac->create_meta(
-				'-triple' => { 'tnrs:source' => $sourceId }
-			)
-		);		
-	}
+	my %authority;
 	
 	# iterate over all returned names
 	for my $name ( @{ $data_structure->{'names'} } ) {
@@ -42,29 +33,34 @@ sub _parse {
 		# instantiate taxon object
 		my $taxon = $fac->create_taxon( '-name' => $name->{'submittedName'} );
 		
-		# iterate over matches for focal name
-		for my $match ( @{ $name->{'matches'} } ) {
+		# get best match
+		my ($match) = sort { $b->{'score'} <=> $a->{'score'} } grep { defined } @{ $name->{'matches'} };
 			
-			# clean up sourceId for usage as predicate
-			my $sourceId = _clean_source_name($match->{'sourceId'});
-			
-			# attach uri
-			my $uri = $match->{'uri'};
-			$taxon->add_meta(
-				$fac->create_meta(
-					'-triple' => { "tnrs:${sourceId}" => $uri }
-				)
+		# attach uri
+		my $uri = $match->{'uri'};
+		my $auth = URI->new($uri)->authority;
+		$authority{$auth} = 1;
+		
+		$taxon->add_meta(
+			$fac->create_meta(
+				'-triple' => { "tnrs:${auth}" => $uri }
 			)
-		}
+		);
+
 		$taxa->insert($taxon);
 	}
+	
+	# need to attach source Ids to taxa block
+	my $metadata = $data_structure->{'metadata'};
+	for my $source ( keys %authority ) {
+		$taxa->add_meta(
+			$fac->create_meta(
+				'-triple' => { 'tnrs:source' => $source }
+			)
+		);		
+	}	
+	
 	return $taxa;
-}
-
-sub _clean_source_name {
-	my $name = shift;
-	$name =~ s/[^A-Za-z0-9]//g;
-	return $name;
 }
 
 =head1 SEE ALSO
