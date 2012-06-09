@@ -33,14 +33,20 @@ sub _parse {
 		# instantiate taxon object
 		my $taxon = $fac->create_taxon( '-name' => $name->{'submittedName'} );
 		
-		# get best match
-		my ($match) = sort { $b->{'score'} <=> $a->{'score'} } grep { defined } @{ $name->{'matches'} };
+		# get best match with URI
+		my ($match) = sort { $b->{'score'} <=> $a->{'score'} } grep { $_->{'uri'} } grep { defined $_ } @{ $name->{'matches'} };
 			
-		# attach uri
+		# parse out 'authority', i.e. domain name
 		my $uri = $match->{'uri'};
 		my $auth = URI->new($uri)->authority;
 		$authority{$auth} = 1;
 		
+		# no URI, no domain...
+		if ( not $auth ) {
+			throw 'BadFormat' => Dumper($match);	
+		}
+		
+		# attach metadata
 		$taxon->add_meta(
 			$fac->create_meta(
 				'-triple' => { "tnrs:${auth}" => $uri }
