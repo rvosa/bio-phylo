@@ -1,6 +1,7 @@
 package Bio::Phylo::Parsers::Taxlist;
 use strict;
 use base 'Bio::Phylo::Parsers::Abstract';
+use Bio::Phylo::Util::CONSTANT;
 
 =head1 NAME
 
@@ -24,9 +25,48 @@ sub _parse {
     my $fac  = $self->_factory;
     my $taxa = $fac->create_taxa;
     local $/ = $self->_args->{'-fieldsep'} || "\n";
-    while (<$fh>) {
+    my $delim = $self->_args->{'-delim'} || "\t";
+    my @header;
+    LINE: while (<$fh>) {
         chomp;
-        $taxa->insert( $fac->create_taxon( '-name' => $_ ) );
+        my @fields = split /$delim/, $_;
+        my $name;
+        my %meta;
+        
+        # this means it is actually tabular, which also means it has a header
+        if ( scalar @fields > 1 ) {
+            
+            # this happens the first line
+            if ( not @header ) {
+                @header = @fields;
+                for my $predicate ( @header ) {
+                    if ( $predicate =~ /^(.+?):.+$/ ) {
+                        my $prefix = $1;
+                        $taxa->set_namespaces(
+                            $prefix => $Bio::Phylo::Util::CONSTANT::NS->{$prefix}
+                        );
+                    }
+                }
+                next LINE;
+            }
+            
+            # create key value pairs to attach
+            for my $i ( 1 .. $#fields ) {
+                $meta{$header[$i]} = $fields[$i] if $fields[$i];
+            }
+        }
+        
+        # this is the first field regardless        
+        $name = shift @fields;
+        my $taxon = $fac->create_taxon( '-name' => $name );
+        
+        # attach metadata, if any
+        for my $predicate ( keys %meta ) {
+            $taxon->add_meta(
+                $fac->create_meta( '-triple' => { $predicate => $meta{$predicate} } )
+            );
+        }
+        $taxa->insert( $taxon );
     }
     return $taxa;
 }
