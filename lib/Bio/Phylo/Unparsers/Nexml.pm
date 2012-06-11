@@ -70,7 +70,7 @@ sub _to_string {
         'nex:nexml',
         {
             'xmlns:nex' => 'http://www.nexml.org/2009',
-            'version'   => '1.0',
+            'version'   => '0.9',
             'generator' => __PACKAGE__ . ' v.' . $Bio::Phylo::VERSION,
             'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance',
             'xsi:schemaLocation' =>
