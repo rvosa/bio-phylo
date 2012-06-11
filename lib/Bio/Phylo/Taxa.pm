@@ -285,26 +285,31 @@ Merges argument Bio::Phylo::Taxa object with invocant.
 =cut
 
     sub merge_by_name {
-        my $merged = $factory->create_taxa;
+        my $merged = $factory->create_taxa( '-name' => 'Merged' );
         for my $taxa (@_) {
-            my %object_by_name =
-              map { $_->get_name => $_ } @{ $merged->get_entities };
-            foreach my $taxon ( @{ $taxa->get_entities } ) {
+            
+            # build a hash of what we have so far
+            my %taxon_by_name = map { $_->get_name => $_ } @{ $merged->get_entities };
+              
+            # iterate over focal taxa block
+            for my $taxon ( @{ $taxa->get_entities } ) {
                 my $name = $taxon->get_name;
-                my $target = $factory->create_taxon( '-name' => $name );
-                if ( exists $object_by_name{$name} ) {
-                    $target = $object_by_name{$name};
+                
+                # retrieve or create target taxon
+                my $target;
+                if ( $taxon_by_name{$name} ) {
+                    $target = $taxon_by_name{$name};
                 }
-                foreach my $datum ( @{ $taxon->get_data } ) {
-                    $datum->set_taxon($target);
-                }
-                foreach my $node ( @{ $taxon->get_nodes } ) {
-                    $node->set_taxon($target);
-                }
-                if ( not exists $object_by_name{$name} ) {
+                else {
+                    $target = $factory->create_taxon( '-name' => $name );
                     $merged->insert($target);
-                    $object_by_name{ $target->get_name } = $target;
-                }
+                    $taxon_by_name{$name} = $target;
+                }                
+                
+                # copy over data, metadata and node links
+                $_->set_taxon($target) for @{ $taxon->get_data };
+                $_->set_taxon($target) for @{ $taxon->get_nodes };
+                $target->add_meta($_)  for @{ $taxon->get_meta };
             }
         }
         return $merged;
