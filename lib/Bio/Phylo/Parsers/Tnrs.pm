@@ -41,7 +41,7 @@ sub _parse {
 		# parse out 'authority', i.e. domain name
 		my $uri = $match->{'uri'};
 		my $auth = URI->new($uri)->authority;
-		$authority{$auth} = 1;
+		$authority{$auth} = 1 if $auth;
 		
 		# no URI, no domain...
 		if ( $auth ) {
