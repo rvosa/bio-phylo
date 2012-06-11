@@ -222,6 +222,109 @@ Returns triple predicate
         return $self->get_attributes->{$predicateName};
     }
 
+=item get_predicate_namespace()
+
+Returns predicate namespace
+
+ Type    : Accessor
+ Title   : get_predicate_namespace
+ Usage   : my $val = $anno->get_predicate_namespace;
+ Function: Returns predicate namespace
+ Returns : A namespace
+ Args    : NONE
+
+=cut	
+	
+	sub get_predicate_namespace {
+		my $self = shift;
+		my $predicate = $self->get_predicate;
+		my ( $pre, $pred ) = split /:/, $predicate;
+		return $self->get_namespaces($pre);
+	}
+
+=item get_predicate_local()
+
+Returns predicate without prefix
+
+ Type    : Accessor
+ Title   : get_predicate_local
+ Usage   : my $val = $anno->get_predicate_local;
+ Function: Returns predicate without prefix
+ Returns : A predicate
+ Args    : NONE
+
+=cut	
+	
+	sub get_predicate_local {
+		my $self = shift;
+		my $predicate = $self->get_predicate;
+		my ( $pre, $pred ) = split /:/, $predicate;
+		return $pred;
+	}
+
+=item get_object_type()
+
+Returns data type of object
+
+ Type    : Accessor
+ Title   : get_object_type
+ Usage   : my $val = $anno->get_object_type;
+ Function: Returns data type of object
+ Returns : A local predicate, e.g. 'boolean'
+ Args    : NONE
+
+=cut
+	
+	sub get_object_type {
+		my $self = shift;
+		if ( my $type = $self->get_attributes('datatype') ) {
+			my ( $pre, $datatype ) = split /:/, $type;
+			return $datatype;
+		}
+	}
+
+=back
+
+=head2 TESTS
+
+=over
+
+=item is_resource()
+
+Returns whether the object is a resource (e.g. an href or a nested XMLLiteral)
+
+ Type    : Accessor
+ Title   : is_resource
+ Usage   : my $val = $anno->is_resource;
+ Function: Returns whether object is a resource
+ Returns : Boolean
+ Args    : NONE
+
+=cut
+	
+	sub is_resource {
+		my $self = shift;
+		return $self->get_attributes('xsi:type') =~ /ResourceMeta/;
+	}
+
+=item is_xml_literal()
+
+Returns whether the object is a nested XMLLiteral
+
+ Type    : Accessor
+ Title   : is_xml_literal
+ Usage   : my $val = $anno->is_xml_literal;
+ Function: Returns whether object is a nested XMLLiteral
+ Returns : Boolean
+ Args    : NONE
+
+=cut
+	
+	sub is_xml_literal {
+		my $self = shift;
+		return $self->get_object_type eq 'XMLLiteral';
+	}
+	
 =back
 
 =head2 SERIALIZERS
