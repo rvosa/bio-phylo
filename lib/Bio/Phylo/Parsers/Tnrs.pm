@@ -34,7 +34,9 @@ sub _parse {
 		my $taxon = $fac->create_taxon( '-name' => $name->{'submittedName'} );
 		
 		# get best match with URI
-		my ($match) = sort { $b->{'score'} <=> $a->{'score'} } grep { $_->{'uri'} } grep { defined $_ } @{ $name->{'matches'} };
+		my ($match) = sort { $b->{'score'} <=> $a->{'score'} }
+		              grep { defined $_->{'uri'} }
+					  grep { defined $_ } @{ $name->{'matches'} };
 			
 		# parse out 'authority', i.e. domain name
 		my $uri = $match->{'uri'};
@@ -42,16 +44,18 @@ sub _parse {
 		$authority{$auth} = 1;
 		
 		# no URI, no domain...
-		if ( not $auth ) {
-			throw 'BadFormat' => Dumper($match);	
+		if ( $auth ) {
+
+			# attach metadata
+			$taxon->add_meta(
+				$fac->create_meta(
+					'-triple' => { "tnrs:${auth}" => $uri }
+				)
+			);
+			
+			# attach link
+			$taxon->set_link($uri);
 		}
-		
-		# attach metadata
-		$taxon->add_meta(
-			$fac->create_meta(
-				'-triple' => { "tnrs:${auth}" => $uri }
-			)
-		);
 
 		$taxa->insert($taxon);
 	}
