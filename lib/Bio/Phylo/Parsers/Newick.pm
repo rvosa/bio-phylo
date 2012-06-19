@@ -22,15 +22,19 @@ sub _return_is_scalar { 1 }
 sub _simplify {
     # Simplify a Newick tree string by removing unneeded nodes. The leaves to
     # keep are given as $ids, an arrayref of terminal node IDs. Note that only
-    # cherries are simplified to keep the function fast.
+    # cherries are simplified to keep the function fast. Ternary or higher order
+    # branches are left alone. Quoted strings should be handled properly.
     my ($string, $ids) = @_;   
     my %id_hash = map { $_ => undef } @$ids;
 
     # Setup some regular expressions:
-    # 1/ ID is anything but : or , or ( or )
-    my $id_re     = qr/[^)(:,;]+/;
-    # 2/ Distance is a number (Regexp::Common $RE{num}{real} would be more stringent)
-    my $dist_re   = qr/[0-9.]+/;
+    # 1/ ID is anything but these characters (except when quoted): , ; : ( ) " '
+    my $id_re_simple = qr/[^)(,:"';]+/;
+    my $id_re_squote = qr/[^']+/;
+    my $id_re_dquote = qr/[^']+/;
+    my $id_re = qr/ (?: $id_re_simple | '$id_re_squote' | "$id_re_dquote" ) /x;
+    # 2/ Distance is a real number (regexp taken from Regexp::Common $RE{num}{real})
+    my $dist_re   = qr/(?:(?i)(?:[+-]?)(?:(?=[.]?[0123456789])(?:[0123456789]*)(?:(?:[.])(?:[0123456789]{0,}))?)(?:(?:[E])(?:(?:[+-]?)(?:[0123456789]+))|))/;
     # 3/ A pair of ID and distance (both optional)
     my $pair_re   = qr/ ($id_re)? (?: \: ($dist_re) )? /x;
     # 4/ Cherry
@@ -42,44 +46,43 @@ sub _simplify {
     $string =~ s/$ws_re//g;
 
     # Prune cherries
-    my $prev_string = $string;
-    while (1) {
-        $string =~ s/ $cherry_re / _prune_cherry($1, $2, $3, $4, $5, $6, $7, \%id_hash) /gex;
-        last if ( $string eq $prev_string );
+    my $prev_string = '';
+    while (not $string eq $prev_string) {
         $prev_string = $string;
+        $string =~ s/ $cherry_re / _prune_cherry($1, $2, $3, $4, $5, $6, $7, \%id_hash) /gex;
     }
 
     return $string;
 }
 
+
 sub _prune_cherry {
     my ($match, $id1, $dist1, $id2, $dist2, $idp, $distp, $id_hash) = @_;
     my $repl;
-
     my $id1_exists = defined $id1 && exists $id_hash->{$id1};
     my $id2_exists = defined $id2 && exists $id_hash->{$id2};
-    if (          $id1_exists  &&     $id2_exists  ) {
+    if ( $id1_exists && $id2_exists ) {
         # Keep both leaves
         $repl = $match;
-    } elsif ( not($id1_exists) && not($id2_exists) ) {
-        # Delete both leaves
-        $repl = '';
     } else {
-        # Keep only one leaf
+        # There are from zero to one leaves to keep. Delete one of them.
         my ($id, $dist) = $id1_exists ? ($id1, $dist1) : ($id2, $dist2);
         if ( defined($dist) || defined($distp) ) {
             $dist = ':'.(($dist||0) + ($distp||0));
         }
-        $dist = '' if not defined $dist;
+        $id   ||= '' if not defined $id;
+        $dist ||= '' if not defined $dist;
         $repl = $id.$dist;
     }
     return $repl;
 }
 
+
 sub _parse {
     my $self   = shift;
     my $fh     = $self->_handle;
     my $forest = $self->_factory->create_forest;
+
     my $string;
     while (<$fh>) {
         chomp;
