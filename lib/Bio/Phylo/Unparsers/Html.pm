@@ -82,12 +82,11 @@ __DATA__
 		<title>
 			[% IF proj.get_name %]
 				[% proj.get_name %]
-			[% ELSE %]
-				(Untitled)
 			[% END %]
 		</title>
 	</head>
 	<body>
+		<img src="http://www.evoio.org/wg/evoio/images/f/f1/Phylotastic_logo.png"/>
 		<h1>Document</h1>
 		[% PROCESS identifiable obj = proj, tag = "h2" %]
 		
@@ -173,8 +172,6 @@ __DATA__
 		<a name="[% obj.get_xml_id %]">
 			[% IF obj.get_name %]
 				[% obj.get_name %]
-			[% ELSE %]
-				(Untitled)
 			[% END %]
 		</a>
 	</[% tag %]>
