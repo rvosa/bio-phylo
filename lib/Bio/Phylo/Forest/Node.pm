@@ -1177,6 +1177,9 @@ Gets invocant's most recent common ancestor shared with argument.
 
     sub get_mrca {
         my ( $self, $other_node ) = @_;
+        if ($self eq $other_node) {
+           return $self;
+        }
         my $self_anc  = $self->get_ancestors       || [$self];
         my $other_anc = $other_node->get_ancestors || [$other_node];
         for my $i ( 0 .. $#{$self_anc} ) {
