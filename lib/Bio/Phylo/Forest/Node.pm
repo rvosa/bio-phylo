@@ -1845,7 +1845,7 @@ Calculates patristic distance between invocant and argument.
 
     sub calc_patristic_distance {
         my ( $self, $other_node ) = @_;
-        my $patristic_distance;
+        my $patristic_distance = 0;
         my $mrca    = $self->get_mrca($other_node);
         my $mrca_id = $mrca->get_id;
         while ( $self->get_id != $mrca_id ) {
@@ -1882,7 +1882,7 @@ Calculates node distance between invocant and argument.
 
     sub calc_nodal_distance {
         my ( $self, $other_node ) = @_;
-        my $nodal_distance;
+        my $nodal_distance = 0;
         my $mrca    = $self->get_mrca($other_node);
         my $mrca_id = $mrca->get_id;
         while ( $self and $self->get_id != $mrca_id ) {
