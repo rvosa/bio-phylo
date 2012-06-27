@@ -137,6 +137,10 @@ ok( $trees[3]->get_root->get_name eq 'root', '73 reroot tree' );
       parse( '-format' => 'newick', '-string' => $subnewick )->first;
     ok( $subtree1->calc_symdiff($subtree2) == 0, '76 clone subtree' );
 }
+is($node->get_mrca($node), $node);
+is($node->calc_patristic_distance($node), 0);
+is($node->calc_nodal_distance($node), 0);
+
 __DATA__
 (H:1,(G:1,(F:1,(E:1,(D:1,(C:1,(A:1,B:1):1):1):1):1):1):1):0;
 (H:1,(G:1,(F:1,((C:1,(A:1,B:1):1):1,(D:1,E:1):1):1):1):1):0;
