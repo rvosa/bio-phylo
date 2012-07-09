@@ -717,6 +717,10 @@ Clones invocant.
             delete $subs{'new'};
         }
         my $clone = $class->new(@new);
+		
+        # execute additional code refs
+        $_->( $self, $clone )
+          for ( grep { looks_like_instance( $_, 'CODE' ) } values %subs );		
 
         # populate the clone
         for my $getter ( keys %methods ) {
@@ -742,9 +746,6 @@ Clones invocant.
             }
         }
 
-        # execute additional code refs
-        $_->( $self, $clone )
-          for ( grep { looks_like_instance( $_, 'CODE' ) } values %subs );
         return $clone;
     }
 
