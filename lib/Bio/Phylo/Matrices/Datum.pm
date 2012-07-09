@@ -881,6 +881,61 @@ Appends argument to invocant.
         $self->set_char( \@newchars );
     }
 
+=item consense()
+
+Creates consensus sequence out of arguments
+
+ Type    : Method
+ Title   : consense
+ Usage   : my @chars = $datum->consense($datum1,...);
+ Function: Creates consensus sequence out of arguments
+ Returns : Returns @chars or $seq
+ Args    : NONE
+
+=cut
+    
+    sub consense {
+        my @data = @_;
+        
+        # build two-dimensional array of character states
+        my @chars;
+        for my $datum ( @data ) {
+            my @char = $datum->get_char;
+            push @chars, \@char;
+        }
+        
+        # get special symbols
+        my $length = $data[0]->get_length;
+        my $to = $data[0]->get_type_object;
+        my $m = $to->get_missing;
+        my $g = $to->get_gap;        
+        
+        # build result
+        my @result;
+        for my $i ( 0 .. ( $length - 1 ) ) {
+            my %col;
+            
+            # get distinct states for column, ignore missing and gap
+            ROW: for my $row ( @chars ) {
+                my $c = $row->[$i];
+                next ROW if $c eq $m or $c eq $g;
+                $col{$c} = 1;
+            }
+            
+            # get ambiguity symbol or missing
+            my @states = keys %col;
+            if ( @states ) {
+                push @result, $to->get_symbol_for_states(@states) || $m;
+            }
+            else {
+                push @result, $m;
+            }
+        }
+        
+        # return result
+        return wantarray ? @result : $to->join(@result);
+    }
+
 =begin comment
 
 Validates invocant data contents.
