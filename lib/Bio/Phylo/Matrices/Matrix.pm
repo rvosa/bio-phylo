@@ -1148,6 +1148,43 @@ or autapomorphies.
 		}
 		return $self->prune_chars(\@indices);		
 	}
+
+=item prune_missing_and_gaps()
+
+Creates a cloned matrix that omits all characters for which the invocant only
+has missing and/or gap states.
+
+ Type    : Utility method
+ Title   : prune_missing_and_gaps
+ Usage   : my $clone = $object->prune_missing_and_gaps;
+ Function: Creates spliced clone.
+ Returns : A spliced clone of the invocant.
+ Args    : None
+ Comments: The columns are retained in the order in 
+           which they were supplied.
+
+=cut
+	
+	sub prune_missing_and_gaps {
+		my $self = shift;
+		my $nchar = $self->get_nchar;
+		my $to = $self->get_type_object;
+		my $m = $to->get_missing;
+		my $g = $to->get_gap;
+		my @indices;
+		for my $i ( 0 .. ( $nchar - 1 ) ) {
+			my %col;
+			$self->visit(sub{
+				my $row = shift;
+				my $state = $row->get_by_index($i);
+				if ( $state ne $m and $state ne $g ) {
+					$col{$state} = 1;
+				}
+				push @indices, $i if not keys %col;
+			});
+		}
+		return $self->prune_chars(\@indices);
+	}
 	
 =item bootstrap()
 
@@ -1254,6 +1291,10 @@ Clones invocant.
 			my $chars = $obj->get_characters;
 			my $clone_chars = $obj->get_characters->clone;
 			$clone->set_characters( $clone_chars );
+		};
+		$subs{'set_taxa'} = sub {
+			my ( $obj, $clone ) = @_;
+			$clone->set_taxa( $obj->make_taxa );
 		};
         return $self->SUPER::clone(%subs);
     }
