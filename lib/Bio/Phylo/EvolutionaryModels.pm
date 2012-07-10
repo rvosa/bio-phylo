@@ -13,7 +13,7 @@ BEGIN {
     # set the version for version checking
     use Bio::Phylo; our $VERSION = $Bio::Phylo::VERSION;
     our @EXPORT_OK =
-      qw(&sample &constant_rate_birth &constant_rate_birth_death);
+      qw(&sample &constant_rate_birth &constant_rate_birth_death &clade_shifts);
 }
 
 =head1 NAME
@@ -1053,7 +1053,7 @@ sub constant_rate_birth_death {
     my %options = @_;
 
     #Check that we have a termination condition
-    unless ( defined $options{tree_size} xor defined $options{tree_age} ) {
+    unless ( defined $options{tree_size} or defined $options{tree_age} ) {
 
         #Error here.
         return undef;
@@ -1174,6 +1174,338 @@ sub constant_rate_birth_death {
     return $tree;
 }
 
+
+=item diversity_dependent_speciation()
+
+A birth and death model with speciation rate dependent on diversity as per
+Etienne et. al. 2012
+
+ Type    : Evolutionary model
+ Title   : diversity_dependent_speciation
+ Usage   : $tree = diversity_dependent_speciation(%options)
+ Function: Produces a tree from the model terminating at a given size/time
+ Returns : Bio::Phylo::Forest::Tree
+ Args    : %options with fields:
+           maximal_birth_rate The maximal birth rate parameter (default 1)
+           death_rate The death rate parameter (default no extinction)
+           K_dash     The modified carrying capacity (no default)
+           tree_size  The size of the tree at which to terminate
+           tree_age   The age of the tree at which to terminate
+
+ NB: At least one of tree_size and tree_age must be specified           
+
+Reference:
+Rampal S. Etienne, Bart Haegeman, Tanja Stadler, Tracy Aze, Paul N. Pearson, 
+Andy Purvis and Albert B. Phillimore. "Diversity-dependence brings molecular 
+phylogenies closer to agreement with the fossil record" 
+doi: 10.1098/rspb.2011.1439
+
+=cut
+
+sub diversity_dependent_speciation {
+    my %options = @_;
+
+    #Check that we have a termination condition
+    unless ( defined $options{tree_size} or defined $options{tree_age} ) {
+        #Error here.
+        return undef;
+    }
+
+    #Check that we have a carrying capacity
+    unless ( defined $options{K_dash} ) {
+        #Error here.
+        return undef;
+    }
+
+    #Set the undefined condition to infinity
+    $options{tree_size} = 1e6 unless defined $options{tree_size};
+    $options{tree_age}  = 1e6 unless defined $options{tree_age};
+
+    #Set default rates
+    $options{maximal_birth_rate} = 1 unless defined( $options{maximal_birth_rate} );
+    delete $options{death_rate}
+      if defined( $options{death_rate} ) && $options{death_rate} == 0;
+
+    #Each node gets an ID number this tracks these
+    my $node_id = 0;
+
+    #Create a new tree with a root, start the list of terminal species
+    my $tree = Bio::Phylo::Forest::Tree->new();
+    my $root = Bio::Phylo::Forest::Node->new();
+    $root->set_branch_length(0);
+    $root->set_name( 'ID' . $node_id++ );
+    $tree->insert($root);
+    my @terminals = ($root);
+    my ( $next_extinction, $next_speciation );
+    my $time      = 0;
+    my $tree_size = 1;
+    
+    
+    $options{birth_rate} = max(0,$options{max_birth_rate}*(1-1/$options{K_dash}));
+    
+
+    #Check whether we have a non-zero root edge
+    if ( defined $options{root_edge} && $options{root_edge} ) {
+
+        #Non-zero root. We set the time to the first speciation event
+        $next_speciation = -log(rand) / $options{birth_rate} / $tree_size;
+    }
+    else {
+
+        #Zero root, we want a speciation event straight away
+        $next_speciation = 0;
+    }
+
+    #Time of the first extinction event. If no extinction we always
+    #set the extinction event after the current speciation event
+    if ( defined $options{death_rate} ) {
+        $next_extinction = -log(rand) / $options{death_rate} / $tree_size;
+    }
+    else {
+        $next_extinction = $next_speciation + 1;
+    }
+
+    #While the tree has not become extinct and the termination criterion
+    #has not been achieved we create new speciation and extinction events
+    while ($tree_size > 0
+        && $tree_size < $options{tree_size}
+        && $time < $options{tree_age} )
+    {
+
+        #Add the time since the last event to all terminal species
+        foreach (@terminals) {
+            $_->set_branch_length(
+                $_->get_branch_length + min(
+                    $next_extinction, $next_speciation,
+                    $options{tree_age} - $time
+                )
+            );
+        }
+
+        #Update the time
+        $time += min( $next_extinction, $next_speciation );
+
+        #If the tree exceeds the time limit we are done
+        return $tree if ( $time > $options{tree_age} );
+
+        #Get the species effected by this event and remove it from the terminals list
+        my $effected =
+          splice( @terminals, int( rand( scalar @terminals ) ), 1 );
+
+        #If we have a speciation event we add two new species
+        if ( $next_speciation < $next_extinction || !defined $next_extinction )
+        {
+            foreach ( 1, 2 ) {
+
+                #Create a new species
+                my $child = Bio::Phylo::Forest::Node->new();
+                $child->set_name( 'ID' . $node_id++ );
+
+                #Give it a zero edge length
+                $child->set_branch_length(0);
+
+                #Add it as a child to the speciating species
+                $effected->set_child($child);
+
+                #Add it to the tree
+                $tree->insert($child);
+
+                #Add it to the terminals list
+                push( @terminals, $child );
+            }
+        }
+
+        #We calculate the time that the next extinction and speciation
+        #events will occur (only the earliest of these will actually
+        #happen). NB: this approach is only appropriate for models where
+        #speciation and extinction times are exponentially distributed.
+        #Windows sometimes returns 0 values for rand...
+        my ( $r1, $r2 ) = ( 0, 0 );
+        $r1 = rand until $r1;
+        $r2 = rand until $r2;
+        $tree_size = scalar @terminals;
+        return $tree unless $tree_size;
+        
+        $options{birth_rate} = max(0,$options{max_birth_rate}*(1-$tree_size/$options{K_dash}));
+        if ($options{birth_rate}==0)
+        {
+        	$next_speciation = $options{tree_age};
+        } else
+        {
+        	$next_speciation = -log($r1) / $options{birth_rate} / $tree_size;
+        }
+        if ( defined $options{death_rate} ) {
+            $next_extinction = -log($r2) / $options{death_rate} / $tree_size;
+        }
+        else {
+            $next_extinction = $next_speciation + 1;
+        }
+    }
+    return $tree;
+}
+
+
+=item constant_rate_birth_death()
+
+A temporal shift birth and death model
+
+ Type    : Evolutionary model
+ Title   : temporal_shift_birth_death
+ Usage   : $tree = constant_rate_birth_death(%options)
+ Function: Produces a tree from the model terminating at a given size/time
+ Returns : Bio::Phylo::Forest::Tree
+ Args    : %options with fields:
+           birth_rates The birth rates 
+           death_rates The death rates
+           rate_times  The times after which the rates apply (first element must be 0)
+           tree_size  The size of the tree at which to terminate
+           tree_age   The age of the tree at which to terminate
+
+ NB: At least one of tree_size and tree_age must be specified           
+
+=cut
+
+sub temporal_shift_birth_death {
+    my %options = @_;
+
+    #Check that we have a termination condition
+    unless ( defined $options{tree_size} or defined $options{tree_age} ) {
+
+        #Error here.
+        return undef;
+    }
+
+    #Set the undefined condition to infinity
+    $options{tree_size} = 1e6 unless defined $options{tree_size};
+    $options{tree_age}  = 1e6 unless defined $options{tree_age};
+
+    #Each node gets an ID number this tracks these
+    my $node_id = 0;
+
+    #Create a new tree with a root, start the list of terminal species
+    my $tree = Bio::Phylo::Forest::Tree->new();
+    my $root = Bio::Phylo::Forest::Node->new();
+    $root->set_branch_length(0);
+    $root->set_name( 'ID' . $node_id++ );
+    $tree->insert($root);
+    my @terminals = ($root);
+    my ( $next_extinction, $next_speciation );
+    my $time      = 0;
+    my $tree_size = 1;
+
+    #Load current rates
+    my $birth_rate = $options{birth_rates}[0];
+    my $death_rate = $options{death_rates}[0];
+    my $current_rates = 0;
+    my $next_rate_change = $options{rate_times}[$current_rates+1];
+    
+    #Add an additional time to the end of the rate change times to simplify checking
+    push(@{$options{rate_times}},$options{tree_size}*2);
+
+    #Check whether we have a non-zero root edge
+    if ( defined $options{root_edge} && $options{root_edge} ) {
+
+        #Non-zero root. We set the time to the first speciation event
+        $next_speciation = -log(rand) / $birth_rate / $tree_size;
+    }
+    else {
+
+        #Zero root, we want a speciation event straight away
+        $next_speciation = 0;
+    }
+
+#        print  "RATES:".$time."|".$birth_rate."|".$death_rate."\n";
+    #Time of the first extinction event. If no extinction we always
+    #set the extinction event after the current speciation event
+    $next_extinction = -log(rand) / $death_rate / $tree_size;
+
+    #While the tree has not become extinct and the termination criterion
+    #has not been achieved we create new speciation and extinction events
+    while ($tree_size > 0
+        && $tree_size < $options{tree_size}
+        && $time < $options{tree_age} )
+    {
+
+#        print  "TIMES:".$next_extinction."|".$next_speciation."|".$next_rate_change."|\n";
+#        print  "RATES:".$time."|".$birth_rate."|".$death_rate."\n";
+        #Add the time since the last event to all terminal species
+        foreach (@terminals) {
+            $_->set_branch_length(
+                $_->get_branch_length + min(
+                    $next_extinction, $next_speciation,
+                    $options{tree_age} - $time
+                )
+            );
+        }
+
+        #Update the time
+        my $time_last = $time;
+        $time += min( $next_extinction, $next_speciation, $next_rate_change-$time_last);
+
+        #If the tree exceeds the time limit we are done
+        return $tree if ( $time > $options{tree_age} );
+
+        
+        if ($next_rate_change-$time_last < min( $next_extinction, $next_speciation) )
+        {
+            $current_rates += 1;
+            $birth_rate = $options{birth_rates}[$current_rates];
+            $death_rate = $options{death_rates}[$current_rates];
+            $next_rate_change = $options{rate_times}[$current_rates+1];
+            
+        } else
+        {
+                
+
+            #Get the species effected by this event and remove it from the terminals list
+            my $effected = splice( @terminals, int( rand( scalar @terminals ) ), 1 );
+
+            #If we have a speciation event we add two new species
+            if ( $next_speciation < $next_extinction || !defined $next_extinction )
+            {
+                foreach ( 1, 2 ) {
+
+                    #Create a new species
+                    my $child = Bio::Phylo::Forest::Node->new();
+                    $child->set_name( 'ID' . $node_id++ );
+
+                    #Give it a zero edge length
+                    $child->set_branch_length(0);
+
+                    #Add it as a child to the speciating species
+                    $effected->set_child($child);
+
+                    #Add it to the tree
+                    $tree->insert($child);
+
+                    #Add it to the terminals list
+                    push( @terminals, $child );
+                }
+            }
+        }
+
+        #We calculate the time that the next extinction and speciation
+        #events will occur (only the earliest of these will actually
+        #happen). NB: this approach is only appropriate for models where
+        #speciation and extinction times are exponentially distributed.
+        #Windows sometimes returns 0 values for rand...
+        my ( $r1, $r2 ) = ( 0, 0 );
+        $r1 = rand until $r1;
+        $r2 = rand until $r2;
+        $tree_size = scalar @terminals;
+        return $tree unless $tree_size;
+        $next_speciation = -log($r1) / $birth_rate / $tree_size;
+        $next_extinction = -log($r2) / $death_rate / $tree_size;
+        
+        if ((scalar @terminals)%100==0)
+        {
+                print $time."|".@terminals."|\n";
+                }
+
+    }
+    return $tree;
+}
+
 =item evolving_speciation_rate()
 
 An evolutionary model featuring evolving speciation rates. Each daughter 
@@ -1200,7 +1532,7 @@ sub evolving_speciation_rate {
     my %options = @_;
 
     #Check that we have a termination condition
-    unless ( defined $options{tree_size} xor defined $options{tree_age} ) {
+    unless ( defined $options{tree_size} or defined $options{tree_age} ) {
 
         #Error here.
         return undef;
@@ -1304,8 +1636,8 @@ sub evolving_speciation_rate {
             $net_rate += $new_speciation_rate;
         }
 
-        #	$net_rate = 0;
-        #	foreach (@birth_rates) { $net_rate += $_; }
+        #   $net_rate = 0;
+        #   foreach (@birth_rates) { $net_rate += $_; }
         #Windows sometimes returns 0 values for rand...
         my ( $r1, $r2 ) = ( 0, 0 );
         $r1 = rand until $r1;
@@ -1317,6 +1649,281 @@ sub evolving_speciation_rate {
         }
         $next_speciation = -log($r1) / $net_rate / $tree_size;
         return $tree unless $tree_size;
+    }
+    return $tree;
+}
+
+
+=item clade_shifts()
+
+A constant rate birth-death model with punctuated changes in the speciation
+and extinction rates. At each change one lineage receives new pre-specified
+speciation and extinction rates.
+
+ Type    : Evolutionary model
+ Title   : clade_shifts
+ Usage   : $tree = clade_shifts(%options)
+ Function: Produces a tree from the model terminating at a given size/time
+ Returns : Bio::Phylo::Forest::Tree
+ Args    : %options with fields:
+           birth_rates The speciation rates
+           death_rates The death rates
+           rate_times  The times at which the rates are introduced to a new
+             clade. The first time should be zero. The remaining must be in 
+             ascending order.
+           tree_size  The size of the tree at which to terminate
+           tree_age   The age of the tree at which to terminate
+
+ NB: At least one of tree_size and tree_age must be specified           
+
+=cut
+
+sub clade_shifts {
+    my %options = @_;
+
+    #Check that we have a termination condition
+    unless ( defined $options{tree_size} or defined $options{tree_age} ) {
+
+        #Error here.
+        return undef;
+    }
+
+    #Set the undefined condition to infinity
+    $options{tree_size} = 1e6 unless defined $options{tree_size};
+    $options{tree_age}  = 1e6 unless defined $options{tree_age};
+
+    #Each node gets an ID number this tracks these
+    my $node_id = 0;
+
+    #Create a new tree with a root, start the list of terminal species
+    my $tree = Bio::Phylo::Forest::Tree->new();
+    my $root = Bio::Phylo::Forest::Node->new();
+    $root->set_branch_length(0);
+    $root->set_name( 'ID' . $node_id++ );
+    $tree->insert($root);
+    
+    #rates
+    my @birth_rates_in = @{$options{birth_rates}};
+    my @death_rates_in = @{$options{death_rates}};
+    my @rate_times_in = @{$options{rate_times}};
+    
+    if ($rate_times_in[0] != 0)
+    {
+        Bio::Phylo::Util::Exceptions::BadArgs->throw( 'error' =>
+              "The first rate time must be 0" );
+    }
+    if (scalar @birth_rates_in != scalar @death_rates_in)
+    {
+        Bio::Phylo::Util::Exceptions::BadArgs->throw( 'error' =>
+              "birth and death rates must have the same length" );
+    }
+    if (scalar @birth_rates_in != scalar @rate_times_in)
+    {
+        Bio::Phylo::Util::Exceptions::BadArgs->throw( 'error' =>
+              "birth/death rates must have the same length as rate times" );
+    }
+    my @birth_rates = ($birth_rates_in[0]);
+    my @death_rates = ($death_rates_in[0]);
+    
+    my $net_birth_rate = $birth_rates[0];
+    my $net_death_rate = $death_rates[0];
+    
+    shift(@birth_rates_in);
+    shift(@death_rates_in);
+    
+    my @terminals = ($root);
+    my ( $next_extinction, $next_speciation, $next_rate_change );
+    my $time      = 0;
+    my $tree_size = 1;
+    my $inf = 9**9**9**9;
+
+    #Check whether we have a non-zero root edge
+    if ( defined $options{root_edge} && $options{root_edge} ) {
+
+        #Non-zero root. We set the time to the first speciation event
+        if ($birth_rates[0] > 0)
+        {
+            $next_speciation = -log(rand) / $birth_rates[0] ;
+        } else
+        { 
+            $next_speciation = $inf;
+        }
+    }
+    else {
+        #Zero root, we want a speciation event straight away
+        $next_speciation = 0.0;
+    }
+
+    #Time of the first extinction event. If no extinction we always
+    #set the extinction event after the current speciation event
+    if ($death_rates[0] > 0)
+    {
+        $next_extinction = -log(rand) / $death_rates[0];
+    } else
+    {
+        $next_extinction = $inf;
+    }
+    
+    #Time of next rate change
+    shift(@rate_times_in); #pop the initial 0
+    $next_rate_change = shift(@rate_times_in);
+    
+    #While the tree has not become extinct and the termination criterion
+    #has not been achieved we create new speciation and extinction events
+    while ($tree_size > 0
+        && $tree_size < $options{tree_size}
+        && $time < $options{tree_age} )
+    {
+        #print $time."|".$tree_size."\n";
+        #Update rates if a clade shift is happening
+        #TODO index rates or pop off one at a time.
+        
+
+        #Add the time since the last event to all terminal species
+        foreach (@terminals) {
+            $_->set_branch_length(
+                $_->get_branch_length + min(
+                    $next_extinction, 
+                    $next_speciation,
+                    $next_rate_change-$time,
+                    $options{tree_age} - $time
+                )
+            );
+        }
+
+        #Update the time
+        my $time_last = $time;
+        $time += min( $next_extinction, $next_speciation, $next_rate_change-$time_last );
+
+        #If the tree exceeds the time limit we are done
+        return $tree if ( $time > $options{tree_age} );
+        
+        #We have a rate change
+        if ($next_rate_change-$time_last < min($next_extinction, $next_speciation))
+        {   
+            #Find a random species to effect
+            my $effected_species = int(rand($tree_size));
+            #Subtract current rates
+            $net_death_rate -= $death_rates[$effected_species];
+            $net_birth_rate -= $birth_rates[$effected_species];
+            #Get new rates
+            $death_rates[$effected_species] = shift(@death_rates_in);
+            $birth_rates[$effected_species] = shift(@birth_rates_in);
+            #Add new rates
+            $net_death_rate += $death_rates[$effected_species];
+            $net_birth_rate += $birth_rates[$effected_species];
+            #Get next rate change time
+            if (scalar(@rate_times_in))
+            {
+                $next_rate_change = shift(@rate_times_in);
+            } else 
+            {
+                $next_rate_change = $inf;
+            }
+        }
+        #Choosing a random species to speciate
+        else 
+        {
+            my $selected    = 0;
+            if ( $next_speciation < $next_extinction )
+            {
+                my $rand_select = rand($net_birth_rate);
+                for (
+                    ;
+                    $selected < scalar @terminals
+                    && $rand_select > $birth_rates[$selected] ;
+                    $selected++
+                )
+                {
+                    $rand_select -= $birth_rates[$selected];
+                }
+            } else
+            {
+                my $rand_select = rand($net_death_rate);
+                for (
+                    ;
+                    $selected < scalar @terminals
+                    && $rand_select > $death_rates[$selected] ;
+                    $selected++
+                )
+                {
+                    $rand_select -= $death_rates[$selected];
+                }
+            }
+            if ($net_birth_rate == 0)
+            {
+                $selected = 0;
+            }
+
+            #Remove the species effected by this event and remove it from the terminals list
+            my $effected      = splice( @terminals,   $selected, 1 );
+            my $effected_birth_rate = splice( @birth_rates, $selected, 1 );
+            my $effected_death_rate = splice( @death_rates, $selected, 1 );
+            
+            $net_birth_rate -= $effected_birth_rate;
+            $net_death_rate -= $effected_death_rate;
+
+            #If we have a speciation event we add two new species
+            if ( $next_speciation < $next_extinction || !defined $next_extinction )
+            {
+                foreach ( 1, 2 ) {
+
+                    #Create a new species
+                    my $child = Bio::Phylo::Forest::Node->new();
+                    $child->set_name( 'ID' . $node_id++ );
+
+                    #Give it a zero edge length
+                    $child->set_branch_length(0);
+
+                    #Add it as a child to the speciating species
+                    $effected->set_child($child);
+
+                    #Add it to the tree
+                    $tree->insert($child);
+
+                    #Add it to the terminals list
+                    push( @terminals, $child );
+                    
+                    push( @birth_rates, $effected_birth_rate );
+                    push( @death_rates, $effected_death_rate );
+                    
+                    $net_death_rate += $effected_death_rate;
+                    $net_birth_rate += $effected_birth_rate;
+                    
+                }
+            }
+        }
+        #We calculate the time that the next extinction and speciation
+        #events will occur (only the earliest of these will actually
+        #happen). NB: this approach is only appropriate for models where
+        #speciation and extinction times are exponentially distributed.
+        
+        #Windows sometimes returns 0 values for rand...
+        my ( $r1, $r2 ) = ( 0, 0 );
+        $r1 = rand until $r1;
+        $r2 = rand until $r2;
+        
+        #The current tree size
+        $tree_size = scalar @terminals;
+        
+        return $tree unless $tree_size;
+        
+        if ($net_birth_rate > 0)
+        {
+            $next_speciation = -log($r1) / $net_birth_rate;
+        } else 
+        {
+            $next_speciation = $inf;
+        }
+        
+        if ($net_death_rate > 0)
+        {
+            $next_extinction = -log($r2) / $net_death_rate;
+        } else
+        {
+            $next_extinction = $inf;
+        }
+
     }
     return $tree;
 }
@@ -1344,7 +1951,7 @@ sub beta_binomial {
     my %options = @_;
 
     #Check that we have a termination condition
-    unless ( defined $options{tree_size} xor defined $options{tree_age} ) {
+    unless ( defined $options{tree_size} or defined $options{tree_age} ) {
 
         #Error here.
         return undef;
