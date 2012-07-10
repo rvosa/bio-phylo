@@ -408,7 +408,6 @@ Validates the object's contents
     sub _cleanup {
         my $self = shift;
         if ( $self and defined( my $id = $self->get_id ) ) {
-            $logger->debug("cleaning up '$self'");
             delete $type{ $self->get_id };
         }
     }

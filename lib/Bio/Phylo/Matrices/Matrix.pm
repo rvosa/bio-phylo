@@ -1890,7 +1890,6 @@ Analog to to_xml.
 
     sub _cleanup {
         my $self = shift;
-        $logger->info("cleaning up '$self'");
         my $id = $self->get_id;
         for (@inside_out_arrays) {
             delete $_->{$id} if defined $id and exists $_->{$id};
