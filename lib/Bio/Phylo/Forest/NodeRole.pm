@@ -924,6 +924,9 @@ Gets invocant's most recent common ancestor shared with argument.
 
     sub get_mrca {
         my ( $self, $other_node ) = @_;
+        if ( $self->get_id == $other_node->get_id ) {
+            return $self;
+        }
         my $self_anc  = $self->get_ancestors       || [$self];
         my $other_anc = $other_node->get_ancestors || [$other_node];
         for my $i ( 0 .. $#{$self_anc} ) {
@@ -1570,7 +1573,7 @@ Calculates patristic distance between invocant and argument.
 
     sub calc_patristic_distance {
         my ( $self, $other_node ) = @_;
-        my $patristic_distance;
+        my $patristic_distance = 0;
         my $mrca    = $self->get_mrca($other_node);
         my $mrca_id = $mrca->get_id;
         while ( $self->get_id != $mrca_id ) {
@@ -1607,7 +1610,7 @@ Calculates node distance between invocant and argument.
 
     sub calc_nodal_distance {
         my ( $self, $other_node ) = @_;
-        my $nodal_distance;
+        my $nodal_distance = 0;
         my $mrca    = $self->get_mrca($other_node);
         my $mrca_id = $mrca->get_id;
         while ( $self and $self->get_id != $mrca_id ) {
