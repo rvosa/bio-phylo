@@ -361,8 +361,6 @@ Returns the tree invocant belongs to
 
 =back
 
-=cut
-
     # podinherit_insert_token
 
 =head1 SEE ALSO
