@@ -17,8 +17,7 @@ Bio::Phylo::Parsers::Figtree - Parser used by Bio::Phylo::IO, no serviceable par
 This module parses annotated trees in NEXUS format as produced by FigTree
 (L<http://tree.bio.ed.ac.uk/software/figtree/>), i.e. trees where nodes have
 additional 'hot comments' attached to them in the tree description. The
-implementation assumes that B<every> node has one such set of annotations,  with
-syntax as follows:
+implementation assumes syntax as follows:
 
  [&minmax={0.1231,0.3254},rate=0.0075583392800736]
  
@@ -28,23 +27,33 @@ comma-separated key/value pairs, where ranges are between curly parentheses.
 =cut
 
 sub _parse {
-    my $self = shift;    
-	my $fh   = $self->_handle;
+    my $self = shift;
+	my $fh = $self->_handle;
+	
+	# first we label all internal nodes with a UID
+	my $i = 1;
+	my $string = '';
+	while(<$fh>) {
+		my @parts = split /\)/, $_;
+		if ( scalar @parts > 1 ) {
+			$parts[$_] .= ')node' . $i++ for 0 .. $#parts - 1;
+		}
+		$string .= join '', @parts;		
+	}
 	
 	# parse all trees
 	my ($forest) = @{ parse( 
 		'-format' => 'nexus', 
-		'-handle' => $fh,
+		'-string' => $string,
 		'-as_project' => 1,
 	)->get_items(_FOREST_) };
 	
-	# need to rewind the file handle to the beginning
-	# after first pass of nexus reading
-	seek($fh,0,0);
+	# attach the figtree namespace
+	$forest->set_namespaces( $pre => $ns );
 	
-	# parse annotated tree description
+	# parse out annotated tree description
 	my @desc;	
-	while(<$fh>) {
+	for(split /\n/, $string) {
 		chomp;
 		if ( /\s*tree\s\S+?\s=\s\[&(?:U|R)\]\s(.+)/ ) {
 			my $desc = $1;
@@ -64,31 +73,28 @@ sub _process_annotations {
 	my $i = 0;
 	for my $tree ( @{ $forest->get_entities } ) {
 		my $desc = $desc[$i];
-		$tree->visit_depth_first( 
-			'-post' => sub { 
-				my $node = shift;
-				$node->set_namespaces( $pre => $ns );
+		$tree->visit( sub { 
+			my $node = shift;
+			my $name = $node->get_internal_name;
+			$log->info("focal node is $name");
+			
+			# comment is a figtree processing instruction, starts with [&
+			if ( $desc =~ /[\(,\)]\Q$name\E\[&([^]]+)\]/ ) {
+				my $annotation = $1;
+				$log->debug("found annotation $annotation");
 				
-				# prune anything preceding first comment token from $desc
-				$desc =~ s/^[^[]+//;
+				# going to parse annotations
+				my %anno = $self->_parse_annotation($annotation);
 				
-				# comment is a figtree processing instruction, starts with [&
-				if ( $desc =~ /^\[&([^[]+)\]/ ) {
-					my $annotation = $1;
-					$log->info("found annotation $annotation");
-					
-					# going to parse annotations
-					my %anno = $self->_parse_annotation($annotation);
-					
-					# attach annotations to focal node
-					$self->_attach_annotation( $node, %anno );
-	
-				}
-				else {
-					$log->info("comment is not a figtree annotation: $desc");
-				}
-			} 
-		);
+				# attach annotations to focal node
+				$self->_attach_annotation( $node, %anno );
+
+			}
+			else {
+				$log->warn("comment is not a figtree annotation: $desc");
+			}
+			
+		} );
 		$i++;
 	}	
 }
@@ -135,7 +141,7 @@ sub _attach_annotation {
 sub _parse_annotation {
 	my ( $self, $string ) = @_;
 	my $log = $self->_logger;
-	$log->info("going to parse annotation $string");
+	$log->debug("going to parse annotation $string");
 	my %anno;
 	while($string) {
 	
@@ -151,7 +157,7 @@ sub _parse_annotation {
 				my @values = split /,/, $seq;
 				$anno{$key} = \@values;
 				$string = substr $string, length($key) + length($seq) + 3;
-				$log->info("remainder is $string");
+				$log->debug("remainder is $string");
 			}
 			
 			# remainder is a scalar
@@ -160,7 +166,7 @@ sub _parse_annotation {
 				$log->info("value is $value");
 				$anno{$key} = $value;
 				$string = substr $string, length($key) + length($value) + 1;
-				$log->info("remainder is $string");
+				$log->debug("remainder is $string");
 			}
 			$string =~ s/^,//;
 		}
