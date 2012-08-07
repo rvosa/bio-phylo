@@ -218,7 +218,8 @@ Gets search query result
 				}		
 			}
 			else {
-				throw 'NetworkError' => $response->status_line;
+				throw 'NetworkError' => "Error fetching from $url: " 
+					. $response->status_line;
 			}
         }
     }
