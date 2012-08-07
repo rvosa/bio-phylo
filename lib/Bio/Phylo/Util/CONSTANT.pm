@@ -61,6 +61,7 @@ BEGIN {
       _NS_PHYLOXML_
       _NS_TB2PURL_
       _NS_TNRS_
+      _NS_FIGTREE_
     );
     %EXPORT_TAGS = (
         'all'         => [@EXPORT_OK],
@@ -126,6 +127,7 @@ BEGIN {
               _NS_PHYLOXML_
               _NS_TB2PURL_
               _NS_TNRS_
+              _NS_FIGTREE_
             )
         ]
     );
@@ -152,6 +154,7 @@ sub _NS_SKOS_ ()     { 'http://www.w3.org/2004/02/skos/core#' }
 sub _NS_PHYLOXML_ () { 'http://www.phyloxml.org/1.10/terms#' }
 sub _NS_TB2PURL_ ()  { 'http://purl.org/phylo/treebase/phylows/' }
 sub _NS_TNRS_ ()     { 'http://phylotastic.org/tnrs/terms#' }
+sub _NS_FIGTREE_ ()  { 'http://tree.bio.ed.ac.uk/software/figtree/terms#' }
 
 our $NS = {
     'tnrs' => _NS_TNRS_(),
@@ -169,6 +172,7 @@ our $NS = {
     'dc'   => _NS_DC_(),
     'owl'  => _NS_OWL_(),
     'dcterms' => _NS_DCTERMS_(),
+    'fig'     => _NS_FIGTREE_(),
 };
 
 sub _NEXML_VERSION_ () { '0.9' }
