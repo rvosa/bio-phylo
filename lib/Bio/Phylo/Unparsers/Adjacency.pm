@@ -79,7 +79,8 @@ HEADER
 			}
 			
 			# branch length
-			my $length = $node->get_branch_length // '';
+			my $bl = $node->get_branch_length;
+			my $length = defined $bl ? $bl : '';
 			
 			# other annotations
 			my $annotations = '';
