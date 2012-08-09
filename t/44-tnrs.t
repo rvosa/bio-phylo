@@ -1,7 +1,17 @@
 #!/usr/bin/perl
+use Test::More;
+BEGIN {
+    eval { require XML::Twig };
+    if ($@) {
+        plan 'skip_all' => 'XML::Twig not installed';
+    }
+    else {
+        Test::More->import('no_plan');
+    }
+}
+
 use strict;
 use warnings;
-use Test::More 'no_plan';
 use Bio::Phylo::IO qw'parse';
 use Bio::Phylo::Util::CONSTANT ':objecttypes';
 
