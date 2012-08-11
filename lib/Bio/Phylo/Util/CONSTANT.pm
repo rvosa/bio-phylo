@@ -3,6 +3,7 @@ use strict;
 use base 'Exporter';
 use Scalar::Util 'blessed';
 use Bio::Phylo::Util::Exceptions 'throw';
+use Bio::Phylo::Util::CONSTANT::Int;
 
 BEGIN {
     our ( @EXPORT_OK, %EXPORT_TAGS );
@@ -176,35 +177,35 @@ our $NS = {
 };
 
 sub _NEXML_VERSION_ () { '0.9' }
-sub _NONE_ ()          { 1 }
-sub _NODE_ ()          { 2 }
-sub _TREE_ ()          { 3 }
-sub _FOREST_ ()        { 4 }
-sub _TAXON_ ()         { 5 }
-sub _TAXA_ ()          { 6 }
-sub _DATUM_ ()         { 7 }
-sub _MATRIX_ ()        { 8 }
-sub _MATRICES_ ()      { 9 }
-sub _SEQUENCE_ ()      { 10 }
-sub _ALIGNMENT_ ()     { 11 }
-sub _CHAR_ ()          { 12 }
-sub _PROJECT_ ()       { 9 }
-sub _CHARSTATE_ ()     { 13 }
-sub _CHARSTATESEQ_ ()  { 14 }
-sub _MATRIXROW_ ()     { 15 }
-sub _ANNOTATION_ ()    { 16 }
-sub _DICTIONARY_ ()    { 17 }
-sub _DOMCREATOR_ ()    { 18 }
-sub _META_ ()          { 19 }
-sub _DESCRIPTION_ ()   { 20 }
-sub _RESOURCE_ ()      { 21 }
-sub _DOCUMENT_ ()      { 22 }
-sub _ELEMENT_ ()       { 23 }
-sub _CHARACTERS_ ()    { 24 }
-sub _CHARACTER_ ()     { 25 }
-sub _SET_ ()           { 26 }
-sub _MODEL_ ()         { 27 }
-sub _OPERATION_ ()     { 28 }
+sub _NONE_ ()          { Bio::Phylo::Util::CONSTANT::Int::_NONE_ }
+sub _NODE_ ()          { Bio::Phylo::Util::CONSTANT::Int::_NODE_ }
+sub _TREE_ ()          { Bio::Phylo::Util::CONSTANT::Int::_TREE_ }
+sub _FOREST_ ()        { Bio::Phylo::Util::CONSTANT::Int::_FOREST_ }
+sub _TAXON_ ()         { Bio::Phylo::Util::CONSTANT::Int::_TAXON_ }
+sub _TAXA_ ()          { Bio::Phylo::Util::CONSTANT::Int::_TAXA_ }
+sub _DATUM_ ()         { Bio::Phylo::Util::CONSTANT::Int::_DATUM_ }
+sub _MATRIX_ ()        { Bio::Phylo::Util::CONSTANT::Int::_MATRIX_ }
+sub _MATRICES_ ()      { Bio::Phylo::Util::CONSTANT::Int::_MATRICES_ }
+sub _SEQUENCE_ ()      { Bio::Phylo::Util::CONSTANT::Int::_SEQUENCE_ }
+sub _ALIGNMENT_ ()     { Bio::Phylo::Util::CONSTANT::Int::_ALIGNMENT_ }
+sub _CHAR_ ()          { Bio::Phylo::Util::CONSTANT::Int::_CHAR_ }
+sub _PROJECT_ ()       { Bio::Phylo::Util::CONSTANT::Int::_PROJECT_ }
+sub _CHARSTATE_ ()     { Bio::Phylo::Util::CONSTANT::Int::_CHARSTATE_ }
+sub _CHARSTATESEQ_ ()  { Bio::Phylo::Util::CONSTANT::Int::_CHARSTATESEQ_ }
+sub _MATRIXROW_ ()     { Bio::Phylo::Util::CONSTANT::Int::_MATRIXROW_ }
+sub _ANNOTATION_ ()    { Bio::Phylo::Util::CONSTANT::Int::_ANNOTATION_ }
+sub _DICTIONARY_ ()    { Bio::Phylo::Util::CONSTANT::Int::_DICTIONARY_ }
+sub _DOMCREATOR_ ()    { Bio::Phylo::Util::CONSTANT::Int::_DOMCREATOR_ }
+sub _META_ ()          { Bio::Phylo::Util::CONSTANT::Int::_META_ }
+sub _DESCRIPTION_ ()   { Bio::Phylo::Util::CONSTANT::Int::_DESCRIPTION_ }
+sub _RESOURCE_ ()      { Bio::Phylo::Util::CONSTANT::Int::_RESOURCE_ }
+sub _DOCUMENT_ ()      { Bio::Phylo::Util::CONSTANT::Int::_DOCUMENT_ }
+sub _ELEMENT_ ()       { Bio::Phylo::Util::CONSTANT::Int::_ELEMENT_ }
+sub _CHARACTERS_ ()    { Bio::Phylo::Util::CONSTANT::Int::_CHARACTERS_ }
+sub _CHARACTER_ ()     { Bio::Phylo::Util::CONSTANT::Int::_CHARACTER_ }
+sub _SET_ ()           { Bio::Phylo::Util::CONSTANT::Int::_SET_ }
+sub _MODEL_ ()         { Bio::Phylo::Util::CONSTANT::Int::_MODEL_ }
+sub _OPERATION_ ()     { Bio::Phylo::Util::CONSTANT::Int::_OPERATION_ }
 
 # for PhyloWS
 sub _HTTP_SC_SEE_ALSO_ () { '303 See Other' }
