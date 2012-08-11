@@ -32,6 +32,11 @@ my %class = (
     'description' => 'Bio::Phylo::PhyloWS::Resource::Description',
 );
 
+sub import {
+    my $package = shift;
+    $package->register_class(@_) if @_;
+}
+
 =head1 NAME
 
 Bio::Phylo::Factory - Creator of objects, reduces hardcoded class names in code
