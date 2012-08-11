@@ -1,4 +1,4 @@
-package Bio::Phylo::Matrices::Datum;
+package Bio::Phylo::Matrices::DatumRole;
 use strict;
 use base qw'Bio::Phylo::Matrices::TypeSafeData Bio::Phylo::Taxa::TaxonLinker';
 use Bio::Phylo::Util::OptionalInterface 'Bio::Seq';
