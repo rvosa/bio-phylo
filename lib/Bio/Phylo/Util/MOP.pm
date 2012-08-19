@@ -12,6 +12,7 @@ use Scalar::Util qw( refaddr );
 our $logger = Bio::Phylo::Util::Logger->new;
 my %methods;
 
+# this might be used to check the interface of alien subclasses
 sub import {
     
 }
