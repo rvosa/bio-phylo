@@ -1,5 +1,6 @@
 package Bio::Phylo::Matrices::Datum;
 use strict;
+use Bio::Phylo::Matrices::DatumRole;
 use base qw'Bio::Phylo::Matrices::DatumRole';
 use Bio::Phylo::Util::Exceptions 'throw';
 use Bio::Phylo::Util::CONSTANT qw'/looks_like/';
@@ -66,7 +67,7 @@ Sets invocant weight.
 
 =cut
 
-    sub set_weight {
+    sub set_weight : Mutator {
         my ( $self, $weight ) = @_;
         my $id = $self->get_id;
         $weight = 1 if not defined $weight;
@@ -92,7 +93,7 @@ Set invocant starting position.
 
 =cut
 
-    sub set_position {
+    sub set_position : Mutator {
         my ( $self, $pos ) = @_;
         $pos = 1 if not defined $pos;
         if ( looks_like_number $pos && $pos >= 1 && $pos / int($pos) == 1 ) {
@@ -126,7 +127,7 @@ Sets single annotation.
 
 =cut
 
-    sub set_annotation {
+    sub set_annotation : Mutator {
         my $self = shift;
         if (@_) {
             my %opt = looks_like_hash @_;
@@ -186,7 +187,7 @@ Sets list of annotations.
 
 =cut
 
-    sub set_annotations {
+    sub set_annotations : Mutator {
         my $self = shift;
         my @anno;
         if ( scalar @_ == 1 and looks_like_instance( $_[0], 'ARRAY' ) ) {
@@ -241,7 +242,7 @@ Gets invocant weight.
 
 =cut
 
-    sub get_weight {
+    sub get_weight : Accessor {
         my $self   = shift;
         my $weight = $weight{ $self->get_id };
         return defined $weight ? $weight : 1;
@@ -260,7 +261,7 @@ Gets invocant starting position.
 
 =cut
 
-    sub get_position {
+    sub get_position : Accessor {
         my $self = shift;
         my $pos  = $position{ $self->get_id };
         return defined $pos ? $pos : 1;
@@ -284,7 +285,7 @@ Retrieves character annotation (hashref).
 
 =cut
 
-    sub get_annotation {
+    sub get_annotation : Accessor {
         my $self = shift;
         my $id   = $self->get_id;
         if (@_) {
@@ -324,12 +325,12 @@ Retrieves character annotations (array ref).
 
 =cut
 
-    sub get_annotations {
+    sub get_annotations : Accessor {
         my $self = shift;
         return $annotations{ $self->get_id } || [];
     }
 
-    sub _cleanup {
+    sub _cleanup : Protected {
         my $self = shift;
         $logger->info("cleaning up '$self'");
         if ( defined( my $id = $self->get_id ) ) {

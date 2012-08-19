@@ -1,5 +1,6 @@
 package Bio::Phylo::Matrices::DatumRole;
 use strict;
+use Bio::Phylo::Util::MOP;
 use base qw'Bio::Phylo::Matrices::TypeSafeData Bio::Phylo::Taxa::TaxonLinker';
 use Bio::Phylo::Util::OptionalInterface 'Bio::Seq';
 use Bio::Phylo::Util::Exceptions 'throw';
