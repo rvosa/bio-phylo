@@ -1,5 +1,6 @@
 package Bio::Phylo::Forest::Node;
 use strict;
+use Bio::Phylo::Forest::NodeRole;
 use base qw'Bio::Phylo::Forest::NodeRole';
 use Bio::Phylo::Util::CONSTANT qw':objecttypes /looks_like/';
 use Bio::Phylo::Util::Exceptions 'throw';
@@ -108,7 +109,7 @@ Sets argument as invocant's parent.
 
 =cut
 
-    sub set_parent {
+    sub set_parent : Mutator {
         my ( $self, $parent ) = @_;
         if ( $parent and looks_like_object $parent, $TYPE_CONSTANT ) {
             $parent->set_child($self);
@@ -133,7 +134,7 @@ Sets argument as invocant's child.
 
 =cut
 
-    sub set_child {
+    sub set_child : Mutator {
         my ( $self, $child, $i ) = @_;
 
         # bad args?
@@ -217,7 +218,7 @@ Sets argument as invocant's branch length.
 
 =cut
 
-    sub set_branch_length {
+    sub set_branch_length : Mutator {
         my ( $self, $bl ) = @_;
         my $id = $self->get_id;
         if ( defined $bl && looks_like_number $bl && !ref $bl ) {
@@ -248,7 +249,7 @@ Sets what tree invocant belongs to
 
 =cut
 
-    sub set_tree {
+    sub set_tree : Mutator {
         my ( $self, $tree ) = @_;
         my $id = $self->get_id;
         if ($tree) {
@@ -279,7 +280,7 @@ Gets invocant's parent.
 
 =cut
 
-    sub get_parent { return $get_parent->(shift) }    
+    sub get_parent : Mutator { return $get_parent->(shift) }    
 
 =item get_branch_length()
 
@@ -298,7 +299,7 @@ Gets invocant's branch length.
 
 =cut
 
-    sub get_branch_length { return $get_branch_length->(shift) }
+    sub get_branch_length : Accessor { return $get_branch_length->(shift) }
 
 =item get_children()
 
@@ -315,7 +316,7 @@ Gets invocant's immediate children.
 
 =cut
 
-    sub get_children { return $get_children->(shift) }
+    sub get_children : Accessor { return $get_children->(shift) }
     
 =item get_tree()
 
@@ -330,7 +331,7 @@ Returns the tree invocant belongs to
 
 =cut
 
-    sub get_tree {
+    sub get_tree : Accessor {
         my $self = shift;
         my $id   = $self->get_id;
         return $tree{$id};
@@ -349,7 +350,7 @@ Returns the tree invocant belongs to
 
 =cut
 
-    sub _cleanup {
+    sub _cleanup : Protected {
         my $self = shift;
         my $id   = $self->get_id;
         for my $field (@fields) {
