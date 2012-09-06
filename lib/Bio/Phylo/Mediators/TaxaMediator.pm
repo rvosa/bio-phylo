@@ -1,13 +1,13 @@
 package Bio::Phylo::Mediators::TaxaMediator;
 use strict;
 use Scalar::Util qw'weaken';
-use Bio::Phylo;
+use Bio::Phylo::Util::Logger;
 use Bio::Phylo::Util::Exceptions;
 use Bio::Phylo::Util::CONSTANT ':objecttypes';
 
 # XXX this class only has weak references
 {
-    my $logger = Bio::Phylo::get_logger();
+    my $logger = Bio::Phylo::Util::Logger->new;
     my $self;
     my ( @object, %id_by_type, %one_to_one, %one_to_many );
 
