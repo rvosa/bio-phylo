@@ -13,7 +13,7 @@ use Bio::Phylo::Util::CONSTANT qw':all';
 
 =head1 NAME
 
-Bio::Phylo::Listable - List of things, super class for many objects
+Bio::Phylo::ListableRole - Extra functionality for things that are lists
 
 =head1 SYNOPSIS
 
@@ -456,6 +456,31 @@ C<$taxon-E<gt>get_data> field.
         }
     }
 
+=item alphabetize()
+
+Sorts the contents alphabetically by their name.
+
+ Type    : Generic method
+ Title   : alphabetize
+ Usage   : $obj->alphabetize;
+ Function: Sorts the contents alphabetically by their name.
+ Returns : $self
+ Args    : None
+ Comments:
+
+=cut
+    
+    sub alphabetize {
+        my $self = shift;
+        my @sorted = map { $_->[0] }
+                     sort { $_->[1] cmp $_->[1] }
+                     map { [ $_, $_->get_internal_name ] }
+                     @{ $self->get_entities };
+        $self->clear;
+        $self->insert($_) for @sorted;
+        return $self;
+    }
+    
 =back
 
 =head2 SETS MANAGEMENT
