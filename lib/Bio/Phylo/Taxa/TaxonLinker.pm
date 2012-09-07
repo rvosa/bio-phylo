@@ -1,11 +1,12 @@
 package Bio::Phylo::Taxa::TaxonLinker;
 use Bio::Phylo::Mediators::TaxaMediator;
 use Bio::Phylo::Util::Exceptions;
+use Bio::Phylo::Util::Logger;
 use Bio::Phylo::Util::CONSTANT qw'_TAXON_ looks_like_object';
 use strict;
 {
     my $TAXON_CONSTANT = _TAXON_;
-    my $logger         = Bio::Phylo->get_logger;
+    my $logger         = Bio::Phylo::Util::Logger->new;
 
 =head1 NAME
 
