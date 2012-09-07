@@ -503,7 +503,7 @@ Get most recent common ancestor of argument nodes.
             unshift @{$anc2}, $node2;
           TRAVERSAL: for my $i ( 0 .. $#{$anc1} ) {
                 for my $j ( 0 .. $#{$anc2} ) {
-                    if ( $anc1->[$i] == $anc2->[$j] ) {
+                    if ( $anc1->[$i]->get_id == $anc2->[$j]->get_id ) {
                         unshift @{$nodes}, $anc1->[$i];
                         last TRAVERSAL;
                     }
