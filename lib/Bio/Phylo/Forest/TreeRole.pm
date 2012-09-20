@@ -361,9 +361,7 @@ Get root node.
  Type    : Query
  Title   : get_root
  Usage   : my $root = $tree->get_root;
- Function: Retrieves the first orphan in 
-           the current Bio::Phylo::Forest::Tree
-           object - which should be the root.
+ Function: Returns the root node.
  Returns : Bio::Phylo::Forest::Node
  Args    : NONE
 
@@ -371,9 +369,25 @@ Get root node.
 
     sub get_root {
         my $self = shift;
-        for ( @{ $self->get_entities } ) {
-            if ( !$_->get_parent ) {
-                return $_;
+        my ( %children_of, %node_by_id );
+        for my $node ( @{ $self->get_entities } ) {
+            $node_by_id{ $node->get_id } = $node;
+            if ( my $parent = $node->get_parent ) {
+                my $parent_id = $parent->get_id;
+                $children_of{$parent_id} = [] if not $children_of{$parent_id};
+                push @{ $children_of{$parent_id} }, $node;
+            }
+            else {
+                return $node;
+            }
+        }
+        for my $parent ( keys %children_of ) {
+            if ( not exists $node_by_id{$parent} ) {
+                my @children = @{ $children_of{$parent} };
+                if ( scalar @children > 1 ) {
+                    $logger->warn("Tree has multiple roots");
+                }
+                return shift @children;
             }
         }
         return;
