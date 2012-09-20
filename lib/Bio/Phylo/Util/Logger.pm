@@ -117,29 +117,30 @@ CODE_TEMPLATE
 
                 # check validity
                 if ( $opt{'-level'} > $debug xor $opt{'-level'} < $fatal ) {
-                    throw 'OutOfBounds' =>
-"'-level' can be between $fatal and $debug, not $opt{'-level'}";
+                    throw 'OutOfBounds' => "'-level' can be between $fatal and $debug, not $opt{'-level'}";
                 }
                 if ( $opt{'-class'} ) {
-                    $VERBOSE{ $opt{'-class'} } = $opt{'-level'};
-                    $self->info(
-"Changed verbosity for class $opt{'-class'} to $opt{'-level'}"
-                    );
+					if ( ref $opt{'-class'} eq 'ARRAY' ) {
+						for my $class ( @{ $opt{'-class'} } ) {
+							$VERBOSE{$class} = $opt{'-level'};
+							$self->info("Changed verbosity for class $opt{'-class'} to $opt{'-level'}");							
+						}
+					}
+					else {
+	                    $VERBOSE{ $opt{'-class'} } = $opt{'-level'};
+		                $self->info("Changed verbosity for class $opt{'-class'} to $opt{'-level'}");
+					}
                 }
                 elsif ( $opt{'-method'} ) {
 					if ( ref $opt{'-method'} eq 'ARRAY' ) {
 						for my $method ( @{ $opt{'-method'} } ) {
 							$VERBOSE{$method} = $opt{'-level'};
-							$self->info(
-	"Changed verbosity for method $method to $opt{'-level'}"
-							);							
+							$self->info("Changed verbosity for method $method to $opt{'-level'}");							
 						}
 					}
 					else {
 						$VERBOSE{ $opt{'-method'} } = $opt{'-level'};
-						$self->info(
-	"Changed verbosity for method $opt{'-method'} to $opt{'-level'}"
-						);
+						$self->info("Changed verbosity for method $opt{'-method'} to $opt{'-level'}");
 					}
                 }
                 else {
