@@ -611,18 +611,17 @@ Gets invocant's previous sister.
 =cut
 
     sub get_previous_sister {
-        my ($self) = @_;
-        my $ps;
+        my $self = shift;
+        my $id = $self->get_id;
         if ( my $parent = $self->get_parent ) {
             my $children = $parent->get_children;
-          FINDSELF: for ( my $i = $#{$children} ; $i >= 1 ; $i-- ) {
-                if ( $children->[$i] == $self ) {
-                    $ps = $children->[ $i - 1 ];
-                    last FINDSELF;
+            for ( my $i = $#{$children} ; $i >= 1 ; $i-- ) {
+                if ( $children->[$i]->get_id == $id ) {
+                    return $children->[ $i - 1 ];
                 }
             }
         }
-        return $ps;
+        return;
     }
 
 =item get_next_sister()
@@ -639,18 +638,17 @@ Gets invocant's next sister.
 =cut
 
     sub get_next_sister {
-        my ($self) = @_;
-        my $ns;
+        my $self = shift;
+        my $id = $self->get_id;
         if ( my $parent = $self->get_parent ) {
             my $children = $parent->get_children;
-          FINDSELF: for my $i ( 0 .. $#{$children} ) {
-                if ( $children->[$i] == $self ) {
-                    $ns = $children->[ $i + 1 ];
-                    last FINDSELF;
+            for my $i ( 0 .. $#{$children} ) {
+                if ( $children->[$i]->get_id == $id ) {
+                    return $children->[ $i + 1 ];
                 }
             }
         }
-        return $ns;
+        return;
     }
 
 =item get_ancestors()
