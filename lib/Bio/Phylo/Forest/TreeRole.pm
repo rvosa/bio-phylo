@@ -369,28 +369,37 @@ Get root node.
 
     sub get_root {
         my $self = shift;
-        my ( %children_of, %node_by_id );
-        for my $node ( @{ $self->get_entities } ) {
-            $node_by_id{ $node->get_id } = $node;
-            if ( my $parent = $node->get_parent ) {
-                my $parent_id = $parent->get_id;
-                $children_of{$parent_id} = [] if not $children_of{$parent_id};
-                push @{ $children_of{$parent_id} }, $node;
-            }
-            else {
-                return $node;
-            }
+        
+        # the simplest approach: look for nodes without parents
+        my ($root) = grep { ! $_->get_parent } @{ $self->get_entities };
+        if ( $root ) {
+            return $root;
         }
-        for my $parent ( keys %children_of ) {
-            if ( not exists $node_by_id{$parent} ) {
-                my @children = @{ $children_of{$parent} };
-                if ( scalar @children > 1 ) {
-                    $logger->warn("Tree has multiple roots");
+        
+        else {
+            my ( %children_of, %node_by_id );
+            for my $node ( @{ $self->get_entities } ) {
+                $node_by_id{ $node->get_id } = $node;
+                if ( my $parent = $node->get_parent ) {
+                    my $parent_id = $parent->get_id;
+                    $children_of{$parent_id} = [] if not $children_of{$parent_id};
+                    push @{ $children_of{$parent_id} }, $node;
                 }
-                return shift @children;
+                else {
+                    return $node;
+                }
             }
+            for my $parent ( keys %children_of ) {
+                if ( not exists $node_by_id{$parent} ) {
+                    my @children = @{ $children_of{$parent} };
+                    if ( scalar @children > 1 ) {
+                        $logger->warn("Tree has multiple roots");
+                    }
+                    return shift @children;
+                }
+            }
+            return;
         }
-        return;
     }
 
 =item get_ntax()
