@@ -58,6 +58,36 @@ sub set_weight {
     throw 'BadNumber' => "'$weight' is not a number";
 }
 
+=item set_codonpos()
+
+ Type    : Mutator
+ Title   : set_codonpos
+ Usage   : $character->set_codonpos(2);
+ Function: Sets codon position for the column
+ Returns : $self
+ Args    : A number
+
+=cut
+
+sub set_codonpos {
+    my ( $self, $codonpos ) = @_;
+    if ( $codonpos == 1 || $codonpos == 2 || $codonpos == 3 ) {
+        if ( my ($meta) = @{ $self->get_meta('bp:codonPos') } ) {
+            $meta->set_triple( 'bp:codonPos' => $codonpos );
+        }
+        else {
+            $self->add_meta(
+                $fac->create_meta(
+                    '-namespaces' => { 'bp' => _NS_BIOPHYLO_ },
+                    '-triple'     => { 'bp:codonPos' => $codonpos },
+                )
+            );
+        }
+        return $self;
+    }
+    throw 'BadNumber' => "'$codonpos' is not a valid 1-based codon position";
+}
+
 =back
 
 =head2 ACCESSORS
@@ -79,6 +109,21 @@ sub get_weight {
     my $self = shift;
     my $weight = $self->get_meta_object('bp:charWeight');
     return defined $weight ? $weight : 1;
+}
+
+=item get_codonpos()
+
+ Type    : Mutator
+ Title   : get_codonpos
+ Usage   : my $pos = $character->get_codonpos;
+ Function: Gets codon position for the column
+ Returns : 1, 2, 3 or undef
+ Args    : None
+
+=cut
+
+sub get_codonpos {
+    shift->get_meta_object('bp:codonPos');
 }
 
 =back
