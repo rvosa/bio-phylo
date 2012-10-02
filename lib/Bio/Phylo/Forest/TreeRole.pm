@@ -342,15 +342,7 @@ Get internal nodes.
 
     sub get_internals {
         my $self = shift;
-        my @internals;
-        $self->visit_level_order(
-            sub {
-                my $node = shift;
-                if ( $node->is_internal ) {
-                    push @internals, $node;
-                }
-            }
-        );
+        my @internals = grep { scalar @{ $_->get_children } } @{ $self->get_entities };
         return \@internals;
     }
 
