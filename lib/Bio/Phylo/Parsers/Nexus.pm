@@ -64,6 +64,7 @@ my %defaults = (
     'blockid'          => \&_blockid,
     'data'             => \&_data,
     'characters'       => \&_characters,
+    'codons'           => \&_codons,
     'nchar'            => \&_nchar,
     'format'           => \&_format,
     'datatype'         => \&_datatype,
@@ -986,6 +987,14 @@ sub _resolve_ambig {
         }
     }
     return \@resolved;
+}
+
+sub _codons {
+    my $self = shift;
+    $self->_logger->info(shift);
+    if ( $self->{'_begin'} ) {
+        $self->{'_begin'} = 0;
+    }
 }
 
 sub _matrix {
