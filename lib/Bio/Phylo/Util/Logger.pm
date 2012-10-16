@@ -148,6 +148,20 @@ CODE_TEMPLATE
                     $self->info("Changed global verbosity to $VERBOSE");
                 }
             }
+			if ( $opt{'-file'} ) {
+				open my $fh, '>>', $file or throw 'FileError' => $!;
+				$self->set_listeners(sub {
+					my $log_string = shift;
+					print $fh $log_string;
+				});
+			}
+			if ( $opt{'-handle'} ) {
+				my $fh = $opt{'-handle'};
+				$self->set_listeners(sub {
+					my $log_string = shift;
+					print $fh $log_string;
+				});				
+			}
         }
         return $VERBOSE;
     }
