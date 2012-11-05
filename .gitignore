@@ -1,1 +1,5 @@
 BioPhylo.komodoproject
+MYMETA.*
+Makefile
+blib
+pm_to_blib
