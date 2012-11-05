@@ -1170,38 +1170,37 @@ Calculates Colless' coefficient of tree imbalance.
 
     sub calc_imbalance {
         my $self = shift;
-        my ( $maxic, $sum, $Ic ) = ( 0, 0 );
-        if ( !$self->is_binary ) {
-            throw 'ObjectMismatch' =>
-              'Colless\' imbalance only possible for binary trees';
-        }
-        my $numtips = $self->calc_number_of_terminals;
-        $numtips -= 2;
-        while ($numtips) {
-            $maxic += $numtips;
-            $numtips--;
-        }
-        for my $node ( @{ $self->get_internals } ) {
-            my ( $fd, $ld, $ftips, $ltips ) =
-              ( $node->get_first_daughter, $node->get_last_daughter, 0, 0 );
-            if ( $fd->is_internal ) {
-                for ( @{ $fd->get_descendants } ) {
-                    if   ( $_->is_terminal ) { $ftips++; }
-                    else                     { next; }
+        my %descendants;
+        my $n = 0;
+        my $sumdiff = 0;
+        $self->visit_depth_first(
+            '-post' => sub {
+                my $node = shift;
+                my @children = @{ $node->get_children };
+                
+                # node is internal, compute n descendants left and right
+                if ( @children == 2 ) {
+                    my $li = shift @children;
+                    my $ri = shift @children;
+                    my $li_ndesc = $descendants{$li->get_id};
+                    my $ri_ndesc = $descendants{$ri->get_id};
+                    $sumdiff += $li_ndesc - $ri_ndesc;
+                    $descendants{$node->get_id} = $li_ndesc + $ri_ndesc;
+                }
+                
+                # node is terminal, initialize tally of descendants
+                elsif ( @children == 0 ) {
+                    $n++;
+                    $descendants{$node->get_id} = 1;
+                }
+                
+                # node is either a polytomy or an unbranched internal. Can't proceed in either case.
+                else {
+                    throw 'ObjectMismatch' => "Colless's imbalance only possible for binary trees";
                 }
             }
-            else { $ftips = 1; }
-            if ( $ld->is_internal ) {
-                foreach ( @{ $ld->get_descendants } ) {
-                    if   ( $_->is_terminal ) { $ltips++; }
-                    else                     { next; }
-                }
-            }
-            else { $ltips = 1; }
-            $sum += abs( $ftips - $ltips );
-        }
-        $Ic = $sum / $maxic;
-        return $Ic;
+        );
+        return $sumdiff / ( ($n-1) * ($n-2) / 2 );
     }
 
 =item calc_i2()
