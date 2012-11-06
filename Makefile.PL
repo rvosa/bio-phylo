@@ -4,18 +4,20 @@ use warnings;
 use ExtUtils::MakeMaker;
 use File::Find;
 
-check_prereq( qw(
-    SVG
-    Math::Random
-    XML::Twig
-    XML::LibXML
-    Math::CDF
-    List::Util
-    SWF::Builder
-    XML::XML2JSON
-    PDF::API2
-    GD
-) );
+my %recommended = (
+    'SVG'           => '0',
+    'Math::Random'  => '0',
+    'XML::Twig'     => '0',
+    'XML::LibXML'   => '0',
+    'Math::CDF'     => '0',
+    'List::Util'    => '0',
+    'SWF::Builder'  => '0',
+    'XML::XML2JSON' => '0',
+    'PDF::API2'     => '0',
+    'GD'            => '0',
+);
+
+check_prereq( keys %recommended );
 
 my %parms = (
     'NAME'         => 'Bio-Phylo',
@@ -35,7 +37,10 @@ if ( $ExtUtils::MakeMaker::VERSION ge '6.46' ) {
             homepage    => 'http://biophylo.blogspot.com/',
             bugtracker  => 'https://github.com/rvosa/bio-phylo',
             repository  => 'git://github.com/rvosa/bio-phylo.git',
-        }
+            license     => 'http://dev.perl.org/licenses/',
+            MailingList => 'mailto:bio-phylo@googlegroups.com',
+        },
+        'recommends' => \%recommended,
     };
 }
 
