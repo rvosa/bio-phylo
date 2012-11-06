@@ -24,6 +24,7 @@ my %parms = (
     'EXE_FILES'    => [],
     'VERSION_FROM' => 'lib/Bio/Phylo.pm',
     'LICENSE'      => 'perl',
+    'ABSTRACT'     => 'An object-oriented Perl toolkit for analyzing and manipulating phyloinformatic data.',
     'clean'        => {},    
     'dist'         => { 'COMPRESS' => 'gzip -9f', 'SUFFIX' => 'gz', },
 );
