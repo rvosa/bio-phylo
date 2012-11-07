@@ -865,14 +865,14 @@ Gets invocant's terminal descendants.
         }
         else {
             my @terminals;
-            my $desc = $self->get_descendants;
-            if ( @{$desc} ) {
-                foreach ( @{$desc} ) {
-                    if ( $_->is_terminal ) {
-                        push @terminals, $_;
+            $self->visit_level_order(
+                sub {
+                    my $node = shift;
+                    if ( $node->is_terminal ) {
+                        push @terminals, $node;
                     }
                 }
-            }
+            );
             return \@terminals;
         }
     }
