@@ -162,6 +162,9 @@ CODE_TEMPLATE
 					print $fh $log_string;
 				});				
 			}
+			if ( $opt{'-listeners'} ) {
+				$self->set_listeners(@{$opt{'-listeners'}});
+			}
         }
         return $VERBOSE;
     }
