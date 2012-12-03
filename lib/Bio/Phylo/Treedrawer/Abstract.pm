@@ -264,6 +264,16 @@ sub _draw_scale {
         if ( $width =~ m/^(\d+)%$/ ) {
             $width = ( $1 / 100 ) * ( $tree->get_tallest_tip->get_x - $rootx );
         }
+        if ( my $units = $options->{'-units'} ) {
+            # now we need to calculate how much each branch length unit (e.g.
+            # substitutions) is in pixels. The $width then becomes the length
+            # of one branch length unit in pixels times $units
+            my $tt = $tree->get_tallest_tip;
+            my $ttx = $tt->get_x;
+            my $ptr = $tt->calc_path_to_root;
+            my $unit_in_pixels = ( $ttx - $rootx ) / $ptr;
+            $width = $units * $unit_in_pixels;
+        }
         if ( $major =~ m/^(\d+)%$/ ) {
             $major = ( $1 / 100 ) * $width;
         }
