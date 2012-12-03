@@ -167,8 +167,8 @@ ok( $pruned->get_nchar == 1, '29 keeping on char' );
         [ 12, [ 'G', 'A', 'T', 'T', 'A', 'C', 'A' ] ],
         [ 11, [ 'T', 'G', 'C', 'C', 'A', 'G', 'A' ] ],
     ];
-    is_deeply( $matrix->calc_distinct_site_patterns,
-        $expected, "36 site patterns" );
+    my $observed = [ sort { $b->[0] <=> $a->[0] } @{ $matrix->calc_distinct_site_patterns } ];
+    is_deeply( $observed, $expected, "36 site patterns" );
 }
 {
     my $matrix = Bio::Phylo::Matrices::Matrix->new(
