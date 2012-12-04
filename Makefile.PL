@@ -28,7 +28,11 @@ my %parms = (
     'LICENSE'      => 'perl',
     'ABSTRACT'     => 'An object-oriented Perl toolkit for analyzing and manipulating phyloinformatic data.',
     'clean'        => {},    
-    'dist'         => { 'COMPRESS' => 'gzip -9f', 'SUFFIX' => 'gz', },
+    'dist'         => {
+        'COMPRESS' => 'gzip -9f',
+        'SUFFIX'   => 'gz',
+        'TARFLAGS' => '--format=ustar -c -v -f',
+    },
 );
 
 if ( $ExtUtils::MakeMaker::VERSION ge '6.46' ) {
