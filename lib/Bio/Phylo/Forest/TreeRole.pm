@@ -346,6 +346,38 @@ Get internal nodes.
         return \@internals;
     }
 
+=item get_cherries()
+
+Get all cherries, i.e. nodes that have two terminal children
+
+ Type    : Query
+ Title   : get_cherries
+ Usage   : my @cherries = @{ $tree->get_cherries };
+ Function: Returns an array ref of cherries
+ Returns : ARRAY
+ Args    : NONE
+
+=cut
+
+    sub get_cherries {
+        my $self = shift;
+        my @cherries;
+        for my $node ( @{ $self->get_entities } ) {
+            my @children = @{ $node->get_children };
+            
+            # node has to be bifurcating
+            if ( scalar(@children) == 2 ) {
+                
+                # both children need to be tips
+                if ( not @{ $children[0]->get_children } and not @{ $children[1]->get_children } ) {
+                    push @cherries, $node;
+                }
+            }
+        }        
+        return \@cherries;
+    }
+
+    
 =item get_root()
 
 Get root node.
