@@ -13,23 +13,59 @@ ok( Bio::Phylo::IO->parse( -string => $string, -format => 'newick' ),
     '3 parse' );
 
 # we need to be able to parse single and double quoted strings correctly
-my $quoted = q{(A,'B;',C[;]);};
-
-my $tree = parse(
-    '-string' => $quoted,
-    '-format' => 'newick',
-)->first;
-
-my %expected = (
-    q{A}    => 0,
-    q{'B;'} => 0,
-    q{C}    => 0, # input is C[;], comment is stripped
-);
-my $observed = 0;
-my $expected_count = scalar keys %expected;
-for my $tip ( @{ $tree->get_terminals } ) {
-    my $name = $tip->get_name;
-    ok( exists $expected{$name}, "$name is parsed correctly" );
-    $observed++ if exists $expected{$name};
+{
+    my $quoted = q{(A,'B;',C[;]);};
+    
+    my $tree = parse(
+        '-string' => $quoted,
+        '-format' => 'newick',
+    )->first;
+    
+    my %expected = (
+        q{A}    => 0,
+        q{'B;'} => 0,
+        q{C}    => 0, # input is C[;], comment is stripped
+    );
+    my $observed = 0;
+    my $expected_count = scalar keys %expected;
+    for my $tip ( @{ $tree->get_terminals } ) {
+        my $name = $tip->get_name;
+        ok( exists $expected{$name}, "$name is parsed correctly" );
+        $observed++ if exists $expected{$name};
+    }
+    ok( $observed == $expected_count, "all names were recovered correctly" );
 }
-ok( $observed == $expected_count, "all names were recovered correctly" );
+
+{
+    my $indented = <<INDENTED;
+(
+  A:0.1,
+  B:0.2,
+  (
+    C:0.3,
+    D:0.4
+  )E:0.5
+)F:0;
+INDENTED
+
+    my $itree = parse(
+        '-format' => 'newick',
+        '-string' => $indented,
+    )->first;
+    
+    my %expected = (
+        A => 0.1,
+        B => 0.2,
+        C => 0.3,
+        D => 0.4,
+        E => 0.5,
+        F => 0,
+    );
+    
+    $itree->visit(sub{
+        my $node = shift;
+        my $name = $node->get_name;
+        my $bl   = $node->get_branch_length;
+        ok( $expected{$name} == $bl, "indented label $name is parsed correctly" );
+    });
+}

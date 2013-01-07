@@ -136,25 +136,29 @@ sub _split {
     my $decommented = '';
     my @trees;
   TOKEN: for my $i ( 0 .. length($string) ) {
-        if ( !$QUOTED && !$COMMENTED && substr( $string, $i, 1 ) eq "'" ) {
+        my $token = substr( $string, $i, 1 );
+        if ( !$QUOTED && !$COMMENTED && $token eq "'" ) {
             $QUOTED++;
         }
-        elsif ( !$QUOTED && !$COMMENTED && substr( $string, $i, 1 ) eq "[" ) {
+        elsif ( !$QUOTED && !$COMMENTED && $token eq "[" ) {
             $COMMENTED++;
             next TOKEN;
         }
-        elsif ( !$QUOTED && $COMMENTED && substr( $string, $i, 1 ) eq "]" ) {
+        elsif ( !$QUOTED && $COMMENTED && $token eq "]" ) {
             $COMMENTED--;
             next TOKEN;
         }
         elsif ($QUOTED
             && !$COMMENTED
-            && substr( $string, $i, 1 ) eq "'"
+            && $token eq "'"
             && substr( $string, $i, 2 ) ne "''" )
         {
             $QUOTED--;
         }
-        $decommented .= substr( $string, $i, 1 ) unless $COMMENTED;
+        if ( !$QUOTED && $token eq ' ' ) {
+            next TOKEN;
+        }
+        $decommented .= $token unless $COMMENTED;
         if ( !$QUOTED && !$COMMENTED && substr( $string, $i, 1 ) eq ';' ) {
             push @trees, $decommented;
             $decommented = '';
