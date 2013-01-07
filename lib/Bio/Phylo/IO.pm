@@ -141,6 +141,10 @@ Parses a file or string.
  Args    : -file    => (path),
             or
            -string  => (scalar),
+           or
+           -handle  => (IO::Handle object)
+           or
+           -url     => (url string)
            -format  => (description format),
            -(other) => (parser specific options)
  Comments: The parse method makes assumptions about 
@@ -261,11 +265,16 @@ Unparses object(s) to a string.
                %options
            );
  Function: Turns Bio::Phylo object into a 
-           string according to specified format.
+           string according to specified format. If an
+           optional -file or -handle argument is provided
+           the string is also written to that.
  Returns : SCALAR
  Args    : -phylo   => (Bio::Phylo object),
            -format  => (description format),
            -(other) => (parser specific options)
+           -file    => (optional: a file path to open and write to)
+           or
+           -handle  => (optional: a handle to write to)
 
 =cut
 
@@ -284,10 +293,25 @@ sub unparse {
     if ( !$opts{-phylo} ) {
         throw 'BadArgs' => 'no object to unparse specified.';
     }
-    my $lib      = 'Bio::Phylo::Unparsers::' . ucfirst $opts{-format};
+    my $lib = 'Bio::Phylo::Unparsers::' . ucfirst $opts{-format};
     my $unparser = looks_like_class($lib)->_new(%opts);
     if ( $unparser->can('_to_string') ) {
-        return $unparser->_to_string;
+        my $string = $unparser->_to_string;
+        
+        # as per @fangly's request, make it possible to provide a -file
+        # or -handle argument
+        if ( $opts{'-file'} ) {
+            open my $fh, '>', $opts{'-file'} or throw 'FileError' => $!;
+            print $fh $string;
+        }
+        if ( $opts{'-handle'} ) {
+            my $fh = $opts{'-handle'};
+            eval { $fh->print($string) };
+            if ( $@ ) {
+                throw 'BadArgs' => "No valid, open handle provided: $@";
+            }
+        }
+        return $string;
     }
     else {
         throw 'ObjectMismatch' => 'the unparser can\'t convert to strings.';
