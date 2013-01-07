@@ -754,8 +754,11 @@ Gets invocant's sisters.
 =cut
 
     sub get_sisters {
-        my $self    = shift;
-        my $sisters = $self->get_parent->get_children;
+        my $self = shift;
+        my $sisters;
+        if ( my $parent = $self->get_parent ) {
+            $sisters = $parent->get_children;
+        }
         return $sisters;
     }
 
