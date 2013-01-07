@@ -207,6 +207,11 @@ __PACKAGE__->_make_exceptions(
         'description' =>
 "This kind of error happens when an invalid numerical argument\nis provided.",
     },
+    'Bio::Phylo::Util::Exceptions::NoData' => {
+	'isa' => 'Bio::Phylo::Util::Exceptions::Generic',
+	'description' =>
+"This kind of error happens when a data source is empty.",
+    },
 
     # system exceptions
     'Bio::Phylo::Util::Exceptions::System' => {

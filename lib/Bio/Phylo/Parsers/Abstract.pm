@@ -80,22 +80,29 @@ sub _open_url {
 # a handle to whatever it is or throw an exception
 sub _open_handle {
     my %args = @_;
+    my $handle;
     if ( $args{'-handle'} ) {
         binmode $args{'-handle'}, ":utf8";
-        return $args{'-handle'};
+        $handle = $args{'-handle'};
     }
     elsif ( $args{'-file'} ) {
-        return _open_file( $args{'-file'}, $args{'-encoding'} );
+        $handle = _open_file( $args{'-file'}, $args{'-encoding'} );
     }
     elsif ( $args{'-string'} ) {
-        return _open_string( $args{'-string'}, $args{'-encoding'} );
+        $handle = _open_string( $args{'-string'}, $args{'-encoding'} );
     }
     elsif ( $args{'-url'} ) {
-        return _open_url( $args{'-url'}, $args{'-encoding'} );
+        $handle = _open_url( $args{'-url'}, $args{'-encoding'} );
     }
     else {
         throw 'BadArgs' => 'No data source provided!';
     }
+    
+    # check to see if the data source contains anything
+    if ( $handle->eof ) {
+        throw 'NoData' => "Source is empty!";
+    }
+    return $handle;
 }
 
 # open a Bio::Phylo::Project if asked (if the -as_project flag
