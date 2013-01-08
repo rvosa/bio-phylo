@@ -2,7 +2,6 @@
 use strict;
 use warnings;
 use Bio::Phylo::IO 'parse';
-use Bio::Phylo::Util::CONSTANT qw':objecttypes looks_like_object';
 
 =begin comment
 
