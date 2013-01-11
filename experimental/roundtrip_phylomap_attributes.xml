@@ -1,0 +1,36 @@
+<nex:nexml about="#nl19" generator="Bio::Phylo::Project v.0.50_1660" version="0.9" xmlns="http://www.nexml.org/2009" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:map="http://purl.org/phylo/phylomap/terms#" xmlns:nex="http://www.nexml.org/2009" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:xsd="http://www.w3.org/2001/XMLSchema#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.nexml.org/2009 http://www.nexml.org/2009/nexml.xsd">
+  <meta content="rutger.vos" datatype="xsd:string" id="ma21" property="dc:creator" xsi:type="nex:LiteralMeta"/>
+  <otus id="os22">
+    <otu id="ou24" label="A"/>
+    <otu id="ou25" label="B"/>
+    <otu id="ou23" label="C"/>
+  </otus>
+  <trees id="ts20" otus="os22">
+    <tree id="te3" xsi:type="nex:IntTree">
+      <node about="#ne4" id="ne4" root="true">
+        <meta content="50" datatype="xsd:integer" id="ma9" property="map:x" xsi:type="nex:LiteralMeta"/>
+        <meta content="258.333333333333" datatype="xsd:float" id="ma18" property="map:y" xsi:type="nex:LiteralMeta"/>
+      </node>
+      <node about="#ne5" id="ne5">
+        <meta content="325" datatype="xsd:integer" id="ma10" property="map:x" xsi:type="nex:LiteralMeta"/>
+        <meta content="133.333333333333" datatype="xsd:float" id="ma15" property="map:y" xsi:type="nex:LiteralMeta"/>
+      </node>
+      <node about="#ne8" id="ne8" label="C" otu="ou23">
+        <meta content="600" datatype="xsd:integer" id="ma16" property="map:x" xsi:type="nex:LiteralMeta"/>
+        <meta content="383.333333333333" datatype="xsd:float" id="ma17" property="map:y" xsi:type="nex:LiteralMeta"/>
+      </node>
+      <node about="#ne6" id="ne6" label="A" otu="ou24">
+        <meta content="600" datatype="xsd:integer" id="ma11" property="map:x" xsi:type="nex:LiteralMeta"/>
+        <meta content="50" datatype="xsd:integer" id="ma12" property="map:y" xsi:type="nex:LiteralMeta"/>
+      </node>
+      <node about="#ne7" id="ne7" label="B" otu="ou25">
+        <meta content="600" datatype="xsd:integer" id="ma13" property="map:x" xsi:type="nex:LiteralMeta"/>
+        <meta content="216.666666666667" datatype="xsd:float" id="ma14" property="map:y" xsi:type="nex:LiteralMeta"/>
+      </node>
+      <edge id="edge5" source="ne4" target="ne5"/>
+      <edge id="edge8" source="ne4" target="ne8"/>
+      <edge id="edge6" source="ne5" target="ne6"/>
+      <edge id="edge7" source="ne5" target="ne7"/>
+    </tree>
+  </trees>
+</nex:nexml>
