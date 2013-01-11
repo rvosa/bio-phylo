@@ -2,12 +2,14 @@ package Bio::Phylo::NeXML::Writable;
 use strict;
 use base 'Bio::Phylo';
 use Bio::Phylo::IO 'unparse';
+use Bio::Phylo::Factory;
 use Bio::Phylo::NeXML::DOM;
 use Bio::Phylo::NeXML::Entities '/entities/';
 use Bio::Phylo::Util::Exceptions 'throw';
 use Bio::Phylo::Util::CONSTANT qw'/looks_like/ :namespaces :objecttypes';
 {
     my $logger              = __PACKAGE__->get_logger;
+    my $fac                 = Bio::Phylo::Factory->new;
     my $DICTIONARY_CONSTANT = _DICTIONARY_;
     my $META_CONSTANT       = _META_;
     my %namespaces          = (
@@ -16,6 +18,7 @@ use Bio::Phylo::Util::CONSTANT qw'/looks_like/ :namespaces :objecttypes';
         'xsi' => _NS_XSI_,
         'rdf' => _NS_RDF_,
         'xsd' => _NS_XSD_,
+	'map' => _NS_PHYLOMAP_,
     );
     my @fields =
       \( my ( %tag, %id, %attributes, %identifiable, %suppress_ns, %meta, %url ) );
@@ -178,6 +181,29 @@ This is the superclass for all objects that can be serialized to NeXML
         return $self;
     }
 
+=item set_meta_object()
+
+ Type    : Mutator
+ Title   : set_meta_object
+ Usage   : $obj->set_meta_object($predicate => $object);
+ Function: Attaches a $predicate => $object pair to the invocant
+ Returns : $self
+ Args    : $predicate => (a valid curie of a known namespace)
+	   $object => (an object value)
+
+=cut    
+
+    sub set_meta_object {
+	my ( $self, $predicate, $object ) = @_;
+	if ( my ($meta) = @{ $self->get_meta($predicate) } ) {
+	    $meta->set_triple( $predicate => $object );
+	}
+	else {
+	    $self->add_meta( $fac->create_meta( '-triple' => { $predicate => $object } ) );
+	}
+	return $self;
+    }
+    
 =item set_identifiable()
 
 By default, all XMLWritable objects are identifiable when serialized,

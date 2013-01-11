@@ -98,8 +98,9 @@ Sets collapsed clade width.
 
     sub set_x {
         my ( $self, $x ) = @_;
-        my $id = $self->get_id;
-        $x{$id} = $x;
+        #my $id = $self->get_id;
+        #$x{$id} = $x;
+        $self->set_meta_object( 'map:x' => $x );
         return $self;
     }
 
@@ -116,8 +117,9 @@ Sets collapsed clade width.
 
     sub set_y {
         my ( $self, $y ) = @_;
-        my $id = $self->get_id;
-        $y{$id} = $y;
+        #my $id = $self->get_id;
+        #$y{$id} = $y;
+        $self->set_meta_object( 'map:y' => $y );
         return $self;
     }
 
@@ -539,9 +541,10 @@ Gets invocant's immediate children.
 =cut
 
     sub get_x {
-        my $self = shift;
-        my $id   = $self->get_id;
-        return $x{$id};
+        #my $self = shift;
+        #my $id   = $self->get_id;
+        #return $x{$id};
+        shift->get_meta_object('map:x');
     }
 
 =item get_y()
@@ -556,9 +559,10 @@ Gets invocant's immediate children.
 =cut
 
     sub get_y {
-        my $self = shift;
-        my $id   = $self->get_id;
-        return $y{$id};
+        #my $self = shift;
+        #my $id   = $self->get_id;
+        #return $y{$id};
+        shift->get_meta_object('map:y');
     }
 
 =item get_radius()
