@@ -2394,8 +2394,8 @@ Keeps argument nodes from invocant (i.e. prunes all others).
             my $node = $tip;
             PARENT: while ( $node ) {
                 my $id = $node->get_id;
-                if ( not $seen{$id} ) {
-                    $seen{$id} = $node;
+                if ( not exists $seen{$id} ) {
+                    $seen{$id} = 0;
                     $node = $node->get_parent;
                 }
                 else {
@@ -2408,12 +2408,14 @@ Keeps argument nodes from invocant (i.e. prunes all others).
         $self->visit_depth_first(
             '-post' => sub {
                 my $n = shift;
+                # remove unwanted node
                 my $p = $n->get_parent;
-                if ( not $seen{$n->get_id} ) {
+                if ( not exists $seen{$n->get_id} ) {
                     $p->delete($n) if $p;
                     $self->delete($n);
                     return;
                 }
+                # remove parent with single child
                 my @children = @{ $n->get_children };
                 if ( scalar(@children) == 1 ) {
                     my ($c) = @children;
