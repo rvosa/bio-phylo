@@ -2341,7 +2341,7 @@ Keeps argument nodes from invocant (i.e. prunes all others).
     sub _get_tip_objects {
         my ( $self, $arg ) = @_;
         my @tips;
-        
+
         # argument is a taxa block
         if ( blessed $arg ) {
             for my $taxon ( @{ $arg->get_entities } ) {
@@ -2351,40 +2351,40 @@ Keeps argument nodes from invocant (i.e. prunes all others).
                 }
             }
         }
-        
+
         # arg is an array ref
         else {
             my $TAXON = _TAXON_;
             my $NODE  = _NODE_;
             for my $thing ( @{ $arg } ) {
-                
+
                 # thing is a taxon or node object
                 if ( blessed $thing ) {
                     if ( $thing->_type == $TAXON ) {
                         my @nodes = @{ $thing->get_nodes };
                         for my $node ( @nodes ) {
                             push @tips, $node if $self->contains($node);
-                        }                        
+                        }
                     }
                     elsif ( $thing->_type == $NODE ) {
                         push @tips, $thing if $self->contains($thing);
                     }
                 }
-                
+
                 # thing is a name
                 else {
                     if ( my $tip = $self->get_by_name($thing) ) {
                         push @tips, $tip;
                     }
                 }
-            }            
+            }
         }
         return \@tips;
     }
 
     sub keep_tips {
         my ( $self, $tip_names ) = @_;
-        
+
         # get node objects for tips
         my @tips = @{ $self->_get_tip_objects($tip_names) };
         
@@ -2394,38 +2394,48 @@ Keeps argument nodes from invocant (i.e. prunes all others).
             my $node = $tip;
             PARENT: while ( $node ) {
                 my $id = $node->get_id;
-                if ( not $seen{$id} ) {
-                    $seen{$id} = $node;
+                if ( not exists $seen{$id} ) {
+                    $seen{$id} = 0;
                     $node = $node->get_parent;
                 }
                 else {
                     last PARENT;
-                }            
+                }
             }
         }
-        
+
         # now do the pruning
         $self->visit_depth_first(
             '-post' => sub {
+                # prune node
                 my $n = shift;
+                my $nid = $n->get_id;
                 my $p = $n->get_parent;
-                if ( not $seen{$n->get_id} ) {
+                if ( not exists $seen{$nid} ) {
                     $p->delete($n) if $p;
                     $self->delete($n);
+                    # record number of children lost by parent
+                    if (defined $p) {
+                       my $pid = $p->get_id;
+                       if ( exists $seen{$pid} ) {
+                          $seen{$pid}++;
+                       }
+                    }
                     return;
                 }
+                # remove nodes who lost children and are now down to a single one
                 my @children = @{ $n->get_children };
-                if ( scalar(@children) == 1 ) {
+                if ( (scalar @children == 1) && ($seen{$nid} > 0) ) {
                     my ($c) = @children;
                     my $bl  = $n->get_branch_length;
-                    my $cbl = $c->get_branch_length;                
+                    my $cbl = $c->get_branch_length;
                     $c->set_branch_length( $bl + $cbl ) if defined $cbl && defined $bl;
-                    $self->delete($n);                                
+                    $self->delete($n);
                     $c->set_parent($p);
                     $p->delete($n) if $p;
                 }
             }
-        );        
+        );
         return $self;
     }
 
