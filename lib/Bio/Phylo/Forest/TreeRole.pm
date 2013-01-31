@@ -2636,27 +2636,41 @@ Collapses internal nodes with fewer than 2 children.
 
     sub remove_unbranched_internals {
         my $self = shift;
-        for my $node ( @{ $self->get_internals } ) {
-            my @children = @{ $node->get_children };
-            if ( scalar @children == 1 ) {
-                my $child = $children[0];
-                $child->set_parent( $node->get_parent );
-                my $child_bl = $children[0]->get_branch_length;
-                my $node_bl  = $node->get_branch_length;
-                if ( defined $child_bl ) {
-                    if ( defined $node_bl ) {
-                        $child->set_branch_length( $child_bl + $node_bl );
-                    }
-                    else {
-                        $child->set_branch_length($child_bl);
-                    }
+        my @delete;
+        $self->visit_depth_first(
+            '-post' => sub {
+                my $node = shift;
+                my @children = @{ $node->get_children };
+                
+                #Êthe node is interior, now need to check for each child
+                # if it's interior as well
+                if ( @children ) {
+                    
+                    # iterate over children 
+                    for my $child ( @children ) {
+                        my @grandchildren = @{ $child->get_children };
+                        
+                        # $child is an unbranched internal, so $grandchildren[0]
+                        # needs to be connected to $node
+                        if ( 1 == scalar @grandchildren ) {
+                            my $gchild = $grandchildren[0];
+                            
+                            # compute the new branch length for $gchild
+                            my $length = (  $child->get_branch_length || 0 )
+                                       + ( $gchild->get_branch_length || 0 );
+                            $gchild->set_branch_length($length);
+                            $gchild->set_parent($node);
+                            $node->delete($child);
+                            
+                            # will delete these nodes from the tree array
+                            # after the recursion
+                            push @delete, $child;						
+                        }
+                    }				
                 }
-                else {
-                    $child->set_branch_length($node_bl) if defined $node_bl;
-                }
-                $self->delete($node);
             }
-        }
+        );
+        $self->delete($_) for @delete;
         return $self;
     }
 
