@@ -1001,11 +1001,9 @@ Calculates the sum of all branch lengths.
     sub calc_tree_length {
         my $self = shift;
         my $tl   = 0;
-        for ( @{ $self->get_entities } ) {
-            if ( my $bl = $_->get_branch_length ) {
-                $tl += $bl if defined $bl;
-            }
-        }
+        $self->visit(sub{
+        	$tl += shift->get_branch_length || 0;
+        });
         return $tl;
     }
 
@@ -2682,6 +2680,34 @@ Collapses internal nodes with fewer than 2 children.
         );
         $self->delete($_) for @delete;
         return $self;
+    }
+
+=item deroot()
+
+Collapses on of the children of a basal bifurcation
+
+ Type    : Tree manipulator
+ Title   : deroot
+ Usage   : $tree->deroot;
+ Function: Removes root
+ Returns : The modified invocant.
+ Args    : NONE
+ Comments:
+
+=cut
+
+    sub deroot {
+        my $self = shift;
+        my $root = $self->get_root;
+        my @children = @{ $root->get_children };
+        if ( scalar @children < 3 ) {
+            my ($collapsible) = grep { $_->is_internal } @children;
+            $collapsible->collapse;
+            return $self;
+        }
+        else {
+            return $self;
+        }
     }
 
 =back
