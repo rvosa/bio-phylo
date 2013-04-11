@@ -80,7 +80,7 @@ as an element called 'meta', with RDFa compliant attributes.
         my %resource = ( 'xsi:type' => 'nex:ResourceMeta' );
         my %literal  = ( 'xsi:type' => 'nex:LiteralMeta' );
         if ( not ref $content ) {
-            if ( $content =~ m|^http://| or $content =~ m|^urn:| ) {
+            if ( $content && ( $content =~ m|^http://| or $content =~ m|^urn:| ) ) {
 				$content =~ s/&([^a])/&amp;$1/g;
                 $self->set_attributes( 'href' => $content, %resource );
                 if ( my $prop = $self->get_attributes('property') ) {
@@ -96,7 +96,7 @@ as an element called 'meta', with RDFa compliant attributes.
                       && $content !~ /\./ ? 'integer' : 'float';
                     $self->set_attributes( 'datatype' => 'xsd:' . $dt );
                 }
-                elsif ( $content eq 'true' or $content eq 'false' ) {
+                elsif ( $content && ( $content eq 'true' or $content eq 'false' ) ) {
                     $self->set_attributes( 'datatype' => 'xsd:boolean' );
                 }
                 else {
