@@ -58,6 +58,7 @@ Bio::Phylo::IO - Front end for parsers and serializers
     '-string' => $tree_string,
     '-format' => 'newick',
     '-keep'   => ['A', 'D'], # nodes to keep
+    '-ignore_comments' => 1, # treats [] symbols as part of taxon name
  )->first;
 
  # parsing a table
