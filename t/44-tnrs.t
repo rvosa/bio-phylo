@@ -1,9 +1,9 @@
 #!/usr/bin/perl
 use Test::More;
 BEGIN {
-    eval { require XML::Twig };
+    eval { require XML::Twig; require JSON };
     if ($@) {
-        plan 'skip_all' => 'XML::Twig not installed';
+        plan 'skip_all' => 'XML::Twig or JSON not installed';
     }
     else {
         Test::More->import('no_plan');
