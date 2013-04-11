@@ -114,7 +114,7 @@ Tree constructor from Bio::Tree::TreeI argument.
         my $self;
         if ( blessed $bptree && $bptree->isa('Bio::Tree::TreeI') ) {
             $self = $fac->create_tree;
-            bless $self, $class;
+#            bless $self, $class;
             $self = $self->_recurse( $bptree->get_root_node );
 
             # copy name
@@ -2680,6 +2680,47 @@ Collapses internal nodes with fewer than 2 children.
         );
         $self->delete($_) for @delete;
         return $self;
+    }
+
+=item remove_orphans()
+
+Removes all unconnected nodes.
+
+ Type    : Tree manipulator
+ Title   : remove_orphans
+ Usage   : $tree->remove_orphans;
+ Function: Removes all unconnected nodes
+ Returns : The modified invocant.
+ Args    : NONE
+ Comments:
+
+=cut
+
+    sub remove_orphans {
+    	my $self = shift;
+    	
+    	# collect all nodes that are topologically connected
+    	my %seen;
+    	$self->visit_depth_first(
+    		'-pre' => sub {
+    			$seen{ shift->get_id }++;
+    		}
+    	);
+    	
+    	# collect all nodes
+    	my @delete;
+    	$self->visit(sub {
+    		my $node = shift;
+    		push @delete, $node if not $seen{$node->get_id};
+    	});
+    	$self->delete($_) for @delete;
+    	
+    	# notify user
+    	if ( scalar @delete ) {
+    		$logger->warn("deleted ".scalar(@delete)." orphaned nodes");
+    	}
+    	
+    	return $self;
     }
 
 =item deroot()
