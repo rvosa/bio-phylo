@@ -934,6 +934,9 @@ Clones invocant.
                 }
             };
         }
+
+	# we do this by executing add_meta(get_meta()) so skip here
+	$subs{'set_meta_object'} = sub {};
         return $self->SUPER::clone(%subs);
     }
 
