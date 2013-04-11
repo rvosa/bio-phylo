@@ -37,6 +37,32 @@ matrices.
 
 =over
 
+=item merge()
+
+Project constructor.
+
+ Type    : Constructor
+ Title   : merge
+ Usage   : my $project = Bio::Phylo::Project->merge( @projects )
+ Function: Populates a Bio::Phylo::Project object from a list of projects
+ Returns : A Bio::Phylo::Project object.
+ Args    : A list of Bio::Phylo::Project objects to be merged
+
+=cut
+
+    sub merge {
+        my $class  = shift;
+	my $self   = $class->SUPER::new;
+	my @taxa   = map { @{ $_->get_items(_TAXA_) } } @_;
+	my $taxa   = $fac->create_taxa->merge_by_name(@taxa);
+	my $forest = $fac->create_forest( '-taxa' => $taxa );
+	$forest->insert($_) for map { @{ $_->get_items(_TREE_) } } @_;
+	$self->insert($taxa);
+	$self->insert($forest);
+	$self->insert($_) for map { $_->set_taxa($taxa) } map { @{ $_->get_items(_MATRIX_) } } @_;
+	return $self;
+    }
+
 =item set_datasource()
 
 Project constructor.
