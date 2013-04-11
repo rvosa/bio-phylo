@@ -44,7 +44,10 @@ Bio::Phylo::Matrices::Datum - Character state sequence
 =head1 DESCRIPTION
 
 The datum object models a single observation or a sequence of observations,
-which can be linked to a taxon object.
+which can be linked to a taxon object. This package contains the getters
+and setters that alter the internal state of the datum object. Additional 
+(stateless) behaviours are defined in the L<Bio::Phylo::Matrices::DatumRole>
+package.
 
 =head1 METHODS
 
@@ -361,14 +364,9 @@ for any user or developer questions and discussions.
 
 =over
 
-=item L<Bio::Phylo::Taxa::TaxonLinker>
+=item L<Bio::Phylo::Matrices::DatumRole>
 
-This object inherits from L<Bio::Phylo::Taxa::TaxonLinker>, so the methods
-defined therein are also applicable to L<Bio::Phylo::Matrices::Datum> objects.
-
-=item L<Bio::Phylo::Matrices::TypeSafeData>
-
-This object inherits from L<Bio::Phylo::Matrices::TypeSafeData>, so the methods
+This object inherits from L<Bio::Phylo::Matrices::DatumRole>, so the methods
 defined therein are also applicable to L<Bio::Phylo::Matrices::Datum> objects.
 
 =item L<Bio::Phylo::Manual>

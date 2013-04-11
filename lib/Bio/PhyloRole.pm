@@ -75,7 +75,7 @@ $VERSION .= "_$rev";
 
 =head1 NAME
 
-Bio::Phylo - Phylogenetic analysis using perl
+Bio::PhyloRole - Extra behaviours for the base class
 
 =head1 SYNOPSIS
 

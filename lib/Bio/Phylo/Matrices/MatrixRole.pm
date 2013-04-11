@@ -17,7 +17,7 @@ my $LOADED_WRAPPERS = 0;
 
 =head1 NAME
 
-Bio::Phylo::Matrices::Matrix - Character state matrix
+Bio::Phylo::Matrices::MatrixRole - Extra behaviours for a character state matrix
 
 =head1 SYNOPSIS
 

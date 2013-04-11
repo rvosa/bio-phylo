@@ -55,16 +55,9 @@ Bio::Phylo::Forest::Node - Node in a phylogenetic tree
 
 =head1 DESCRIPTION
 
-This module defines a node object and its methods. The node is fairly
-syntactically rich in terms of navigation, and additional getters are provided to
-further ease navigation from node to node. Typical first daughter -> next sister
-traversal and recursion is possible, but there are also shrinkwrapped methods
-that return for example all terminal descendants of the focal node, or all
-internals, etc.
-
-Node objects are inserted into tree objects, although technically the tree
-object is only a container holding all the nodes together. Unless there are
-orphans all nodes can be reached without recourse to the tree object.
+This module has the getters and setters that alter the state of a 
+node object. Useful behaviours (which are also available) are defined
+in the L<Bio::Phylo::Forest::NodeRole> package.
 
 =head1 METHODS
 
@@ -371,14 +364,9 @@ for any user or developer questions and discussions.
 
 =over
 
-=item L<Bio::Phylo::Taxa::TaxonLinker>
+=item L<Bio::Phylo::Forest::NodeRole>
 
-This object inherits from L<Bio::Phylo::Taxa::TaxonLinker>, so methods
-defined there are also applicable here.
-
-=item L<Bio::Phylo::Listable>
-
-This object inherits from L<Bio::Phylo::Listable>, so methods
+This object inherits from L<Bio::Phylo::Forest::NodeRole>, so methods
 defined there are also applicable here.
 
 =item L<Bio::Phylo::Manual>

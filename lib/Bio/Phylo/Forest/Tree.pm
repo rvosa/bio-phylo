@@ -27,10 +27,10 @@ Bio::Phylo::Forest::Tree - Phylogenetic tree
 
 =head1 DESCRIPTION
 
-The object models a phylogenetic tree, a container of
-L<Bio::Phylo::Forest::Node> objects. The tree object
-inherits from L<Bio::Phylo::Listable>, so look there
-for more methods.
+The package has the getters and setters that alter the
+internal state of a tree object. Additional tree-related
+behaviours (which are available also) are defined in the
+package L<Bio::Phylo::Forest::TreeRole>.
 
 =head1 METHODS
 
@@ -213,10 +213,10 @@ for any user or developer questions and discussions.
 
 =over
 
-=item L<Bio::Phylo::Listable>
+=item L<Bio::Phylo::Forest::TreeRole>
 
-The L<Bio::Phylo::Forest::Tree|Bio::Phylo::Forest::Tree> object inherits from
-the L<Bio::Phylo::Listable|Bio::Phylo::Listable> object, so the methods defined
+The L<Bio::Phylo::Forest::Tree> package inherits from
+the L<Bio::Phylo::Forest::TreeRole> package, so the methods defined
 therein also apply to trees.
 
 =item L<Bio::Phylo::Manual>

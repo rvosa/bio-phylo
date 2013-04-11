@@ -31,7 +31,7 @@ my $LOADED_WRAPPERS = 0;
 
 =head1 NAME
 
-Bio::Phylo::Forest::Tree - Phylogenetic tree
+Bio::Phylo::Forest::TreeRole - Extra behaviours for a phylogenetic tree
 
 =head1 SYNOPSIS
 

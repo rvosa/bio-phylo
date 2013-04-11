@@ -19,7 +19,7 @@ my $LOADED_WRAPPERS = 0;
 
 =head1 NAME
 
-Bio::Phylo::Matrices::Datum - Character state sequence
+Bio::Phylo::Matrices::DatumRole - Extra behaviours for a character state sequence
 
 =head1 SYNOPSIS
 

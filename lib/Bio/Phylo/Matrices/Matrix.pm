@@ -106,7 +106,7 @@ Bio::Phylo::Matrices::Matrix - Character state matrix
 
 This module defines a container object that holds
 L<Bio::Phylo::Matrices::Datum> objects. The matrix
-object inherits from L<Bio::Phylo::Listable>, so the
+object inherits from L<Bio::Phylo::MatrixRole>, so the
 methods defined there apply here.
 
 =head1 METHODS

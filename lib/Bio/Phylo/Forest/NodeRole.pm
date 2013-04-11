@@ -23,7 +23,7 @@ my $fac = Bio::Phylo::Factory->new;
 
 =head1 NAME
 
-Bio::Phylo::Forest::Node - Node in a phylogenetic tree
+Bio::Phylo::Forest::NodeRole - Extra behaviours for a node in a phylogenetic tree
 
 =head1 SYNOPSIS
 
