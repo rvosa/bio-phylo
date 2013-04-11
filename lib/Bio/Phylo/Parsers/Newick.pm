@@ -10,9 +10,31 @@ Bio::Phylo::Parsers::Newick - Parser used by Bio::Phylo::IO, no serviceable part
 
 =head1 DESCRIPTION
 
-This module parses tree descriptions in parenthetical
-format. It is called by the L<Bio::Phylo::IO> facade,
-don't call it directly.
+This module parses tree descriptions in parenthetical format. It is called by the 
+L<Bio::Phylo::IO> facade, don't call it directly. Several additional flags can be
+passed to the Bio::Phylo::IO parse and parse_tree functions to influence how to deal
+with complex newick strings:
+
+ -keep => [ ...list of taxa names... ]
+
+The C<-keep> flag allows you to only retain certain taxa of interest, ignoring others
+while building the tree object.
+
+ -ignore_comments => 1,
+
+This will treat comments in square brackets as if they are a normal taxon name character,
+this so that names such as C<Choristoneura diversana|BC ZSM Lep 23401[05/*> are parsed 
+"successfully". (Note: square brackets should NOT be used in this way as it will break
+many parsers).
+
+ -keep_whitespace => 1,
+
+This will treat unescaped whitespace as if it is a normal taxon name character. Normally,
+whitespace is only retained inside quoted strings (e.g. C<'Homo sapiens'>), otherwise it
+is the convention to use underscores (C<Homo_sapiens>). This is because some programs 
+introduce whitespace to prettify a newick string, e.g. to indicate indentation/depth, 
+in which case you almost certainly want to ignore it. This is the default behaviour. The 
+option to keep it is provided for dealing with incorrectly formatted data.
 
 =cut
 
@@ -51,7 +73,7 @@ sub _simplify {
         $prev_string = $string;
         $string =~ s/ $cherry_re / _prune_cherry($1, $2, $3, $4, $5, $6, $7, \%id_hash) /gex;
     }
-
+	__PACKAGE__->_logger->debug("simplified string by removing unneeded nodes");
     return $string;
 }
 
@@ -89,11 +111,15 @@ sub _parse {
         $string .= $_;
     }
 
-    my $ids = $self->_args->{'-keep'};
+    my $ids        = $self->_args->{'-keep'};
+    my $ignore     = $self->_args->{'-ignore_comments'};
+    my $whitespace = $self->_args->{'-keep_whitespace'};
 
     # remove comments, split on tree descriptions
-    for my $newick ( $self->_split($string) ) {
-
+    my $counter = 1;
+    for my $newick ( $self->_split($string,$ignore,$whitespace) ) {
+		$self->_logger->debug("going to process newick string " . $counter++);
+		
         # simplify tree
         if ($ids) {
             $newick = _simplify($string, $ids);
@@ -131,7 +157,8 @@ sub _parse {
 =cut
 
 sub _split {
-    my ( $self, $string ) = @_;
+    my ( $self, $string, $ignore, $whitespace ) = @_;
+    my $log = $self->_logger;
     my ( $QUOTED, $COMMENTED ) = ( 0, 0 );
     my $decommented = '';
     my @trees;
@@ -140,11 +167,12 @@ sub _split {
         if ( !$QUOTED && !$COMMENTED && $token eq "'" ) {
             $QUOTED++;
         }
-        elsif ( !$QUOTED && !$COMMENTED && $token eq "[" ) {
+        elsif ( !$QUOTED && !$COMMENTED && $token eq "[" && ! $ignore ) {
             $COMMENTED++;
+            $log->debug("quote level changed to $COMMENTED");
             next TOKEN;
         }
-        elsif ( !$QUOTED && $COMMENTED && $token eq "]" ) {
+        elsif ( !$QUOTED && $COMMENTED && $token eq "]" && ! $ignore ) {
             $COMMENTED--;
             next TOKEN;
         }
@@ -155,7 +183,7 @@ sub _split {
         {
             $QUOTED--;
         }
-        if ( !$QUOTED && $token eq ' ' ) {
+        if ( !$QUOTED && $token eq ' ' && ! $whitespace ) {
             next TOKEN;
         }
         $decommented .= $token unless $COMMENTED;
@@ -164,7 +192,8 @@ sub _split {
             $decommented = '';
         }
     }
-    $self->_logger->debug("removed comments, split on tree descriptions");
+    $log->debug("removed comments, split on tree descriptions");
+    $log->debug("found ".scalar(@trees)." tree descriptions");
     return @trees;
 }
 
