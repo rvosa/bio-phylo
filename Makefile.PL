@@ -15,6 +15,7 @@ my %recommended = (
     'XML::XML2JSON' => '0',
     'PDF::API2'     => '0',
     'GD'            => '0',
+    'JSON'          => '0',
 );
 
 check_prereq( keys %recommended );
