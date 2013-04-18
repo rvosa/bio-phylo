@@ -1026,7 +1026,7 @@ Returns the tree subtended by the invocant
                 $node->set_generic( 'clone' => $clone );
                 $tree->insert($clone);
                 if ( my $parent = $node->get_parent ) {
-                    if ( my $pclone = $node->get_generic('clone') ) {
+                    if ( my $pclone = $parent->get_generic('clone') ) {
                         $clone->set_parent($pclone);
                     }
                     else {
