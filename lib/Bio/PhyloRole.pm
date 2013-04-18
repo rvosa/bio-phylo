@@ -381,19 +381,13 @@ Sets generic key/value pair(s).
 
 Gets invocant's name, modified to be safely used in nexus files. This means that:
 
-=item * 
-
-names with spaces in them that aren't 'single quoted' have their spaces replaced
+=item names with spaces in them that aren't 'single quoted' have their spaces replaced
 with underscores
 
-=item * 
-
-names with any of the following characters in them are single quoted: 
+=item names with any of the following characters in them are single quoted: 
  -^*(){}[]+=;:"\<>/,
 
-=item * 
-
-names with single quotes inside them (i.e. not around them) are "double quoted"
+=item names with single quotes inside them (i.e. not around them) are "double quoted"
 
  Type    : Accessor
  Title   : get_nexus_name
