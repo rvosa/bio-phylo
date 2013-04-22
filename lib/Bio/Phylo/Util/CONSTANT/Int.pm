@@ -28,4 +28,11 @@ sub _CHARACTER_ ()     { 25 }
 sub _SET_ ()           { 26 }
 sub _MODEL_ ()         { 27 }
 sub _OPERATION_ ()     { 28 }
+
+=head1 NAME
+
+Bio::Phylo::Util::CONSTANT::Int - Integer constants, no serviceable parts inside
+
+=cut
+
 1;
