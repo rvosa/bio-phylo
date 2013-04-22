@@ -114,10 +114,11 @@ sub _parse {
     my $ids        = $self->_args->{'-keep'};
     my $ignore     = $self->_args->{'-ignore_comments'};
     my $whitespace = $self->_args->{'-keep_whitespace'};
+    my $quotes     = $self->_args->{'-ignore_quotes'};
 
     # remove comments, split on tree descriptions
     my $counter = 1;
-    for my $newick ( $self->_split($string,$ignore,$whitespace) ) {
+    for my $newick ( $self->_split($string,$ignore,$whitespace,$quotes) ) {
 		$self->_logger->debug("going to process newick string " . $counter++);
 		
         # simplify tree
@@ -157,14 +158,14 @@ sub _parse {
 =cut
 
 sub _split {
-    my ( $self, $string, $ignore, $whitespace ) = @_;
+    my ( $self, $string, $ignore, $whitespace, $quotes ) = @_;
     my $log = $self->_logger;
     my ( $QUOTED, $COMMENTED ) = ( 0, 0 );
     my $decommented = '';
     my @trees;
   TOKEN: for my $i ( 0 .. length($string) ) {
         my $token = substr( $string, $i, 1 );
-        if ( !$QUOTED && !$COMMENTED && $token eq "'" ) {
+        if ( !$QUOTED && !$COMMENTED && $token eq "'" && ! $quotes ) {
             $QUOTED++;
         }
         elsif ( !$QUOTED && !$COMMENTED && $token eq "[" && ! $ignore ) {
@@ -179,7 +180,7 @@ sub _split {
         elsif ($QUOTED
             && !$COMMENTED
             && $token eq "'"
-            && substr( $string, $i, 2 ) ne "''" )
+            && substr( $string, $i, 2 ) ne "''" && ! $quotes )
         {
             $QUOTED--;
         }
