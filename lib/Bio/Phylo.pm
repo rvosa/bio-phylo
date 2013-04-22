@@ -17,7 +17,7 @@ use Bio::Phylo::Util::Logger;             # for logging, like log4perl/log4j
 use Bio::Phylo::Identifiable;    # for storing unique IDs inside an instance
 
 our ( $logger, $COMPAT ) = Bio::Phylo::Util::Logger->new;
-our $VERSION = "0.54";
+our $VERSION = "0.55";
 
 # mediates one-to-many relationships between taxon and nodes,
 # taxon and sequences, taxa and forests, taxa and matrices.
