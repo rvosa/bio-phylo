@@ -5,6 +5,17 @@ use Bio::Phylo::Util::Exceptions 'throw';
 use Bio::Phylo::Util::CONSTANT qw'looks_like_instance :namespaces :objecttypes';
 use Bio::Phylo::Util::Dependency qw'RDF::Trine::Node::Resource RDF::Query';
 
+=head1 NAME
+
+Bio::Phylo::Parsers::Cdao - Parser used by Bio::Phylo::IO, no serviceable parts inside
+
+=head1 DESCRIPTION
+
+This module is used for parsing CDAO RDF. The implementation is incomplete,
+especially for character state matrices (trees and OTUs work fine).
+
+=cut
+
 my $ns_cdao = _NS_CDAO_;
 my $ns_rdf  = _NS_RDF_;
 my $ns_rdfs = _NS_RDFS_;
@@ -351,5 +362,36 @@ sub _process_edges {
         $objects{$child_uri}->set_branch_length($branch_length) if defined $branch_length;
     }
 }
+
+# podinherit_insert_token
+
+=head1 SEE ALSO
+
+There is a mailing list at L<https://groups.google.com/forum/#!forum/bio-phylo> 
+for any user or developer questions and discussions.
+
+=over
+
+=item L<Bio::Phylo::IO>
+
+The CDAO parser is called by the L<Bio::Phylo::IO> object.
+Look there for examples.
+
+=item L<Bio::Phylo::Manual>
+
+Also see the manual: L<Bio::Phylo::Manual> and L<http://rutgervos.blogspot.com>.
+
+=back
+
+=head1 CITATION
+
+If you use Bio::Phylo in published research, please cite it:
+
+B<Rutger A Vos>, B<Jason Caravas>, B<Klaas Hartmann>, B<Mark A Jensen>
+and B<Chase Miller>, 2011. Bio::Phylo - phyloinformatic analysis using Perl.
+I<BMC Bioinformatics> B<12>:63.
+L<http://dx.doi.org/10.1186/1471-2105-12-63>
+
+=cut
 
 1;
