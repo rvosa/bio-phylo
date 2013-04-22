@@ -7,6 +7,12 @@ use Bio::Phylo::Util::Exceptions 'throw';
 use Bio::Phylo::Util::Logger ':levels';
 use Scalar::Util qw( refaddr );
 
+=head1 NAME
+
+Bio::Phylo::Util::MOP - Meta-object programming, no serviceable parts inside
+
+=cut
+
 # abandon all hope, ye who enter here
 
 our $logger = Bio::Phylo::Util::Logger->new;
