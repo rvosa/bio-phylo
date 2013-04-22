@@ -377,6 +377,53 @@ Get all cherries, i.e. nodes that have two terminal children
         return \@cherries;
     }
 
+=item get_all_rootings()
+
+Gets a forest of all rooted versions of the invocant tree.
+
+ Type    : Query
+ Title   : get_all_rootings
+ Usage   : my $forest = $tree->get_all_rootings;
+ Function: Returns an array ref of cherries
+ Returns : Bio::Phylo::Forest object
+ Args    : NONE
+ Comments: This method assumes the invocant tree has a basal trichotomy.
+           "Rooted" trees with a basal bifurcation will give strange
+           results.
+
+=cut    
+
+    sub get_all_rootings {
+        my $self = shift;
+        my $forest = $fac->create_forest;
+        
+        # iterate over all nodes
+        my $i = 0;
+        $self->visit(sub{
+           
+            # clone the tree
+            my $clone = $self->clone;
+            my $node  = $clone->get_by_index($i++);
+            my $anc   = $node->get_ancestors;
+            
+            # create the new root if node isn't already root
+            if ( $anc->[0] ) {
+                my $nroot = $fac->create_node;
+                $nroot->set_child($node);
+                $clone->insert($nroot);
+                $anc->[0]->delete($node) if $anc->[0];
+                
+                # flip the nodes on the path to the root
+                for my $j ( 0 .. $#{ $anc } ) {
+                    $nroot->set_child($anc->[$j]);                
+                    $nroot = $anc->[$j];
+                }
+                $forest->insert($clone);
+            }
+        });
+        return $forest;
+    }
+
     
 =item get_root()
 
