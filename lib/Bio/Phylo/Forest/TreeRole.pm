@@ -2725,24 +2725,26 @@ Removes all unconnected nodes.
 
 =item deroot()
 
-Collapses on of the children of a basal bifurcation
+Collapses one of the children of a basal bifurcation
 
  Type    : Tree manipulator
  Title   : deroot
  Usage   : $tree->deroot;
  Function: Removes root
  Returns : The modified invocant.
- Args    : NONE
+ Args    : Optional: node to collapse
  Comments:
 
 =cut
 
     sub deroot {
-        my $self = shift;
+        my ($self,$collapsible) = @_;
         my $root = $self->get_root;
         my @children = @{ $root->get_children };
         if ( scalar @children < 3 ) {
-            my ($collapsible) = grep { $_->is_internal } @children;
+        	if ( not $collapsible) {
+            	($collapsible) = grep { $_->is_internal } @children;
+            }
             $collapsible->collapse;
             return $self;
         }
