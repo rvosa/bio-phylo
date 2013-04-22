@@ -161,7 +161,7 @@ Test if tree is rooted.
         my $self = shift;
         my $id   = $self->get_id;
         if ( defined $rooted{$id} ) {
-            return $rooted{$id};
+            return ! $rooted{$id};
         }
         if ( my $root = $self->get_root ) {
             if ( my $children = $root->get_children ) {
