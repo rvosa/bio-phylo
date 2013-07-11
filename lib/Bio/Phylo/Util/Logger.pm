@@ -1,97 +1,44 @@
 package Bio::Phylo::Util::Logger;
 use strict;
 use base 'Exporter';
-use File::Spec;
-
-#use Filter::Simple;
-use Bio::Phylo::Util::CONSTANT qw'looks_like_hash looks_like_instance';
 use Bio::Phylo::Util::Exceptions 'throw';
-use Config;
-our ( $volume, $class_dir, $file, $VERBOSE, $AUTOLOAD, $TRACEBACK, @EXPORT_OK,
-    %EXPORT_TAGS );
+use Bio::Phylo::Util::CONSTANT qw'/looks_like/';
+
+our ( %VERBOSITY, $PREFIX );
+our $TRACEBACK   = 0;
+our	@EXPORT_OK   = qw(DEBUG INFO WARN ERROR FATAL);
+our	%EXPORT_TAGS = ( 'simple' => [@EXPORT_OK], 'levels' => [@EXPORT_OK] );
 
 BEGIN {
-    @EXPORT_OK = qw(DEBUG INFO WARN ERROR FATAL);
-    %EXPORT_TAGS = ( 'levels' => [@EXPORT_OK] );
-    my $class_file = __FILE__;
-    ( $volume, $class_dir, $file ) = File::Spec->splitpath($class_file);
-
-    # By default, the logger formats its messages to show where the logging
-    # method (i.e. debug, info, warn, error or fatal) was called, (e.g in
-    # the synopsis the $logger->info method was called in Bio/Phylo.pm on
-    # line 280). However, in some cases you may want to have the message be
-    # formatted to originate earlier in the call stack. An example of
-    # this is in Bio::Phylo::Util::Exceptions, which calls $logger->error
-    # automatically every time an exception is thrown. This behaviour would
-    # not be very useful if the resulting message is shown to originate from
-    # within the "throw" method - so instead it seems to originate from
-    # where the exception was thrown, i.e. one frame up in the call stack.
-    # This behaviour can be achieved by changing the value of the
-    # $Bio::Phylo::Util::Logger::TRACEBACK variable. For each increment in
-    # that variable, the logger moves one frame up in the call stack.
-    $TRACEBACK = 0;
-    $class_dir =~ s/Bio.Phylo.Util.?$//;
-
-#	printf STDERR "[ %s starting, will use PREFIX=%s where applicable ]\n", __PACKAGE__, $class_dir;
+	
+	# compute the path to the root of Bio::Phylo,
+	# use that as the default prefix
+	my $package = __PACKAGE__;
+	my $file    = __FILE__;
+	$package    =~ s/::/\//g;
+	$package   .= '.pm';
+	$file       =~ s/\Q$package\E$//;
+	$PREFIX     = $file;
+	
+	# set verbosity to 2, i.e. warn
+	$VERBOSITY{'*'} = $ENV{'BIO_PHYLO_VERBOSITY'} || 2;
 }
+
 {
-    my $self;
-    my %VERBOSE;
-    my @listeners;
-    my ( $fatal, $error, $warn, $info, $debug ) = ( 0 .. 4 );
-    $VERBOSE = $warn;
-    for my $method (qw(fatal error warn info debug)) {
-        eval <<"CODE_TEMPLATE";
-	sub $method {
-		my ( \$self, \$msg ) = \@_;
-		my ( \$package, \$file1up, \$line1up, \$subroutine ) = caller( \$TRACEBACK + 1 );
-		my ( \$pack0up, \$filename, \$line, \$sub0up )       = caller( \$TRACEBACK + 0 );
-		my \$verbosity;
-		if ( exists \$VERBOSE{\$subroutine} ) {
- 			\$verbosity = \$VERBOSE{\$subroutine};
- 		}
- 		elsif ( exists \$VERBOSE{\$pack0up} ) {
- 			\$verbosity = \$VERBOSE{\$pack0up};
- 		}
- 		else {
- 			\$verbosity = \$VERBOSE;
- 		}		
-		if ( \$verbosity >= \$${method} ) {			
-			my \$log_string;
-			if ( substr(\$filename,0,length(\$class_dir)) eq \$class_dir ) {
-				\$log_string = sprintf( "%s %s [\\\$PREFIX/%s, %s] - %s\\n",
-				uc("$method"), \$subroutine, substr(\$filename,length(\$class_dir)), \$line, \$msg );
-			}
-			else {
-				\$log_string = sprintf( "%s %s [%s, %s] - %s\\n",
-				uc("$method"), \$subroutine, \$filename, \$line, \$msg );			
-			}
-			print STDERR \$log_string;
-			\$_->( \$log_string, uc("$method"), \$subroutine, \$filename, \$line, \$msg ) for \@listeners;
-		}
-		return \$self;	
-	}	
-CODE_TEMPLATE
-    }
+	my %levels = ( FATAL => 0, ERROR => 1, WARN => 2, INFO => 3, DEBUG => 4 );
+    my @listeners = ( sub { print STDERR shift } ); # default
 
+	# dummy constructor that dispatches to VERBOSE(),
+	# then returns the package name
     sub new {
-        my $package = shift;
-
-        # singleton object
-        if ( not $self ) {
-            $self = \$package;
-            bless $self, $package;
-        }
-
-        # process args
-        $self->VERBOSE(@_) if @_;
-
-        # done
-        return $self;
+        my $class = shift;
+        $class->VERBOSE(@_) if @_;
+        return $class;
     }
 
+	# set additional listeners
     sub set_listeners {
-        my ( $self, @args ) = @_;
+        my ( $class, @args ) = @_;
         for my $arg (@args) {
             if ( looks_like_instance $arg, 'CODE' ) {
                 push @listeners, $arg;
@@ -100,107 +47,139 @@ CODE_TEMPLATE
                 throw 'BadArgs' => "$arg not a CODE reference";
             }
         }
-        return $self;
+        return $class;
     }
+	
+    # this is never called directly. rather, messages are dispatched here
+	# by the DEBUG() ... FATAL() subs below
+	sub LOG ($$) {
+		my ( $msg, $lvl ) = @_;
+		
+		# probe the call stack
+		my ( $pack2, $file2, $line2, $sub2 ) = caller( $TRACEBACK + 2 );
+		my ( $pack1, $file1, $line1, $sub1 ) = caller( $TRACEBACK + 1 );
+		
+		# cascade verbosity from global to local
+		my $verbosity = $VERBOSITY{'*'}; # global
+		$verbosity = $VERBOSITY{$pack1} if exists $VERBOSITY{$pack1}; # package
+ 		$verbosity = $VERBOSITY{$sub2}  if exists $VERBOSITY{$sub2}; # sub
+		
+		# verbosity is higher than the current caller, proceed
+		if ( $verbosity >= $levels{$lvl} ) {			
+
+			# strip the prefix from the calling file's path
+			if ( index $file1, $PREFIX == 0 ) {
+				$file1 =~ s/^\Q$PREFIX\E//;
+			}
+			
+			# make template, populate string
+			my $tmpl = "%s %s [%s: %i] - %s\n";
+			my $string = sprintf $tmpl, $lvl, $sub2, $file1, $line1, $msg;
+			
+			# dispatch to the listeners
+			$_->( $string, $lvl, $sub2, $file1, $line1, $msg ) for @listeners;
+		}		
+	}
+	
+	# these subs both return their verbosity constants and, if
+	# provided with a message, dispatch the message to LOG()
+    sub FATAL ($) { LOG $_[0], 'FATAL' if $_[0]; $levels{'FATAL'} }	
+    sub ERROR ($) { LOG $_[0], 'ERROR' if $_[0]; $levels{'ERROR'} }
+    sub WARN  ($) { LOG $_[0], 'WARN'  if $_[0]; $levels{'WARN'}  }
+    sub INFO  ($) { LOG $_[0], 'INFO'  if $_[0]; $levels{'INFO'}  }
+    sub DEBUG ($) { LOG $_[0], 'DEBUG' if $_[0]; $levels{'DEBUG'} }	
 
     sub PREFIX {
-        my ( $self, $prefix ) = @_;
-        $class_dir = $prefix if $prefix;
-        return $class_dir;
+        my ( $class, $prefix ) = @_;
+        $PREFIX = $prefix if $prefix;
+        return $PREFIX;
     }
 
     sub VERBOSE {
-        my $self = shift;
+        shift if ref $_[0] or $_[0] eq __PACKAGE__;
         if (@_) {
             my %opt = looks_like_hash @_;
-            if ( defined $opt{'-level'} ) {
+			my $level = $opt{'-level'};
+			
+			# verbosity is specified
+            if ( defined $level ) {
 
                 # check validity
-                if ( $opt{'-level'} > $debug xor $opt{'-level'} < $fatal ) {
-                    throw 'OutOfBounds' => "'-level' can be between $fatal and $debug, not $opt{'-level'}";
+                if ( $level > 4 xor $level < 0 ) {
+                    throw 'OutOfBounds' => "'-level' can be between 0 and 4, not $level";
                 }
-                if ( $opt{'-class'} ) {
-					if ( ref $opt{'-class'} eq 'ARRAY' ) {
-						for my $class ( @{ $opt{'-class'} } ) {
-							$VERBOSE{$class} = $opt{'-level'};
-							$self->info("Changed verbosity for class $opt{'-class'} to $opt{'-level'}");							
+				
+				# verbosity is specified for one or more packages
+                if ( my $class = $opt{'-class'} ) {
+					if ( ref $class eq 'ARRAY' ) {
+						for my $c ( @{ $class } ) {
+							$VERBOSITY{$c} = $level;
+							INFO "Changed verbosity for class $c to $level";
 						}
 					}
 					else {
-	                    $VERBOSE{ $opt{'-class'} } = $opt{'-level'};
-		                $self->info("Changed verbosity for class $opt{'-class'} to $opt{'-level'}");
+	                    $VERBOSITY{$class} = $level;
+		                INFO "Changed verbosity for class $class to $level";
 					}
                 }
-                elsif ( $opt{'-method'} ) {
-					if ( ref $opt{'-method'} eq 'ARRAY' ) {
-						for my $method ( @{ $opt{'-method'} } ) {
-							$VERBOSE{$method} = $opt{'-level'};
-							$self->info("Changed verbosity for method $method to $opt{'-level'}");							
+				
+				# verbosity is specified for one or more methods
+                elsif ( my $method = $opt{'-method'} ) {
+					if ( ref $method eq 'ARRAY' ) {
+						for my $m ( @{ $method } ) {
+							$VERBOSITY{$m} = $level;
+							INFO "Changed verbosity for method $m to $level";
 						}
 					}
 					else {
-						$VERBOSE{ $opt{'-method'} } = $opt{'-level'};
-						$self->info("Changed verbosity for method $opt{'-method'} to $opt{'-level'}");
+						$VERBOSITY{$method} = $level;
+						INFO "Changed verbosity for method $method to $level";
 					}
                 }
+				
+				# verbosity is set globally
                 else {
-                    $VERBOSE = $opt{'-level'};
-                    $self->info("Changed global verbosity to $VERBOSE");
+                    $VERBOSITY{'*'} = $level;
+                    INFO "Changed global verbosity to $VERBOSITY{'*'}";
                 }
             }
+			
+			# log to a file
 			if ( $opt{'-file'} ) {
-				open my $fh, '>>', $file or throw 'FileError' => $!;
-				$self->set_listeners(sub {
-					my $log_string = shift;
-					print $fh $log_string;
-				});
+				open my $fh, '>>', $opt{'-file'} or throw 'FileError' => $!;
+				__PACKAGE__->set_listeners(sub { print $fh shift });
 			}
+			
+			# log to a handle
 			if ( $opt{'-handle'} ) {
 				my $fh = $opt{'-handle'};
-				$self->set_listeners(sub {
-					my $log_string = shift;
-					print $fh $log_string;
-				});				
+				__PACKAGE__->set_listeners(sub { print $fh shift });
 			}
+			
+			# log to listeners
 			if ( $opt{'-listeners'} ) {
-				$self->set_listeners(@{$opt{'-listeners'}});
+				__PACKAGE__->set_listeners(@{$opt{'-listeners'}});
 			}
+			
+			# update the prefix
+			if ( $opt{'-prefix'} ) {
+				__PACKAGE__->PREFIX($opt{'-prefix'});
+			}
+			
         }
-        return $VERBOSE;
+        return $VERBOSITY{'*'};
     }
-
-    sub DESTROY {
-    }    # empty destructor so we don't go up inheritance tree at the end
-         # log levels
-    sub FATAL () { 0 }
-    sub ERROR () { 1 }
-    sub WARN ()  { 2 }
-    sub INFO ()  { 3 }
-    sub DEBUG () { 4 }
-
-    # source filtering to get rid of all logger calls.
-    # This doesn't seem to improve performance by much
-    # and the regexes might not work if there are
-    # parentheses inside the logging string so this is
-    # highly experimental. Also, it requires modules
-    # to "use" Bio::Phylo::Util::Logger explicitly instead
-    # of calling get_logger up the inheritance tree. All
-    # in all this is pretty useless and buggy at this point
-    # so let's just comment this out.
-    # 	FILTER {
-    # 		my $debug_regex = '$logger->debug(';
-    # 		my $info_regex  = '$logger->info(';
-    # 		my $warn_regex  = '$logger->warn(';
-    # 		my $error_regex = '$logger->error(';
-    # 		my $fatal_regex = '$logger->fatal(';
-    #
-    # 		s/\Q$debug_regex\E[^\)]+?\);//g unless $ENV{'BIO_PHYLO_LOGGING'};
-    # 		s/\Q$info_regex\E[^\)]+?\);//g  unless $ENV{'BIO_PHYLO_LOGGING'};
-    # 		s/\Q$warn_regex\E[^\)]+?\);//g  unless $ENV{'BIO_PHYLO_LOGGING'};
-    # 		s/\Q$error_regex\E[^\)]+?\);//g unless $ENV{'BIO_PHYLO_LOGGING'};
-    # 		s/\Q$fatal_regex\E[^\)]+?\);//g unless $ENV{'BIO_PHYLO_LOGGING'};
-    #
-    # 	};
+	
+	# alias for singleton methods
+	no warnings 'once';
+	*fatal = \&FATAL;
+	*error = \&ERROR;
+	*warn  = \&WARN;
+	*info  = \&INFO;
+	*debug = \&DEBUG;
+	
+	# empty destructor so we don't go up inheritance tree at the end
+	sub DESTROY {} 	
 }
 1;
 
@@ -270,12 +249,12 @@ levels
 
 The example above will write something like the following to the log file:
 
- INFO Bio::Phylo::Forest::Tree::new [$PREFIX/Bio/Phylo/Forest/Tree.pm, 99] - constructor called for 'Bio::Phylo::Forest::Tree'
- INFO Bio::Phylo::set_name [$PREFIX/Bio/Phylo.pm, 281] - setting name 'A'
- INFO Bio::Phylo::set_name [$PREFIX/Bio/Phylo.pm, 281] - setting name 'B'
- INFO Bio::Phylo::set_name [$PREFIX/Bio/Phylo.pm, 281] - setting name 'C'
- INFO Bio::Phylo::set_name [$PREFIX/Bio/Phylo.pm, 281] - setting name 'D'
- INFO Bio::Phylo::set_name [$PREFIX/Bio/Phylo.pm, 281] - setting name 'E'
+ INFO Bio::Phylo::Forest::Tree::new [Bio/Phylo/Forest/Tree.pm, 99] - constructor called for 'Bio::Phylo::Forest::Tree'
+ INFO Bio::Phylo::set_name [Bio/Phylo.pm, 281] - setting name 'A'
+ INFO Bio::Phylo::set_name [Bio/Phylo.pm, 281] - setting name 'B'
+ INFO Bio::Phylo::set_name [Bio/Phylo.pm, 281] - setting name 'C'
+ INFO Bio::Phylo::set_name [Bio/Phylo.pm, 281] - setting name 'D'
+ INFO Bio::Phylo::set_name [Bio/Phylo.pm, 281] - setting name 'E'
 
 =head1 DESCRIPTION
 
@@ -321,8 +300,13 @@ Constructor for Logger.
  Usage   : my $logger = Bio::Phylo::Util::Logger->new;
  Function: Instantiates a logger
  Returns : a Bio::Phylo::Util::Logger object
- Args    : -verbose => Bio::Phylo::Util::Logger::INFO (DEBUG/INFO/WARN/ERROR/FATAL)
- 	   -package => a package for which to set verbosity (optional)	
+ Args    : -level  => Bio::Phylo::Util::Logger::INFO (DEBUG/INFO/WARN/ERROR/FATAL)
+ 	       -class  => a package (or array ref) for which to set verbosity (optional)
+		   -method => a sub name (or array ref) for which to set verbosity (optional)
+		   -file   => a file to which to append logging messages
+		   -listeners => array ref of subs that handle logging messages
+		   -prefix    => a path fragment to strip from the paths in logging messages
+		   
 
 =back
 
@@ -356,17 +340,6 @@ This is very verbose, probably only useful if you write core Bio::Phylo code.
 =head2 LOGGING METHODS
 
 =over
-
-=item log()
-
-Prints argument debugging message, depending on verbosity.
-
- Type    : logging method
- Title   : log
- Usage   : $logger->log( "WARN", "warning message" );
- Function: prints logging message, depending on verbosity
- Returns : invocant
- Args    : message log level, logging message
 
 =item debug()
 
@@ -517,7 +490,5 @@ B<Rutger A Vos>, B<Jason Caravas>, B<Klaas Hartmann>, B<Mark A Jensen>
 and B<Chase Miller>, 2011. Bio::Phylo - phyloinformatic analysis using Perl.
 I<BMC Bioinformatics> B<12>:63.
 L<http://dx.doi.org/10.1186/1471-2105-12-63>
-
-
 
 =cut
