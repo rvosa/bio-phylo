@@ -137,9 +137,10 @@ sub _new {
         '_fac'      => $fac,
         '_handle'   => _open_handle(%args),
         '_proj'     => _open_project( $fac, %args ),
-        '_args'     => \%args,                      # for child-specific arguments
+        '_args'     => \%args, # for child-specific arguments
         '_encoding' => $args{'-encoding'},
         '_handlers' => $args{'-handlers'},
+        '_flush'    => $args{'-flush'},
     }, $class;
 }
 
@@ -189,6 +190,7 @@ sub _handle   { shift->{'_handle'} }
 sub _factory  { shift->{'_fac'} }
 sub _args     { shift->{'_args'} }
 sub _encoding { shift->{'_encoding'} }
+sub _flush    { shift->{'_flush'} }
 sub _handlers {
     my ( $self, $type ) = @_;    
     if ( my $h = $self->{'_handlers'} ) {
