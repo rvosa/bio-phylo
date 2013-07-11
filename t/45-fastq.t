@@ -9,7 +9,7 @@ my $seq = _DATUM_;
 my $counter = 0;
 parse(
    -format => 'fastq',
-   -type   => 'illumina', # to indicate how phred scores are scaled
+   -type   => 'sanger', # to indicate how phred scores are scaled
    -handle => \*DATA,
    -flush  => 1, # don't store record, flush and move on
    -handlers => {
