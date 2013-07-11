@@ -14,6 +14,7 @@ Bio::Phylo::Parsers::Fastq - Parser used by Bio::Phylo::IO, no serviceable parts
 A FASTQ file parser. To use it, you need to pass an argument
 that specifies the data type of the phred scores into the parse function, i.e.
 
+ my $handler_type = _DATUM_;
  parse(
     -format => 'fastq',
     -type   => 'illumina', # to indicate how phred scores are scaled
@@ -21,8 +22,8 @@ that specifies the data type of the phred scores into the parse function, i.e.
     -flush  => 1, # don't store record, flush and move on
     -handlers => {
     
-        # species a handler that is executed on each newly created datum
-        _DATUM_ => sub {
+        # specifies a handler that is executed on each newly created datum
+        $handler_type => sub {
             my $seq = shift;
             my @char = $seq->get_char;
             my @anno = @{ $seq->get_annotations };
