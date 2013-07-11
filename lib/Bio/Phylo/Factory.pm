@@ -10,6 +10,7 @@ my %class = (
     'matrix'      => 'Bio::Phylo::Matrices::Matrix',
     'characters'  => 'Bio::Phylo::Matrices::Characters',
     'character'   => 'Bio::Phylo::Matrices::Character',
+    'datatype'    => 'Bio::Phylo::Matrices::Datatype',
     'forest'      => 'Bio::Phylo::Forest',
     'node'        => 'Bio::Phylo::Forest::Node',
     'tree'        => 'Bio::Phylo::Forest::Tree',
