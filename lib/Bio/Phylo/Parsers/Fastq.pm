@@ -19,24 +19,24 @@ that specifies the data type of the phred scores into the parse function, i.e.
     -type   => 'illumina', # to indicate how phred scores are scaled
     -file   => 'infile.fastq',
     -flush  => 1, # don't store record, flush and move on
-	-handlers => {
-	
-		# species a handler that is executed on each newly created datum
-		_DATUM_ => sub {
-			my $seq = shift;
-			my @char = $seq->get_char;
-			my @anno = @{ $seq->get_annotations };
-			
-			# print fasta, omit bases with low phred scores
-			print ">$seq\n";
-			for my $i ( 0 .. $#char ) {
-				if ( $anno[$i]->{phred} > 20 ) {
-					print $char[$i];
-				}
-			}
-			print "\n";
-		}
-	}
+    -handlers => {
+    
+        # species a handler that is executed on each newly created datum
+        _DATUM_ => sub {
+            my $seq = shift;
+            my @char = $seq->get_char;
+            my @anno = @{ $seq->get_annotations };
+            
+            # print fasta, omit bases with low phred scores
+            print ">$seq\n";
+            for my $i ( 0 .. $#char ) {
+                if ( $anno[$i]->{phred} > 20 ) {
+                    print $char[$i];
+                }
+            }
+            print "\n";
+        }
+    }
  );
 
 =cut
@@ -46,95 +46,95 @@ sub _parse {
     my $fh     = $self->_handle;
     my $fac    = $self->_factory;
     my $type   = $self->_args->{'-type'} or throw 'BadArgs' => 'No data type specified!';
-	my $to     = $fac->create_datatype($type);
+    my $to     = $fac->create_datatype($type);
     my $matrix;
-	$matrix = $fac->create_matrix( '-type' => 'dna' ) unless $self->_flush;
+    $matrix = $fac->create_matrix( '-type' => 'dna' ) unless $self->_flush;
 
-	my ( $readseq, $readphred );
-	my ( $id, $seq, $phred );
-	LINE: for my $line ( <$fh> ) {
-		chomp $line;
+    my ( $readseq, $readphred );
+    my ( $id, $seq, $phred );
+    LINE: for my $line ( <$fh> ) {
+        chomp $line;
 
-		# found the FASTQ id line
-		if ( $line =~ /^\@(.+)$/ and not $readphred ) {
-			my $capture = $1;
-			
-			# process previous record
-			if ( $id && $seq && $phred ) {				
-				$self->_process_seq(
-					'phred' => $phred,
-					'seq'   => $seq,
-					'id'    => $id,
-					'to'    => $to,
-				);
-			}
-			
-			# start new record
-			$id        = $capture;
-			$readseq   = 1;
-			$readphred = 0;
-			$seq       = '';
-			INFO "found record ID $id, going to read sequence";
-			next LINE;
-		}
+        # found the FASTQ id line
+        if ( $line =~ /^\@(.+)$/ and not $readphred ) {
+            my $capture = $1;
+            
+            # process previous record
+            if ( $id && $seq && $phred ) {              
+                $self->_process_seq(
+                    'phred' => $phred,
+                    'seq'   => $seq,
+                    'id'    => $id,
+                    'to'    => $to,
+                );
+            }
+            
+            # start new record
+            $id        = $capture;
+            $readseq   = 1;
+            $readphred = 0;
+            $seq       = '';
+            INFO "found record ID $id, going to read sequence";
+            next LINE;
+        }
 
-		# found the FASTQ plus line
-		elsif ( $line =~ /^\+/ and not $readphred ) {
-			$readseq   = 0;
-			$readphred = 1;
-			$phred     = '';
-			INFO "found plus line, going to read sequence quality";
-			next LINE;
-		}
+        # found the FASTQ plus line
+        elsif ( $line =~ /^\+/ and not $readphred ) {
+            $readseq   = 0;
+            $readphred = 1;
+            $phred     = '';
+            INFO "found plus line, going to read sequence quality";
+            next LINE;
+        }
 
-		# concatenate sequence
-		elsif ( $readseq ) {
-			$seq .= $line;
-			next LINE;
-		}
+        # concatenate sequence
+        elsif ( $readseq ) {
+            $seq .= $line;
+            next LINE;
+        }
 
-		# concatenate quality line
-		elsif ( $readphred ) {
-			$phred .= $line;
-			if ( length($phred) == length($seq) ) {
-				INFO "found all phred characters";
-				$readphred = 0;
-			}
-			next LINE;
-		}
-	}
-	
-	# process last record
-	$self->_process_seq(
-		'phred' => $phred,
-		'seq'   => $seq,
-		'id'    => $id,
-		'to'    => $to,
-	);	
-	
-	# done
+        # concatenate quality line
+        elsif ( $readphred ) {
+            $phred .= $line;
+            if ( length($phred) == length($seq) ) {
+                INFO "found all phred characters";
+                $readphred = 0;
+            }
+            next LINE;
+        }
+    }
+    
+    # process last record
+    $self->_process_seq(
+        'phred' => $phred,
+        'seq'   => $seq,
+        'id'    => $id,
+        'to'    => $to,
+    );  
+    
+    # done
     return $self->_flush ? undef : $matrix;
 }
 
 sub _process_seq {
-	my ($self,%args) = @_;
-	my $sh = $self->_handlers(_DATUM_);
-	
-	# turn the phred line into column-level annotations
-	my @scores = map { { 'phred' => $_ } }
-				 map { @{ $args{to}->get_states_for_symbol($_) } }
-				 @{ $args{to}->split($args{phred}) };
-				 
-	# create the sequence object
-	my $datum = $self->_factory->create_datum(
-		'-type' => 'dna',
-		'-name' => $args{id},
-		'-char' => $args{seq},
-		'-annotations' => \@scores,
-	);
-	
-	$sh->($datum) if $sh;
-	$args{'matrix'}->insert($datum) unless $self->_flush;
+    my ($self,%args) = @_;
+    my $sh = $self->_handlers(_DATUM_);
+    
+    # turn the phred line into column-level annotations
+    my @scores = map { { 'phred' => $_ } }
+                 map { @{ $args{to}->get_states_for_symbol($_) } }
+                 @{ $args{to}->split($args{phred}) };
+                 
+    # create the sequence object
+    my $datum = $self->_factory->create_datum(
+        '-type' => 'dna',
+        '-name' => $args{id},
+        '-char' => $args{seq},
+        '-annotations' => \@scores,
+    );
+    
+    $sh->($datum) if $sh;
+    $args{'matrix'}->insert($datum) unless $self->_flush;
 }
 
 # podinherit_insert_token
