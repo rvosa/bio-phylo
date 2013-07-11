@@ -2,6 +2,7 @@ package Bio::Phylo::Parsers::Fasta;
 use strict;
 use base 'Bio::Phylo::Parsers::Abstract';
 use Bio::Phylo::Util::Exceptions 'throw';
+use Bio::Phylo::Util::CONSTANT ':objecttypes';
 
 =head1 NAME
 
@@ -40,8 +41,8 @@ sub _parse {
     my $self = shift;
     my $fh   = $self->_handle;
     my $fac  = $self->_factory;
-    my $type = $self->_args->{'-type'}
-      or throw 'BadArgs' => 'No data type specified!';
+    my $sh   = $self->_handlers(_DATUM_);
+    my $type = $self->_args->{'-type'} or throw 'BadArgs' => 'No data type specified!';
     my $matrix = $fac->create_matrix( '-type' => $type );
     my ( $seq, $datum );
     while (<$fh>) {
@@ -50,7 +51,9 @@ sub _parse {
         if ( $line =~ />(\S+)/ ) {
             my $name = $1;
             if ( $seq && $datum ) {
-                $matrix->insert( $datum->set_char($seq) );
+                $datum->set_char($seq);
+                $sh->($datum) if $sh;
+                $matrix->insert($datum);
             }
             $datum = $fac->create_datum(
                 '-type'    => $type,
@@ -66,7 +69,9 @@ sub _parse {
 
 # within the loop, insertions are triggered by encountering the next definition line,
 # hence, the last $datum needs to be inserted explicitly when we leave the loop
-    $matrix->insert( $datum->set_char($seq) );
+    $datum->set_char($seq);
+    $sh->($datum) if $sh;
+    $matrix->insert($datum);
     return $matrix;
 }
 
