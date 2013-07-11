@@ -139,6 +139,7 @@ sub _new {
         '_proj'     => _open_project( $fac, %args ),
         '_args'     => \%args,                      # for child-specific arguments
         '_encoding' => $args{'-encoding'},
+        '_handlers' => $args{'-handlers'},
     }, $class;
 }
 
@@ -188,6 +189,12 @@ sub _handle   { shift->{'_handle'} }
 sub _factory  { shift->{'_fac'} }
 sub _args     { shift->{'_args'} }
 sub _encoding { shift->{'_encoding'} }
+sub _handlers {
+    my ( $self, $type ) = @_;    
+    if ( my $h = $self->{'_handlers'} ) {
+        return defined $type ? $h->{$type} : $h;
+    }
+}
 
 # podinherit_insert_token
 
