@@ -196,11 +196,11 @@ sub parse {
 
     # check provided arguments
     throw 'OddHash' => 'Odd number of elements in hash assignment' if !@_;
-    throw 'BadArgs' => 'No format specified' unless $opts{'-format'};
+    #throw 'BadArgs' => 'No format specified' unless $opts{'-format'};
     throw 'BadArgs' => 'No parseable data source specified' unless $source;
 
     # instantiate parser subclass and process data
-    my $lib = 'Bio::Phylo::Parsers::' . ucfirst $opts{'-format'};
+    my $lib = 'Bio::Phylo::Parsers::' . ( ucfirst $opts{'-format'} || 'Abstract' );
     return looks_like_class($lib)->_new(@_)->_process;
 }
 
