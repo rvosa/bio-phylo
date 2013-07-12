@@ -83,11 +83,11 @@ BEGIN {
     
     # these subs both return their verbosity constants and, if
     # provided with a message, dispatch the message to LOG()
-    sub FATAL ($) { LOG $_[0], 'FATAL' if $_[0]; $levels{'FATAL'} } 
-    sub ERROR ($) { LOG $_[0], 'ERROR' if $_[0]; $levels{'ERROR'} }
-    sub WARN  ($) { LOG $_[0], 'WARN'  if $_[0]; $levels{'WARN'}  }
-    sub INFO  ($) { LOG $_[0], 'INFO'  if $_[0]; $levels{'INFO'}  }
-    sub DEBUG ($) { LOG $_[0], 'DEBUG' if $_[0]; $levels{'DEBUG'} } 
+    sub FATAL (;$) { LOG $_[0], 'FATAL' if $_[0]; $levels{'FATAL'} } 
+    sub ERROR (;$) { LOG $_[0], 'ERROR' if $_[0]; $levels{'ERROR'} }
+    sub WARN  (;$) { LOG $_[0], 'WARN'  if $_[0]; $levels{'WARN'}  }
+    sub INFO  (;$) { LOG $_[0], 'INFO'  if $_[0]; $levels{'INFO'}  }
+    sub DEBUG (;$) { LOG $_[0], 'DEBUG' if $_[0]; $levels{'DEBUG'} } 
 
     sub PREFIX {
         my ( $class, $prefix ) = @_;
