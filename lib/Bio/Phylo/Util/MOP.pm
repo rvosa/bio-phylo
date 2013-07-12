@@ -4,7 +4,7 @@ use attributes;
 use Attribute::Handlers;
 use Data::Dumper;
 use Bio::Phylo::Util::Exceptions 'throw';
-use Bio::Phylo::Util::Logger ':levels';
+use Bio::Phylo::Util::Logger ':simple';
 use Scalar::Util qw( refaddr );
 
 =head1 NAME
@@ -13,9 +13,7 @@ Bio::Phylo::Util::MOP - Meta-object programming, no serviceable parts inside
 
 =cut
 
-# abandon all hope, ye who enter here
-
-our $logger = Bio::Phylo::Util::Logger->new;
+# 
 my %methods;
 
 # this might be used to check the interface of alien subclasses
@@ -23,6 +21,7 @@ sub import {
     
 }
 
+# my %sims = $mop->get_symtable('Bio::Phylo');
 sub get_symtable {
     my ( $self, $package ) = @_;
     my %symtable;
@@ -34,6 +33,7 @@ sub get_symtable {
     return \%symtable;    
 }
 
+# $mop->get_method('Bio::Phylo::new')->()
 sub get_method {
     my ( $self, $fqn ) = @_;
     my $coderef;
@@ -45,6 +45,7 @@ sub get_method {
     return $coderef;
 }
 
+# my @classes = @{ $mop->get_classes($obj) }
 sub get_classes {
     my ( $self, $obj, $all ) = @_;
     my $class = ref $obj || $obj;
