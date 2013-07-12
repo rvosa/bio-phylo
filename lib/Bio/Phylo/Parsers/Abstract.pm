@@ -1,9 +1,10 @@
 package Bio::Phylo::Parsers::Abstract;
 use strict;
 use base 'Bio::Phylo::IO';
+use IO::Handle;
 use Bio::Phylo::Util::Exceptions 'throw';
-use Bio::Phylo::Util::CONSTANT 'looks_like_hash';
-use Bio::Phylo::Util::Logger;
+use Bio::Phylo::Util::CONSTANT '/looks_like/';
+use Bio::Phylo::Util::Logger ':simple';
 use Bio::Phylo::Factory;
 
 =head1 NAME
@@ -124,8 +125,19 @@ sub _open_project {
 # this constructor is called by the Bio::Phylo::IO::parse
 # subroutine
 sub _new {
-    my $class = shift;
+    my $class = shift;    
     my %args  = looks_like_hash @_;
+    
+    # we need to guess the format
+    if ( $class eq __PACKAGE__ ) {
+        if ( my $format = _guess_format(_open_handle(%args)) ) {
+            $class = 'Bio::Phylo::Parsers::' . ucfirst($format);
+            return looks_like_class($class)->_new(%args);
+        }
+        else {
+            throw 'BadArgs' => "No format specified and unable to guess!";
+        }
+    }    
 
     # factory is either user supplied or a private static
     my $fac = $args{'-factory'} || $factory;
@@ -196,6 +208,47 @@ sub _handlers {
     if ( my $h = $self->{'_handlers'} ) {
         return defined $type ? $h->{$type} : $h;
     }
+}
+
+sub _guess_format {
+    my $handle = shift;
+    my $line = $handle->getline;
+    my $format;
+    if ( $line =~ /^#nexus/i ) {
+        $format = 'nexus';
+    }
+    elsif ( $line =~ /^<[^>]*nexml/ ) {
+        $format = 'nexml';
+    }
+    elsif ( $line =~ /^<[^>]*phyloxml/ ) {
+        $format = 'phyloxml';
+    }
+    elsif ( $line =~ /^\s*\d+\s+\d+\s*$/ ) {
+        $format = 'phylip';
+    }
+    elsif ( $line =~ /^>/ ) {
+        $format = 'fasta';
+    }
+    elsif ( $line =~ /^\@/ ) {
+        $format = 'fastq';
+    }
+    elsif ( $line =~ /^\s*\(/ ) {
+        $format = 'newick';
+        if ( $line =~ /{/ ) {
+            $format = 'figtree';
+        }
+    }
+    elsif ( $line =~ /<\? xml/ ) {
+        $line = $handle;
+        if ( $line =~ /^<[^>]*nexml/ ) {
+            $format = 'nexml';
+        }
+        elsif ( $line =~ /^<[^>]*phyloxml/ ) {
+            $format = 'phyloxml';
+        }        
+    }
+    seek( $handle, 0, 0 );
+    return $format;
 }
 
 # podinherit_insert_token
