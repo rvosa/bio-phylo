@@ -45,6 +45,13 @@ sub get_method {
     return $coderef;
 }
 
+# @methods = @{ $mop->get_implementations( 'new', $obj || $package ) };
+sub get_implementations {
+	my ( $self, $method, $obj ) = @_;
+	my @methods = grep { $_->{name} eq $method } @{ $self->get_methods($obj) };
+	return \@methods;
+}
+
 # my @classes = @{ $mop->get_classes($obj) }
 sub get_classes {
     my ( $self, $obj, $all ) = @_;
@@ -73,6 +80,7 @@ sub _recurse_isa {
     }
 }
 
+# my @methods = @{ $mop->get_methods($obj) };
 sub get_methods {
     my ( $self, $obj ) = @_;
     my $isa = $self->get_classes($obj);
