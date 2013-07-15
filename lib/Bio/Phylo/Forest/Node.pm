@@ -102,7 +102,7 @@ Sets argument as invocant's parent.
 
 =cut
 
-    sub set_parent : Mutator {
+    sub set_parent : Mutator Clonable {
         my ( $self, $parent ) = @_;
         if ( $parent and looks_like_object $parent, $TYPE_CONSTANT ) {
             $parent->set_child($self);
@@ -211,7 +211,7 @@ Sets argument as invocant's branch length.
 
 =cut
 
-    sub set_branch_length : Mutator {
+    sub set_branch_length : Mutator Clonable {
         my ( $self, $bl ) = @_;
         my $id = $self->get_id;
         if ( defined $bl && looks_like_number $bl && !ref $bl ) {
@@ -242,7 +242,7 @@ Sets what tree invocant belongs to
 
 =cut
 
-    sub set_tree : Mutator {
+    sub set_tree : Mutator Clonable {
         my ( $self, $tree ) = @_;
         my $id = $self->get_id;
         if ($tree) {
