@@ -618,21 +618,12 @@ Invocant destructor.
                 delete $objects{$id};
             }
 
-          # call *all* _cleanup methods, wouldn't work if simply SUPER::_cleanup
-          # given multiple inheritance
-			my $isa = $mop->get_classes($self);          
-            {
-                no strict 'refs';
-                for my $SUPER ( @{$isa} ) {
-                    if ( $SUPER->can('_cleanup') ) {
-                        my $cleanup = "${SUPER}::_cleanup";
-                        $self->$cleanup;
-                    }
-                }
-                use strict;
-            }
+			# do the cleanups
+			my @cleanups = @{ $mop->get_implementations( '_cleanup', $self ) };
+			for my $c ( @cleanups ) {			
+				$c->{'code'}->($self);
+			}
 			
-            #$logger->debug("done cleaning up '$self'"); # XXX
             # cleanup from mediator
             $taxamediator->unregister($self);
 
