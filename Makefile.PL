@@ -32,7 +32,7 @@ my %parms = (
     'dist'         => {
         'COMPRESS' => 'gzip -9f',
         'SUFFIX'   => 'gz',
-        'TARFLAGS' => '--format=ustar -c -v -f',
+        'TARFLAGS' => '-c -v -f',
     },
 );
 
