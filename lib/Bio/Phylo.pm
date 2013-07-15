@@ -14,10 +14,11 @@ use Bio::Phylo::Util::CONSTANT '/looks_like/';
 use Bio::Phylo::Util::IDPool;    # creates unique object IDs
 use Bio::Phylo::Util::Exceptions 'throw'; # defines exception classes and throws
 use Bio::Phylo::Util::Logger;             # for logging, like log4perl/log4j
-use Bio::Phylo::Identifiable;    # for storing unique IDs inside an instance
+use Bio::Phylo::Util::MOP;                # for traversing inheritance trees
+use Bio::Phylo::Identifiable;             # for storing unique IDs inside an instance
 
 our ( $logger, $COMPAT ) = Bio::Phylo::Util::Logger->new;
-our $VERSION = "0.55";
+our $VERSION = "0.56";
 
 # mediates one-to-many relationships between taxon and nodes,
 # taxon and sequences, taxa and forests, taxa and matrices.
@@ -27,6 +28,7 @@ require Bio::Phylo::Mediators::TaxaMediator;
 
 {
     my $taxamediator = 'Bio::Phylo::Mediators::TaxaMediator';
+    my $mop = 'Bio::Phylo::Util::MOP';
 
     sub import {
         my $class = shift;
@@ -34,7 +36,7 @@ require Bio::Phylo::Mediators::TaxaMediator;
             my %opt = looks_like_hash @_;
             while ( my ( $key, $value ) = each %opt ) {
                 if ( $key =~ qr/^VERBOSE$/i ) {
-                    $logger->VERBOSE( '-level' => $value, -class => $class );
+                    $logger->VERBOSE( '-level' => $value, '-class' => $class );
                 }
                 elsif ( $key =~ qr/^COMPAT$/i ) {
                     $COMPAT = ucfirst( lc($value) );
@@ -356,7 +358,7 @@ Sets generic key/value pair(s).
             $logger->info("setting generic key/value pairs %{args}");
 
             # fill up the hash
-            foreach my $key ( keys %args ) {
+            for my $key ( keys %args ) {
                 $generic{$id}->{$key} = $args{$key};
             }
         }
@@ -385,10 +387,7 @@ Gets invocant GUID.
 
 =cut
 
-    sub get_guid {
-		my $self = shift;
-		return $guid{ $self->get_id };
-    }
+    sub get_guid { $guid{ shift->get_id } }
 
 =item get_desc()
 
@@ -403,10 +402,7 @@ Gets invocant description.
 
 =cut
 
-    sub get_desc {
-        my $self = shift;
-        return $desc{ $self->get_id };
-    }
+    sub get_desc { $desc{ shift->get_id } }
 
 =item get_score()
 
@@ -421,10 +417,7 @@ Gets invocant's score.
 
 =cut
 
-    sub get_score {
-        my $self = shift;
-        return $score{ $self->get_id };
-    }
+    sub get_score { $score{ shift->get_id } }
 
 =item get_generic()
 
@@ -625,18 +618,9 @@ Invocant destructor.
                 delete $objects{$id};
             }
 
-            # build full @ISA from child to here
-            my $class = ref $self;
-            my $isa;
-            unless ( $isa = $isa_for_class{$class} ) {
-                $isa = [];
-                my $seen = {};
-                _recurse_isa( $class, $isa, $seen );
-                $isa_for_class{$class} = $isa;
-            }
-
           # call *all* _cleanup methods, wouldn't work if simply SUPER::_cleanup
           # given multiple inheritance
+			my $isa = $mop->get_classes($self);          
             {
                 no strict 'refs';
                 for my $SUPER ( @{$isa} ) {
@@ -647,7 +631,7 @@ Invocant destructor.
                 }
                 use strict;
             }
-
+			
             #$logger->debug("done cleaning up '$self'"); # XXX
             # cleanup from mediator
             $taxamediator->unregister($self);
