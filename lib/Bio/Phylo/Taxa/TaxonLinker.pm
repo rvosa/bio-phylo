@@ -1,12 +1,13 @@
 package Bio::Phylo::Taxa::TaxonLinker;
 use Bio::Phylo::Mediators::TaxaMediator;
 use Bio::Phylo::Util::Exceptions;
-use Bio::Phylo::Util::Logger;
+use Bio::Phylo::Util::MOP;
+use Bio::Phylo::Util::Logger ':simple';
 use Bio::Phylo::Util::CONSTANT qw'_TAXON_ looks_like_object';
 use strict;
 {
     my $TAXON_CONSTANT = _TAXON_;
-    my $logger         = Bio::Phylo::Util::Logger->new;
+    my $mediator = 'Bio::Phylo::Mediators::TaxaMediator';
 
 =head1 NAME
 
@@ -53,19 +54,15 @@ Links the invocant object to a taxon object.
 
 =cut
 
-    sub set_taxon {
+    sub set_taxon : Mutator Clonable {
         my ( $self, $taxon ) = @_;
         if ( $taxon and looks_like_object $taxon, $TAXON_CONSTANT ) {
-            $logger->info("setting taxon '$taxon'");
-            Bio::Phylo::Mediators::TaxaMediator->set_link(
-                '-one'  => $taxon,
-                '-many' => $self,
-            );
+            INFO "setting taxon '$taxon'";
+            $mediator->set_link( '-one'  => $taxon, '-many' => $self );
         }
         else {
-            $logger->info("re-setting taxon link");
-            Bio::Phylo::Mediators::TaxaMediator->remove_link(
-                '-many' => $self );
+            INFO "re-setting taxon link";
+            $mediator->remove_link( '-many' => $self );
         }
         return $self;
     }
@@ -84,9 +81,9 @@ Unlinks the invocant object from any taxon object.
 
 =cut
 
-    sub unset_taxon {
+    sub unset_taxon : Mutator {
         my $self = shift;
-        $logger->debug("unsetting taxon");
+        DEBUG "unsetting taxon";
         $self->set_taxon();
         return $self;
     }
@@ -112,12 +109,8 @@ Retrieves the Bio::Phylo::Taxa::Taxon object linked to the invocant.
 
 =cut
 
-    sub get_taxon {
-        return Bio::Phylo::Mediators::TaxaMediator->get_link( '-source' => shift );
-    }
-
-    sub _cleanup {
-        my $self = shift;
+    sub get_taxon : Accessor {
+        $mediator->get_link( '-source' => shift );
     }
 
 =back
