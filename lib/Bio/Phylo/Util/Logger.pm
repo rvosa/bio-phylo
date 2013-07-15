@@ -6,7 +6,7 @@ use Bio::Phylo::Util::CONSTANT qw'/looks_like/';
 
 our ( %VERBOSITY, $PREFIX );
 our $TRACEBACK   = 0;
-our @EXPORT_OK   = qw(DEBUG INFO WARN ERROR FATAL);
+our @EXPORT_OK   = qw(DEBUG INFO WARN ERROR FATAL VERBOSE);
 our %EXPORT_TAGS = ( 'simple' => [@EXPORT_OK], 'levels' => [@EXPORT_OK] );
 
 BEGIN {
