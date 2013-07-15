@@ -13,8 +13,14 @@ Bio::Phylo::Util::MOP - Meta-object programming, no serviceable parts inside
 
 =cut
 
-# 
+# this will be populated when the attribute handlers are triggered
 my %methods;
+
+# this will progressively store/memoize all superclasses for given classes
+my %classes;
+
+# this will progressively store/memoize the methods for given classes
+my %class_methods;
 
 # this might be used to check the interface of alien subclasses
 sub import {
@@ -48,7 +54,7 @@ sub get_method {
 # @methods = @{ $mop->get_implementations( 'new', $obj || $package ) };
 sub get_implementations {
 	my ( $self, $method, $obj ) = @_;
-	my @methods = grep { $_->{name} eq $method } @{ $self->get_methods($obj) };
+	my @methods = grep { $_->{'name'} eq $method } @{ $self->get_methods($obj) };
 	return \@methods;
 }
 
@@ -56,9 +62,19 @@ sub get_implementations {
 sub get_classes {
     my ( $self, $obj, $all ) = @_;
     my $class = ref $obj || $obj;
-    my ( $seen, $isa ) = ( {}, [] );
-    _recurse_isa($class, $isa, $seen, $all);
-    return $isa;
+    
+    # return if already cached
+    if ( $classes{$class} ) {
+    	return $classes{$class};
+    }
+    
+    # compute, cache, return
+    else {
+    	my ( $seen, $isa ) = ( {}, [] );
+	    _recurse_isa($class, $isa, $seen, $all);
+	    $classes{$class} = $isa;
+    	return $isa;
+    }
 }
 
 # starting from $class, push all superclasses (+$class) into @$isa,
@@ -83,28 +99,39 @@ sub _recurse_isa {
 # my @methods = @{ $mop->get_methods($obj) };
 sub get_methods {
     my ( $self, $obj ) = @_;
-    my $isa = $self->get_classes($obj);
-    my @methods;
-	for my $package ( @{ $isa } ) {
+    my $class = ref $obj || $obj;
+    
+    # return if already cached
+    if ( $class_methods{$class} ) {
+    	return $class_methods{$class};
+    }
+    
+    # compute, cache, return
+    else {
+		my $isa = $self->get_classes($obj);
+		my @methods;
+		for my $package ( @{ $isa } ) {
 
-		my %symtable = %{ $self->get_symtable($package) };		
+			my %symtable = %{ $self->get_symtable($package) };		
 		
-		# at this point we have lots of things, we just want methods
-		for my $entry ( keys %symtable ) {
+			# at this point we have lots of things, we just want methods
+			for my $entry ( keys %symtable ) {
 			
-			# check if entry is a CODE reference
-			my $can = $package->can( $entry );
-			if ( ref $can eq 'CODE' ) {
-				push @methods, {
-					'package'    => $package,
-					'name'       => $entry,
-					'glob'       => $symtable{$entry},
-					'code'       => $can,
-				};
+				# check if entry is a CODE reference
+				my $can = $package->can( $entry );
+				if ( ref $can eq 'CODE' ) {
+					push @methods, {
+						'package'    => $package,
+						'name'       => $entry,
+						'glob'       => $symtable{$entry},
+						'code'       => $can,
+					};
+				}
 			}
 		}
-	}
-	return \@methods;        
+		$class_methods{$class} = \@methods;
+		return \@methods;  
+	}      
 }
 
 sub get_methods_by_attribute {
