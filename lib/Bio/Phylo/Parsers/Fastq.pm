@@ -53,7 +53,7 @@ sub _parse {
 
     my ( $readseq, $readphred );
     my ( $id, $seq, $phred );
-    LINE: for my $line ( <$fh> ) {
+    LINE: while( my $line = $fh->getline ) {
         chomp $line;
 
         # found the FASTQ id line

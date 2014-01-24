@@ -39,7 +39,7 @@ type is to facilitate NeXML serialization of characters and their annotations.
 
 =cut
 
-sub set_weight {
+sub set_weight : Clonable {
     my ( $self, $weight ) = @_;
     if ( looks_like_number $weight ) {
         if ( my ($meta) = @{ $self->get_meta('bp:charWeight') } ) {
@@ -53,9 +53,11 @@ sub set_weight {
                 )
             );
         }
-        return $self;
     }
-    throw 'BadNumber' => "'$weight' is not a number";
+    elsif ( defined $weight ) {
+        throw 'BadNumber' => "'$weight' is not a number";
+    }
+    return $self;    
 }
 
 =item set_codonpos()
@@ -69,23 +71,27 @@ sub set_weight {
 
 =cut
 
-sub set_codonpos {
+sub set_codonpos : Clonable {
     my ( $self, $codonpos ) = @_;
-    if ( $codonpos == 1 || $codonpos == 2 || $codonpos == 3 ) {
-        if ( my ($meta) = @{ $self->get_meta('bp:codonPos') } ) {
-            $meta->set_triple( 'bp:codonPos' => $codonpos );
+    if ( $codonpos ) {
+        if ( $codonpos == 1 || $codonpos == 2 || $codonpos == 3 ) {
+            if ( my ($meta) = @{ $self->get_meta('bp:codonPos') } ) {
+                $meta->set_triple( 'bp:codonPos' => $codonpos );
+            }
+            else {
+                $self->add_meta(
+                    $fac->create_meta(
+                        '-namespaces' => { 'bp' => _NS_BIOPHYLO_ },
+                        '-triple'     => { 'bp:codonPos' => $codonpos },
+                    )
+                );
+            }
         }
-        else {
-            $self->add_meta(
-                $fac->create_meta(
-                    '-namespaces' => { 'bp' => _NS_BIOPHYLO_ },
-                    '-triple'     => { 'bp:codonPos' => $codonpos },
-                )
-            );
-        }
-        return $self;
+        elsif ( defined $codonpos ) {
+            throw 'BadNumber' => "'$codonpos' is not a valid 1-based codon position";
+        }   
     }
-    throw 'BadNumber' => "'$codonpos' is not a valid 1-based codon position";
+    return $self;
 }
 
 =back
@@ -106,9 +112,7 @@ sub set_codonpos {
 =cut
 
 sub get_weight {
-    my $self = shift;
-    my $weight = $self->get_meta_object('bp:charWeight');
-    return defined $weight ? $weight : 1;
+    shift->get_meta_object('bp:charWeight');
 }
 
 =item get_codonpos()

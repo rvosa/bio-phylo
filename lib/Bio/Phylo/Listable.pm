@@ -56,7 +56,7 @@ Pushes an object into its container.
 
 =cut
 
-    sub insert : Mutator {
+    sub insert {
         my ( $self, @obj ) = @_;
         if ( @obj and $self->can_contain(@obj) ) {
             my $id = $self->get_id;
@@ -86,7 +86,7 @@ Inserts argument object in container at argument index.
 
 =cut    
 
-    sub insert_at_index : Mutator {
+    sub insert_at_index {
         my ( $self, $obj, $index ) = @_;
         $logger->debug("inserting '$obj' in '$self' at index $index");
         if ( defined $obj and $self->can_contain($obj) ) {
@@ -129,7 +129,7 @@ Deletes argument from container.
 
 =cut
 
-    sub delete : Mutator {
+    sub delete {
         my ( $self, $obj ) = @_;
         my $id = $self->get_id;
         if ( $self->can_contain($obj) ) {
@@ -170,7 +170,7 @@ Empties container object.
 
 =cut
 
-    sub clear : Mutator {
+    sub clear {
         my $self = shift;
         my $id   = $self->get_id;
         $entities{$id} = [];
@@ -192,7 +192,7 @@ Keeps the container's contents specified by an array reference of indices.
 
 =cut
 
-    sub keep_entities : Mutator {
+    sub keep_entities {
         my ( $self, $indices_array_ref ) = @_;
         my $id       = $self->get_id;
         my $ent      = $entities{$id} || [];
@@ -216,8 +216,16 @@ Returns a reference to an array of objects contained by the listable object.
 
 =cut
 
-    sub get_entities : Accessor {
+    sub get_entities {
         return $entities{ $_[0]->get_id } || [];
+    }
+    
+    sub _get_things { $entities{shift->get_id} }
+    sub _set_things : Clonable DeepClonable {
+        my ( $self, $things ) = @_;
+        $entities{$self->get_id} = $things;
+        $self->notify_listeners( '_set_things', $things );
+        return $self;
     }
 
 =back
@@ -240,7 +248,7 @@ Jumps to the first element contained by the listable object.
 
 =cut
 
-    sub first : Accessor Mutator {
+    sub first {
         my $self = shift;
         my $id   = $self->get_id;
         $index{$id} = 0;
@@ -261,7 +269,7 @@ Jumps to the last element contained by the listable object.
 
 =cut
 
-    sub last : Accessor Mutator {
+    sub last {
         my $self = shift;
         my $id   = $self->get_id;
         $index{$id} = $#{ $entities{$id} };
@@ -282,7 +290,7 @@ Returns the current focal element of the listable object.
 
 =cut
 
-    sub current : Accessor Mutator {
+    sub current {
         my $self = shift;
         my $id   = $self->get_id;
         if ( !defined $index{$id} ) {
@@ -305,7 +313,7 @@ Returns the next focal element of the listable object.
 
 =cut
 
-    sub next : Accessor Mutator {
+    sub next {
         my $self = shift;
         my $id   = $self->get_id;
         if ( !defined $index{$id} ) {
@@ -335,7 +343,7 @@ Returns the previous element of the listable object.
 
 =cut
 
-    sub previous : Accessor Mutator {
+    sub previous {
         my $self = shift;
         my $id   = $self->get_id;
 
@@ -356,17 +364,25 @@ Returns the previous element of the listable object.
 
 Returns the current internal index of the container.
 
- Type    : Generic query
+ Type    : Accessor
  Title   : current_index
  Usage   : my $last_index = $obj->current_index;
  Function: Returns the current internal 
-           index of the container.
+           index of the container or 0
  Returns : An integer
  Args    : none.
 
 =cut
 
-    sub current_index : Accessor { $index{ ${ $_[0] } } || 0 }
+    sub current_index { $index{ ${ $_[0] } } || 0 }
+
+    sub _get_index { $index{shift->get_id} }  
+
+    sub _set_index : Clonable {
+        my ( $self, $idx ) = @_;
+        $index{ $self->get_id } = $idx;
+        return $self;
+    }
 
 =item last_index()
 
@@ -382,7 +398,7 @@ Returns the highest valid index of the container.
 
 =cut
 
-    sub last_index : Accessor { $#{ $entities{ ${ $_[0] } } } }
+    sub last_index { $#{ $entities{ ${ $_[0] } } } }
 
 =back
 
@@ -405,7 +421,7 @@ Attaches a listener (code ref) which is executed when contents change.
 
 =cut
 
-    sub set_listener : Mutator {
+    sub set_listener {
         my ( $self, $listener ) = @_;
         my $id = $self->get_id;
         if ( not $listeners{$id} ) {
@@ -418,6 +434,12 @@ Attaches a listener (code ref) which is executed when contents change.
             throw 'BadArgs' => "$listener not a CODE reference";
         }
     }
+    sub _set_listeners : Clonable {
+        my ( $self, $l ) = @_;
+        $listeners{$self->get_id} = $l;
+        return $self;
+    }
+    sub _get_listeners { $listeners{shift->get_id} }
 
 =item notify_listeners()
 
@@ -433,7 +455,7 @@ Notifies listeners of changed contents.
 
 =cut
 
-    sub notify_listeners : Accessor {
+    sub notify_listeners {
         my ( $self, @args ) = @_;
         my $id = $self->get_id;
         if ( $listeners{$id} ) {
@@ -442,42 +464,6 @@ Notifies listeners of changed contents.
             }
         }
         return $self;
-    }
-
-=item clone()
-
-Clones container.
-
- Type    : Utility method
- Title   : clone
- Usage   : my $clone = $object->clone;
- Function: Creates a deep copy of the container.
- Returns : A copy of the container.
- Args    : NONE.
- Comments: Cloning is currently experimental, use with caution.
-
-=cut
-
-    sub clone : Accessor {
-        my $self = shift;
-        $logger->info("cloning $self");
-        my %subs = @_;
-
-        # some extra logic to copy characters from source to target
-        if ( not exists $subs{'insert'} ) {
-            $subs{'insert'} = sub {
-                my ( $obj, $clone ) = @_;
-                my $clone_id = $clone->get_id;
-                for my $ent ( @{ $obj->get_entities } ) {
-                    my $copy = $ent;
-                    if ( looks_like_implementor( $ent, 'clone' ) ) {
-                        $copy = $ent->clone;
-                    }
-                    push @{ $entities{$clone_id} }, $copy;
-                }
-            };
-        }
-        return $self->SUPER::clone(%subs);
     }
 
 =back
@@ -524,7 +510,7 @@ Consult the documentation for L<Bio::Phylo::Set> for a code sample.
         return $listener;
     };
 
-    sub add_set : Mutator {
+    sub add_set {
         my ( $self, $set ) = @_;
         my $listener = $create_set_listeners->( $self, $set );
         $self->set_listener($listener);
@@ -532,6 +518,29 @@ Consult the documentation for L<Bio::Phylo::Set> for a code sample.
         $sets{$id} = {} if not $sets{$id};
         my $setid = $set->get_id;
         $sets{$id}->{$setid} = $set;
+        return $self;
+    }
+    
+=item set_sets()
+
+ Type    : Mutator
+ Title   : set_sets
+ Usage   : $obj->set_sets([ $s1, $s2, $s3 ])
+ Function: Assigns all Bio::Phylo::Set objects to the container
+ Returns : Invocant
+ Args    : An array ref of Bio::Phylo::Set objects
+
+=cut    
+    
+    sub set_sets : Clonable {
+        my ( $self, $sets ) = @_;
+        my $id = $self->get_id;
+        $sets{$id} = {};
+        if ( $sets ) {
+            for my $set ( @{ $sets } ) {
+                $sets{$id}->{$set->get_id} = $set;
+            }
+        }
         return $self;
     }
 
@@ -546,7 +555,7 @@ Consult the documentation for L<Bio::Phylo::Set> for a code sample.
 
 =cut    
 
-    sub remove_set : Mutator {
+    sub remove_set {
         my ( $self, $set ) = @_;
         my $id = $self->get_id;
         $sets{$id} = {} if not $sets{$id};
@@ -566,7 +575,7 @@ Consult the documentation for L<Bio::Phylo::Set> for a code sample.
 
 =cut 
 
-    sub get_sets : Accessor {
+    sub get_sets {
         my $self = shift;
         my $id   = $self->get_id;
         $sets{$id} = {} if not $sets{$id};
@@ -591,7 +600,7 @@ Consult the documentation for L<Bio::Phylo::Set> for a code sample.
 
 =cut 
 
-    sub is_in_set : Accessor {
+    sub is_in_set {
         my ( $self, $obj, $set ) = @_;        
         if ( looks_like_object($set,_SET_) and $sets{ $self->get_id }->{ $set->get_id } ) {
             my $i = $self->get_index_of($obj);
@@ -622,7 +631,7 @@ Consult the documentation for L<Bio::Phylo::Set> for a code sample.
 
 =cut 
 
-    sub add_to_set : Mutator {
+    sub add_to_set {
         my ( $self, $obj, $set ) = @_;
         my $id = $self->get_id;
         $sets{$id} = {} if not $sets{$id};
@@ -659,7 +668,7 @@ Consult the documentation for L<Bio::Phylo::Set> for a code sample.
 
 =cut
 
-    sub remove_from_set : Mutator {
+    sub remove_from_set {
         my ( $self, $obj, $set ) = @_;
         my $id = $self->get_id;
         $sets{$id} = {} if not $sets{$id};
@@ -689,7 +698,7 @@ Consult the documentation for L<Bio::Phylo::Set> for a code sample.
 
 =cut
 
-    sub _cleanup : Protected {
+    sub _cleanup : Destructor {
         my $self = shift;
         my $id   = $self->get_id;
         for my $field (@fields) {

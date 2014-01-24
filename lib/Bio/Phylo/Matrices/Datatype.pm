@@ -3,7 +3,7 @@ use strict;
 use base 'Bio::Phylo::NeXML::Writable';
 use Bio::Phylo::Factory;
 use Bio::Phylo::Util::Exceptions 'throw';
-use Bio::Phylo::Util::CONSTANT qw'_DOMCREATOR_ /looks_like/';
+use Bio::Phylo::Util::CONSTANT qw'_DOMCREATOR_ _DATATYPE_ /looks_like/';
 {
     my $logger = __PACKAGE__->get_logger;
     my $fac    = Bio::Phylo::Factory->new();
@@ -50,7 +50,7 @@ Datatype constructor.
 
 =cut
 
-    sub new {
+    sub new : Constructor {
         my $class = shift;
 
         # constructor called with type string
@@ -107,7 +107,7 @@ Sets state lookup table.
 
 =cut
 
-    sub set_lookup {
+    sub set_lookup : Clonable {
         my ( $self, $lookup ) = @_;
         my $id = $self->get_id;
 
@@ -142,7 +142,7 @@ Sets missing data symbol.
 
 =cut
 
-    sub set_missing {
+    sub set_missing : Clonable {
         my ( $self, $missing ) = @_;
         my $id = $self->get_id;
         if ( $missing ne $self->get_gap ) {
@@ -169,7 +169,7 @@ Sets gap symbol.
 
 =cut
 
-    sub set_gap {
+    sub set_gap : Clonable {
         my ( $self, $gap ) = @_;
         if ( not $gap eq $self->get_missing ) {
             $gap{ $self->get_id } = $gap;
@@ -181,6 +181,25 @@ Sets gap symbol.
         return $self;
     }
 
+=item set_metas_for_states()
+
+Assigns all metadata annotations for all state symbols
+
+ Type    : Mutator
+ Title   : set_metas_for_states
+ Usage   : $obj->set_metas_for_states({ $state => [ $m1, $m2 ] });
+ Function: Assigns all metadata annotations for all state symbols
+ Returns : Modified object.
+ Args    : A hash reference of state symbols with metadata arrays
+
+=cut
+    
+    sub set_metas_for_states : Clonable {
+        my ( $self, $metas ) = @_;
+        $meta{$self->get_id} = $metas;
+        return $self;
+    }
+    
 =item add_meta_for_state()
 
 Adds a metadata annotation for a state symbol
@@ -521,7 +540,7 @@ Gets metadata annotations (if any) for the provided state symbol
 
  Type    : Accessor
  Title   : get_meta_for_state
- Usage   : my $meta = @{ $obj->get_meta_for_state };
+ Usage   : my @meta = @{ $obj->get_meta_for_state };
  Function: Gets metadata annotations for a state symbol
  Returns : An array reference of Bio::Phylo::NeXML::Meta objects
  Args    : A state symbol
@@ -536,6 +555,21 @@ Gets metadata annotations (if any) for the provided state symbol
         }
         return [];
     }
+
+=item get_metas_for_states()
+
+Gets metadata annotations (if any) for all state symbols
+
+ Type    : Accessor
+ Title   : get_metas_for_states
+ Usage   : my @meta = @{ $obj->get_metas_for_states };
+ Function: Gets metadata annotations for state symbols
+ Returns : An array reference of Bio::Phylo::NeXML::Meta objects
+ Args    : None
+
+=cut
+    
+    sub get_metas_for_states { $meta{shift->get_id} }
 
 =back
 
@@ -742,7 +776,7 @@ Joins argument array ref of characters following appropriate rules.
         return CORE::join( '', @{$array} );
     }
 
-    sub _cleanup {
+    sub _cleanup : Destructor {
         my $self = shift;
         $logger->debug("cleaning up '$self'");
         my $id = $self->get_id;
@@ -978,6 +1012,7 @@ Analog to to_xml.
         return $elt;
     }
     sub _tag { 'states' }
+    sub _type { _DATATYPE_ }
 
 =back
 

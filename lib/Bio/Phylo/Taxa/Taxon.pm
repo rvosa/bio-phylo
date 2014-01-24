@@ -71,37 +71,6 @@ cross-referencing datum objects and tree nodes.
 
 =head1 METHODS
 
-=head2 CONSTRUCTOR
-
-=over
-
-=item new()
-
-Taxon constructor.
-
- Type    : Constructor
- Title   : new
- Usage   : my $taxon = Bio::Phylo::Taxa::Taxon->new;
- Function: Instantiates a Bio::Phylo::Taxa::Taxon
-           object.
- Returns : A Bio::Phylo::Taxa::Taxon object.
- Args    : none.
-
-=cut
-
-    #     sub new {
-    #         # could be child class
-    #         my $class = shift;
-    #
-    #         # notify user
-    #         $logger->info("constructor called for '$class'");
-    #
-    #         # go up inheritance tree, eventually get an ID
-    #         return $class->SUPER::new( '-tag' => __PACKAGE__->_tag, @_ );
-    #     }
-
-=back
-
 =head2 MUTATORS
 
 =over
@@ -121,9 +90,17 @@ Associates argument data with invocant.
 
 =cut
 
-    sub set_data {
+    sub set_data : Clonable {
         my ( $self, $datum ) = @_;
-        if ( looks_like_object $datum, $DATUM_CONSTANT ) {
+        if ( not defined $datum ) {
+            return $self;
+        }
+        elsif ( ref $datum eq 'ARRAY' ) {
+            for my $d ( @{ $datum } ) {
+                $self->set_data($d);
+            }        
+        }
+        elsif ( looks_like_object $datum, $DATUM_CONSTANT ) {
             $mediator->set_link(
                 '-one'  => $self,
                 '-many' => $datum,
@@ -146,9 +123,17 @@ Associates argument node with invocant.
 
 =cut
 
-    sub set_nodes {
+    sub set_nodes : Clonable {
         my ( $self, $node ) = @_;
-        if ( looks_like_object $node, $NODE_CONSTANT ) {
+        if ( not defined $node ) {
+            return $self;
+        }        
+        elsif ( ref $node eq 'ARRAY' ) {
+            for my $n ( @{ $node } ) {
+                $self->set_nodes($n);
+            }
+        }
+        elsif ( looks_like_object $node, $NODE_CONSTANT ) {
             $mediator->set_link(
                 '-one'  => $self,
                 '-many' => $node,
@@ -256,34 +241,6 @@ Retrieves associated node objects.
             '-source' => $self,
             '-type'   => $NODE_CONSTANT,
         ) || [];
-    }
-
-=begin comment
-
-Taxon destructor.
-
- Type    : Destructor
- Title   : DESTROY
- Usage   : $phylo->DESTROY
- Function: Destroys Phylo object
- Alias   :
- Returns : TRUE
- Args    : none
- Comments: You don't really need this,
-           it is called automatically when
-           the object goes out of scope.
-
-=end comment
-
-=cut
-
-    sub DESTROY {
-        my $self = shift;
-
-        # notify user
-        #$logger->debug("destructor called for '$self'");
-        # recurse up inheritance tree for cleanup
-        $self->SUPER::DESTROY;
     }
 
 =begin comment

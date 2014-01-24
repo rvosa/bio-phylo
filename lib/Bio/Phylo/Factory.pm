@@ -182,6 +182,9 @@ sub AUTOLOAD {
         $path =~ s|::|/|g;
         $path .= '.pm';
         if ( not $INC{$path} ) {
+            
+            # here we need to do a string eval use so that the
+            # entire symbol table is populated
             require $path;
         }
         return $class{$type}->new(@_);

@@ -25,6 +25,9 @@ my $LOADED_WRAPPERS = 0;
                 elsif ( $method eq 'delete' ) {
                     $node->set_tree();
                 }
+                elsif ( $method eq '_set_things' ) {
+                    $_->set_tree($self) for @{ $node };
+                }
             }
         },
     );
@@ -75,7 +78,7 @@ Tree constructor.
 
 =cut
 
-    sub new {
+    sub new : Constructor {
 
         # could be child class
         my $class = shift;

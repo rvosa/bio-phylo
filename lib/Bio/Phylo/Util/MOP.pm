@@ -138,11 +138,19 @@ sub get_methods_by_attribute {
     my ( $self, $obj, $attribute ) = @_;
     my $isa = $self->get_classes($obj);
     my $methods = $methods{$attribute};
-    my %return;
+    my @return;
     for my $class ( @{ $isa } ) {
-        $return{$class} = $methods->{$class} if $methods->{$class};
+	if ( $methods->{$class} ) {
+	    for my $key ( keys %{ $methods->{$class} } ) {
+		push @return, {
+		    'package' => $class,
+		    'name'    => $key,
+		    'code'    => $methods->{$class}->{$key}
+		};
+	    }
+	}
     }
-    return \%return;
+    return \@return;
 }
 
 sub get_accessors {
@@ -170,6 +178,11 @@ sub get_clonables {
     return $self->get_methods_by_attribute($obj,'Clonable');
 }
 
+sub get_deep_clonables {
+    my ( $self, $obj ) = @_;
+    return $self->get_methods_by_attribute($obj,'DeepClonable');
+}
+
 sub get_destructors {
     my ( $self, $obj ) = @_;
     return $self->get_methods_by_attribute($obj,'Destructor');
@@ -183,6 +196,11 @@ sub get_privates {
 sub get_statics {
     my ( $self, $obj ) = @_;
     return $self->get_methods_by_attribute($obj,'Static');
+}
+
+sub get_serializers {
+    my ( $self, $obj ) = @_;
+    return $self->get_methods_by_attribute($obj,'Serializer');
 }
 
 sub _handler {
@@ -276,6 +294,15 @@ sub UNIVERSAL::Clonable : ATTR(CODE) {
     _handler(@_);  
 }
 
+sub UNIVERSAL::DeepClonable : ATTR(CODE) {
+	my ($package, $symbol, $referent, $attr, $data) = @_;
+    _handler(@_);  
+}
+
+sub UNIVERSAL::Serializer : ATTR(CODE) {
+	my ($package, $symbol, $referent, $attr, $data) = @_;
+    _handler(@_);  
+}
 
 1;
 

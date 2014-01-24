@@ -38,6 +38,7 @@ BEGIN {
       _SET_
       _MODEL_
       _OPERATION_
+      _DATATYPE_
       looks_like_number
       looks_like_object
       looks_like_hash
@@ -64,6 +65,7 @@ BEGIN {
       _NS_TNRS_
       _NS_FIGTREE_
       _NS_PHYLOMAP_
+      _NS_BIOVEL_
     );
     %EXPORT_TAGS = (
         'all'         => [@EXPORT_OK],
@@ -99,6 +101,7 @@ BEGIN {
               _SET_
               _MODEL_
               _OPERATION_
+              _DATATYPE_
             )
         ],
         'functions' => [
@@ -131,6 +134,7 @@ BEGIN {
               _NS_TNRS_
               _NS_FIGTREE_
               _NS_PHYLOMAP_
+              _NS_BIOVEL_
             )
         ]
     );
@@ -159,6 +163,7 @@ sub _NS_TB2PURL_ ()  { 'http://purl.org/phylo/treebase/phylows/' }
 sub _NS_TNRS_ ()     { 'http://phylotastic.org/tnrs/terms#' }
 sub _NS_FIGTREE_ ()  { 'http://tree.bio.ed.ac.uk/software/figtree/terms#' }
 sub _NS_PHYLOMAP_ () { 'http://purl.org/phylo/phylomap/terms#' }
+sub _NS_BIOVEL_ ()   { 'http://biovel.eu/terms#' }
 
 our $NS = {
     'tnrs' => _NS_TNRS_(),
@@ -175,6 +180,7 @@ our $NS = {
     'nex'  => _NS_NEXML_(),
     'dc'   => _NS_DC_(),
     'owl'  => _NS_OWL_(),
+    'bv'   => _NS_BIOVEL_(),
     'dcterms' => _NS_DCTERMS_(),
     'fig'     => _NS_FIGTREE_(),
 };
@@ -209,6 +215,7 @@ sub _CHARACTER_ ()     { Bio::Phylo::Util::CONSTANT::Int::_CHARACTER_ }
 sub _SET_ ()           { Bio::Phylo::Util::CONSTANT::Int::_SET_ }
 sub _MODEL_ ()         { Bio::Phylo::Util::CONSTANT::Int::_MODEL_ }
 sub _OPERATION_ ()     { Bio::Phylo::Util::CONSTANT::Int::_OPERATION_ }
+sub _DATATYPE_ ()      { Bio::Phylo::Util::CONSTANT::Int::_DATATYPE_ }
 
 # for PhyloWS
 sub _HTTP_SC_SEE_ALSO_ () { '303 See Other' }

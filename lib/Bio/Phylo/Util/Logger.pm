@@ -170,13 +170,37 @@ BEGIN {
         return $VERBOSITY{'*'};
     }
     
-    # alias for singleton methods
-    no warnings 'once';
-    *fatal = \&FATAL;
-    *error = \&ERROR;
-    *warn  = \&WARN;
-    *info  = \&INFO;
-    *debug = \&DEBUG;
+    # aliases for singleton methods
+    sub fatal {
+		my $self = shift;
+		$TRACEBACK++;
+		FATAL shift;
+		$TRACEBACK--;
+	}
+    sub error {
+		my $self = shift;
+		$TRACEBACK++;
+		ERROR shift;
+		$TRACEBACK--;
+	}
+	sub warn {
+		my $self = shift;
+		$TRACEBACK++;
+		WARN shift;
+		$TRACEBACK--;
+	}
+	sub info {
+		my $self = shift;
+		$TRACEBACK++;
+		INFO shift;
+		$TRACEBACK--;
+	}
+	sub debug {
+		my $self = shift;
+		$TRACEBACK++;
+		DEBUG shift;
+		$TRACEBACK--;
+	}
     
     # empty destructor so we don't go up inheritance tree at the end
     sub DESTROY {}  

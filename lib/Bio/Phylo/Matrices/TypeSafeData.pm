@@ -49,7 +49,7 @@ TypeSafeData constructor.
 
 =cut    
 
-    sub new {
+    sub new : Constructor {
 
         # is child class
         my $class = shift;
@@ -142,7 +142,7 @@ Set missing data symbol.
 
     sub set_missing {
         my ( $self, $missing ) = @_;
-        if ( $self->can('get_matchchar') and $missing eq $self->get_matchchar )
+        if ( $self->can('get_matchchar') and $self->get_matchchar and $missing eq $self->get_matchchar )
         {
             throw 'BadArgs' =>
               "Missing character '$missing' already in use as match character";
@@ -169,7 +169,7 @@ Set gap data symbol.
 
     sub set_gap {
         my ( $self, $gap ) = @_;
-        if ( $self->can('get_matchchar') and $gap eq $self->get_matchchar ) {
+        if ( $self->can('get_matchchar') and $self->get_matchchar and $self->get_matchchar eq $gap ) {
             throw 'BadArgs' =>
               "Gap character '$gap' already in use as match character";
         }
@@ -219,7 +219,7 @@ Set data type object.
 
 =cut
 
-    sub set_type_object {
+    sub set_type_object : Clonable DeepClonable {
         my ( $self, $obj ) = @_;
         $logger->info("setting character type object");
         $type{ $self->get_id } = $obj;
@@ -332,49 +332,6 @@ Get data type object.
 =cut
 
     sub get_type_object { $type{ $_[0]->get_id } }
-
-=back
-
-=head2 UTILITY METHODS
-
-=over
-
-=item clone()
-
-Clones invocant.
-
- Type    : Utility method
- Title   : clone
- Usage   : my $clone = $object->clone;
- Function: Creates a copy of the invocant object.
- Returns : A copy of the invocant.
- Args    : NONE
-
-=cut
-
-    sub clone {
-        my $self = shift;
-        $logger->info("cloning $self");
-        my %subs = @_;
-
-        # we'll create type object during construction
-        $subs{'set_type'}    = 0;
-        $subs{'set_missing'} = 0;
-        $subs{'set_gap'}     = 0;
-        $subs{'set_lookup'}  = 0;
-
-        # we'll override this, the type object is created from scratch
-        $subs{'set_type_object'} = 0;
-
-        # this will create type object during construction
-        $subs{'new'} = [
-            '-type'    => $self->get_type,
-            '-missing' => $self->get_missing,
-            '-gap'     => $self->get_gap,
-            '-lookup'  => $self->get_lookup,
-        ];
-        return $self->SUPER::clone(%subs);
-    }
 
 =back
 

@@ -13,9 +13,9 @@ my $LOADED_WRAPPERS = 0;
     my $logger             = __PACKAGE__->get_logger;
     my $TYPE_CONSTANT      = _DATUM_;
     my $CONTAINER_CONSTANT = _MATRIX_;
-    {
-    my @fields             = \( my ( %weight, %position, %annotations ) );
-    }
+    #{
+    #my @fields             = \( my ( %weight, %position, %annotations ) );
+    #}
 
 =head1 NAME
 
@@ -77,7 +77,7 @@ Datum object constructor.
 
 =cut
 
-    sub new {
+    sub new : Constructor {
 
         # could be child class
         my $class = shift;
@@ -205,7 +205,7 @@ Sets character state(s)
             }
         }
         my $missing  = $self->get_missing;
-        my $position = $self->get_position;
+        my $position = $self->get_position || 1;
         for ( 1 .. $position - 1 ) {
             unshift @data, $missing;
         }
@@ -323,13 +323,11 @@ Gets invocant number of characters.
 
     sub get_length {
         my $self = shift;
-
-        #        $logger->info("Chars: @char");
         if ( my $matrix = $self->_get_container ) {
             return $matrix->get_nchar;
         }
         else {
-            return scalar( @{ $self->get_entities } ) + $self->get_position - 1;
+            return scalar( @{ $self->get_entities } ) + ( $self->get_position || 1 ) - 1;
         }
     }
 
@@ -349,7 +347,7 @@ Gets state at argument index.
     sub get_by_index {
         my ( $self, $index ) = @_;
         $logger->debug($index);
-        my $offset = $self->get_position - 1;
+        my $offset = ( $self->get_position || 1 ) - 1;
         return $self->get_type_object->get_missing if $offset > $index;
         my $val = $self->SUPER::get_by_index( $index - $offset );
         return defined $val ? $val : $self->get_type_object->get_missing;
@@ -687,32 +685,6 @@ Validates invocant data contents.
         if ( !$self->get_type_object->is_valid($self) ) {
             throw 'InvalidData' => 'Invalid data!';
         }
-    }
-
-=item clone()
-
-Clones invocant.
-
- Type    : Utility method
- Title   : clone
- Usage   : my $clone = $object->clone;
- Function: Creates a copy of the invocant object.
- Returns : A copy of the invocant.
- Args    : None.
- Comments: Cloning is currently experimental, use with caution.
-
-=cut
-
-    sub clone {
-        my $self = shift;
-        my %subs = @_;
-
-        # some extra logic to copy characters from source to target
-        $subs{'set_char'} = 0;
-
-        # some logic to copy annotations
-        $subs{'set_annotation'} = 0;
-        return $self->SUPER::clone(%subs);
     }
 
 =item to_xml()

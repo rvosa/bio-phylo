@@ -134,7 +134,7 @@ Sets argument state labels.
 
 =cut
 
-    sub set_statelabels {
+    sub set_statelabels : Clonable {
         my ( $self, $statelabels ) = @_;
 
         # it's an array ref, but what about its contents?
@@ -174,7 +174,7 @@ Normally you never have to use this.
 
 =cut
 
-    sub set_characters {
+    sub set_characters : Clonable DeepClonable {
         my ( $self, $characters ) = @_;
         if ( looks_like_object $characters, _CHARACTERS_ ) {
             $characters{ $self->get_id } = $characters;
@@ -195,9 +195,9 @@ Defines matrix gapmode.
 
 =cut
 
-    sub set_gapmode {
+    sub set_gapmode : Clonable {
         my ( $self, $gapmode ) = @_;
-        $gapmode{ $self->get_id } = !!$gapmode;
+        $gapmode{ $self->get_id } = $gapmode;
         return $self;
     }
 
@@ -214,21 +214,26 @@ Assigns match symbol.
 
 =cut
 
-    sub set_matchchar {
+    sub set_matchchar : Clonable {
         my ( $self, $match ) = @_;
-        my $missing = $self->get_missing;
-        my $gap     = $self->get_gap;
-        if ( $match eq $missing ) {
-            throw 'BadArgs' =>
-              "Match character '$match' already in use as missing character";
-        }
-        elsif ( $match eq $gap ) {
-            throw 'BadArgs' =>
-              "Match character '$match' already in use as gap character";
-        }
-        else {
-            $matchchar{ $self->get_id } = $match;
-        }
+	if ( $match ) {
+	    my $missing = $self->get_missing;
+	    my $gap     = $self->get_gap;
+	    if ( $match eq $missing ) {
+		throw 'BadArgs' =>
+		  "Match character '$match' already in use as missing character";
+	    }
+	    elsif ( $match eq $gap ) {
+		throw 'BadArgs' =>
+		  "Match character '$match' already in use as gap character";
+	    }
+	    else {
+		$matchchar{ $self->get_id } = $match;
+	    }
+	}
+	else {
+	    $matchchar{ $self->get_id } = undef;
+	}
         return $self;
     }
 
@@ -246,9 +251,14 @@ Defines matrix 'polymorphism' interpretation.
 
 =cut
 
-    sub set_polymorphism {
+    sub set_polymorphism : Clonable {
         my ( $self, $poly ) = @_;
-        $polymorphism{ $self->get_id } = !!$poly;
+        if ( defined $poly ) {
+            $polymorphism{ $self->get_id } = $poly;
+        }
+        else {
+            delete $polymorphism{ $self->get_id };
+        }
         return $self;
     }
 
@@ -266,9 +276,14 @@ Defines matrix case sensitivity interpretation.
 
 =cut
 
-    sub set_respectcase {
+    sub set_respectcase : Clonable {
         my ( $self, $case_sensitivity ) = @_;
-        $case_sensitivity{ $self->get_id } = !!$case_sensitivity;
+        if ( defined $case_sensitivity ) {
+            $case_sensitivity{ $self->get_id } = $case_sensitivity;
+        }
+        else {
+            delete $case_sensitivity{ $self->get_id };
+        }
         return $self;
     }
 
@@ -339,7 +354,7 @@ Returns matrix match character.
 
 =cut
 
-    sub get_matchchar { $matchchar{ $_[0]->get_id } || '.' }
+    sub get_matchchar { $matchchar{ $_[0]->get_id } }
 
 =item get_polymorphism()
 
@@ -355,7 +370,7 @@ Returns matrix 'polymorphism' interpretation.
 
 =cut
 
-    sub get_polymorphism { $polymorphism{ $_[0]->get_id } }
+    sub get_polymorphism { $polymorphism{ shift->get_id } }
 
 =item get_respectcase()
 
@@ -371,9 +386,9 @@ Returns matrix case sensitivity interpretation.
 
 =cut
 
-    sub get_respectcase { $case_sensitivity{ $_[0]->get_id } }
+    sub get_respectcase { $case_sensitivity{ shift->get_id } }
 
-    sub _cleanup {
+    sub _cleanup : Destructor {
         my $self = shift;
         my $id = $self->get_id;
         for (@inside_out_arrays) {

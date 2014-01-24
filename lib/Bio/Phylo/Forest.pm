@@ -38,45 +38,6 @@ The Bio::Phylo::Forest object models a set of trees. The object subclasses the
 L<Bio::Phylo::Listable> object, so look there for more methods available to
 forest objects.
 
-=head1 METHODS
-
-=head2 CONSTRUCTOR
-
-=over
-
-=item new()
-
-Forest constructor.
-
- Type    : Constructor
- Title   : new
- Usage   : my $trees = Bio::Phylo::Forest->new;
- Function: Instantiates a Bio::Phylo::Forest object.
- Returns : A Bio::Phylo::Forest object.
- Args    : None required, though see the superclass
-           Bio::Phylo::Listable from which this
-           object inherits.
-
-=cut
-
-    # 	sub new {
-    #
-    # 		# could be child class
-    # 		my $class = shift;
-    #
-    # 		# notify user
-    # 		$logger->info("constructor called for '$class'");
-    #
-    # 		# recurse up inheritance tree, get ID
-    # 		my $self = $class->SUPER::new( '-tag' => __PACKAGE__->_tag, @_ );
-    #
-    # 		# local fields would be set here
-    #
-    # 		return $self;
-    # 	}
-
-=back
-
 =head1 CALCULATIONS
 
 =over

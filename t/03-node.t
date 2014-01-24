@@ -126,6 +126,7 @@ ok( $trees[3]->get_root->get_name eq 'root', '73 reroot tree' );
     my $preterminal = $tree->get_by_name('n1');
     ok( $preterminal->is_preterminal, '75 is preterminal' );
 }
+=pod
 {
     my $newick =
       '(H:1,(G:1,(F:1,(E:1,(D:1,(C:1,(A:1,B:1):1):1):1)sub:1):1):1):0;';
@@ -137,6 +138,7 @@ ok( $trees[3]->get_root->get_name eq 'root', '73 reroot tree' );
       parse( '-format' => 'newick', '-string' => $subnewick )->first;
     ok( $subtree1->calc_symdiff($subtree2) == 0, '76 clone subtree' );
 }
+=cut
 is($node->get_mrca($node), $node);
 is($node->calc_patristic_distance($node), 0);
 is($node->calc_nodal_distance($node), 0);

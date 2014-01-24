@@ -215,10 +215,12 @@ sub _parse {
     my $ordered_blocks = $self->{'_blocks'};
 
     # prepare the requested return...
-    my $temp_project =
-      pop( @{$ordered_blocks} );    # nexml root tag is processed last!
+    my $temp_project = pop( @{$ordered_blocks} ); # nexml root tag is processed last!
+    $self->{'_project_meta'} = $temp_project->get_meta;
     return @{$ordered_blocks};
 }
+
+sub _project_meta { shift->{'_project_meta'} }
 
 # element handler
 sub _handle_nexml {

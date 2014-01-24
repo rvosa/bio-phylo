@@ -3,15 +3,10 @@ use strict;
 use Bio::PhyloRole;
 use base 'Bio::PhyloRole';
 
-# Because we use a roll-your-own looks_like_number from
-# Bio::Phylo::Util::CONSTANT, here we don't have to worry
-# about older core S::U versions that don't have it...
+# don't use Scalar::Util::looks_like_number directly, use wrapped version
 use Scalar::Util qw'weaken blessed';
-
-#... instead, Bio::Phylo::Util::CONSTANT can worry about it
-# in one location, perhaps using the S::U version, or a drop-in
 use Bio::Phylo::Util::CONSTANT '/looks_like/';
-use Bio::Phylo::Util::IDPool;    # creates unique object IDs
+use Bio::Phylo::Util::IDPool;             # creates unique object IDs
 use Bio::Phylo::Util::Exceptions 'throw'; # defines exception classes and throws
 use Bio::Phylo::Util::Logger;             # for logging, like log4perl/log4j
 use Bio::Phylo::Util::MOP;                # for traversing inheritance trees
@@ -139,7 +134,7 @@ argument "-name" in the constructor.
 
 =cut
 
-    sub new {
+    sub new : Constructor {
 
         # $class could be a child class, called from $class->SUPER::new(@_)
         # or an object, e.g. $node->new(%args) in which case we create a new
@@ -159,11 +154,12 @@ argument "-name" in the constructor.
         $objects{$id} = $self;
         weaken( $objects{$id} );
 		
-		# notify user
+	# notify user
         $logger->info("constructor called for '$class' - $id");
 
         # processing arguments
         if ( @_ and @_ = looks_like_hash @_ ) {
+	    $logger->info("processing arguments");
 
             # process all arguments
           ARG: while (@_) {
@@ -210,6 +206,7 @@ argument "-name" in the constructor.
                 }
             }
         }
+	$logger->info("done processing constructor arguments");
 
         # register with mediator
         # TODO this is irrelevant for some child classes,
@@ -217,9 +214,11 @@ argument "-name" in the constructor.
         # tips of the inheritance tree. The hack where we
         # skip over direct instances of Writable is so that
         # we don't register things like <format> and <matrix> tags
-        if ( ref $self ne 'Bio::Phylo::NeXML::Writable' ) {
+        if ( ref $self ne 'Bio::Phylo::NeXML::Writable' && ! $self->isa('Bio::Phylo::Matrices::Datatype') ) {
+	    $logger->info("going to register $self with $taxamediator");
             $taxamediator->register($self);
         }
+	$logger->info("done building object");
         return $self;
     }
 
@@ -245,9 +244,14 @@ Sets invocant GUID.
 
 =cut
 
-    sub set_guid {
+    sub set_guid : Clonable {
         my ( $self, $guid ) = @_;
-        $guid{ $self->get_id } = $guid;
+        if ( defined $guid ) {
+        	$guid{ $self->get_id } = $guid;
+        }
+        else {
+        	delete $guid{ $self->get_id };
+        }
         return $self;
     }
 
@@ -265,9 +269,14 @@ Sets invocant description.
 
 =cut
 
-    sub set_desc {
+    sub set_desc : Clonable {
         my ( $self, $desc ) = @_;
-        $desc{ $self->get_id } = $desc;
+        if ( defined $desc ) {
+        	$desc{ $self->get_id } = $desc;
+        }
+        else {
+        	delete $desc{ $self->get_id };
+        }
         return $self;
     }
 
@@ -286,7 +295,7 @@ Sets invocant score.
 
 =cut
 
-    sub set_score {
+    sub set_score : Clonable {
         my ( $self, $score ) = @_;
 
         # $score must be a number (or undefined)
@@ -297,13 +306,13 @@ Sets invocant score.
 
             # notify user
             $logger->info("setting score '$score'");
+	        $score{ $self->get_id } = $score;            
         }
         else {
             $logger->info("unsetting score");
+            delete $score{ $self->get_id };
         }
 
-        # this resets the score if $score was undefined
-        $score{ $self->get_id } = $score;
         return $self;
     }
 
@@ -329,7 +338,7 @@ Sets generic key/value pair(s).
 
 =cut
 
-    sub set_generic {
+    sub set_generic : Clonable {
         my $self = shift;
 
         # retrieve id just once, don't call $self->get_id in loops, inefficient
@@ -496,6 +505,36 @@ Attempts to fetch an in-memory object by its UID
         return $objects{$id};
     }
 
+=item get_logger()
+
+Returns a singleton reference to a Bio::Phylo::Util::Logger object
+
+ Type    : Accessor
+ Title   : get_logger
+ Usage   : my $logger = Bio::Phylo->get_logger
+ Function: Returns logger
+ Returns : A Bio::Phylo::Util::Logger object 
+ Args    : None
+
+=cut
+    
+    sub get_logger { $logger }
+
+=item VERSION()
+
+Returns the $VERSION string of this Bio::Phylo release
+
+ Type    : Accessor
+ Title   : VERSION
+ Usage   : my $version = Bio::Phylo->VERSION
+ Function: Returns version string
+ Returns : A string
+ Args    : None
+
+=cut
+    
+    sub VERSION { $VERSION }
+
 =item clone()
 
 Clones invocant.
@@ -510,80 +549,80 @@ Clones invocant.
 
 =cut
 
-    # TODO this needs overrides in a number of subclasses,
-    # in particular in Bio::Phylo::Taxa and Bio::Phylo::Taxa::Taxon
-    # classes because of the asymmetry between set_forest/get_forests,
-    # set_node/get_nodes etc.
     sub clone {
-        my ( $self, %subs ) = @_;
+        my ( $self, $deep ) = @_;
+        $deep = 1 unless defined $deep;
+	
+	# compute and instantiate the constructor nearest to the tips of
+	# the inheritance tree
+	my $constructors = $mop->get_constructors($self); my $clone =
+	$constructors->[0]->{'code'}->(ref $self);
 
-        # may not work yet! warn user
-        $logger->info("cloning is experimental, use with caution");
-
-        # get inheritance tree
-        my ( $class, $isa, $seen ) = ( ref($self), [], {} );
-        _recurse_isa( $class, $isa, $seen );
-
-        # walk symbol table, get symmetrical set_foo/get_foo pairs
-        my %methods;
-        for my $package ( $class, @{$isa} ) {
-            my %symtable;
-            eval "\%symtable = \%${package}::";
-          SETTER: for my $setter ( keys %symtable ) {
-                next SETTER if $setter !~ m/^set_/;
-                my $getter = $setter;
-                $getter =~ s/^s/g/;
-                next SETTER if not exists $symtable{$getter};
-
-                # have a symmetrical set_foo/get_foo pair, check
-                # if they're code (not variables, for example)
-                my $get_ref = $class->can($getter);
-                my $set_ref = $class->can($setter);
-                if (    looks_like_instance( $get_ref, 'CODE' )
-                    and looks_like_instance( $set_ref, 'CODE' ) )
-                {
-                    $methods{$getter} = $setter;
-                }
-            }
-        }
-
-        # instantiate the clone
-        my @new;
-        if ( $subs{'new'} ) {
-            @new = @{ $subs{'new'} };
-            delete $subs{'new'};
-        }
-        my $clone = $class->new(@new);
+	# keep track of which methods we've done, including overrides
+	my %seen;
+	
+	# do the deep cloning first
+	if ( $deep ) {
+	    
+	    # get the deeply clonable methods
+	    my $clonables = $mop->get_deep_clonables($self);
+	    for my $setter ( @{ $clonables } ) {
+		my $setter_name = $setter->{'name'};
+	
+		# only do this for the shallowest method with
+		# the same name: the others are overrided
+		if ( not $seen{$setter_name} ) {
+		    $seen{$setter_name}++;
+    
+		    # pass the output of the getter to the
+		    # input of the setter
+		    my $output = $self->_get_clonable_output($setter);
+		    my $input;
+		    if ( ref $output eq 'ARRAY' ) {
+			$input = [
+			    map { ref $_ ? $_->clone($deep) : $_ }
+			    @{ $output }
+			];
+		    }
+		    elsif ( $output and ref $output ) {
+			$input = $output->clone($deep);
+		    }
+		    $setter->{'code'}->($clone,$input);
+		}
+	    }
+	}
 		
-        # execute additional code refs
-        $_->( $self, $clone )
-          for ( grep { looks_like_instance( $_, 'CODE' ) } values %subs );		
+	# get the clonable methods
+	my $clonables = $mop->get_clonables($self);		
+	for my $setter ( @{ $clonables } ) {
+	    my $setter_name = $setter->{'name'};
+    
+	    # only do this for the shallowest method with the
+	    # same name: the others are overrided
+	    if ( not $seen{$setter_name} ) {
+		$seen{$setter_name}++;
+		my $output = $self->_get_clonable_output($setter);
+		$setter->{'code'}->($clone,$output);
+	    }		
+	}
+	return $clone;
+    }
+    
+    sub _get_clonable_output {
+	my ( $self, $setter ) = @_;
+	my $setter_name = $setter->{'name'};
+	
+	# assume getter/setter symmetry
+	my $getter_name = $setter_name;
+	$getter_name =~ s/^(_?)set_/$1get_/;
+	my $fqn = $setter->{'package'} . '::' . $getter_name;
 
-        # populate the clone
-        for my $getter ( keys %methods ) {
-            my $setter = $methods{$getter};
-            if ( exists $subs{$setter} ) {
-                $logger->info("method $setter for $clone overridden");
-                if ( looks_like_instance( $subs{$setter}, 'CODE' ) ) {
-                    $subs{$setter}->( $self, $clone );
-                }
-                delete $subs{$setter};
-            }
-            else {
-                eval {
-                    $logger->info("copying $getter => $setter");
-                    my $value = $self->$getter;
-                    if ( defined $value ) {
-                        $clone->$setter($value);
-                    }
-                };
-                if ($@) {
-                    $logger->warn("failed copy of $getter => $setter: \n$@");
-                }
-            }
-        }
+	# get the code reference for the fully qualified name of the getter
+	my $getter = $mop->get_method($fqn);
 
-        return $clone;
+	# pass the output of the getter to the input of the setter
+	my $output = $getter->($self);
+	return $output;
     }
 
 =begin comment
@@ -605,54 +644,33 @@ Invocant destructor.
 
 =cut
 
-    {
-        no warnings 'recursion';
-        my %isa_for_class;
+	sub DESTROY {
+		my $self = shift;
 
-        sub DESTROY {
-            my $self = shift;
+		# delete from get_obj_by_id
+		my $id;
+		if ( defined( $id = $self->get_id ) ) {
+			delete $objects{$id};
+		}
 
-            # delete from get_obj_by_id
-            my $id;
-            if ( defined( $id = $self->get_id ) ) {
-                delete $objects{$id};
-            }
+		# do the cleanups
+		my @destructors = @{ $mop->get_destructors( $self ) };
+		for my $d ( @destructors ) {			
+			$d->{'code'}->( $self );
+		}
+		
+		# unregister from mediator
+		$taxamediator->unregister( $self );
 
-			# do the cleanups
-			my @cleanups = @{ $mop->get_implementations( '_cleanup', $self ) };
-			for my $c ( @cleanups ) {			
-				$c->{'code'}->($self);
-			}
-			
-            # cleanup from mediator
-            $taxamediator->unregister($self);
+		# done cleaning up, id can be reclaimed
+		Bio::Phylo::Util::IDPool->_reclaim( $self );
+	}
 
-            # done cleaning up, id can be reclaimed
-            Bio::Phylo::Util::IDPool->_reclaim($self);
-        }
-    }
-
-    # starting from $class, push all superclasses (+$class) into @$isa,
-    # %$seen is just a helper to avoid getting stuck in cycles
-    sub _recurse_isa {
-        my ( $class, $isa, $seen ) = @_;
-        if ( not $seen->{$class} ) {
-            $seen->{$class} = 1;
-            push @{$isa}, $class;
-            my @isa;
-            {
-                no strict 'refs';
-                @isa = @{"${class}::ISA"};
-                use strict;
-            }
-            _recurse_isa( $_, $isa, $seen ) for @isa;
-        }
-    }
 
     # child classes probably should have a method like this,
     # if their objects hold internal state anyway (b/c they'll
     # be inside-out objects).
-    sub _cleanup {
+    sub _cleanup : Destructor {
         my $self = shift;
         my $id = $self->get_id;
 
@@ -685,10 +703,7 @@ Invocant destructor.
     # to have the objects of a has-a relationship fiddle with
     # their container we hide this method from abuse. Then
     # again, sometimes it's handy ;-)
-    sub _get_container {
-        my $self = shift;
-        return $container{ $self->get_id };
-    }
+    sub _get_container { $container{ shift->get_id } }
 
 =begin comment
 
@@ -712,8 +727,7 @@ Invocant destructor.
                 if ( $container->can_contain($self) ) {
                     if ( $container->contains($self) ) {
                         $container{$id} = $container;
-                        weaken( $container{$id} );
-                        return $self;
+                        weaken( $container{$id} );                        
                     }
                     else {
                         throw 'ObjectMismatch' => "'$self' not in '$container'";
@@ -729,8 +743,10 @@ Invocant destructor.
             }
         }
         else {
-            throw 'BadArgs' => "Argument not an object";
-        }
+			delete $container{$id};
+				#throw 'BadArgs' => "Argument not an object";
+		}
+		return $self;
     }
 
 =back

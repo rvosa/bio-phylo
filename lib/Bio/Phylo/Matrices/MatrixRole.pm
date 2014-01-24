@@ -138,7 +138,7 @@ Matrix constructor.
 
 =cut
 
-    sub new {
+    sub new : Constructor {
 
         # could be child class
         my $class = shift;
@@ -476,7 +476,7 @@ Calculates number of characters.
         my $self  = shift;
         my $nchar = 0;
         for my $row ( @{ $self->get_entities } ) {
-            my $offset    = $row->get_position - 1;
+            my $offset    = ( $row->get_position || 1 ) - 1;
             my $rowlength = scalar @{ $row->get_entities };
             $rowlength += $offset;
             $nchar = $rowlength if $rowlength > $nchar;
@@ -1002,44 +1002,6 @@ Creates jackknifed clone.
         return $self->keep_chars( \@indices );
     }
 
-=item clone()
-
-Clones invocant.
-
- Type    : Utility method
- Title   : clone
- Usage   : my $clone = $object->clone;
- Function: Creates a copy of the invocant object.
- Returns : A copy of the invocant.
- Args    : NONE
-
-=cut
-
-    sub clone {
-        my $self = shift;
-        $logger->info("cloning $self");
-        my %subs = @_;
-
-        # we'll clone datum objects, so no raw copying
-        $subs{'set_raw'} = sub { };
-
-        # we'll use the set/get_special_symbols method
-        $subs{'set_missing'}    = sub { };
-        $subs{'set_gap'}        = sub { };
-        $subs{'set_matchchar'}  = sub { };
-		$subs{'set_characters'} = sub {
-            my ( $obj, $clone ) = @_;
-			my $chars = $obj->get_characters;
-			my $clone_chars = $obj->get_characters->clone;
-			$clone->set_characters( $clone_chars );
-		};
-		$subs{'set_taxa'} = sub {
-			my ( $obj, $clone ) = @_;
-			$clone->set_taxa( $obj->make_taxa );
-		};
-        return $self->SUPER::clone(%subs);
-    }
-
 =item insert()
 
 Insert argument in invocant.
@@ -1213,7 +1175,9 @@ Creates a taxa block from the objects contents if none exists yet.
                     $taxa{$name} = $factory->create_taxon( '-name' => $name );
                 }
             }
-            $taxa->insert( map { $taxa{$_} } sort { $a cmp $b } keys %taxa );
+			if ( keys %taxa ) {
+				$taxa->insert( map { $taxa{$_} } sort { $a cmp $b } keys %taxa );
+			}
             $self->set_taxa($taxa);
             return $taxa;
         }

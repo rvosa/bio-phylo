@@ -54,7 +54,7 @@ Links the invocant object to a taxon object.
 
 =cut
 
-    sub set_taxon : Mutator Clonable {
+    sub set_taxon : Clonable {
         my ( $self, $taxon ) = @_;
         if ( $taxon and looks_like_object $taxon, $TAXON_CONSTANT ) {
             INFO "setting taxon '$taxon'";
@@ -81,7 +81,7 @@ Unlinks the invocant object from any taxon object.
 
 =cut
 
-    sub unset_taxon : Mutator {
+    sub unset_taxon {
         my $self = shift;
         DEBUG "unsetting taxon";
         $self->set_taxon();
@@ -109,7 +109,7 @@ Retrieves the Bio::Phylo::Taxa::Taxon object linked to the invocant.
 
 =cut
 
-    sub get_taxon : Accessor {
+    sub get_taxon {
         $mediator->get_link( '-source' => shift );
     }
 

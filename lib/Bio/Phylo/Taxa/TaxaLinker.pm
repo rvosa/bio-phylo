@@ -48,7 +48,7 @@ Associates invocant with Bio::Phylo::Taxa argument.
 
 =cut
 
-sub set_taxa {
+sub set_taxa : Clonable DeepClonable {
     my ( $self, $taxa ) = @_;
     if ( $taxa and looks_like_object $taxa, $TYPE_CONSTANT ) {
         $logger->info("setting taxa '$taxa'");

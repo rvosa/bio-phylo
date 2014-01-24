@@ -172,7 +172,7 @@ Populates the triple, assuming that the invocant is attached to a subject.
 
 =cut    
 
-    sub set_triple {
+    sub set_triple : Clonable {
         my ( $self, $property, $content ) = @_;
         if ( ref($property) && ref($property) eq 'HASH' ) {
             ( $property, $content ) = each %{$property};
@@ -187,6 +187,24 @@ Populates the triple, assuming that the invocant is attached to a subject.
 =head2 ACCESSORS
 
 =over
+
+=item get_triple ()
+
+Returns predicate and object for the triple
+
+ Type    : Accessor
+ Title   : get_triple
+ Usage   : my ( $predicate, $object ) = $anno->get_triple;
+ Function: Returns triple
+ Returns : Predicate and object of a triple
+ Args    : NONE
+
+=cut
+
+    sub get_triple {
+	my $self = shift;
+	return $self->get_predicate, $self->get_object;
+    }
 
 =item get_object()
 
@@ -406,7 +424,7 @@ L<http://dx.doi.org/10.1186/1471-2105-12-63>
     sub _type      { $TYPE_CONSTANT }
     sub _container { $CONTAINER_CONSTANT }
 
-    sub _cleanup {
+    sub _cleanup : Destructor {
         my $id = shift->get_id;
         delete $_->{$id} for @fields;
     }

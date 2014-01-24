@@ -18,7 +18,7 @@ use Bio::Phylo::Util::CONSTANT qw'/looks_like/ :namespaces :objecttypes';
         'xsi' => _NS_XSI_,
         'rdf' => _NS_RDF_,
         'xsd' => _NS_XSD_,
-	'map' => _NS_PHYLOMAP_,
+		'map' => _NS_PHYLOMAP_,
     );
     my @fields =
       \( my ( %tag, %id, %attributes, %identifiable, %suppress_ns, %meta, %url ) );
@@ -88,7 +88,7 @@ This is the superclass for all objects that can be serialized to NeXML
 
 =cut
 
-    sub set_suppress_ns {
+    sub set_suppress_ns : Clonable {
         my $self = shift;
         my $id   = $self->get_id;
         $suppress_ns{$id} = 1;
@@ -130,7 +130,9 @@ This is the superclass for all objects that can be serialized to NeXML
                 $meta{$id} = [];
             }
             push @{ $meta{$id} }, $meta_obj;
-            $self->set_attributes( 'about' => '#' . $self->get_xml_id );
+            if ( $self->is_identifiable ) {
+            	$self->set_attributes( 'about' => '#' . $self->get_xml_id );
+            }
         }
         return $self;
     }
@@ -189,20 +191,44 @@ This is the superclass for all objects that can be serialized to NeXML
  Function: Attaches a $predicate => $object pair to the invocant
  Returns : $self
  Args    : $predicate => (a valid curie of a known namespace)
-	   $object => (an object value)
+	       $object => (an object value)
 
 =cut    
 
     sub set_meta_object {
-	my ( $self, $predicate, $object ) = @_;
-	if ( my ($meta) = @{ $self->get_meta($predicate) } ) {
-	    $meta->set_triple( $predicate => $object );
-	}
-	else {
-	    $self->add_meta( $fac->create_meta( '-triple' => { $predicate => $object } ) );
-	}
-	return $self;
+		my ( $self, $predicate, $object ) = @_;
+		if ( my ($meta) = @{ $self->get_meta($predicate) } ) {
+			$meta->set_triple( $predicate => $object );
+		}
+		else {
+			$self->add_meta( $fac->create_meta( '-triple' => { $predicate => $object } ) );
+		}
+		return $self;
     }
+
+=item set_meta()
+
+ Type    : Mutator
+ Title   : set_meta
+ Usage   : $obj->set_meta([ $m1, $m2, $m3 ]);
+ Function: Assigns all metadata objects
+ Returns : $self
+ Args    : An array ref of metadata objects
+
+=cut  
+	
+	sub set_meta : Clonable {
+		my ( $self, $meta ) = @_;
+		if ( $meta && @{ $meta } ) {
+			$meta{$self->get_id} = $meta;
+            $self->set_attributes( 'about' => '#' . $self->get_xml_id );			
+		}
+		else {
+			$meta{$self->get_id} = [];
+			$self->unset_attribute( 'about' );
+		}
+		return $self;
+	}
     
 =item set_identifiable()
 
@@ -221,9 +247,9 @@ Typically, this is done internally - you will probably never use this method.
 
 =cut
 
-    sub set_identifiable {
+    sub set_identifiable : Clonable {
         my $self = shift;
-        $identifiable{ $self->get_id } = !!shift;
+        $identifiable{ $self->get_id } = shift;
         return $self;
     }
 
@@ -244,7 +270,7 @@ xml element structure called <node/>
 
 =cut
 
-    sub set_tag {
+    sub set_tag : Clonable {
         my ( $self, $tag ) = @_;
 
         # _ is ok; see http://www.w3.org/TR/2004/REC-xml-20040204/#NT-NameChar
@@ -272,7 +298,7 @@ Sets invocant name.
 
 =cut
 
-    sub set_name {
+    sub set_name : Clonable {
         my ( $self, $name ) = @_;
         if ( defined $name ) {
             return $self->set_attributes( 'label' => $name );
@@ -365,9 +391,11 @@ the physical location of the containing document.
 
 =cut
 
-    sub set_base_uri {
+    sub set_base_uri : Clonable {
         my ( $self, $uri ) = @_;
-        $self->set_attributes( 'xml:base' => $uri );
+        if ( $uri ) {
+        	$self->set_attributes( 'xml:base' => $uri );
+        }
         return $self;
     }
 
@@ -386,10 +414,12 @@ allow clickable links, such as SVG or RSS.
 
 =cut
 
-    sub set_link {
+    sub set_link : Clonable {
         my ( $self, $url ) = @_;
-        my $id = $self->get_id;
-        $url{$id} = $url;
+        if ( $url ) {
+    	    my $id = $self->get_id;
+	        $url{$id} = $url;
+        }
         return $self;
     }
 
@@ -693,6 +723,11 @@ Retrieves attributes for the element.
         if ( defined $self->is_identifiable and not $self->is_identifiable ) {
             delete $attrs->{'id'};
         }
+        
+        # process the about attribute
+        if ( not @{ $self->get_meta } and $attrs->{'about'} ) {
+        	delete $attrs->{'about'};
+        }
 	
 		# set the otus attribute
         if ( $self->can('get_taxa') ) {
@@ -701,8 +736,7 @@ Retrieves attributes for the element.
                   if looks_like_instance( $taxa, 'Bio::Phylo' );
             }
             else {
-                throw 'ObjectMismatch' =>
-                  "$self can link to a taxa element, but doesn't";
+                $logger->error("$self can link to a taxa element, but doesn't");
             }
         }
 	
@@ -814,11 +848,7 @@ allow clickable links, such as SVG or RSS.
 
 =cut
 
-    sub get_link {
-        my $self = shift;
-        my $id   = $self->get_id;
-        return $url{$id};
-    }
+    sub get_link { $url{ shift->get_id } }
 
 =item get_dom_elt()
 
@@ -883,6 +913,7 @@ method indicates whether that is the case.
         my $self = shift;
         return $identifiable{ $self->get_id };
     }
+    *get_identifiable = \&is_identifiable;
 
 =item is_ns_suppressed()
 
@@ -899,46 +930,7 @@ method indicates whether that is the case.
     sub is_ns_suppressed {
         return $suppress_ns{ shift->get_id };
     }
-
-=back
-
-=head2 CLONER
-
-=over
-
-=item clone()
-
-Clones invocant.
-
- Type    : Utility method
- Title   : clone
- Usage   : my $clone = $object->clone;
- Function: Creates a copy of the invocant object.
- Returns : A copy of the invocant.
- Args    : NONE.
- Comments: Cloning is currently experimental, use with caution.
-
-=cut
-
-    sub clone {
-        my $self = shift;
-        $logger->info("cloning $self");
-        my %subs = @_;
-
-        # some extra logic to copy characters from source to target
-        if ( not exists $subs{'add_meta'} ) {
-            $subs{'add_meta'} = sub {
-                my ( $obj, $clone ) = @_;
-                for my $meta ( @{ $obj->get_meta } ) {
-                    $clone->add_meta($meta);
-                }
-            };
-        }
-
-	# we do this by executing add_meta(get_meta()) so skip here
-	$subs{'set_meta_object'} = sub {};
-        return $self->SUPER::clone(%subs);
-    }
+    *get_suppress_ns = \&is_ns_suppressed;
 
 =back
 
@@ -1051,7 +1043,7 @@ Serializes object to CDAO RDF/XML string
 		);
 	}
 
-    sub _cleanup {
+    sub _cleanup : Destructor {
         my $self = shift;
         my $id   = $self->get_id;
         for my $field (@fields) {

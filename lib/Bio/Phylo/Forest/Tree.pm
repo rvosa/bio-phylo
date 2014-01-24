@@ -56,7 +56,7 @@ Sets tree to be interpreted as unrooted.
 
 =cut
 
-    sub set_as_unrooted : Mutator {
+    sub set_as_unrooted {
         my $self = shift;
         $rooted{ $self->get_id } = 1;
         return $self;
@@ -78,7 +78,7 @@ Sets tree to be the default tree in a forest
 
 =cut
 
-    sub set_as_default : Mutator {
+    sub set_as_default {
         my $self = shift;
         if ( my $forest = $self->_get_container ) {
             if ( my $tree = $forest->get_default_tree ) {
@@ -105,7 +105,7 @@ Sets tree to NOT be the default tree in a forest
 
 =cut
 
-    sub set_not_default : Mutator {
+    sub set_not_default {
         my $self = shift;
         $default{ $self->get_id } = 0;
         return $self;
@@ -133,7 +133,7 @@ Test if tree is default tree.
 
 =cut
 
-    sub is_default : Accessor {
+    sub is_default {
         my $self = shift;
         return !!$default{ $self->get_id };
     }
@@ -157,7 +157,7 @@ Test if tree is rooted.
 
 =cut
 
-    sub is_rooted : Accessor {
+    sub is_rooted {
         my $self = shift;
         my $id   = $self->get_id;
         if ( defined $rooted{$id} ) {
@@ -172,26 +172,8 @@ Test if tree is rooted.
         return 0;
     }
 
-=back
-
-=head2 SERIALIZERS
-
-=over
-
-=begin comment
-
- Type    : Internal method
- Title   : _cleanup
- Usage   : $trees->_cleanup;
- Function: Called during object destruction, for cleanup of instance data
- Returns : 
- Args    :
-
-=end comment
-
-=cut
-
-    sub _cleanup : Protected {
+    # the following methods are purely for internal consumption
+    sub _cleanup : Destructor {
         my $self = shift;
         if ( defined( my $id = $self->get_id ) ) {
             for my $field (@fields) {
@@ -199,6 +181,22 @@ Test if tree is rooted.
             }
         }
     }
+    
+    sub _set_rooted : Clonable {
+        my ( $self, $r ) = @_;
+        $rooted{$self->get_id} = $r;
+        return $self;
+    }
+    
+    sub _get_rooted { $rooted{shift->get_id} }
+    
+    sub _set_default : Clonable {
+        my ( $self, $d ) = @_;
+        $default{$self->get_id} = $d;
+        return $self;
+    }
+    
+    sub _get_default { $default{shift->get_id} }
 
 =back
 

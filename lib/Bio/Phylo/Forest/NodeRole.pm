@@ -104,7 +104,7 @@ Node constructor.
 
 =cut
 
-    sub new {
+    sub new : Constructor {
 
         # could be child class
         my $class = shift;
@@ -1868,69 +1868,6 @@ Visits nodes in a level order traversal.
             throw 'BadArgs' => "'$sub' not a CODE reference";
         }
         return $self;
-    }
-
-=back
-
-=head2 UTILITY METHODS
-
-=over
-
-=item clone()
-
-Clones invocant.
-
- Type    : Utility method
- Title   : clone
- Usage   : my $clone = $object->clone;
- Function: Creates a copy of the invocant object.
- Returns : A copy of the invocant.
- Args    : Optional: a hash of code references to 
-           override reflection-based getter/setter copying
-
-           my $clone = $object->clone(  
-               'set_forest' => sub {
-                   my ( $self, $clone ) = @_;
-                   for my $forest ( @{ $self->get_forests } ) {
-                       $clone->set_forest( $forest );
-                   }
-               },
-               'set_matrix' => sub {
-                   my ( $self, $clone ) = @_;
-                   for my $matrix ( @{ $self->get_matrices } ) {
-                       $clone->set_matrix( $matrix );
-                   }
-           );
-
- Comments: Cloning is currently experimental, use with caution.
-           It works on the assumption that the output of get_foo
-           called on the invocant is to be provided as argument
-           to set_foo on the clone - such as 
-           $clone->set_name( $self->get_name ). Sometimes this 
-           doesn't work, for example where this symmetry doesn't
-           exist, or where the return value of get_foo isn't valid
-           input for set_foo. If such a copy fails, a warning is 
-           emitted. To make sure all relevant attributes are copied
-           into the clone, additional code references can be 
-           provided, as in the example above. Typically, this is
-           done by overrides of this method in child classes.
-
-=cut
-
-    sub clone {
-        my $self = shift;
-        $logger->info("cloning $self");
-        my %subs = @_;
-
-        # we'll clone relatives in the tree, so no raw copying
-        $subs{'set_parent'}          = sub { };
-        $subs{'set_first_daughter'}  = sub { };
-        $subs{'set_last_daughter'}   = sub { };
-        $subs{'set_next_sister'}     = sub { };
-        $subs{'set_previous_sister'} = sub { };
-        $subs{'set_child'}           = sub { };
-        $subs{'insert'}              = sub { };
-        return $self->SUPER::clone(%subs);
     }
 
 =back

@@ -70,17 +70,20 @@ Sets invocant weight.
 
 =cut
 
-    sub set_weight : Mutator {
+    sub set_weight : Clonable {
         my ( $self, $weight ) = @_;
         my $id = $self->get_id;
-        $weight = 1 if not defined $weight;
         if ( looks_like_number $weight ) {
             $weight{$id} = $weight;
             $logger->info("setting weight '$weight'");
         }
-        elsif ( !looks_like_number $weight ) {
+        elsif ( defined $weight ) {
             throw 'BadNumber' => 'Not a number!';
         }
+        else {
+            $weight{$id} = undef;
+        }
+        return $self;
     }
 
 =item set_position()
@@ -96,16 +99,19 @@ Set invocant starting position.
 
 =cut
 
-    sub set_position : Mutator {
+    sub set_position : Clonable {
         my ( $self, $pos ) = @_;
-        $pos = 1 if not defined $pos;
         if ( looks_like_number $pos && $pos >= 1 && $pos / int($pos) == 1 ) {
             $position{ $self->get_id } = $pos;
             $logger->info("setting position '$pos'");
         }
-        else {
+        elsif ( defined $pos ) {
             throw 'BadNumber' => "'$pos' not a positive integer!";
         }
+        else {
+            $position{ $self->get_id } = undef;
+        }
+        return $self;
     }
 
 =item set_annotation()
@@ -130,7 +136,7 @@ Sets single annotation.
 
 =cut
 
-    sub set_annotation : Mutator {
+    sub set_annotation {
         my $self = shift;
         if (@_) {
             my %opt = looks_like_hash @_;
@@ -190,7 +196,7 @@ Sets list of annotations.
 
 =cut
 
-    sub set_annotations : Mutator {
+    sub set_annotations : Clonable {
         my $self = shift;
         my @anno;
         if ( scalar @_ == 1 and looks_like_instance( $_[0], 'ARRAY' ) ) {
@@ -245,11 +251,7 @@ Gets invocant weight.
 
 =cut
 
-    sub get_weight : Accessor {
-        my $self   = shift;
-        my $weight = $weight{ $self->get_id };
-        return defined $weight ? $weight : 1;
-    }
+    sub get_weight { $weight{ shift->get_id } }
 
 =item get_position()
 
@@ -264,11 +266,7 @@ Gets invocant starting position.
 
 =cut
 
-    sub get_position : Accessor {
-        my $self = shift;
-        my $pos  = $position{ $self->get_id };
-        return defined $pos ? $pos : 1;
-    }
+    sub get_position { $position{ shift->get_id } }
 
 =item get_annotation()
 
@@ -288,7 +286,7 @@ Retrieves character annotation (hashref).
 
 =cut
 
-    sub get_annotation : Accessor {
+    sub get_annotation {
         my $self = shift;
         my $id   = $self->get_id;
         if (@_) {
@@ -328,12 +326,12 @@ Retrieves character annotations (array ref).
 
 =cut
 
-    sub get_annotations : Accessor {
+    sub get_annotations {
         my $self = shift;
         return $annotations{ $self->get_id } || [];
     }
 
-    sub _cleanup : Protected {
+    sub _cleanup : Destructor {
         my $self = shift;
         $logger->info("cleaning up '$self'");
         if ( defined( my $id = $self->get_id ) ) {

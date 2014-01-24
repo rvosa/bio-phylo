@@ -14,7 +14,6 @@ This class has no internal state, no cleanup is necessary.
 {
     my $TYPE      = _MATRICES_;
     my $CONTAINER = _NONE_;
-    my $logger    = __PACKAGE__->get_logger;
 
 =head1 NAME
 
@@ -35,40 +34,6 @@ Bio::Phylo::Matrices - Container of matrix objects
 The L<Bio::Phylo::Matrices> object models a set of matrices. It inherits from
 the L<Bio::Phylo::Listable> object, and so the filtering methods of that object
 are available to apply to a set of matrices.
-
-=head1 METHODS
-
-=head2 CONSTRUCTOR
-
-=over
-
-=item new()
-
-Matrices constructor.
-
- Type    : Constructor
- Title   : new
- Usage   : my $matrices = Bio::Phylo::Matrices->new;
- Function: Initializes a Bio::Phylo::Matrices object.
- Returns : A Bio::Phylo::Matrices object.
- Args    : None required.
-
-=cut
-
-    #    sub new {
-    #        # could be child class
-    #        my $class = shift;
-    #
-    #        # notify user
-    #        $logger->info("constructor called for '$class'");
-    #
-    #        # recurse up inheritance tree, get ID
-    #        my $self = $class->SUPER::new( @_ );
-    #
-    #        # local fields would be set here
-    #
-    #        return $self;
-    #    }
 
 =begin comment
 
@@ -99,10 +64,6 @@ Matrices constructor.
 =cut
 
     sub _type { $TYPE }
-
-=back
-
-=cut
 
     # podinherit_insert_token
 

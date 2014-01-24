@@ -169,8 +169,11 @@ sub _process {
     my $self = shift;
     if ( $self->_return_is_scalar ) {
         my $result = $self->_parse;
-        if ( $self->_project ) {
-            return $self->_project->insert($result);
+        if ( my $p = $self->_project ) {
+        	if ( my $meta = $self->_project_meta ) {
+        		$p->add_meta($_) for @{ $meta };
+        	}
+            return $p->insert($result);
         }
         else {
             return $result;
@@ -178,8 +181,11 @@ sub _process {
     }
     else {
         my @result = $self->_parse;
-        if ( $self->_project ) {
-            return $self->_project->insert(@result);
+        if ( my $p = $self->_project ) {
+        	if ( my $meta = $self->_project_meta ) {
+        		$p->add_meta($_) for @{ $meta };
+        	}        
+            return $p->insert(@result);
         }
         else {
             return [@result];
@@ -196,6 +202,7 @@ sub _string {
     my $string = do { local $/; <$handle> };
     return $string;
 }
+sub _project_meta {};
 sub _logger   { $logger }
 sub _project  { shift->{'_proj'} }
 sub _handle   { shift->{'_handle'} }

@@ -1,13 +1,11 @@
 package Bio::Phylo::Mediators::TaxaMediator;
 use strict;
-use Scalar::Util qw'weaken';
-use Bio::Phylo::Util::Logger;
+use Scalar::Util qw'weaken isweak';
+use Bio::Phylo::Util::Logger ':simple';
 use Bio::Phylo::Util::Exceptions;
 use Bio::Phylo::Util::CONSTANT ':objecttypes';
 
-# XXX this class only has weak references
 {
-    my $logger = Bio::Phylo::Util::Logger->new;
     my $self;
     my ( @object, %id_by_type, %one_to_one, %one_to_many );
 
@@ -54,11 +52,11 @@ TaxaMediator constructor.
         my $class = shift;
 
         # notify user
-        $logger->info("constructor called for '$class'");
+        DEBUG "constructor called for '$class'";
 
         # singleton class
         if ( not $self ) {
-            $logger->debug("first time instantiation of singleton");
+            INFO "first time instantiation of singleton";
             $self = \$class;
             bless $self, $class;
         }
@@ -101,7 +99,17 @@ Stores argument in invocant's cache.
 
                 # store in object cache
                 $object[$id] = $obj;
-                weaken $object[$id];
+                
+                # in the one-to-many relationships we only weaken the
+                # references to the many objects so that the get cleaned up
+                #Êwhen they go out of scope. When the are unregistered and
+                #Êthere is no more many object that references the one object,
+                # the one object's reference needs to be weakened as well so
+                # that it is cleaned up when it is no longer reachable from
+                # elsewhere.
+                #if ( $type != _TAXA_ && $type != _TAXON_ ) {
+                    weaken $object[$id];
+                #}
                 return $self;
             }
         }
@@ -125,7 +133,19 @@ Removes argument from invocant's cache.
         my ( $self, $obj ) = @_;
 
         my $id = $obj->get_id;
+        
         if ( defined $id ) {
+            my $taxa_id = $one_to_one{$id};
+            
+            # decrease reference count of taxa block if we are the last pointer
+            # to it
+            if ( $taxa_id ) {
+                my @others = keys %{ $one_to_many{$taxa_id} };
+                if ( @others == 1 ) {
+                    weaken $object[$taxa_id];
+                }
+                delete $one_to_many{$taxa_id}->{$id};
+            }            
             
             # remove from object cache
             if ( exists $object[$id] ) {
@@ -137,10 +157,11 @@ Removes argument from invocant's cache.
                 delete $one_to_one{$id};
             }
             
-            # remove from one-to-many mapping
+            # remove from one-to-many mapping if I am taxa
             if ( exists $one_to_many{$id} ) {
                 delete $one_to_many{$id};    
             }
+            
         }
         return $self;
     }
@@ -175,6 +196,17 @@ Creates link between objects.
         my ( $one_id, $many_id ) = ( $one->get_id, $many->get_id );
         $one_to_one{$many_id} = $one_id;
         $one_to_many{$one_id} = {} unless $one_to_many{$one_id};
+
+        # once other objects start referring to the taxon we want
+        # these references to keep the taxon "alive" until all other
+        # objects pointing to it have gone out of scope, in which
+        # case the reference must be weakened again, so that it
+        # might get cleaned up also
+        if (isweak($object[$one_id]) ) {
+            my $strong = $object[$one_id];
+            $object[$one_id] = $strong;
+        }
+        
         $one_to_many{$one_id}->{$many_id} = $many->_type;
         return $self;
     }
@@ -273,7 +305,7 @@ Removes link between objects.
             my $target = $self->get_link( '-source' => $many );
             $one_id = $target->get_id if $target;
         }
-        delete $one_to_many{$one_id}->{$many_id} if $one_to_many{$one_id};          
+        delete $one_to_many{$one_id}->{$many_id} if $one_id and $one_to_many{$one_id};          
         delete $one_to_one{$many_id};
     }
 

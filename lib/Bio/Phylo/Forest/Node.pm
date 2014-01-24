@@ -102,7 +102,7 @@ Sets argument as invocant's parent.
 
 =cut
 
-    sub set_parent : Mutator Clonable {
+    sub set_parent : Clonable {
         my ( $self, $parent ) = @_;
         if ( $parent and looks_like_object $parent, $TYPE_CONSTANT ) {
             $parent->set_child($self);
@@ -127,7 +127,7 @@ Sets argument as invocant's child.
 
 =cut
 
-    sub set_child : Mutator {
+    sub set_child {
         my ( $self, $child, $i ) = @_;
 
         # bad args?
@@ -194,7 +194,7 @@ Sets argument as invocant's child.
         $set_raw_child->( $self, $child, $i );
         return $self;
     }
-
+    
 =item set_branch_length()
 
 Sets argument as invocant's branch length.
@@ -211,7 +211,7 @@ Sets argument as invocant's branch length.
 
 =cut
 
-    sub set_branch_length : Mutator Clonable {
+    sub set_branch_length : Clonable {
         my ( $self, $bl ) = @_;
         my $id = $self->get_id;
         if ( defined $bl && looks_like_number $bl && !ref $bl ) {
@@ -242,7 +242,7 @@ Sets what tree invocant belongs to
 
 =cut
 
-    sub set_tree : Mutator Clonable {
+    sub set_tree : Clonable {
         my ( $self, $tree ) = @_;
         my $id = $self->get_id;
         if ($tree) {
@@ -273,7 +273,7 @@ Gets invocant's parent.
 
 =cut
 
-    sub get_parent : Mutator { return $get_parent->(shift) }    
+    sub get_parent { return $get_parent->(shift) }    
 
 =item get_branch_length()
 
@@ -292,7 +292,7 @@ Gets invocant's branch length.
 
 =cut
 
-    sub get_branch_length : Accessor { return $get_branch_length->(shift) }
+    sub get_branch_length { return $get_branch_length->(shift) }
 
 =item get_children()
 
@@ -309,7 +309,7 @@ Gets invocant's immediate children.
 
 =cut
 
-    sub get_children : Accessor { return $get_children->(shift) }
+    sub get_children { return $get_children->(shift) }
     
 =item get_tree()
 
@@ -324,7 +324,7 @@ Returns the tree invocant belongs to
 
 =cut
 
-    sub get_tree : Accessor {
+    sub get_tree {
         my $self = shift;
         my $id   = $self->get_id;
         return $tree{$id};
@@ -343,7 +343,7 @@ Returns the tree invocant belongs to
 
 =cut
 
-    sub _cleanup : Protected {
+    sub _cleanup : Destructor {
         my $self = shift;
         my $id   = $self->get_id;
         for my $field (@fields) {
