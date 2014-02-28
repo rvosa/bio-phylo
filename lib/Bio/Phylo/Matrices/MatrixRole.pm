@@ -1029,6 +1029,8 @@ Insert argument in invocant.
             throw 'ObjectMismatch' => 'object is of wrong data type';
         }
         my $taxon1 = $obj->get_taxon;
+        my $tname = $taxon1->get_name;
+        my $mname = $self->get_name || $self->get_internal_name;
         for my $ents ( @{ $self->get_entities } ) {
             if ( $obj->get_id == $ents->get_id ) {
                 throw 'ObjectMismatch' => 'row already inserted';
@@ -1036,11 +1038,8 @@ Insert argument in invocant.
             if ($taxon1) {
                 my $taxon2 = $ents->get_taxon;
                 if ( $taxon2 && $taxon1->get_id == $taxon2->get_id ) {
-                    $logger->warn(
-'datum linking to same taxon already existed, concatenating instead'
-                    );
-                    $ents->concat($obj);
-                    return $self;
+                	my $tmpl = 'Note: a row linking to %s already exists in matrix %s';
+                    $logger->warn(sprintf $tmpl,$tname,$mname);
                 }
             }
         }
