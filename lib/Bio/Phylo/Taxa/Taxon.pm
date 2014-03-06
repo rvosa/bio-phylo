@@ -51,7 +51,7 @@ Bio::Phylo::Taxa::Taxon - Operational taxonomic unit
  }
 
  # crossreference tree and taxa
- $tree->crossreference($taxa);
+ $tree->cross_reference($taxa);
 
  # iterate over nodes
  while ( my $node = $tree->next ) {
