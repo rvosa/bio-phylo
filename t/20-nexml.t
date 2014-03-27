@@ -1,3 +1,4 @@
+#!/usr/bin/perl
 use Test::More;
 
 BEGIN {
@@ -18,8 +19,9 @@ use Bio::Phylo::IO qw'parse unparse';
 use Bio::Phylo::Util::Logger;
 use Data::Dumper;
 use Bio::Phylo::Factory;
+
 my $fac = Bio::Phylo::Factory->new;
-my $XML_PATH = $ENV{'NEXML_ROOT'} . '/examples' || '../examples';    # TODO fixme
+my $XML_PATH = $ENV{'NEXML_ROOT'} . '/examples';
 
 # here we just parse a file with only taxon elements
 my $taxa = parse( '-format' => 'nexml', '-file' => "$XML_PATH/taxa.xml" )->[0];
