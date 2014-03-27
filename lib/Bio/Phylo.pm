@@ -13,7 +13,7 @@ use Bio::Phylo::Util::MOP;                # for traversing inheritance trees
 use Bio::Phylo::Identifiable;             # for storing unique IDs inside an instance
 
 our ( $logger, $COMPAT ) = Bio::Phylo::Util::Logger->new;
-our $VERSION = "0.57";
+our $VERSION = "0.58";
 
 # mediates one-to-many relationships between taxon and nodes,
 # taxon and sequences, taxa and forests, taxa and matrices.
