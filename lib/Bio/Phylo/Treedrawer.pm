@@ -1,7 +1,6 @@
 package Bio::Phylo::Treedrawer;
 use strict;
 use Bio::Phylo::Util::Logger;
-use Bio::Phylo::Forest::DrawTree;
 use Bio::Phylo::Util::Exceptions 'throw';
 use Bio::Phylo::Util::CONSTANT qw'_TREE_ /looks_like/ _PI_';
 
@@ -398,9 +397,6 @@ Sets tree to draw.
 sub set_tree {
     my ( $self, $tree ) = @_;
     if ( looks_like_object $tree, _TREE_ ) {
-        if ( not $tree->isa('Bio::Phylo::Forest::DrawTree') ) {
-            $tree = Bio::Phylo::Forest::DrawTree->new( '-tree' => $tree );
-        }
         $self->{'TREE'} = $tree->negative_to_zero;
     }
     return $self;
