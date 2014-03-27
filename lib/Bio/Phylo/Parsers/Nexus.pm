@@ -1215,25 +1215,27 @@ sub _semicolon {
         $characters->add_set($set);
         my $range = $self->{'_charset'}->{'range'};
         my @range;
-        while ( @{ $range } ) {
-            my $index = shift @{ $range };
-            if ( $range->[0] && $range->[0] eq '-' ) {
-                shift @{ $range };
-                my $end = shift @{ $range };
-                push @range, ( $index - 1 ) .. ( $end - 1 );
-            }
-            else {
-                push @range, ( $index - 1 );
-            }
-        }
-        for my $i ( @range ) {
-            my $character = $characters->get_by_index($i);
-            if ( $character ) {
-                $characters->add_to_set($character,$set);
-            }
-            else {
-                throw 'API' => "No character at index $i";
-            }
+        if ( ref($range) eq 'ARRAY' ) {
+			while ( @{ $range } ) {
+				my $index = shift @{ $range };
+				if ( $range->[0] && $range->[0] eq '-' ) {
+					shift @{ $range };
+					my $end = shift @{ $range };
+					push @range, ( $index - 1 ) .. ( $end - 1 );
+				}
+				else {
+					push @range, ( $index - 1 );
+				}
+			}
+			for my $i ( @range ) {
+				my $character = $characters->get_by_index($i);
+				if ( $character ) {
+					$characters->add_to_set($character,$set);
+				}
+				else {
+					throw 'API' => "No character at index $i";
+				}
+			}
         }
         $self->{'_charset'} = {};        
     }
