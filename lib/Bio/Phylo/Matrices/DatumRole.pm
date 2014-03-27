@@ -509,6 +509,37 @@ Calculates occurrences of states.
         return \%counts;
     }
 
+=item calc_distance()
+
+Calculates the distance between the invocant and argument
+
+ Type    : Calculation
+ Title   : calc_distance
+ Usage   : my $dist = $datum1->calc_distance($datum2);
+ Function: Calculates pairwise distance
+ Returns : A number, the distance per site
+ Args    : Another datum to calculate the distance to
+ Comments: Assumes the sequences are aligned. Calculates
+           substitutions / total non-missing sites.
+=cut
+
+	sub calc_distance {
+		my ( $self, $other ) = @_;
+		my @c1 = $self->get_char;
+		my @c2 = $other->get_char; 
+		my $t = $self->get_type_object;
+		my $m = $t->get_missing;
+		my $g = $t->get_gap;
+		my $subst = 0;
+		my $total = 0;
+		for my $i ( 0 .. $#c1 ) {
+			next if $c1[$i] eq $m or $c1[$i] eq $g or $c2[$i] eq $m or $c2[$i] eq $g;
+			$subst += $c1[$i] ne $c2[$i];
+			$total++;
+		}
+		return $total ? $subst / $total : 9**9**9;
+	}
+
 =item calc_state_frequencies()
 
 Calculates the frequencies of the states observed in the matrix.
