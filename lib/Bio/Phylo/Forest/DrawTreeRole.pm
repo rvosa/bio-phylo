@@ -1,8 +1,9 @@
-package Bio::Phylo::Forest::DrawTree;
+package Bio::Phylo::Forest::DrawTreeRole;
 use strict;
 use Carp;
-use base 'Bio::Phylo::Forest::Tree';
-use Bio::Phylo::Forest::DrawNode;
+use Bio::Phylo::Forest::TreeRole;
+use base 'Bio::Phylo::Forest::TreeRole';
+use Bio::Phylo::Forest::DrawNodeRole;
 use Bio::Phylo::Util::CONSTANT 'looks_like_hash';
 {
 

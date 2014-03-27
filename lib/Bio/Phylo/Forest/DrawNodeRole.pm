@@ -1,7 +1,8 @@
-package Bio::Phylo::Forest::DrawNode;
+package Bio::Phylo::Forest::DrawNodeRole;
 use strict;
 use Carp;
-use base 'Bio::Phylo::Forest::Node';
+use Bio::Phylo::Forest::NodeRole;
+use base 'Bio::Phylo::Forest::NodeRole';
 {
 
 	our $AUTOLOAD;
