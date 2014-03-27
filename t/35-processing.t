@@ -1,18 +1,15 @@
-# $Id: 19-svg.t 838 2009-03-04 20:47:20Z rvos $
+#!/usr/bin/perl
 use Test::More 'no_plan';
 use strict;
 use Bio::Phylo::IO 'parse';
 use Bio::Phylo::Treedrawer;
 use Bio::Phylo::Util::Logger ':levels';
-use Bio::Phylo::Factory;
-my $factory = Bio::Phylo::Factory->new;
-$factory->register_class( 'tree' => 'Bio::Phylo::Forest::DrawTree' );
-$factory->register_class( 'node' => 'Bio::Phylo::Forest::DrawNode' );
+
 my $tree = parse(
     -format  => 'newick',
     -string  => do { local $/; <DATA> },
-    -factory => $factory
 )->first;
+
 $tree->visit(
     sub {
         my $node = shift;
@@ -27,12 +24,12 @@ $tree->visit(
     }
 );
 my $treedrawer = Bio::Phylo::Treedrawer->new(
-    -width       => 800,
-    -height      => 600,
-    -shape       => 'RECT',         # curvogram
-    -mode        => 'PHYLO',        # phylogram
-    -format      => 'Processing',
-    -node_radius => 40,
+    '-width'       => 800,
+    '-height'      => 600,
+    '-shape'       => 'RECT',         # curvogram
+    '-mode'        => 'PHYLO',        # phylogram
+    '-format'      => 'Processing',
+    '-node_radius' => 40,
 );
 $treedrawer->set_tree($tree);
 ok( $treedrawer->draw );
