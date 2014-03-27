@@ -1,25 +1,17 @@
 package Bio::Phylo::Forest::DrawTree;
 use strict;
+use Carp;
 use base 'Bio::Phylo::Forest::Tree';
 use Bio::Phylo::Forest::DrawNode;
 use Bio::Phylo::Util::CONSTANT 'looks_like_hash';
 {
 
-    # @fields array necessary for object destruction
-    my @fields = \(
-        my (
-            %width,             %height,         %node_radius,
-            %tip_radius,        %node_colour,    %node_shape,
-            %node_image,        %branch_color,   %branch_shape,
-            %branch_width,      %branch_style,   %collapsed_width,
-            %font_face,         %font_size,      %font_style,
-            %margin,            %margin_top,     %margin_bottom,
-            %margin_left,       %margin_right,   %padding,
-            %padding_top,       %padding_bottom, %padding_left,
-            %padding_right,     %mode,           %shape,
-            %text_horiz_offset, %text_vert_offset,
-        )
-    );
+	our $AUTOLOAD;
+	my @properties = qw(width height node_radius tip_radius node_color node_shape
+	node_image branch_color branch_shape branch_width branch_style collapsed_width
+	font_face font_size font_style margin margin_top margin_bottom margin_left 
+	margin_right padding padding_top padding_bottom padding_left padding_right
+	mode shape text_horiz_offset text_vert_offset);
 
 =head1 NAME
 
@@ -67,7 +59,10 @@ Tree constructor.
             my $tree = $args{'-tree'};
             my $self = $tree->clone;
             bless $self, $class;
-            $self->visit( sub { bless shift, 'Bio::Phylo::Forest::DrawNode' } );
+            for my $node ( @{ $self->get_entities } ) {
+            	bless $node, 'Bio::Phylo::Forest::DrawNode';
+            }              
+            
             delete $args{'-tree'};
             for my $key ( keys %args ) {
                 my $method = $key;
@@ -93,16 +88,6 @@ Tree constructor.
  Returns : $self
  Args    : width
 
-=cut
-
-    sub set_width {
-        my ( $self, $width ) = @_;
-        my $id = $self->get_id;
-        $width{$id} = $width;
-        $self->_redraw;
-        return $self;
-    }
-
 =item set_height()
 
  Type    : Mutator
@@ -111,16 +96,6 @@ Tree constructor.
  Function: Sets height
  Returns : $self
  Args    : height
-
-=cut
-
-    sub set_height {
-        my ( $self, $height ) = @_;
-        my $id = $self->get_id;
-        $height{$id} = $height;
-        $self->_redraw;
-        return $self;
-    }
 
 =item set_node_radius()
 
@@ -131,16 +106,6 @@ Tree constructor.
  Returns : $self
  Args    : node_radius
 
-=cut
-
-    sub set_node_radius {
-        my ( $self, $node_radius ) = @_;
-        my $id = $self->get_id;
-        $node_radius{$id} = $node_radius;
-        $self->_apply_to_nodes( 'set_radius', $node_radius );
-        return $self;
-    }
-
 =item set_tip_radius()
 
  Type    : Mutator
@@ -149,16 +114,6 @@ Tree constructor.
  Function: Sets tip radius
  Returns : $self
  Args    : tip radius
-
-=cut
-
-    sub set_tip_radius {
-        my ( $self, $r ) = @_;
-        my $id = $self->get_id;
-        $tip_radius{$id} = $r;
-        $self->_apply_to_nodes( 'set_tip_radius', $r );
-        return $self;
-    }
 
 =item set_node_colour()
 
@@ -169,17 +124,6 @@ Tree constructor.
  Returns : $self
  Args    : node_colour
 
-=cut
-
-    sub set_node_colour {
-        my ( $self, $node_colour ) = @_;
-        my $id = $self->get_id;
-        $node_colour{$id} = $node_colour;
-        $self->_apply_to_nodes( 'set_node_colour', $node_colour );
-        return $self;
-    }
-    *set_node_color = \&set_node_colour;
-
 =item set_node_shape()
 
  Type    : Mutator
@@ -189,16 +133,6 @@ Tree constructor.
  Returns : $self
  Args    : node_shape
 
-=cut
-
-    sub set_node_shape {
-        my ( $self, $node_shape ) = @_;
-        my $id = $self->get_id;
-        $node_shape{$id} = $node_shape;
-        $self->_apply_to_nodes( 'set_node_shape', $node_shape );
-        return $self;
-    }
-
 =item set_node_image()
 
  Type    : Mutator
@@ -207,16 +141,6 @@ Tree constructor.
  Function: Sets node_image
  Returns : $self
  Args    : node_image
-
-=cut
-
-    sub set_node_image {
-        my ( $self, $node_image ) = @_;
-        my $id = $self->get_id;
-        $node_image{$id} = $node_image;
-        $self->_apply_to_nodes( 'set_node_image', $node_image );
-        return $self;
-    }
 
 =item set_collapsed_clade_width()
 
@@ -229,16 +153,6 @@ Sets collapsed clade width.
  Returns :
  Args    : Positive number
 
-=cut
-
-    sub set_collapsed_clade_width {
-        my ( $self, $width ) = @_;
-        my $id = $self->get_id;
-        $collapsed_width{$id} = $width;
-        $self->_apply_to_nodes( 'set_collapsed_clade_width', $width );
-        return $self;
-    }
-
 =item set_branch_color()
 
  Type    : Mutator
@@ -247,17 +161,6 @@ Sets collapsed clade width.
  Function: Sets branch_color
  Returns : $self
  Args    : branch_color
-
-=cut
-
-    sub set_branch_color {
-        my ( $self, $branch_color ) = @_;
-        my $id = $self->get_id;
-        $branch_color{$id} = $branch_color;
-        $self->_apply_to_nodes( 'set_branch_color', $branch_color );
-        return $self;
-    }
-    *set_branch_colour = \&set_branch_colour;
 
 =item set_branch_shape()
 
@@ -268,16 +171,6 @@ Sets collapsed clade width.
  Returns : $self
  Args    : branch_shape
 
-=cut
-
-    sub set_branch_shape {
-        my ( $self, $branch_shape ) = @_;
-        my $id = $self->get_id;
-        $branch_shape{$id} = $branch_shape;
-        $self->_apply_to_nodes( 'set_branch_shape', $branch_shape );
-        return $self;
-    }
-
 =item set_branch_width()
 
  Type    : Mutator
@@ -286,16 +179,6 @@ Sets collapsed clade width.
  Function: Sets branch width
  Returns : $self
  Args    : branch_width
-
-=cut
-
-    sub set_branch_width {
-        my ( $self, $branch_width ) = @_;
-        my $id = $self->get_id;
-        $branch_width{$id} = $branch_width;
-        $self->_apply_to_nodes( 'set_branch_width', $branch_width );
-        return $self;
-    }
 
 =item set_branch_style()
 
@@ -306,16 +189,6 @@ Sets collapsed clade width.
  Returns : $self
  Args    : branch_style
 
-=cut
-
-    sub set_branch_style {
-        my ( $self, $branch_style ) = @_;
-        my $id = $self->get_id;
-        $branch_style{$id} = $branch_style;
-        $self->_apply_to_nodes( 'set_branch_style', $branch_style );
-        return $self;
-    }
-
 =item set_font_face()
 
  Type    : Mutator
@@ -324,16 +197,6 @@ Sets collapsed clade width.
  Function: Sets font_face
  Returns : $self
  Args    : font face, Verdana, Arial, Serif
-
-=cut
-
-    sub set_font_face {
-        my ( $self, $font_face ) = @_;
-        my $id = $self->get_id;
-        $font_face{$id} = $font_face;
-        $self->_apply_to_nodes( 'set_font_face', $font_face );
-        return $self;
-    }
 
 =item set_font_size()
 
@@ -344,16 +207,6 @@ Sets collapsed clade width.
  Returns : $self
  Args    : Font size in pixels
 
-=cut
-
-    sub set_font_size {
-        my ( $self, $font_size ) = @_;
-        my $id = $self->get_id;
-        $font_size{$id} = $font_size;
-        $self->_apply_to_nodes( 'set_font_size', $font_size );
-        return $self;
-    }
-
 =item set_font_style()
 
  Type    : Mutator
@@ -362,16 +215,6 @@ Sets collapsed clade width.
  Function: Sets font_style
  Returns : $self
  Args    : Font style, e.g. Italic
-
-=cut
-
-    sub set_font_style {
-        my ( $self, $font_style ) = @_;
-        my $id = $self->get_id;
-        $font_style{$id} = $font_style;
-        $self->_apply_to_nodes( 'set_font_style', $font_style );
-        return $self;
-    }
 
 =item set_margin()
 
@@ -382,20 +225,6 @@ Sets collapsed clade width.
  Returns : $self
  Args    : margin
 
-=cut
-
-    sub set_margin {
-        my ( $self, $margin ) = @_;
-        my $id = $self->get_id;
-        $margin{$id} = $margin;
-        for my $setter (qw(top bottom left right)) {
-            my $method = 'set_margin_' . $setter;
-            $self->$method($margin);
-        }
-        $self->_redraw;
-        return $self;
-    }
-
 =item set_margin_top()
 
  Type    : Mutator
@@ -404,16 +233,6 @@ Sets collapsed clade width.
  Function: Sets margin_top
  Returns : $self
  Args    : margin_top
-
-=cut
-
-    sub set_margin_top {
-        my ( $self, $margin_top ) = @_;
-        my $id = $self->get_id;
-        $margin_top{$id} = $margin_top;
-        $self->_redraw;
-        return $self;
-    }
 
 =item set_margin_bottom()
 
@@ -424,16 +243,6 @@ Sets collapsed clade width.
  Returns : $self
  Args    : margin_bottom
 
-=cut
-
-    sub set_margin_bottom {
-        my ( $self, $margin_bottom ) = @_;
-        my $id = $self->get_id;
-        $margin_bottom{$id} = $margin_bottom;
-        $self->_redraw;
-        return $self;
-    }
-
 =item set_margin_left()
 
  Type    : Mutator
@@ -442,16 +251,6 @@ Sets collapsed clade width.
  Function: Sets margin_left
  Returns : $self
  Args    : margin_left
-
-=cut
-
-    sub set_margin_left {
-        my ( $self, $margin_left ) = @_;
-        my $id = $self->get_id;
-        $margin_left{$id} = $margin_left;
-        $self->_redraw;
-        return $self;
-    }
 
 =item set_margin_right()
 
@@ -462,16 +261,6 @@ Sets collapsed clade width.
  Returns : $self
  Args    : margin_right
 
-=cut
-
-    sub set_margin_right {
-        my ( $self, $margin_right ) = @_;
-        my $id = $self->get_id;
-        $margin_right{$id} = $margin_right;
-        $self->_redraw;
-        return $self;
-    }
-
 =item set_padding()
 
  Type    : Mutator
@@ -480,20 +269,6 @@ Sets collapsed clade width.
  Function: Sets padding
  Returns : $self
  Args    : padding
-
-=cut
-
-    sub set_padding {
-        my ( $self, $padding ) = @_;
-        my $id = $self->get_id;
-        $padding{$id} = $padding;
-        for my $setter (qw(top bottom left right)) {
-            my $method = 'set_padding_' . $setter;
-            $self->$method($padding);
-        }
-        $self->_redraw;
-        return $self;
-    }
 
 =item set_padding_top()
 
@@ -504,16 +279,6 @@ Sets collapsed clade width.
  Returns : $self
  Args    : padding_top
 
-=cut
-
-    sub set_padding_top {
-        my ( $self, $padding_top ) = @_;
-        my $id = $self->get_id;
-        $padding_top{$id} = $padding_top;
-        $self->_redraw;
-        return $self;
-    }
-
 =item set_padding_bottom()
 
  Type    : Mutator
@@ -522,16 +287,6 @@ Sets collapsed clade width.
  Function: Sets padding_bottom
  Returns : $self
  Args    : padding_bottom
-
-=cut
-
-    sub set_padding_bottom {
-        my ( $self, $padding_bottom ) = @_;
-        my $id = $self->get_id;
-        $padding_bottom{$id} = $padding_bottom;
-        $self->_redraw;
-        return $self;
-    }
 
 =item set_padding_left()
 
@@ -542,16 +297,6 @@ Sets collapsed clade width.
  Returns : $self
  Args    : padding_left
 
-=cut
-
-    sub set_padding_left {
-        my ( $self, $padding_left ) = @_;
-        my $id = $self->get_id;
-        $padding_left{$id} = $padding_left;
-        $self->_redraw;
-        return $self;
-    }
-
 =item set_padding_right()
 
  Type    : Mutator
@@ -560,16 +305,6 @@ Sets collapsed clade width.
  Function: Sets padding_right
  Returns : $self
  Args    : padding_right
-
-=cut
-
-    sub set_padding_right {
-        my ( $self, $padding_right ) = @_;
-        my $id = $self->get_id;
-        $padding_right{$id} = $padding_right;
-        $self->_redraw;
-        return $self;
-    }
 
 =item set_mode()
 
@@ -580,16 +315,6 @@ Sets collapsed clade width.
  Returns : $self
  Args    : mode, e.g. 'CLADO' or 'PHYLO'
 
-=cut
-
-    sub set_mode {
-        my ( $self, $mode ) = @_;
-        my $id = $self->get_id;
-        $mode{$id} = $mode;
-        $self->_redraw;
-        return $self;
-    }
-
 =item set_shape()
 
  Type    : Mutator
@@ -598,15 +323,6 @@ Sets collapsed clade width.
  Function: Sets shape
  Returns : $self
  Args    : shape, e.g. 'RECT', 'CURVY', 'DIAG'
-
-=cut
-
-    sub set_shape {
-        my ( $self, $shape ) = @_;
-        my $id = $self->get_id;
-        $shape{$id} = $shape;
-        return $self;
-    }
 
 =item set_text_horiz_offset()
 
@@ -617,16 +333,6 @@ Sets collapsed clade width.
  Returns : $self
  Args    : text_horiz_offset
 
-=cut
-
-    sub set_text_horiz_offset {
-        my ( $self, $text_horiz_offset ) = @_;
-        my $id = $self->get_id;
-        $text_horiz_offset{$id} = $text_horiz_offset;
-        $self->_apply_to_nodes( 'set_text_horiz_offset', $text_horiz_offset );
-        return $self;
-    }
-
 =item set_text_vert_offset()
 
  Type    : Mutator
@@ -635,16 +341,6 @@ Sets collapsed clade width.
  Function: Sets text_vert_offset
  Returns : $self
  Args    : text_vert_offset
-
-=cut
-
-    sub set_text_vert_offset {
-        my ( $self, $text_vert_offset ) = @_;
-        my $id = $self->get_id;
-        $text_vert_offset{$id} = $text_vert_offset;
-        $self->_apply_to_nodes( 'set_text_vert_offset', $text_vert_offset );
-        return $self;
-    }
 
 =back
 
@@ -661,14 +357,6 @@ Sets collapsed clade width.
  Returns : width
  Args    : NONE
 
-=cut
-
-    sub get_width {
-        my $self = shift;
-        my $id   = $self->get_id;
-        return $width{$id};
-    }
-
 =item get_height()
 
  Type    : Accessor
@@ -677,14 +365,6 @@ Sets collapsed clade width.
  Function: Gets height
  Returns : height
  Args    : NONE
-
-=cut
-
-    sub get_height {
-        my $self = shift;
-        my $id   = $self->get_id;
-        return $height{$id};
-    }
 
 =item get_node_radius()
 
@@ -695,14 +375,6 @@ Sets collapsed clade width.
  Returns : node_radius
  Args    : NONE
 
-=cut
-
-    sub get_node_radius {
-        my $self = shift;
-        my $id   = $self->get_id;
-        return $node_radius{$id};
-    }
-
 =item get_node_colour()
 
  Type    : Accessor
@@ -711,15 +383,6 @@ Sets collapsed clade width.
  Function: Gets node_colour
  Returns : node_colour
  Args    : NONE
-
-=cut
-
-    sub get_node_colour {
-        my $self = shift;
-        my $id   = $self->get_id;
-        return $node_colour{$id};
-    }
-    *get_node_color = \&get_node_colour;
 
 =item get_node_shape()
 
@@ -730,14 +393,6 @@ Sets collapsed clade width.
  Returns : node_shape
  Args    : NONE
 
-=cut
-
-    sub get_node_shape {
-        my $self = shift;
-        my $id   = $self->get_id;
-        return $node_shape{$id};
-    }
-
 =item get_node_image()
 
  Type    : Accessor
@@ -746,14 +401,6 @@ Sets collapsed clade width.
  Function: Gets node_image
  Returns : node_image
  Args    : NONE
-
-=cut
-
-    sub get_node_image {
-        my $self = shift;
-        my $id   = $self->get_id;
-        return $node_image{$id};
-    }
 
 =item get_collapsed_clade_width()
 
@@ -766,14 +413,6 @@ Gets collapsed clade width.
  Returns : Positive number
  Args    : None
 
-=cut
-
-    sub get_collapsed_clade_width {
-        my $self = shift;
-        my $id   = $self->get_id;
-        return $collapsed_width{$id};
-    }
-
 =item get_branch_color()
 
  Type    : Accessor
@@ -782,15 +421,6 @@ Gets collapsed clade width.
  Function: Gets branch_color
  Returns : branch_color
  Args    : NONE
-
-=cut
-
-    sub get_branch_color {
-        my $self = shift;
-        my $id   = $self->get_id;
-        return $branch_color{$id};
-    }
-    *get_branch_colour = \&get_branch_color;
 
 =item get_branch_shape()
 
@@ -801,14 +431,6 @@ Gets collapsed clade width.
  Returns : branch_shape
  Args    : NONE
 
-=cut
-
-    sub get_branch_shape {
-        my $self = shift;
-        my $id   = $self->get_id;
-        return $branch_shape{$id};
-    }
-
 =item get_branch_width()
 
  Type    : Accessor
@@ -817,14 +439,6 @@ Gets collapsed clade width.
  Function: Gets branch_width
  Returns : branch_width
  Args    : NONE
-
-=cut
-
-    sub get_branch_width {
-        my $self = shift;
-        my $id   = $self->get_id;
-        return $branch_width{$id};
-    }
 
 =item get_branch_style()
 
@@ -835,14 +449,6 @@ Gets collapsed clade width.
  Returns : branch_style
  Args    : NONE
 
-=cut
-
-    sub get_branch_style {
-        my $self = shift;
-        my $id   = $self->get_id;
-        return $branch_style{$id};
-    }
-
 =item get_font_face()
 
  Type    : Accessor
@@ -851,14 +457,6 @@ Gets collapsed clade width.
  Function: Gets font_face
  Returns : font_face
  Args    : NONE
-
-=cut
-
-    sub get_font_face {
-        my $self = shift;
-        my $id   = $self->get_id;
-        return $font_face{$id};
-    }
 
 =item get_font_size()
 
@@ -869,14 +467,6 @@ Gets collapsed clade width.
  Returns : font_size
  Args    : NONE
 
-=cut
-
-    sub get_font_size {
-        my $self = shift;
-        my $id   = $self->get_id;
-        return $font_size{$id};
-    }
-
 =item get_font_style()
 
  Type    : Accessor
@@ -885,14 +475,6 @@ Gets collapsed clade width.
  Function: Gets font_style
  Returns : font_style
  Args    : NONE
-
-=cut
-
-    sub get_font_style {
-        my $self = shift;
-        my $id   = $self->get_id;
-        return $font_style{$id};
-    }
 
 =item get_margin()
 
@@ -903,14 +485,6 @@ Gets collapsed clade width.
  Returns : margin
  Args    : NONE
 
-=cut
-
-    sub get_margin {
-        my $self = shift;
-        my $id   = $self->get_id;
-        return $margin{$id};
-    }
-
 =item get_margin_top()
 
  Type    : Accessor
@@ -919,14 +493,6 @@ Gets collapsed clade width.
  Function: Gets margin_top
  Returns : margin_top
  Args    : NONE
-
-=cut
-
-    sub get_margin_top {
-        my $self = shift;
-        my $id   = $self->get_id;
-        return $margin_top{$id};
-    }
 
 =item get_margin_bottom()
 
@@ -937,14 +503,6 @@ Gets collapsed clade width.
  Returns : margin_bottom
  Args    : NONE
 
-=cut
-
-    sub get_margin_bottom {
-        my $self = shift;
-        my $id   = $self->get_id;
-        return $margin_bottom{$id};
-    }
-
 =item get_margin_left()
 
  Type    : Accessor
@@ -953,14 +511,6 @@ Gets collapsed clade width.
  Function: Gets margin_left
  Returns : margin_left
  Args    : NONE
-
-=cut
-
-    sub get_margin_left {
-        my $self = shift;
-        my $id   = $self->get_id;
-        return $margin_left{$id};
-    }
 
 =item get_margin_right()
 
@@ -971,14 +521,6 @@ Gets collapsed clade width.
  Returns : margin_right
  Args    : NONE
 
-=cut
-
-    sub get_margin_right {
-        my $self = shift;
-        my $id   = $self->get_id;
-        return $margin_right{$id};
-    }
-
 =item get_padding()
 
  Type    : Accessor
@@ -987,14 +529,6 @@ Gets collapsed clade width.
  Function: Gets padding
  Returns : padding
  Args    : NONE
-
-=cut
-
-    sub get_padding {
-        my $self = shift;
-        my $id   = $self->get_id;
-        return $padding{$id};
-    }
 
 =item get_padding_top()
 
@@ -1005,14 +539,6 @@ Gets collapsed clade width.
  Returns : padding_top
  Args    : NONE
 
-=cut
-
-    sub get_padding_top {
-        my $self = shift;
-        my $id   = $self->get_id;
-        return $padding_top{$id};
-    }
-
 =item get_padding_bottom()
 
  Type    : Accessor
@@ -1021,14 +547,6 @@ Gets collapsed clade width.
  Function: Gets padding_bottom
  Returns : padding_bottom
  Args    : NONE
-
-=cut
-
-    sub get_padding_bottom {
-        my $self = shift;
-        my $id   = $self->get_id;
-        return $padding_bottom{$id};
-    }
 
 =item get_padding_left()
 
@@ -1039,14 +557,6 @@ Gets collapsed clade width.
  Returns : padding_left
  Args    : NONE
 
-=cut
-
-    sub get_padding_left {
-        my $self = shift;
-        my $id   = $self->get_id;
-        return $padding_left{$id};
-    }
-
 =item get_padding_right()
 
  Type    : Accessor
@@ -1055,14 +565,6 @@ Gets collapsed clade width.
  Function: Gets padding_right
  Returns : padding_right
  Args    : NONE
-
-=cut
-
-    sub get_padding_right {
-        my $self = shift;
-        my $id   = $self->get_id;
-        return $padding_right{$id};
-    }
 
 =item get_mode()
 
@@ -1077,11 +579,10 @@ Gets collapsed clade width.
 
     sub get_mode {
         my $self = shift;
-        my $id   = $self->get_id;
         if ( $self->is_cladogram ) {
-            $mode{$id} = 'CLADO';
+            return 'CLADO';
         }
-        return $mode{$id};
+        return $self->get_meta_object( 'map:mode' );
     }
 
 =item get_shape()
@@ -1093,14 +594,6 @@ Gets collapsed clade width.
  Returns : shape
  Args    : NONE
 
-=cut
-
-    sub get_shape {
-        my $self = shift;
-        my $id   = $self->get_id;
-        return $shape{$id};
-    }
-
 =item get_text_horiz_offset()
 
  Type    : Accessor
@@ -1110,14 +603,6 @@ Gets collapsed clade width.
  Returns : text_horiz_offset
  Args    : NONE
 
-=cut
-
-    sub get_text_horiz_offset {
-        my $self = shift;
-        my $id   = $self->get_id;
-        return $text_horiz_offset{$id};
-    }
-
 =item get_text_vert_offset()
 
  Type    : Accessor
@@ -1126,14 +611,6 @@ Gets collapsed clade width.
  Function: Gets text_vert_offset
  Returns : text_vert_offset
  Args    : NONE
-
-=cut
-
-    sub get_text_vert_offset {
-        my $self = shift;
-        my $id   = $self->get_id;
-        return $text_vert_offset{$id};
-    }
 
 =begin comment
 
@@ -1148,74 +625,104 @@ This method re-computes the node coordinates
         my ( $width, $height ) = ( $self->get_width, $self->get_height );
         my $tips_seen  = 0;
         my $total_tips = $self->calc_number_of_terminals();
-        my $tallest    = $self->get_root->calc_max_path_to_tips;
-        my $maxnodes   = $self->get_root->calc_max_nodes_to_tips;
-        my $is_clado   = $self->get_mode =~ m/^c/i;
-        $self->visit_depth_first(
-            '-post' => sub {
-                my $node = shift;
-                my ( $x, $y );
-                if ( $node->is_terminal ) {
-                    $tips_seen++;
-                    $y = ( $height / $total_tips ) * $tips_seen;
-                    $x =
-                        $is_clado
-                      ? $width
-                      : ( $width / $tallest ) * $node->calc_path_to_root;
-                }
-                else {
-                    my @children = @{ $node->get_children };
-                    $y += $_->get_y for @children;
-                    $y /= scalar @children;
-                    $x =
-                        $is_clado
-                      ? $width -
-                      ( ( $width / $maxnodes ) * $node->calc_max_nodes_to_tips )
-                      : ( $width / $tallest ) * $node->calc_path_to_root;
-                }
-                $node->set_y($y);
-                $node->set_x($x);
-            }
-        );
-    }
-
-=begin comment
-
-This method applies settings for nodes globally.
-
-=end comment
-
-=cut
-
-    sub _apply_to_nodes {
-        my ( $self, $method, $value ) = @_;
-        $self->visit( sub { shift->$method($value) } );
-    }
-
-=begin comment
-
- Type    : Internal method
- Title   : _cleanup
- Usage   : $trees->_cleanup;
- Function: Called during object destruction, for cleanup of instance data
- Returns : 
- Args    :
-
-=end comment
-
-=cut
-
-    sub _cleanup {
-        my $self = shift;
-        my $id   = $self->get_id;
-        for my $field (@fields) {
-            delete $field->{$id};
+        if ( my $root = $self->get_root ) {
+			my $tallest    = $root->calc_max_path_to_tips;
+			my $maxnodes   = $root->calc_max_nodes_to_tips;
+			my $is_clado   = $self->get_mode =~ m/^c/i;
+			$self->visit_depth_first(
+				'-post' => sub {
+					my $node = shift;
+					my ( $x, $y );
+					if ( $node->is_terminal ) {
+						$tips_seen++;
+						$y = ( $height / $total_tips ) * $tips_seen;
+						$x =
+							$is_clado
+						  ? $width
+						  : ( $width / $tallest ) * $node->calc_path_to_root;
+					}
+					else {
+						my @children = @{ $node->get_children };
+						$y += $_->get_y for @children;
+						$y /= scalar @children;
+						$x =
+							$is_clado
+						  ? $width -
+						  ( ( $width / $maxnodes ) * $node->calc_max_nodes_to_tips )
+						  : ( $width / $tallest ) * $node->calc_path_to_root;
+					}
+					$node->set_y($y);
+					$node->set_x($x);
+				}
+			);
         }
     }
+
 
 =back
 
 =cut
+
+	sub AUTOLOAD {
+		my $self = shift;
+		my $method = $AUTOLOAD;
+		$method =~ s/.+://; # strip package names
+		$method =~ s/colour/color/; # map Canadian/British to American :)
+		
+		# if the user calls some non-existant method, try to do the
+		# usual way, with this message, from perspective of caller
+		my $template = 'Can\'t locate object method "%s" via package "%s"';
+		
+		# handler set_* method calls
+		if ( $method =~ /^set_(.+)$/ ) {
+			my $prop = $1;
+
+			# test if this is actually settable			
+			if ( grep { /^\Q$prop\E$/ } @properties ) {
+				my $value = shift;
+			
+				# these are properties that must be applied to all nodes
+				if ( $prop =~ /_(?:node|tip|branch|clade|font|text)_/ ) {
+					$self->visit(sub{
+						my $node = shift;
+						$node->$method($value);
+					});
+				}
+			
+				# these are properties that must be expanded to left/right/top/bottom
+				if ( $prop =~ /_(?:margin|padding)$/ ) {
+					for my $pos ( qw(left right top bottom) ) {
+						my $expanded = $method . '_' . $pos;
+						$self->$expanded($value);
+					}
+				}
+			
+				# also apply the property to the tree itself
+				$self->set_meta_object( "map:$prop" => $value );
+				$self->_redraw;
+				return $self;
+			}
+			else {				
+				croak sprintf $template, $method, __PACKAGE__;
+			}
+		}
+		elsif ( $method =~ /^get_(.+)$/ ) {
+			my $prop = $1;
+			
+			# test if this is actually gettable			
+			if ( grep { /^\Q$prop\E$/ } @properties ) {
+			
+				# return the annotation
+				return $self->get_meta_object( "map:$prop" );
+			}
+			else {				
+				croak sprintf $template, $method, __PACKAGE__;
+			}			
+		}
+		else {
+			croak sprintf $template, $method, __PACKAGE__;
+		}	
+	}
 
     # podinherit_insert_token
 
