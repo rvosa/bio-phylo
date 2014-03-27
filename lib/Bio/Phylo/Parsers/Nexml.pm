@@ -406,6 +406,7 @@ sub _handle_chars {
     # now process character sets
     $self->_process_set($definitions_elt,$characters);
     push @{ $self->{'_blocks'} }, $matrix_obj;
+    $self->_logger->info( $self->_pos . " Processed block id: $matrix_id" );
 }
 
 # here we create a hash keyed on column ids => state ids => state symbols
