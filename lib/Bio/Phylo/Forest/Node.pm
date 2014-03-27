@@ -1,7 +1,7 @@
 package Bio::Phylo::Forest::Node;
 use strict;
-use Bio::Phylo::Forest::NodeRole;
-use base qw'Bio::Phylo::Forest::NodeRole';
+use Bio::Phylo::Forest::DrawNodeRole;
+use base qw'Bio::Phylo::Forest::DrawNodeRole';
 use Bio::Phylo::Util::CONSTANT qw':objecttypes /looks_like/';
 use Bio::Phylo::Util::Exceptions 'throw';
 use Scalar::Util 'weaken';

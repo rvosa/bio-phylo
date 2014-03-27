@@ -1,7 +1,7 @@
 package Bio::Phylo::Forest::Tree;
 use strict;
-use Bio::Phylo::Forest::TreeRole;
-use base 'Bio::Phylo::Forest::TreeRole';
+use Bio::Phylo::Forest::DrawTreeRole;
+use base qw'Bio::Phylo::Forest::DrawTreeRole';
 {
     my @fields = \( my ( %default, %rooted ) );
 
