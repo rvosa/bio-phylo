@@ -21,7 +21,7 @@ my %recommended = (
 check_prereq( keys %recommended );
 
 my %parms = (
-    'NAME'         => 'Bio-Phylo',
+    'NAME'         => 'Bio::Phylo', # EU::MM apparently now wants Package::Name
     'AUTHOR'       => 'Rutger Vos',
     'PL_FILES'     => {},
     'EXE_FILES'    => [],
