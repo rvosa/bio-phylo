@@ -661,7 +661,9 @@ Invocant destructor.
 		my @classes = @{ $mop->get_classes($self) };
 		for my $class ( @classes ) {
 			my $cleanup = "${class}::_cleanup";
-			$self->$cleanup;
+			if ( $class->can($cleanup) ) {				
+				$self->$cleanup;
+			}
 		}
 		
 		# unregister from mediator
