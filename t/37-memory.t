@@ -38,10 +38,10 @@ my $fac = Bio::Phylo::Factory->new;
         $taxa->insert($taxon);
         ( $taxon_id, $taxa_id ) = ( $taxon->get_id, $taxa->get_id );
     }
-SKIP: {
-	skip "please fix cyclical references in objects contained by Listables", 1, 1;
+#SKIP: {
+#	skip "please fix cyclical references in objects contained by Listables", 1, 1;
 	ok( ! Bio::Phylo->get_obj_by_id($taxon_id), 'test contained taxon in taxa destruction' );
-}
+#}
     ok( ! Bio::Phylo->get_obj_by_id($taxa_id), 'test container taxa destruction' );
 }
 
@@ -74,10 +74,10 @@ SKIP: {
         $tree->insert($node);
         ( $node_id, $tree_id ) = ( $node->get_id, $tree->get_id );
     }
-SKIP: {
-	skip "please fix cyclical references in objects contained by Listables", 1, 1;    
+#SKIP: {
+#	skip "please fix cyclical references in objects contained by Listables", 1, 1;    
     ok( ! Bio::Phylo->get_obj_by_id($node_id), 'test contained node in tree destruction' );
-}
+#}
     ok( ! Bio::Phylo->get_obj_by_id($tree_id), 'test container tree destruction' );
 }
 
@@ -92,11 +92,11 @@ SKIP: {
         $tree->insert($child,$parent);
         ( $n1, $n2, $t ) = ( $child->get_id, $parent->get_id, $tree->get_id );
     }
-SKIP: {
-	skip "please fix cyclical references in objects contained by Listables", 2, 1;    
+#SKIP: {
+#	skip "please fix cyclical references in objects contained by Listables", 2, 1;    
     ok( ! Bio::Phylo->get_obj_by_id($n1), 'test nodes in tree destruction' );
     ok( ! Bio::Phylo->get_obj_by_id($n2), 'test nodes in tree destruction' );
-}
+#}
     ok( ! Bio::Phylo->get_obj_by_id($t), 'test nodes in tree destruction' );
 }
 
@@ -130,10 +130,10 @@ SKIP: {
         ( $m, $d ) = ( $matrix->get_id, $datum->get_id );
     }
     ok( ! Bio::Phylo->get_obj_by_id($m), 'test container matrix destruction' );
-SKIP: {
-	skip "please fix cyclical references in objects contained by Listables", 1, 1;    
+#SKIP: {
+#	skip "please fix cyclical references in objects contained by Listables", 1, 1;    
     ok( ! Bio::Phylo->get_obj_by_id($d), 'test contained datum in matrix destruction' );
-}
+#}
 }
 
 # test entire project

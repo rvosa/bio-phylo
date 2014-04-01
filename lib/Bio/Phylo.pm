@@ -654,9 +654,14 @@ Invocant destructor.
 		}
 
 		# do the cleanups
-		my @destructors = @{ $mop->get_destructors( $self ) };
-		for my $d ( @destructors ) {			
-			$d->{'code'}->( $self );
+# 		my @destructors = @{ $mop->get_destructors( $self ) };
+# 		for my $d ( @destructors ) {			
+# 			$d->{'code'}->( $self );
+# 		}
+		my @classes = @{ $mop->get_classes($self) };
+		for my $class ( @classes ) {
+			my $cleanup = "${class}::_cleanup";
+			$self->$cleanup;
 		}
 		
 		# unregister from mediator
