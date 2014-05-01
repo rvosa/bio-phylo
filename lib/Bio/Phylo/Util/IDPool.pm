@@ -21,6 +21,10 @@ use strict;
 
         #        push @reclaim, $obj->get_id;
     }
+    
+    sub _reset {
+    	$obj_counter = 1;
+    }
 }
 1;
 __END__
