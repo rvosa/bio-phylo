@@ -162,7 +162,7 @@ sub _NS_PHYLOXML_ () { 'http://www.phyloxml.org/1.10/terms#' }
 sub _NS_TB2PURL_ ()  { 'http://purl.org/phylo/treebase/phylows/' }
 sub _NS_TNRS_ ()     { 'http://phylotastic.org/tnrs/terms#' }
 sub _NS_FIGTREE_ ()  { 'http://tree.bio.ed.ac.uk/software/figtree/terms#' }
-sub _NS_PHYLOMAP_ () { 'http://purl.org/phylo/phylomap/terms#' }
+sub _NS_PHYLOMAP_ () { 'http://phylomap.org/terms.owl#' }
 sub _NS_BIOVEL_ ()   { 'http://biovel.eu/terms#' }
 
 our $NS = {
