@@ -1045,9 +1045,27 @@ Serializes object to CDAO RDF/XML string
 
     sub _cleanup : Destructor {
         my $self = shift;
-        my $id   = $self->get_id;
-        for my $field (@fields) {
-            delete $field->{$id};
+        
+        # this deserves an explanation. the issue is as follows: for the package
+        # bio-phylo-megatree we have node objects that are persisted in a database
+        # and accessed through an object-relational mapping provided by DBIx::Class.
+        # these node objects are created and destroyed on the fly as a set of node
+        # records (i.e. a tree) is traversed. this is the whole point of the package,
+        # because it means large trees don't ever have to be kept in memory. however,
+        # as a consequence, every time one of those ORM-backed nodes goes out of scope, 
+        # this destructor is called and all the @fields are cleaned up again. this 
+        # precludes computation and caching of node coordinates (or any other semantic 
+        # annotation) on such ORM-backed objects. the terrible, terrible fix for now is 
+        # to just assume that i) these annotations need to stay alive ii) we're not going 
+        # to have ID clashes (!!!!!), so iii) we just don't clean up after ourselves. 
+        # as a note to my future self: it would be a good idea to have a triple store-like 
+        # table to store the annotations, so they are persisted in the same way as the
+        # node objects, bypassing this malarkey.        
+        if ( not $self->isa('DBIx::Class::Core') ) {
+			my $id = $self->get_id;
+			for my $field (@fields) {
+				delete $field->{$id};
+			}
         }
     }
 
