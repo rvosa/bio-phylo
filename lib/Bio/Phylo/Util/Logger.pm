@@ -68,7 +68,7 @@ BEGIN {
         if ( $verbosity >= $levels{$lvl} ) {            
 
             # strip the prefix from the calling file's path
-            if ( index $file1, $PREFIX == 0 ) {
+            if ( index($file1, $PREFIX) == 0 ) {
                 $file1 =~ s/^\Q$PREFIX\E//;
             }
             
