@@ -168,9 +168,9 @@ Serializes object to general purpose string
         my $class         = ref $self;
         my $id            = $self->get_id;
         my $internal_name = $self->get_internal_name;
-        my $name          = $self->get_name;
-        my $score         = $self->get_score;
-        my $desc          = $self->get_desc;
+        my $name          = $self->get_name  || '';
+        my $score         = $self->get_score || '';
+        my $desc          = $self->get_desc  || '';
         return <<"SERIALIZED_OBJECT";
 class: $class
 id: $id
