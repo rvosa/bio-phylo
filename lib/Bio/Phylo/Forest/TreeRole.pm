@@ -2314,22 +2314,22 @@ Randomly breaks polytomies.
  Function: Randomly breaks polytomies by inserting 
            additional internal nodes.
  Returns : The modified invocant.
- Args    :
+ Args    : Optionally, when passed a true value (e.g. '1'), the newly created nodes
+           will be unnamed, otherwise they will be named 'r1', 'r2', 'r3' and so on.
  Comments:
 
 =cut
 
     sub resolve {
-        my $tree = shift;
+        my ( $tree, $anonymous ) = @_;
         for my $node ( @{ $tree->get_internals } ) {
             my @children = @{ $node->get_children };
             if ( scalar @children > 2 ) {
                 my $i = 1;
                 while ( scalar @children > 2 ) {
-                    my $newnode = Bio::Phylo::Forest::Node->new(
-                        '-branch_length' => 0.00,
-                        '-name'          => 'r' . $i++,
-                    );
+                	my %args = ( '-branch_length' => 0.00 );
+                	$args{'-name'} = 'r' . $i++ unless $anonymous;
+                    my $newnode = $fac->create_node(%args);
                     $tree->insert($newnode);
                     $newnode->set_parent($node);
                     for ( 1 .. 2 ) {
