@@ -2703,27 +2703,55 @@ Collapses internal nodes with fewer than 2 children.
                 #Êthe node is interior, now need to check for each child
                 # if it's interior as well
                 if ( @children ) {
+                
+                	# special case for the root with unbranched child
+                	if ( $node->is_root and 1 == @children ) {
+                		my ($child) = @children;
+						for my $gchild ( @{ $child->get_children } ) {
+					
+							# compute the new branch length for $gchild
+							my $clength = $child->get_branch_length;
+							my $glength = $gchild->get_branch_length;
+							my $length = $clength if defined $clength;
+							$length += $glength if defined $glength;
+							$gchild->set_branch_length($length) if defined $length;
+							
+							# connect grandchild to root
+							$gchild->set_parent($node);
+							$node->delete($child);
+					
+							# will delete these nodes from the tree array
+							# after the recursion
+							push @delete, $child;						
+						}              		
+                	}
+                	else {
                     
-                    # iterate over children 
-                    for my $child ( @children ) {
-                        my @grandchildren = @{ $child->get_children };
-                        
-                        # $child is an unbranched internal, so $grandchildren[0]
-                        # needs to be connected to $node
-                        if ( 1 == scalar @grandchildren ) {
-                            my $gchild = $grandchildren[0];
-                            
-                            # compute the new branch length for $gchild
-                            my $length = (  $child->get_branch_length || 0 )
-                                       + ( $gchild->get_branch_length || 0 );
-                            $gchild->set_branch_length($length);
-                            $gchild->set_parent($node);
-                            $node->delete($child);
-                            
-                            # will delete these nodes from the tree array
-                            # after the recursion
-                            push @delete, $child;						
-                        }
+						# iterate over children 
+						for my $child ( @children ) {
+							my $child_name = $child->get_name;
+							my @grandchildren = @{ $child->get_children };
+						
+							# $child is an unbranched internal, so $grandchildren[0]
+							# needs to be connected to $node
+							if ( 1 == scalar @grandchildren ) {
+								my $gchild = $grandchildren[0];
+							
+								# compute the new branch length for $gchild
+								my $clength = $child->get_branch_length;
+								my $glength = $gchild->get_branch_length;
+								my $length = $clength if defined $clength;
+								$length += $glength if defined $glength;
+								$gchild->set_branch_length($length) if defined $length;
+								
+								$gchild->set_parent($node);
+								$node->delete($child);
+							
+								# will delete these nodes from the tree array
+								# after the recursion
+								push @delete, $child;						
+							}
+						}
                     }				
                 }
             }
