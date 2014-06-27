@@ -62,7 +62,7 @@ BEGIN {
         # cascade verbosity from global to local
         my $verbosity = $VERBOSITY{'*'}; # global
         $verbosity = $VERBOSITY{$pack1} if exists $VERBOSITY{$pack1}; # package
-        $verbosity = $VERBOSITY{$sub2}  if exists $VERBOSITY{$sub2}; # sub
+        $verbosity = $VERBOSITY{$sub2}  if $sub2 and exists $VERBOSITY{$sub2}; # sub
         
         # verbosity is higher than the current caller, proceed
         if ( $verbosity >= $levels{$lvl} ) {            
