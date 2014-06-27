@@ -273,9 +273,9 @@ Sets three special symbols in one call
                   . join( ', ', values %args );
             }
             my %old_special_symbols = (
-                $self->get_missing   => 'set_missing',
-                $self->get_gap       => 'set_gap',
-                $self->get_matchchar => 'set_matchchar',
+                ( $self->get_missing   || '?' ) => 'set_missing',
+                ( $self->get_gap       || '-' ) => 'set_gap',
+                ( $self->get_matchchar || '.' ) => 'set_matchchar',
             );
             my %new_special_symbols = (
                 $args{'-missing'}   => 'set_missing',
