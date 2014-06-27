@@ -74,7 +74,7 @@ BEGIN {
             
             # make template, populate string
             my $tmpl = "%s %s [%s: %i] - %s\n";
-            my $string = sprintf $tmpl, $lvl, $sub2, $file1, $line1, $msg;
+            my $string = sprintf $tmpl, $lvl, ( $sub2 || '' ), $file1, $line1, $msg;
             
             # dispatch to the listeners
             $_->( $string, $lvl, $sub2, $file1, $line1, $msg ) for @listeners;
