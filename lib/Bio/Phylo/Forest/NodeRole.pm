@@ -939,7 +939,6 @@ Gets invocant's most recent common ancestor shared with argument.
                 }
             }
         }
-        $logger->warn( "using " . $self_anc->[-1]->get_internal_name );
         return $self_anc->[-1];
     }
 
@@ -1963,17 +1962,17 @@ Serializes subtree subtended by invocant to newick string.
             my $name;
             if ( $node->is_terminal or $args{'-nodelabels'} ) {
                 if ( not $args{'-tipnames'} ) {
-                    $name = $node->get_nexus_name;
+                    $name = $node->get_nexus_name(1);
                 }
                 elsif ( $args{'-tipnames'} =~ /^internal$/i ) {
-                    $name = $node->get_nexus_name;
+                    $name = $node->get_nexus_name(1);
                 }
                 elsif ( $args{'-tipnames'} =~ /^taxon/i and $node->get_taxon ) {
                     if ( $args{'-tipnames'} =~ /^taxon_internal$/i ) {
-                        $name = $node->get_taxon->get_nexus_name;
+                        $name = $node->get_taxon->get_nexus_name(1);
                     }
                     elsif ( $args{'-tipnames'} =~ /^taxon$/i ) {
-                        $name = $node->get_taxon->get_nexus_name;
+                        $name = $node->get_taxon->get_nexus_name(1);
                     }
                 }
                 else {
