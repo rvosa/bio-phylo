@@ -1755,6 +1755,34 @@ L<http://dx.doi.org/10.1016/0025-5564(81)90043-2>
         return $symdiff;
     }
 
+=item calc_avtd()
+
+Calculates the average taxonomic distinctiveness. See
+Clarke KR, Warwick RM (1998) A taxonomic distinctness index and its statistical 
+properties. J Appl Ecol 35:523-525
+
+ Type    : Calculation
+ Title   : calc_avtd
+ Usage   : my $avtd = $tree->calc_avtd;
+ Function: Returns the average taxonomic distinctiveness
+ Returns : SCALAR
+ Args    : A Bio::Phylo::Forest::Tree object
+ Comments: 
+
+=cut
+
+	sub calc_avtd {
+		my $tree = shift;
+		my @tips = @{ $tree->get_terminals };
+		my $dist = 0;
+		for my $i ( 0 .. $#tips - 1 ) {
+			for my $j ( $i + 1 .. $#tips ) {
+				$dist += $tips[$i]->calc_patristic_distance($tips[$j]);
+			}
+		}
+		return $dist / scalar(@tips);
+	}
+
 =item calc_fp() 
 
 Calculates the Fair Proportion value for each terminal.
