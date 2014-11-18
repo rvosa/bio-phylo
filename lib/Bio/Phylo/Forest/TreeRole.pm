@@ -1348,7 +1348,7 @@ Calculates I2 imbalance.
 
 =item calc_gamma()
 
-Calculates the Pybus gamma statistic.
+Calculates the Pybus & Harvey (2000) gamma statistic.
 
  Type    : Calculation
  Title   : calc_gamma
