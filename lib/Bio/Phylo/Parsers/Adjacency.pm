@@ -45,6 +45,9 @@ sub _parse {
 	my ( @header, %node_cols );
 	my %node_for_id;
     LINE: while (<$fh>) {
+    	unless ( scalar(keys(%node_for_id)) % 1000 ) {
+    		$log->debug("processed node " . scalar(keys(%node_for_id)));
+    	}
         chomp;
 		
 		# the first line is the header row
