@@ -243,7 +243,8 @@ Gets node that divides tree into two distance-balanced partitions.
  Function: Gets node nearest to the middle of the longest path
  Returns : A Bio::Phylo::Forest::Node object.
  Args    : NONE
- Comments: This algorithm was ported from ETE
+ Comments: This algorithm was ported from ETE. 
+           It assumes the tree has branch lengths.
 
 =cut
 
@@ -251,7 +252,8 @@ Gets node that divides tree into two distance-balanced partitions.
         my $self     = shift;
         my $root     = $self->get_root;
         my $nA       = $self->get_tallest_tip;
-        my $nB       = $nA->get_farthest_node;
+        my $nB       = $nA->get_farthest_node(1);
+        $logger->error("no farthest node!") unless $nB; 
         my $A2B_dist = $nA->calc_path_to_root + $nB->calc_path_to_root;
         my $outgroup = $nA;
         my $middist  = $A2B_dist / 2;
