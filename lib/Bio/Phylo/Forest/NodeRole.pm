@@ -736,6 +736,9 @@ instead.
             }
             return $furthest_node;
         }
+        else {
+        	$logger->error("no terminals!");
+        }
     }
 
 =item get_sisters()
