@@ -636,14 +636,12 @@ Test if tree is bifurcating.
 
     sub is_binary {
         my $self = shift;
-        for ( @{ $self->get_internals } ) {
-            if ( $_->get_first_daughter->get_next_sister->get_id !=
-                $_->get_last_daughter->get_id )
-            {
-                return;
-            }
-        }
-        return 1;
+        my $return = 1;
+        $self->visit(sub{
+        	my $count = scalar(@{ shift->get_children });
+        	$return = 0 if $count != 0 && $count != 2;
+        });
+        $return;
     }
 
 =item is_ultrametric()
@@ -1266,7 +1264,7 @@ Calculates Colless' coefficient of tree imbalance.
                     my $ri = shift @children;
                     my $li_ndesc = $descendants{$li->get_id};
                     my $ri_ndesc = $descendants{$ri->get_id};
-                    $sumdiff += $li_ndesc - $ri_ndesc;
+                    $sumdiff += abs($li_ndesc - $ri_ndesc);
                     $descendants{$node->get_id} = $li_ndesc + $ri_ndesc;
                 }
                 
@@ -1762,6 +1760,7 @@ L<http://dx.doi.org/10.1016/0025-5564(81)90043-2>
 Calculates the average taxonomic distinctiveness. See
 Clarke KR, Warwick RM (1998) A taxonomic distinctness index and its statistical 
 properties. J Appl Ecol 35:523-525
+L<http://dx.doi.org/10.1046/j.1365-2664.1998.3540523.x>
 
  Type    : Calculation
  Title   : calc_avtd
