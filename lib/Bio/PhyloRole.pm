@@ -1,6 +1,7 @@
 package Bio::PhyloRole;
 use strict;
 use base 'Bio::Phylo::Identifiable';
+use Data::Dumper;
 use Bio::Phylo::Util::CONSTANT '/looks_like/';
 use Bio::Phylo::Identifiable;              # for storing unique IDs inside an instance
 use Bio::Phylo::Util::Exceptions 'throw';  # defines exception classes and throws
@@ -176,6 +177,7 @@ Serializes object to general purpose string
         my $name          = $self->get_name  || '';
         my $score         = $self->get_score || '';
         my $desc          = $self->get_desc  || '';
+        my $gen           = Dumper($self->get_generic) || '';
         return <<"SERIALIZED_OBJECT";
 class: $class
 id: $id
@@ -183,6 +185,7 @@ internal_name: $internal_name
 name: $name
 score: $score
 desc: $desc
+generic: $gen
 SERIALIZED_OBJECT
     }
 
