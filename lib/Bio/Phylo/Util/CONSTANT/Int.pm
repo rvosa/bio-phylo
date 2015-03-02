@@ -1,4 +1,8 @@
 package Bio::Phylo::Util::CONSTANT::Int;
+
+use strict;
+use warnings;
+
 sub _NONE_ ()          { 1 }
 sub _NODE_ ()          { 2 }
 sub _TREE_ ()          { 3 }

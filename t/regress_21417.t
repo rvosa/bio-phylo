@@ -1,5 +1,8 @@
 use Bio::Phylo::IO 'parse';
 use Test::More tests => 1;
+use strict;
+use warnings;
+
 my $tree = parse(
     -format => 'newick',
     -string => do { local $/ = undef; <DATA> }

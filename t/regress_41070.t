@@ -1,4 +1,6 @@
 use Test::More;
+use strict;
+use warnings;
 
 BEGIN {
     eval { require Bio::TreeIO };
