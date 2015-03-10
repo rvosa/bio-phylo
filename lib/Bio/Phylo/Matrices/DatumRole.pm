@@ -520,7 +520,7 @@ Calculates the distance between the invocant and argument
  Returns : A number, the distance per site
  Args    : Another datum to calculate the distance to
  Comments: Assumes the sequences are aligned. Calculates
-           substitutions / total non-missing sites.
+           substitutions / total non-missing and non-gapped sites.
 =cut
 
 	sub calc_distance {
