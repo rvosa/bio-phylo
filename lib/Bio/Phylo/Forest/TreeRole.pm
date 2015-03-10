@@ -1280,7 +1280,13 @@ Calculates Colless' coefficient of tree imbalance.
                 }
             }
         );
-        return $sumdiff / ( ($n-1) * ($n-2) / 2 );
+        if ( $n < 3 ) {
+        	$logger->error("too few nodes in tree: $n<=2");
+        	return undef;
+        }
+        else {
+        	return $sumdiff / ( ($n-1) * ($n-2) / 2 );
+        }
     }
 
 =item calc_i2()
@@ -1301,8 +1307,7 @@ Calculates I2 imbalance.
         my $self = shift;
         my ( $maxic, $sum, $I2 ) = ( 0, 0 );
         if ( !$self->is_binary ) {
-            throw 'ObjectMismatch' =>
-              'I2 imbalance only possible for binary trees';
+            throw 'ObjectMismatch' => 'I2 imbalance only possible for binary trees';
         }
         my $numtips = $self->calc_number_of_terminals;
         $numtips -= 2;
@@ -1342,8 +1347,14 @@ Calculates I2 imbalance.
             next unless ( $ftips + $ltips - 2 );
             $sum += abs( $ftips - $ltips ) / abs( $ftips + $ltips - 2 );
         }
-        $I2 = $sum / $maxic;
-        return $I2;
+        if ( $maxic == 0 ) {
+        	$logger->error("too few nodes in tree: $maxic==0");
+        	return undef;
+        }
+        else {
+        	$I2 = $sum / $maxic;
+        	return $I2;
+        }
     }
 
 =item calc_gamma()
@@ -1428,6 +1439,9 @@ Calculates the Pybus & Harvey (2000) gamma statistic.
         $denominator->bdiv( 12 * ( $n - 2 ) );
         $denominator->bsqrt();
         $sum->bdiv( $denominator * $tl );
+        
+         # R seems to be unhappy about long numbers, so truncating
+        $sum->accuracy(10);
         return $sum;
     }
 
@@ -1467,8 +1481,13 @@ Calculates stemminess measure of Fiala and Sokal (1985).
                 $total += ( $node->get_branch_length / $desclengths );
             }
         }
-        $total /= $nnodes;
-        return $total;
+        if ( $nnodes ) {
+        	return $total /= $nnodes;
+        }
+        else {
+        	$logger->error("too few nodes in tree: n-1=$nnodes");
+        	return undef;
+        }
     }
 
 =item calc_rohlf_stemminess()
@@ -1823,6 +1842,26 @@ Calculates the Fair Proportion value for each terminal.
         }
         return $fp;
     }
+    
+=item calc_fp_mean()
+
+Calculates the mean Fair Proportion value over all terminals
+
+ Type    : Calculation
+ Title   : calc_fp_mean
+ Usage   : my $pe = $tree->calc_fp_mean();
+ Function: Returns the mean Fair Proportion value over all terminals
+ Returns : FLOAT
+ Args    : NONE
+
+=cut      
+    
+    sub calc_fp_mean {
+    	my $self = shift;
+    	my $per_tip = $self->calc_fp;
+    	my @values = values %{ $per_tip };
+    	return sum(@values)/scalar(@values);    
+    }
 
 =item calc_es() 
 
@@ -1858,6 +1897,26 @@ Calculates the Equal Splits value for each terminal
         }
         return $es;
     }
+    
+=item calc_es_mean()
+
+Calculates the mean Equal Splits value over all terminals
+
+ Type    : Calculation
+ Title   : calc_es_mean
+ Usage   : my $pe = $tree->calc_es_mean();
+ Function: Returns the mean Equal Splits value over all terminals
+ Returns : FLOAT
+ Args    : NONE
+
+=cut      
+    
+    sub calc_es_mean {
+    	my $self = shift;
+    	my $per_tip = $self->calc_es;
+    	my @values = values %{ $per_tip };
+    	return sum(@values)/scalar(@values);    
+    }    
 
 =item calc_pe()
 
@@ -1880,6 +1939,26 @@ Calculates the Pendant Edge value for each terminal.
           { map { $_->get_name => $_->get_branch_length } @{$terminals} };
         return $pe;
     }
+    
+=item calc_pe_mean()
+
+Calculates the mean Pendant Edge value over all terminals
+
+ Type    : Calculation
+ Title   : calc_pe_mean
+ Usage   : my $pe = $tree->calc_pe_mean();
+ Function: Returns the mean Pendant Edge value over all terminals
+ Returns : FLOAT
+ Args    : NONE
+
+=cut     
+    
+    sub calc_pe_mean {
+    	my $self = shift;
+    	my $per_tip = $self->calc_pe;
+    	my @values = values %{ $per_tip };
+    	return sum(@values)/scalar(@values);    
+    }     
 
 =item calc_shapley()
 
@@ -1985,6 +2064,26 @@ Calculates the Shapley value for each terminal.
         }
         return ( @core_terminals, @child_terminals, @parent_terminals );
     }
+    
+=item calc_shapley_mean()
+
+Calculates the mean Shapley value over all terminals
+
+ Type    : Calculation
+ Title   : calc_shapley_mean
+ Usage   : my $es = $tree->calc_shapley_mean();
+ Function: Returns the mean Shapley value over all terminals
+ Returns : FLOAT
+ Args    : NONE
+
+=cut    
+    
+    sub calc_shapley_mean {
+    	my $self = shift;
+    	my $per_tip = $self->calc_shapley;
+    	my @values = values %{ $per_tip };
+    	return sum(@values)/scalar(@values);    
+    }    
 
 =back
 
