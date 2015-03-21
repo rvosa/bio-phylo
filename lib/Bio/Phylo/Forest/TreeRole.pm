@@ -8,8 +8,9 @@ use Bio::Phylo::Util::OptionalInterface 'Bio::Tree::TreeI';
 use Bio::Phylo::Forest::Node;
 use Bio::Phylo::IO 'unparse';
 use Bio::Phylo::Factory;
+use Bio::Phylo::Generator;
 use Scalar::Util 'blessed';
-use List::Util 'sum';
+use List::Util qw'sum shuffle';
 my $LOADED_WRAPPERS = 0;
 {
     my $logger = __PACKAGE__->get_logger;
@@ -1824,6 +1825,27 @@ Calculates the Fair Proportion value for each terminal.
         return $fp;
     }
 
+=item calc_fp_mean() 
+
+Calculates the mean Fair Proportion value over all terminals.
+
+ Type    : Calculation
+ Title   : calc_fp_mean
+ Usage   : my $fp = $tree->calc_fp_mean();
+ Function: Returns the mean Fair Proportion 
+           value over all terminals
+ Returns : FLOAT
+ Args    : NONE
+
+=cut
+    
+    sub calc_fp_mean {
+    	my $self = shift;
+    	my $fp = $self->calc_fp;
+    	my @fp = values %{ $fp };
+    	return sum(@fp)/scalar(@fp);
+    }
+
 =item calc_es() 
 
 Calculates the Equal Splits value for each terminal
@@ -1859,6 +1881,26 @@ Calculates the Equal Splits value for each terminal
         return $es;
     }
 
+=item calc_es_mean()
+
+Calculates the mean Equal Splits value over all terminals
+
+ Type    : Calculation
+ Title   : calc_es_mean
+ Usage   : my $es = $tree->calc_es_mean();
+ Function: Returns the Equal Splits value over all terminals
+ Returns : FLOAT
+ Args    : NONE
+
+=cut
+
+	sub calc_es_mean {
+		my $self = shift;
+		my $es = $self->calc_es;
+		my @es = values %{ $es };
+		return sum(@es)/scalar(@es);
+	}
+
 =item calc_pe()
 
 Calculates the Pendant Edge value for each terminal.
@@ -1880,6 +1922,26 @@ Calculates the Pendant Edge value for each terminal.
           { map { $_->get_name => $_->get_branch_length } @{$terminals} };
         return $pe;
     }
+
+=item calc_pe_mean()
+
+Calculates the mean Pendant Edge value over all terminals
+
+ Type    : Calculation
+ Title   : calc_pe_mean
+ Usage   : my $es = $tree->calc_pe_mean();
+ Function: Returns the mean Pendant Edge value over all terminals
+ Returns : FLOAT
+ Args    : NONE
+
+=cut
+
+	sub calc_pe_mean {
+		my $self = shift;
+		my $pe = $self->calc_pe;
+		my @pe = values %{ $pe };
+		return sum(@pe)/scalar(@pe);
+	}
 
 =item calc_shapley()
 
@@ -1985,6 +2047,26 @@ Calculates the Shapley value for each terminal.
         }
         return ( @core_terminals, @child_terminals, @parent_terminals );
     }
+
+=item calc_shapley_mean()
+
+Calculates the mean Shapley value over all terminals
+
+ Type    : Calculation
+ Title   : calc_shapley_mean
+ Usage   : my $es = $tree->calc_shapley_mean();
+ Function: Returns the mean Shapley value over all terminals
+ Returns : HASHREF
+ Args    : NONE
+
+=cut
+
+	sub calc_shapley_mean {
+		my $self = shift;
+		my $sv = $self->calc_shapley;
+		my @sv = values %{ $sv };
+		return sum(@sv)/scalar(@sv);
+	}
 
 =back
 
@@ -2372,6 +2454,256 @@ Randomly breaks polytomies.
         }
         return $tree;
     }
+    
+=item replicate()
+
+Simulates tree(s) whose properties resemble that of the input tree in terms of birth/death
+rate, depth, and size/depth distribution of genera. This uses the R environment for 
+statistics to get a maximum likelihood estimate of birth/death rates on the source tree
+and therefore requires the package L<Statistics::R> to be installed, and the R package
+'ape'. The idea is that this is used on a species tree that is ultrametric. To get 
+simulated genera whose sizes and root depths approximate those of the source tree, 
+annotate genus nodes in the source tree using $node->set_generic( 'genus' => $name ),
+where $name is a single word (i.e. a genus name), and provide the optional -genera flag 
+with a true value.
+
+ Type    : Tree manipulator
+ Title   : replicate
+ Usage   : my $forest = $tree->replicate;
+ Function: Simulates tree(s) whose properties resemble that of the invocant tree
+ Returns : Bio::Phylo::Forest
+ Args    : Optional: -trees    => number of replicates, default is 1
+           Optional: -rootedge => keep the birth/death root branch, then scale the tree(s)
+           Optional: -genera   => approximate distribution of source genus sizes and depths 
+           (do this by tagging internal nodes: $node->set_rank('genus'))
+ Comments: Requires Statistics::R, and an R environment with 'ape' installed
+           Expects to operate on an ultrametric tree
+
+=cut    
+    
+    sub replicate {
+    	my ( $self, %args ) = @_;
+    	if ( looks_like_class 'Statistics::R' ) {
+    	
+    		# get birthdeath parameters
+    		$logger->info("going to estimate b/d");
+    		my $newick = $self->to_newick;
+    		my $R = Statistics::R->new;
+    		$R->run(q[library("ape")]);
+    		$R->run(qq[phylo <- read.tree(text="$newick")]);
+    		$R->run(q[bd <- birthdeath(phylo)]);
+    		$R->run(q[ratio <- as.double(bd$para[1])]);
+    		my $b_over_d = $R->get(q[ratio]);
+    		$logger->info("b/d=$b_over_d");
+    		
+    		# generate the tree
+    		$logger->info("going to simulate tree(s)");
+    		my $gen = Bio::Phylo::Generator->new;
+    		my $forest = $gen->gen_rand_birth_death(
+    			'-trees'    => $args{'-trees'} || 1,
+    			'-killrate' => $b_over_d,
+    			'-tips'     => scalar(@{ $self->get_terminals }),
+    		);
+    		
+    		# invent tip labels
+    		$forest->visit(sub{
+    			my $t = shift;
+    			my $n = 0;
+    			for my $tip ( @{ $t->get_terminals } ) {
+    				my $genus = $self->_make_taxon_name;
+    				my $species = $self->_make_taxon_name;
+    				if ( $genus =~ /(..)$/ ) {
+    					my $suffix = $1;
+    					$species =~ s/..$/$suffix/;
+    					$tip->set_name( ucfirst($genus) . '_' . $species );
+    				}
+    			}
+    		});
+    		
+    		# scale the trees
+    		my $height = $self->calc_tree_height;
+    		$forest->visit(sub{shift->get_root->set_branch_length(0)}) if not $args{'-rootedge'};
+    		$forest->visit(sub{shift->scale($height)});
+    		$logger->info("tree height is $height");
+    		
+    		# create similar genera, optionally
+    		if ( $args{'-genera'} ) {
+    			$logger->info("going to approximate genera");
+    		
+    			# iterate over trees
+    			for my $replicate ( @{ $forest->get_entities } ) {
+    		
+					# get distribution of source genus sizes and depths
+					$logger->info("calculating source genus sizes and depths");
+					my ( $counter, %genera ) = ( 0 );
+					$self->visit(sub{
+						my $node = shift;
+						if ( $node->get_rank eq 'genus' ) {
+							my $id     = $node->get_id;
+							my $height = $height - $node->calc_path_to_root;
+							my $size   = scalar(@{ $node->get_terminals });
+							my $name   = $node->get_name || 'Genus' . ++$counter;
+							$genera{$id} = {
+								'name'   => $name,
+								'size'   => $size,
+								'height' => $height,
+								'node'   => $node,
+							};
+						}
+					});
+				
+					# get distribution of target node sizes and depths
+					$logger->info("calculating target genus sizes and depths");					
+					my ( %node );
+					$replicate->visit(sub{
+						my $node   = shift;
+						my $id     = $node->get_id;	
+						my $height = $height - $node->calc_path_to_root;												
+						my $size   = scalar(@{ $node->get_terminals });
+						push @{ $node{$size} }, [ $node, $height, $id ];
+					});
+				
+					# start assigning genera, from big to small
+					for my $genus ( sort { $genera{$b}->{'size'} <=> $genera{$a}->{'size'} } keys %genera ) {
+
+						# get key for candidate set of nodes
+						my $name = $genera{$genus}->{'name'} || "Genus${genus}";						
+						my $size = $genera{$genus}->{'size'};
+						my @labels = shuffle map { $_->get_name } @{ $genera{$genus}->{'node'}->get_terminals };
+						$logger->info("processing $name ($size tips)");
+						SIZE: while( not $node{$size} ) { last SIZE if --$size <= 1 }
+					
+						# get target height
+						if ( $node{$size} ) {
+							$logger->info("found candidate(s) with $size tips");						
+							my $h = $genera{$genus}->{'height'};
+							my ($node) = map { $_->[0] } 
+							            sort { abs($a->[1]-$h) <=> abs($b->[1]-$h) } 
+							                @{ $node{$size} };
+							
+							# assign genus label to node and tips, remove all descendants 
+							# (and self!) from list of candidates, as we can't nest genera
+							my $sp = 0;							
+							$node->set_name($name);
+							for my $n ( $node, @{ $node->get_descendants } ) {
+								$n->set_name($labels[$sp++]) if $n->is_terminal;
+								for my $i ( 1 .. $size ) {
+									if ( my $array = $node{$i} ) {
+										my $id = $n->get_id;
+										my @filtered = grep { $id != $_->[2] } @$array;
+										@filtered ? $node{$i} = \@filtered : delete $node{$i};
+									}
+								}
+							}
+						}
+						else {
+							$logger->warn("exhausted candidate genera for $genus");
+						}
+					}
+    			}
+    		}
+    		return $forest;
+    	}
+    }
+    
+    sub _make_taxon_name {
+    	my @vowels = qw(a e i o u);
+    	my @consonants = qw(q r t p s d f g h l z c v b n m);
+    	my @suffixes =qw(us os is as es);
+    	my $length = 1 + int rand 3;
+    	my ($start) = int rand 2 ? shuffle(@vowels) : shuffle(@consonants);
+		my @name = ( $start );
+    	for my $i ( 0 .. $length ) {
+    		my ($vowel) = shuffle(@vowels);
+    		my ($consonant) = shuffle(@consonants);
+    		push @name, $vowel, $consonant;
+    	}
+    	my ($suffix) = shuffle(@suffixes);
+    	push @name, $suffix;
+    	return join '', @name;
+    }
+
+=item generize()
+
+Identifies monophyletic genera by traversing the tree, taking the first word of the tip
+names and finding the MRCA of each word. That MRCA is tagged as rank 'genus' and assigned
+the name.
+
+ Type    : Tree manipulator
+ Title   : generize
+ Usage   : $tree->generize(%args);
+ Function: Identifies monophyletic genera
+ Returns : Invocant
+ Args    : Optional: -delim => the delimiter that separates the genus name from any 
+                               following (sub)specific epithets. Default is a space ' '.
+           Optional: -monotypic => if true, also tags monotypic genera
+           Optional: -polypara  => if true, also tags poly/paraphyletic genera
+ Comments: Non-monophyletic genera are ignored entirely
+
+=cut
+    
+    sub generize {
+    	my ( $self, %args ) = @_;
+    	my $delim = $args{'-delim'} || ' ';
+    	
+    	# bin by genus name
+    	my %genera;
+    	for my $tip ( @{ $self->get_terminals } ) {
+    		my $binomial = $tip->get_name;
+    		my ($genus) = split /$delim/, $binomial;
+    		$genera{$genus} = [] if not $genera{$genus};
+    		push @{ $genera{$genus} }, $tip;
+    	}
+    	
+    	# identify and tag MRCAs
+    	my %skip;
+    	for my $genus ( sort { scalar(@{$genera{$b}}) <=> scalar(@{$genera{$a}}) } keys %genera ) {
+    		next if $skip{$genus};
+    		my $tips = $genera{$genus};
+    		
+    		# genus is monotypic
+    		if ( scalar(@$tips) == 1 ) {
+    			$logger->info("$genus is monotypic");
+    			$tips->[0]->set_rank('genus') if $args{'-monotypic'};
+    		}
+    		else {
+    		
+    			# get the MRCA
+				my ( $mrca, %seen );
+				my @paths = map { @{ $_->get_ancestors } } @{ $tips };
+				$seen{$_->get_id}++ for @paths;
+				($mrca) = map { $_->[0] } 
+				         sort { $b->[1] <=> $a->[1] } 
+				          map { [ $_, $_->calc_path_to_root ] } 
+				         grep { $seen{$_->get_id} == @$tips } @paths;
+				
+				# identify mono/poly/para
+				my $clade_size = @{ $mrca->get_terminals };
+				my $tip_count  = @{ $tips };
+				if ( $clade_size == $tip_count ) {
+					$logger->info("$genus is monophyletic");
+					$mrca->set_rank('genus');
+					$mrca->set_name($genus);
+				}
+				else {
+										
+					# we could now have nested, smaller genera inside this one
+					$logger->info("$genus is non-monophyletic $clade_size != $tip_count");
+					if ( $args{'-polypara'} ) {
+						$logger->info("tagging non-monophyletic $genus anyway");
+						$mrca->set_rank('genus');
+						$mrca->set_name($genus);	
+						my @names = map { $_->get_name } @{ $mrca->get_terminals };
+						for my $name ( @names ) {
+							$name =~ s/^(.+?)${delim}.+$/$1/;
+							$skip{$name}++;
+						}			
+					}
+				}
+			}
+        }
+        return $self;
+    }
 
 =item prune_tips()
 
@@ -2590,7 +2922,7 @@ Sorts nodes in ascending (or descending) order of number of children.
 =item sort_tips()
 
 Sorts nodes in (an approximation of) the provided ordering. Given an array
-reference of taxa, an array reference of name strings or a taxa object, this
+reference of taxa, an array reference of name strings, or a taxa object, this
 method attempts to order the tips in the same way. It does this by recursively
 computing the rank for all internal nodes by taking the average rank of its
 children. This results in the following orderings:

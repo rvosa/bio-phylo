@@ -867,19 +867,10 @@ Gets invocant's terminal descendants.
     sub get_terminals {
         my $self = shift;
         if ( $self->is_terminal ) {
-            return [$self];
+        	return [$self];
         }
         else {
-            my @terminals;
-            $self->visit_level_order(
-                sub {
-                    my $node = shift;
-                    if ( $node->is_terminal ) {
-                        push @terminals, $node;
-                    }
-                }
-            );
-            return \@terminals;
+        	return [ grep { $_->is_terminal } @{ $self->get_descendants } ];
         }
     }
 

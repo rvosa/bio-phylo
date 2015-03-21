@@ -12,7 +12,7 @@ my ( $TYPE_CONSTANT, $CONTAINER_CONSTANT ) = ( _NODE_, _TREE_ );
 {    
 
     # @fields array necessary for object destruction
-    my @fields = \( my ( %branch_length, %parent, %tree ) );
+    my @fields = \( my ( %branch_length, %parent, %tree, %rank ) );
 
 =head1 NAME
 
@@ -260,6 +260,27 @@ Sets what tree invocant belongs to
         return $self;
     }
 
+=item set_rank()
+
+Sets the taxonomic rank of the node
+
+ Type    : Mutator
+ Title   : set_rank
+ Usage   : $node->set_rank('genus');
+ Function: Sets the taxonomic rank of the node
+ Returns : Invocant
+ Args    : String
+ Comments: Free-form, but highly recommended to use same rank names as in Bio::Taxon
+
+=cut
+
+    
+    sub set_rank : Clonable {
+    	my ( $self, $rank ) = @_;
+    	$rank{$self->get_id} = $rank;
+    	return $self;
+    }
+
 =item get_parent()
 
 Gets invocant's parent.
@@ -329,6 +350,22 @@ Returns the tree invocant belongs to
         my $id   = $self->get_id;
         return $tree{$id};
     }
+
+=item get_rank()
+
+Gets the taxonomic rank of the node
+
+ Type    : Mutator
+ Title   : get_rank
+ Usage   : my $rank = $node->get_rank;
+ Function: Gets the taxonomic rank of the node
+ Returns : String
+ Args    : NONE
+ Comments: 
+
+=cut
+    
+    sub get_rank { $rank{shift->get_id} }
 
 =begin comment
 
