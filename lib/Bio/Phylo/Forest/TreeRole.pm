@@ -2562,9 +2562,12 @@ statistics to get a maximum likelihood estimate of birth/death rates on the sour
 and therefore requires the package L<Statistics::R> to be installed, and the R package
 'ape'. The idea is that this is used on a species tree that is ultrametric. To get 
 simulated genera whose sizes and root depths approximate those of the source tree, 
-annotate genus nodes in the source tree using $node->set_generic( 'genus' => $name ),
-where $name is a single word (i.e. a genus name), and provide the optional -genera flag 
-with a true value.
+annotate genus nodes in the source tree, e.g. using $tree->generize, and provide the 
+optional -genera flag of replicate() with a true value.
+
+This method uses the function C<birthdeath> from the R package C<ape>. If you use this
+method in a publication, you should therefore B<cite that package> (in addition to 
+Bio::Phylo). More information about C<ape> can be found at L<http://ape-package.ird.fr/>.
 
  Type    : Tree manipulator
  Title   : replicate
@@ -2706,20 +2709,25 @@ with a true value.
     }
     
     sub _make_taxon_name {
-    	my @vowels = qw(a e i o u);
-    	my @consonants = qw(q r t p s d f g h l z c v b n m);
+    	my %l = (
+    		'v' => [ qw(a e i o u) ],
+    		'c' => [ qw(qu cr ct p pr ps rs ld ph gl ch l sc v n m) ],
+    	);
     	my @suffixes =qw(us os is as es);
-    	my $length = 1 + int rand 3;
-    	my ($start) = int rand 2 ? shuffle(@vowels) : shuffle(@consonants);
-		my @name = ( $start );
+    	my $length = 1 + int rand 2;
+    	my @order = int rand 2 ? qw(v c) : qw(c v);
+    	my ($l1) = shuffle(@{$l{$order[0]}});
+    	my ($l2) = shuffle(@{$l{$order[1]}});
+		my @name = ( $l1, $l2 );
     	for my $i ( 0 .. $length ) {
-    		my ($vowel) = shuffle(@vowels);
-    		my ($consonant) = shuffle(@consonants);
-    		push @name, $vowel, $consonant;
+	    	($l1) = shuffle(@{$l{$order[0]}});
+    		($l2) = shuffle(@{$l{$order[1]}});
+    		push @name, $l1, $l2;
     	}
+    	my $name = join '', @name;
+    	$name =~ s/[aeiou]+$//;
     	my ($suffix) = shuffle(@suffixes);
-    	push @name, $suffix;
-    	return join '', @name;
+    	return $name . $suffix;
     }
 
 =item generize()
@@ -2736,8 +2744,10 @@ the name.
  Args    : Optional: -delim => the delimiter that separates the genus name from any 
                                following (sub)specific epithets. Default is a space ' '.
            Optional: -monotypic => if true, also tags monotypic genera
-           Optional: -polypara  => if true, also tags poly/paraphyletic genera
- Comments: Non-monophyletic genera are ignored entirely
+           Optional: -polypara  => if true, also tags poly/paraphyletic genera. Any 
+                                   putative genera nested within the largest of the 
+                                   entangled, poly/paraphyletic genera will be ignored.
+ Comments:
 
 =cut
     
