@@ -1,5 +1,8 @@
 package Bio::Phylo::Util::Dependency;
 
+use strict;
+use warnings;
+
 BEGIN {
     use Bio::Phylo::Util::Exceptions 'throw';
     use Bio::Phylo::Util::CONSTANT 'looks_like_class';

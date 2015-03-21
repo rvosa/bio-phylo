@@ -2,6 +2,9 @@ package Bio::Phylo::Identifiable;
 use Bio::Phylo::Util::IDPool;
 use Bio::Phylo::Util::Exceptions 'throw';
 
+use strict;
+use warnings;
+
 =head1 NAME
 
 Bio::Phylo::Identifiable - Objects with unique identifiers
