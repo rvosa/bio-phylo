@@ -1058,30 +1058,54 @@ Creates simulated replicate.
 			$R->run(q[library("ape")]);
 			$R->run(q[library("phytools")]);				
 			$R->run(qq[phylo <- read.tree(text="$newick")]);
+			
+			# start the matrix
+			my @matrix;
+			push @matrix, [] for 1 .. $self->get_ntax;
 
     		# iterate over distinct site patterns
     		for my $p ( @$pattern ) {
-    			my $i = $pattern->[2]->[0];
+    			my $i = $p->[2]->[0];
     			my $model = Bio::Phylo::Models::Substitution::Binary->modeltest(
     				'-tree'   => $tree,
-    				'-char'   => $characters->get_by_index($i),
     				'-matrix' => $self,
+    				'-char'   => $characters->get_by_index($i),    				
     			);
     			
     			# pass model to R
     			my ( $fw, $rev ) = ( $model->get_forward, $model->get_reverse );
-    			my $rates = [ $fw, $rev, $rev, $fw ];
+    			my $rates = [ 0, $fw, $rev, 0 ];
     			$R->set( 'rates' => $rates );
-    			$R->run(qq[Q<-matrix($rates,2,2,byrow=TRUE)]);
-    			$R->run(qq[rownames(Q)<-colnames(Q)<-c("0","1")]);
+    			$R->run(qq[Q<-matrix($rates,2,2,byrow=TRUE)]); 
+    			$R->run(qq[rownames(Q)<-colnames(Q)<-c("0","1")]);   			
     			$R->run(qq[diag(Q)<--rowSums(Q)]);
     			
 				# simulate character on tree, get states
-				$R->run(qq[tt<-sim.history(phylo,Q)]);
-				$R->run(qq[states<-getStates(tt,"tips")]);
+				$R->run(qq[tt<-sim.history(phylo,Q,message=FALSE)]);
+				$R->run(qq[states<-as.double(getStates(tt,"tips"))]);
 				my $states = $R->get(q[states]);
-
+				
+				# add states to matrix
+				my @indices = @{ $p->[2] };
+				for my $row ( 0 .. $#{ $states } ) {
+					my $value = $states->[$row];
+					for my $col ( @indices ) {
+						$matrix[$row]->[$col] = $value;
+					}
+				}
     		}
+    		
+    		# create matrix
+    		my $i = 0;
+    		$tree->visit_depth_first(
+    			'-pre' => sub { 
+    				unshift @{ $matrix[$i++] }, shift->get_name
+    			}
+    		);
+    		return __PACKAGE__->new(
+    			'-type' => $self->get_type,
+    			'-raw'  => \@matrix,
+    		);
     	}    
     }
 
