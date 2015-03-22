@@ -8,7 +8,6 @@ use Bio::Phylo::Util::OptionalInterface 'Bio::Tree::TreeI';
 use Bio::Phylo::Forest::Node;
 use Bio::Phylo::IO 'unparse';
 use Bio::Phylo::Factory;
-use Bio::Phylo::Generator;
 use Scalar::Util 'blessed';
 use List::Util qw'sum shuffle';
 my $LOADED_WRAPPERS = 0;
@@ -2585,7 +2584,7 @@ Bio::Phylo). More information about C<ape> can be found at L<http://ape-package.
     
     sub replicate {
     	my ( $self, %args ) = @_;
-    	if ( looks_like_class 'Statistics::R' ) {
+    	if ( looks_like_class('Statistics::R') and looks_like_class('Bio::Phylo::Generator') ) {
     	
     		# get birthdeath parameters
     		$logger->info("going to estimate b/d");
