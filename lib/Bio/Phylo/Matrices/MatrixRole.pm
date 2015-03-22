@@ -1,6 +1,7 @@
 package Bio::Phylo::Matrices::MatrixRole;
 use strict;
 use base qw'Bio::Phylo::Matrices::TypeSafeData Bio::Phylo::Taxa::TaxaLinker';
+use Bio::Phylo::Models::Substitution::Binary;
 use Bio::Phylo::Util::OptionalInterface 'Bio::Align::AlignI';
 use Bio::Phylo::Util::CONSTANT qw':objecttypes /looks_like/';
 use Bio::Phylo::Util::Exceptions qw'throw';
@@ -681,11 +682,11 @@ will be lost.)
 =cut
 
     sub calc_distinct_site_patterns {
-        my $self  = shift;
+        my ( $self, $indices ) = @_;
         my $raw   = $self->get_raw;
         my $nchar = $self->get_nchar;
         my $ntax  = $self->get_ntax;
-        my %pattern;
+        my ( %pattern, %index );
         for my $i ( 1 .. $nchar ) {
             my @column;
             for my $j ( 0 .. ( $ntax - 1 ) ) {
@@ -693,14 +694,20 @@ will be lost.)
             }
             my $col_pattern = join ' ', @column;
             $pattern{$col_pattern}++;
+            $index{$col_pattern} = [] if not $index{$col_pattern};
+            push @{ $index{$col_pattern} }, $i - 1;
         }
         my @pattern_array;
         for my $key ( keys %pattern ) {
             my @column = split / /, $key;
-            push @pattern_array, [ $pattern{$key}, \@column ];
+            if ( $indices ) {
+            	push @pattern_array, [ $pattern{$key}, \@column, $index{$key} ];
+            }
+            else {
+            	push @pattern_array, [ $pattern{$key}, \@column ];
+            }
         }
-        my @sorted = sort { $b->[0] <=> $a->[1] } @pattern_array;
-        \@sorted;
+        return [ sort { $b->[0] <=> $a->[0] } @pattern_array ];
     }
 
 =item calc_gc_content()
@@ -1000,6 +1007,82 @@ Creates jackknifed clone.
         }
         @indices = sort { $a <=> $b } keys %indices;
         return $self->keep_chars( \@indices );
+    }
+    
+=item replicate()
+
+Creates simulated replicate.
+
+ Type    : Utility method
+ Title   : replicate
+ Usage   : my $replicate = $matrix->replicate($tree);
+ Function: Creates simulated replicate.
+ Returns : A simulated replicate of the invocant.
+ Args    : Tree to simulate the characters on.
+ Comments: Requires Statistics::R
+
+=cut    
+    
+    sub replicate {
+    	my ($self,$tree) = @_;
+    	if ( not looks_like_object $tree, _TREE_ ) {
+    		throw 'BadArgs' => "Need tree as argument";
+    	}
+    	my $type = $self->get_type;
+    	if ( $type =~ /dna/i ) {
+    		return $self->_replicate_dna($tree);
+    	}
+    	elsif ( $type =~ /standard/i ) {
+    		return $self->_replicate_binary($tree);
+    	}
+    	else {
+    		throw 'BadArgs' => "Can't replicate $type matrices (yet?)";
+    	}
+    }
+    
+    sub _replicate_dna {
+    
+    }
+    
+    sub _replicate_binary {
+    	my ($self,$tree) = @_;
+    	
+    	# we will need both 'ape' and 'phytools'
+    	if ( looks_like_class 'Statistics::R' ) {
+    		my $pattern = $self->calc_distinct_site_patterns('with_indices_of_patterns');
+    		my $characters = $self->get_characters;
+    		
+			# instantiate R
+			my $newick = $tree->to_newick;
+			my $R = Statistics::R->new;
+			$R->run(q[library("ape")]);
+			$R->run(q[library("phytools")]);				
+			$R->run(qq[phylo <- read.tree(text="$newick")]);
+
+    		# iterate over distinct site patterns
+    		for my $p ( @$pattern ) {
+    			my $i = $pattern->[2]->[0];
+    			my $model = Bio::Phylo::Models::Substitution::Binary->modeltest(
+    				'-tree'   => $tree,
+    				'-char'   => $characters->get_by_index($i),
+    				'-matrix' => $self,
+    			);
+    			
+    			# pass model to R
+    			my ( $fw, $rev ) = ( $model->get_forward, $model->get_reverse );
+    			my $rates = [ $fw, $rev, $rev, $fw ];
+    			$R->set( 'rates' => $rates );
+    			$R->run(qq[Q<-matrix($rates,2,2,byrow=TRUE)]);
+    			$R->run(qq[rownames(Q)<-colnames(Q)<-c("0","1")]);
+    			$R->run(qq[diag(Q)<--rowSums(Q)]);
+    			
+				# simulate character on tree, get states
+				$R->run(qq[tt<-sim.history(phylo,Q)]);
+				$R->run(qq[states<-getStates(tt,"tips")]);
+				my $states = $R->get(q[states]);
+
+    		}
+    	}    
     }
 
 =item insert()
