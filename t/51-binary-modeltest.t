@@ -13,4 +13,10 @@ SKIP: {
 		'-format' => 'newick',
 		'-handle' => \*DATA,
 	);
+	
+	ok( 'here we test $matrix->replicate' );
+	ok( 'here we check if the result is reasonable' );
 };
+
+__DATA__
+((A,B),C);
