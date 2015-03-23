@@ -74,8 +74,8 @@ sub modeltest {
 		
 		# return instance
 		return $class->new(
-			'-forward' => $rates->[0],
-			'-reverse' => $rates->[1],
+			'-forward' => $rates->[1],
+			'-reverse' => $rates->[0],
 		);	
 	}
 }
