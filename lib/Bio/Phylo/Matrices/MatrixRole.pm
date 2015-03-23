@@ -528,12 +528,166 @@ Retrieves a 'raw' (two-dimensional array) representation of the matrix's content
         }
         return \@raw;
     }
+    
+=item get_ungapped_columns()
+
+ Type    : Accessor
+ Title   : get_ungapped_columns
+ Usage   : my @ungapped = @{ $matrix->get_ungapped_columns };
+ Function: Retrieves the zero-based column indices of columns without gaps
+ Returns : An array reference with zero or more indices (i.e. integers)
+ Args    : NONE
+
+=cut    
+    
+    sub get_ungapped_columns {
+    	my $self  = shift;
+		my $raw   = $self->get_raw;
+		my $nchar = $self->get_nchar;
+		my @ungapped;
+		my $gap = $self->get_gap;
+		for my $i ( 1 .. $nchar ) {
+			my %seen;
+			for my $row ( @$raw ) {
+				my $c = $row->[$i];
+				$seen{$c}++;
+			}
+			push @ungapped, $i - 1 unless $seen{$gap};
+		} 
+		return \@ungapped;   
+    }
+
+=item get_invariant_columns()
+
+ Type    : Accessor
+ Title   : get_invariant_columns
+ Usage   : my @invariant = @{ $matrix->get_invariant_columns };
+ Function: Retrieves the zero-based column indices of invariant columns
+ Returns : An array reference with zero or more indices (i.e. integers)
+ Args    : Optional:
+           -gap     => if true, counts the gap symbol (probably '-') as a variant
+           -missing => if true, counts the missing symbol (probably '?') as a variant
+
+=cut
+    
+    sub get_invariant_columns {
+    	my ( $self, %args ) = @_;
+    	my $raw   = $self->get_raw;
+    	my $nchar = $self->get_nchar;
+    	my $gap   = $self->get_gap;
+    	my $miss  = $self->get_missing;
+    	my @invariant;
+    	for my $i ( 1 .. $nchar ) {
+    		my %seen;
+    		for my $row ( @$raw ) {
+    			my $c = $row->[$i];
+    			$seen{$c}++;
+    		}
+    		my @states = keys %seen;
+    		@states = grep { $_ ne $gap  } unless $args{'-gap'};
+    		@states = grep { $_ ne $miss } unless $args{'-missing'};
+    		push @invariant, $i - 1 unless @states > 1;
+    	}
+    	return \@invariant;
+    }
+    
 
 =back
 
 =head2 CALCULATIONS
 
 =over
+
+=item calc_indel_sizes()
+
+Calculates size distribution of insertions or deletions
+
+ Type    : Calculation
+ Title   : calc_indel_sizes
+ Usage   : my %sizes = %{ $matrix->calc_indel_sizes };
+ Function: Calculates proportion of invariant sites.
+ Returns : HASH
+ Args    : Optional:
+           -trim       => if true, disregards indels at start and end
+           -insertions => if true, counts insertions, if false, counts deletions
+
+=cut
+
+    sub calc_indel_sizes {
+    	my ($self,%args) = @_;
+    	my $ntax  = $self->get_ntax;
+    	my $nchar = $self->get_nchar;
+    	my $raw   = $self->get_raw;
+    	my $gap   = $self->get_gap;
+    	my @indels;
+    	
+    	# iterate over rows
+    	for my $row ( @$raw ) {
+    		my $previous;
+    		my @row_indels;
+    		
+    		# iterate over columns
+    		for my $i ( 1 .. $nchar ) {
+    		
+    			# focal cell is a gap
+    			if ( $row->[$i] eq $gap ) {
+					if ( $previous ) {
+					
+						# we're extending an indel
+						if ( $previous eq $gap ) {
+							$row_indels[-1]->{'end'} = $i;
+						}
+						
+						# we're starting an indel
+						else {
+							push @row_indels, { 'start' => $i };
+						}
+					}
+					
+					# sequence starts with an indel
+					else {
+						push @row_indels, { 'start' => $i };
+					}
+    			}			
+    			$previous = $row->[$i];
+    		}
+    		
+    		# flatten the lists
+    		push @indels, @row_indels;
+    	}
+    	
+    	# remove tops and tails
+    	if ( $args{'-trim'} ) {
+    		@indels = grep { $_->{'start'} > 1 } @indels;
+    		@indels = grep { $_->{'end'} < $nchar } @indels;
+    	}
+    	
+    	# count sizes
+    	my %sizes;
+    	for my $i ( 1 .. $nchar ) {
+    		my @starting_here = grep { $_->{'start'} == $i } @indels;
+    		if ( @starting_here ) {
+    			for my $j ( $i + 1 .. $nchar ) {
+    				my @ending_here = grep { $_->{'end'} == $j } @starting_here;
+    				if ( @ending_here ) {
+    					my $size = $j - $i;
+    					
+    					# more taxa have an indel here than don't. crudely, we
+    					# say this is probably an insertion
+    					if ( scalar(@ending_here) > ( $ntax / 2 ) ) {
+    						$sizes{$size}++ if $args{'-insertions'};
+    					}
+    					# it's a deletion
+    					else {
+    						$sizes{$size}++ if not $args{'-insertions'};
+    					}
+    				}
+    			}
+    		}
+    	}
+    	return \%sizes;
+    }
+
 
 =item calc_prop_invar()
 
@@ -745,6 +899,80 @@ Calculates the G+C content as a fraction on the total
             $total += $freq->{$_} if exists $freq->{$_};
         }
         return $total;
+    }
+
+=item calc_median_sequence()
+
+Calculates the median character sequence of the matrix
+
+ Type    : Calculation
+ Title   : calc_median_sequence
+ Usage   : my $seq = $obj->calc_median_sequence;
+ Function: Calculates median sequence
+ Returns : Array in list context, string in scalar context
+ Args    : Optional:
+           -ambig   => if true, uses ambiguity codes to summarize equally frequent
+                       states for a given character. Otherwise picks a random one.
+           -missing => if true, keeps the missing symbol (probably '?') if this
+                       is the most frequent for a given character. Otherwise strips it.
+           -gaps    => if true, keeps the gap symbol (probably '-') if this is the most
+                       frequent for a given character. Otherwise strips it.
+ Comments: The intent of this method is to provide a crude approximation of the most
+           commonly occurring sequences in an alignment, for example as a starting 
+           sequence for a sequence simulator. This gives you something to work with if
+           ancestral sequence calculation is too computationally intensive and/or not
+           really necessary.
+
+=cut
+    
+    sub calc_median_sequence {
+    	my ( $self, %args ) = @_;
+    	my $to = $self->get_type_object;
+    	my $type = $self->get_type;
+    	if ( $type =~ /continuous/i ) {
+			throw 'BadArgs' => 'No median sequence calculation for continuous data (yet)';
+    	}
+    	else {
+    		my $raw   = $self->get_raw;
+    		my $ntax  = $self->get_ntax;
+    		my $nchar = $self->get_nchar;
+    		my $gap   = $self->get_gap;
+    		my $miss  = $self->get_missing;
+    		my @seq;
+    		for my $i ( 1 .. $nchar ) {
+    			my %seen;
+    			for my $row ( @$raw ) {
+    				my $c = uc $row->[$i];
+    				$seen{$c}++;
+    			}
+    			my @sorted = sort { $seen{$b} <=> $seen{$a} } keys %seen;
+    			my $max = $seen{$sorted[0]};
+    			my @top;
+    			my $j = 0;
+    			while ( $seen{$sorted[$j]} == $max ) {
+    				push @top, $sorted[$j];
+    				$j++;
+    			}
+    			if ( @top == 1 ) {
+    				push @seq, @top;
+    			}
+    			else {
+    				if ( $args{'-ambig'} ) {
+    					push @seq, $to->get_symbol_for_states(@top);
+    				}
+    				else {
+    					push @seq, shift @top;
+    				}
+    			}
+    		}
+    		if ( not $args{'-gaps'} ) {
+    			@seq = grep { $_ ne $gap } @seq;
+    		}
+    		if ( not $args{'-missing'} ) {
+    			@seq = grep { $_ ne $miss } @seq;
+    		}
+    		return wantarray ? @seq : join '', @seq;
+    	}
     }
 
 =back
@@ -1020,7 +1248,7 @@ Creates simulated replicate.
  Function: Creates simulated replicate.
  Returns : A simulated replicate of the invocant.
  Args    : Tree to simulate the characters on.
- Comments: Requires Statistics::R
+ Comments: Requires Statistics::R, with 'ape', 'phylosim', 'phangorn' and 'phytools'
 
 =cut    
     
@@ -1042,7 +1270,48 @@ Creates simulated replicate.
     }
     
     sub _replicate_dna {
-    
+    	my ($self,$tree) = @_;
+    	
+    	# we will need 'ape', 'phylosim' (and 'phangorn' for model testing)
+    	if ( looks_like_class 'Statistics::R' ) {
+    	
+			# instantiate R			
+			my $R = Statistics::R->new;
+			$R->run(q[library("ape")]);
+			$R->run(q[library("phylosim")]);
+				
+			# pass in the tree, scale it so that its length sums to 1.
+			# in combination with a gamma function and/or invariant sites
+			# this should give us sequences that are reasonably realistic:
+			# not overly divergent.			
+			my $newick = $tree->to_newick;
+			$R->run(qq[phylo <- read.tree(text="$newick")]);
+			$R->run(q[tree <- PhyloSim(phylo)]);
+			$R->run(q[scaleTree(tree,1/tree$treeLength)]);
+			$R->run(q[t <- tree$phylo]);
+
+			# run the model test
+			my $model = Bio::Phylo::Models::Substitution::Dna->modeltest(
+				'-tree'   => $tree,
+				'-matrix' => $self,
+			);
+			
+			# prepare data for processes
+			my @ungapped   = @{ $self->get_ungapped_columns };
+			my @invariant  = @{ $self->get_invariant_columns };
+			my %deletions  = %{ $self->calc_indel_sizes( '-trim' => 1 ) };
+			my %insertions = %{ $self->calc_indel_sizes( '-trim' => 1, '-insertions' => 1 ) };
+			my $ancestral  = $self->calc_median_sequence;
+			
+			# pass in the model specification
+			
+			# run the simulator
+			
+			# get the data back
+			
+			# create a matrix object    	
+    	
+    	}    
     }
     
     sub _replicate_binary {
