@@ -1,5 +1,6 @@
 package Bio::Phylo::Matrices::MatrixRole;
 use strict;
+use Data::Dumper;
 use base qw'Bio::Phylo::Matrices::TypeSafeData Bio::Phylo::Taxa::TaxaLinker';
 use Bio::Phylo::Models::Substitution::Binary;
 use Bio::Phylo::Util::OptionalInterface 'Bio::Align::AlignI';
@@ -1051,6 +1052,7 @@ Creates simulated replicate.
     	if ( looks_like_class 'Statistics::R' ) {
     		my $pattern = $self->calc_distinct_site_patterns('with_indices_of_patterns');
     		my $characters = $self->get_characters;
+    		$logger->info("matrix has ".scalar(@$pattern)." distinct patterns");
     		
 			# instantiate R
 			my $newick = $tree->to_newick;
@@ -1066,24 +1068,37 @@ Creates simulated replicate.
     		# iterate over distinct site patterns
     		for my $p ( @$pattern ) {
     			my $i = $p->[2]->[0];
-    			my $model = Bio::Phylo::Models::Substitution::Binary->modeltest(
-    				'-tree'   => $tree,
-    				'-matrix' => $self,
-    				'-char'   => $characters->get_by_index($i),    				
-    			);
+    			my %pat = map { $_ => 1 } @{ $p->[1] };
+    			my $states;
     			
-    			# pass model to R
-    			my ( $fw, $rev ) = ( $model->get_forward, $model->get_reverse );
-    			my $rates = [ 0, $fw, $rev, 0 ];
-    			$R->set( 'rates' => $rates );
-    			$R->run(qq[Q<-matrix($rates,2,2,byrow=TRUE)]); 
-    			$R->run(qq[rownames(Q)<-colnames(Q)<-c("0","1")]);   			
-    			$R->run(qq[diag(Q)<--rowSums(Q)]);
-    			
-				# simulate character on tree, get states
-				$R->run(qq[tt<-sim.history(phylo,Q,message=FALSE)]);
-				$R->run(qq[states<-as.double(getStates(tt,"tips"))]);
-				my $states = $R->get(q[states]);
+    			# if this column is completely invariant, the model
+    			# estimator is unhappy, so we just copy it over
+    			if ( keys(%pat) == 1 ) {
+    				$logger->info("column is invariant, copying verbatim");
+    				$states = $p->[1];
+    			}
+    			else {
+					$logger->info("going to test model for column(s) $i..*");
+					my $model = Bio::Phylo::Models::Substitution::Binary->modeltest(
+						'-tree'   => $tree,
+						'-matrix' => $self,
+						'-char'   => $characters->get_by_index($i),    				
+					);
+				
+					# pass model to R
+					my ( $fw, $rev ) = ( $model->get_forward, $model->get_reverse );
+					$logger->info("0 -> 1 ($fw), 1 -> 0 ($rev)");
+					my $rates = [ 0, $fw, $rev, 0 ];
+					$R->set( 'rates' => $rates );
+					$R->run(qq[Q<-matrix(rates,2,2,byrow=TRUE)]); 
+					$R->run(qq[rownames(Q)<-colnames(Q)<-c("0","1")]);   			
+					$R->run(qq[diag(Q)<--rowSums(Q)]);
+				
+					# simulate character on tree, get states
+					$R->run(qq[tt<-sim.history(phylo,Q,message=FALSE)]);
+					$R->run(qq[states<-as.double(getStates(tt,"tips"))]);
+					$states = $R->get(q[states]);
+				}
 				
 				# add states to matrix
 				my @indices = @{ $p->[2] };
@@ -1099,10 +1114,14 @@ Creates simulated replicate.
     		my $i = 0;
     		$tree->visit_depth_first(
     			'-pre' => sub { 
-    				unshift @{ $matrix[$i++] }, shift->get_name
+    				my $node = shift;
+    				if ( $node->is_terminal ) {
+    					unshift @{ $matrix[$i++] }, $node->get_name
+    				}
     			}
     		);
-    		return __PACKAGE__->new(
+    		$logger->info(Dumper(\@matrix));
+    		return $factory->create_matrix(
     			'-type' => $self->get_type,
     			'-raw'  => \@matrix,
     		);
