@@ -172,7 +172,7 @@ sub modeltest {
         my ($fasta_fh, $fasta) = tempfile( 'CLEANUP' => 1 );
         print $fasta_fh unparse('-phylo'=>$matrix, '-format'=>'fasta');
         close $fasta_fh;
-
+	
         # instanciate R and lcheck if phangorn is installed
         my $R = Statistics::R->new;
         $R->run(q[package <- require("phangorn")]);
@@ -185,14 +185,17 @@ sub modeltest {
         # read data
         $R->run(qq[data <- read.FASTA("$fasta")]);
 
-        if ($tree) {
+        if ( $tree ) {
             # prune out taxa from tree that are not present in the data
             my @taxon_names = map {$_->get_name} @{ $matrix->get_entities };
-            $tree->keep_tips(\@taxon_names);
-            my ($newick_fh, $newick) = tempfile( 'CLEANUP' => 1 );
-            print $newick_fh unparse('-phylo'=>$tree, '-format'=>'newick');
-            close $newick_fh;
-            $R->run(qq[tree <- read.tree("$newick")]);
+	    $logger->debug('pruning input tree');
+	    $tree->keep_tips(\@taxon_names);
+	    if ( ! $tree ) {
+		$logger->warn('tip labels of tree do not match data');
+		return $model;		    
+	    }
+	    my $newick = $tree->to_newick;	    
+            $R->run(qq[tree <- read.tree(text="$newick")]);
             # call modelTest
             $logger->debug("calling modelTest from R package phangorn");
             $R->run(q[test <- modelTest(phyDat(data), tree=tree)]);
