@@ -1,6 +1,8 @@
+#!/usr/bin/perl
 use strict;
 use Test::More 'no_plan';
 use Bio::Phylo::Models::Substitution::Dna;
+
 require_ok('Bio::Phylo::Models::Substitution::Dna');
 my $model = Bio::Phylo::Models::Substitution::Dna->new(
     '-type'   => 'GTR',
