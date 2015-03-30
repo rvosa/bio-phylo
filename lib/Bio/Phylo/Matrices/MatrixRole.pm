@@ -605,7 +605,7 @@ Calculates size distribution of insertions or deletions
  Type    : Calculation
  Title   : calc_indel_sizes
  Usage   : my %sizes = %{ $matrix->calc_indel_sizes };
- Function: Calculates proportion of invariant sites.
+ Function: Calculates the size distribution of indels.
  Returns : HASH
  Args    : Optional:
            -trim       => if true, disregards indels at start and end
@@ -1271,46 +1271,60 @@ Creates simulated replicate.
     
     sub _replicate_dna {
     	my ($self,$tree) = @_;
-    	
+
     	# we will need 'ape', 'phylosim' (and 'phangorn' for model testing)
     	if ( looks_like_class 'Statistics::R' ) {
-    	
-			# instantiate R			
-			my $R = Statistics::R->new;
-			$R->run(q[library("ape")]);
-			$R->run(q[library("phylosim")]);
-				
-			# pass in the tree, scale it so that its length sums to 1.
-			# in combination with a gamma function and/or invariant sites
-			# this should give us sequences that are reasonably realistic:
-			# not overly divergent.			
-			my $newick = $tree->to_newick;
-			$R->run(qq[phylo <- read.tree(text="$newick")]);
-			$R->run(q[tree <- PhyloSim(phylo)]);
-			$R->run(q[scaleTree(tree,1/tree$treeLength)]);
-			$R->run(q[t <- tree$phylo]);
+	    
+	    # instantiate R			
+	    my $R = Statistics::R->new;
+	    $R->run(q[require("ape")]);
+	    $R->run(q[phylosim <- require("phylosim")]);
+			
+	    # check if phylosim (and therefore ape) is installed
+	    if ( $R->get(q[phylosim]) eq 'FALSE' ) {
+		$logger->warn('R package phylosim must be installed to replicate alignment.');
+		return;
+	    }
+	    
+	    # pass in the tree, scale it so that its length sums to 1.
+	    # in combination with a gamma function and/or invariant sites
+	    # this should give us sequences that are reasonably realistic:
+	    # not overly divergent.				    
+	    my $newick = $tree->to_newick;
 
-			# run the model test
-			my $model = Bio::Phylo::Models::Substitution::Dna->modeltest(
-				'-tree'   => $tree,
-				'-matrix' => $self,
-			);
+	    $R->run(qq[phylo <- read.tree(text="$newick")]);
+	    $R->run(q[tree <- PhyloSim(phylo)]);
+	    $R->run(q[scaleTree(tree,1/tree$treeLength)]);
+	    $R->run(q[t <- tree$phylo]);
+
+	    # run the model test
+	    my $class = 'Bio::Phylo::Models::Substitution::Dna';
+	    my $model = $class->modeltest($self, $tree);
+
+
+	    # prepare data for processes
+	    my @ungapped   = @{ $self->get_ungapped_columns };
+	    my @invariant  = @{ $self->get_invariant_columns };
+	    my %deletions  = %{ $self->calc_indel_sizes( '-trim' => 1 ) };
+	    my %insertions = %{ $self->calc_indel_sizes( '-trim' => 1, '-insertions' => 1 ) };
+	    my $ancestral  = $self->calc_median_sequence;
+	    
+	    my $m = ref($model);
+	    if ( $m=~/([^::]+$)/ ) {
+		$m = $1;
+	    }
+	    # mapping between model names
+	    my %models = {'JC'=>'JC69', 'GTR'=>'GTR', 'F81'=>'F81', 'HKY85'=>'HKY', 'K80'=>'K80'};
+	    my $type = $models{$m} || 'GTR';
+
+	    # pass in the model specification
 			
-			# prepare data for processes
-			my @ungapped   = @{ $self->get_ungapped_columns };
-			my @invariant  = @{ $self->get_invariant_columns };
-			my %deletions  = %{ $self->calc_indel_sizes( '-trim' => 1 ) };
-			my %insertions = %{ $self->calc_indel_sizes( '-trim' => 1, '-insertions' => 1 ) };
-			my $ancestral  = $self->calc_median_sequence;
-			
-			# pass in the model specification
-			
-			# run the simulator
-			
-			# get the data back
-			
-			# create a matrix object    	
-    	
+	    # run the simulator
+	    
+	    # get the data back
+	    
+	    # create a matrix object    	
+	    
     	}    
     }
     
