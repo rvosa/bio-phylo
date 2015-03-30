@@ -8,7 +8,7 @@ use Bio::AlignIO;
 eval { require Statistics::R };
 
  SKIP: {
-     skip 'Statistics::R not installed', 7, if $@;
+     skip 'Statistics::R not installed', 4, if $@;
 
      use_ok( 'Bio::Phylo::Models::Substitution::Dna' );
 
