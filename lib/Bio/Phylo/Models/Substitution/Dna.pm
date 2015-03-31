@@ -150,7 +150,7 @@ sub set_pi {
     my $total = 0;
     $total += $_ for @{$pi};
     $total == 1 or throw 'BadArgs' => 'Frequencies must sum to one';
-    $self->{'_pi'} = $pi;
+    $self->{'_pi'} = $pi;    
     return $self;
 }
 
@@ -231,27 +231,23 @@ sub modeltest {
 
         # create model with specific parameters dependent on primary model type
         if ( $modeltype =~ /JC/ ) {
-            require Bio::Phylo::Models::Substitution::Dna::JC61;
-            $model = Bio::Phylo::Models::Substitution::Dna::F81->new();
+            require Bio::Phylo::Models::Substitution::Dna::JC69;
+            $model = Bio::Phylo::Models::Substitution::Dna::JC69->new();
 
         }
         elsif ( $modeltype =~ /F81/ ) {
             require Bio::Phylo::Models::Substitution::Dna::F81;
-            $model = Bio::Phylo::Models::Substitution::Dna::F81->new(
-                    '-pi' => $pi );
+            $model = Bio::Phylo::Models::Substitution::Dna::F81->new('-pi' => $pi);
         }
         elsif ( $modeltype =~ /GTR/ ) {
             require Bio::Phylo::Models::Substitution::Dna::GTR;
-            $model = Bio::Phylo::Models::Substitution::Dna::GTR->new(
-                    '-pi' => $pi );
+            $model = Bio::Phylo::Models::Substitution::Dna::GTR->new('-pi' => $pi);	    
         }
         elsif ( $modeltype =~ /HKY/ ) {
             require Bio::Phylo::Models::Substitution::Dna::HKY85;
-            # get transition/transversion ratio
-            my $kappa = $R->get(q[fit$Q[2]]);
-            $model = Bio::Phylo::Models::Substitution::Dna::HKY85->new(
-                    '-pi' => $pi,
-                    '-kappa' => $kappa );
+            # transition/transversion ratio kappa determined by transiton A->G/A->C in Q matrix
+            my $kappa = $R->get(q[fit$Q[2]/fit$Q[1]]);
+            $model = Bio::Phylo::Models::Substitution::Dna::HKY85->new('-kappa' => $kappa, '-pi' => $pi );	    
         }
         elsif ( $modeltype =~ /K80/ ) {
             require Bio::Phylo::Models::Substitution::Dna::K80;
@@ -260,7 +256,7 @@ sub modeltest {
               '-pi' => $pi,
               '-kappa' => $kappa );
           }
-        # model is unknown  (e.g. phangorn's SYM ?)
+        # Model is unknown  (e.g. phangorn's SYM ?)
         else {
             $logger->debug("unknown model type, setting to generic DNA substitution model");
             $model = Bio::Phylo::Models::Substitution::Dna->new(
