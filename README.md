@@ -44,14 +44,14 @@ utility)
 
 CONTRIBUTORS
 ------------
-Rutger Vos
-Jason Caravas
-Klaas Hartmann
-Mark A. Jensen
-Chase Miller
-Aki Mimoto
-Hannes Hettling
-Florent Angly
+* Rutger Vos
+* Jason Caravas
+* Klaas Hartmann
+* Mark A. Jensen
+* Chase Miller
+* Aki Mimoto
+* Hannes Hettling
+* Florent Angly
 
 BUGS
 ----
