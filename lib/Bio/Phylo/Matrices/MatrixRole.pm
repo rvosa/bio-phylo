@@ -580,13 +580,13 @@ Retrieves a 'raw' (two-dimensional array) representation of the matrix's content
     	for my $i ( 1 .. $nchar ) {
     		my %seen;
     		for my $row ( @$raw ) {
-    			my $c = $row->[$i];
+    			my $c = uc $row->[$i];
     			$seen{$c}++;
     		}
     		my @states = keys %seen;
     		@states = grep { $_ ne $gap  } @states unless $args{'-gap'};
     		@states = grep { $_ ne $miss } @states unless $args{'-missing'};
-    		push @invariant, $i - 1 unless @states > 1;
+    		push @invariant, $i - 1 if @states and @states == 1;
     	}
     	return \@invariant;
     }
