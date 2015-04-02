@@ -931,6 +931,28 @@ method indicates whether that is the case.
         return $suppress_ns{ shift->get_id };
     }
     *get_suppress_ns = \&is_ns_suppressed;
+    
+=item is_equal()
+
+Tests whether the invocant and the argument are the same. Normally this is done
+by comparing object identifiers, but if the argument is not an object but a string
+then the string is taken to be a name with which to compare, e.g. 
+$taxon->is_equal('Homo sapiens')
+
+ Type    : Test
+ Title   : is_equal
+ Usage   : if ( $obj->is_equal($other) ) { ... }
+ Function: Tests whether the invocant and the argument are the same
+ Returns : BOOLEAN
+ Args    : Object to compare with, or a string representing a
+           name to compare with the invocant's name
+
+=cut
+    
+    sub is_equal {
+    	my ($self,$other) = @_;
+    	return ref $other ? $self->SUPER::is_equal($other) : $self->get_name eq $other;
+    }
 
 =back
 
