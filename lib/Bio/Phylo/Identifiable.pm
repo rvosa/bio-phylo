@@ -76,6 +76,24 @@ sub get_id {
     }
 }
 
+=item is_equal()
+
+Compares invocant's UID with argument's UID
+
+ Type    : Test
+ Title   : is_equal
+ Usage   : do_something() if $obj->is_equal($other);
+ Function: Compares objects by UID
+ Returns : BOOLEAN
+ Args    : Another object to compare with
+
+=cut
+
+sub is_equal {
+	my ($self,$other) = @_;
+	return $self->get_id == $other->get_id;
+}
+
 =back
 
 =head1 SEE ALSO
