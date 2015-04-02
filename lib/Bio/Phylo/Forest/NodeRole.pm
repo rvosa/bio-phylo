@@ -1619,6 +1619,26 @@ Calculates node distance between invocant and argument.
         return $nodal_distance;
     }
 
+=item calc_terminals()
+
+Calculates number of terminals subtended by the invocant
+
+ Type    : Calculation
+ Title   : calc_terminals
+ Usage   : my $ntips = $node->calc_terminals;
+ Function: Returns the number of terminals subtended by the invocant
+ Returns : INT
+ Args    : None
+
+=cut
+    
+    sub calc_terminals {
+    	my $self = shift;
+    	my $tips = 0;
+    	$self->visit_depth_first( '-pre' => sub { $tips++ if shift->is_terminal } );
+    	return $tips;
+    }
+
 =back
 
 =head2 VISITOR METHODS
