@@ -2,8 +2,11 @@
 use strict;
 use warnings;
 use List::Util qw[sum min max];
+use Bio::Phylo::Util::Logger ':levels';
 use constant True  => !undef;
 use constant False => undef;
+
+my $log = Bio::Phylo::Util::Logger->new( '-level' => INFO );
 
 # # # # # # # # # # #
 # Rank functions Daniel Ford, Tanja Gernhard 2006
@@ -18,6 +21,10 @@ use constant False => undef;
 # This is a more or less literal port to Perl of the functions developed by
 # Daniel Ford and Tanja Stadler (nŽe Gernhard) during Tanja's dissertation
 # research. Some minimal changes were made to make the code more idiomatic.
+
+##########################################################################################
+# Math functions. Maybe these should go into something like Bio::Phylo::Util::Math, 
+# together with random_exponential, random_uniform, qnorm, qbeta
 
 # Calculation of n choose j
 # This version saves partial results for use later
@@ -62,7 +69,7 @@ sub gcd {
 # Takes two large integers and attempts to divide them and give
 # the float answer without overflowing
 # (subroutine for compare(t,u,v))
-# does this by first taking out the gcd
+# does this by first taking out the greatest common denominator
 sub gcd_divide {
 	my ( $n, $m ) = @_;
 	my $x = gcd($n,$m);
@@ -71,47 +78,73 @@ sub gcd_divide {
 	return $n/$m;
 }
 
+##########################################################################################
+# Original comment:
 # get the number of descendants of u and of all vertices on the
 # path to the root (subroutine for rankprob(t,u))
+
+# Interpretation:
+# recurses from the root to the tips, returns an array reference at every step whose
+# first element is a boolean set to true once the query node has been seen. The second
+# element is an array that contains the number of subtended leaves - 1 for the query
+# node and for all sisters of the nodes on the path from the query to the root
 sub numDescendants {
-	my ($tree,$u) = @_;
+	my ($node,$u) = @_;
 	
 	# focal node (subtree) is empty, i.e. a leaf 
-	return [False,False] unless @{ $tree };
+	if ( not @{ $node } ) {
+		$log->info("node is terminal");
+		return [False,False];
+	}
+	else {
+		$log->info("node is internal");
+	}
 	
 	# focal node is u
-	return [True,[$tree->[2]->{"leaves_below"}-1]] if $tree->[2]->{"label"}==$u;
+	if ( $node->[2]->{"label"} == $u ) {
+		$log->info("reached node $u");
+		return [True,[$node->[2]->{"leaves_below"}-1]];
+	}
+	else {
+		$log->info("not yet reached $u: ".$node->[2]->{"label"});		
+	}
 	
 	# recurse left
-	my $x = numDescendants( $tree->[0], $u );
+	my $x = numDescendants( $node->[0], $u );
 	if ( $x->[0] ) {
+		$log->info("seen $u");
 		my $n;
 		
 		# focal node has no sibling
-		if ( not @{ $tree->[1] } ) {
+		if ( not @{ $node->[1] } ) {
 			$n = 0;
 		}
 		else {
-			$n = $tree->[1]->[2]->{"leaves_below"} - 1;
+			$n = $node->[1]->[2]->{"leaves_below"} - 1;
 		}
 		return [ True, [ @{ $x->[1] }, $n ] ];
 	}
+	else {
+		$log->info("not seen $u");
+	}
 	
 	# recurse right
-	my $y = numDescendants( $tree->[1], $u );
+	my $y = numDescendants( $node->[1], $u );
 	if ( $y->[0] ) {
+		$log->info("seen $u");
 		my $n;
 		
 		# focal node has no sibling
-		if ( not @{ $tree->[0] } ) {
+		if ( not @{ $node->[0] } ) {
 			$n = 0;
 		}
 		else {
-			$n = $tree->[0]->[2]->{"leaves_below"} - 1;			
+			$n = $node->[0]->[2]->{"leaves_below"} - 1;
 		}
 		return [ True, [ @{ $y->[1] }, $n ] ];
 	}
 	else {
+		$log->info("not seen $u");
 		return [False,False];
 	}
 }
@@ -125,16 +158,16 @@ sub numDescendants {
 # the u half of the subtree
 # the v half of the subtree
 sub subtree {
-	my ($tree,$u,$v) = @_;
+	my ($node,$u,$v) = @_;
 	
-	# tree is empty
-	if ( not @{ $tree } ) {
+	# node is terminal
+	if ( not @{ $node } ) {
 		return False, False, False, False, False;
 	}
 	
 	# recurse left and right
-	my ( $found_ul, $found_vl, $subtree_l, $subtree_ul, $subtree_vl ) = subtree( $tree->[0], $u, $v );
-	my ( $found_ur, $found_vr, $subtree_r, $subtree_ur, $subtree_vr ) = subtree( $tree->[1], $u, $v );
+	my ( $found_ul, $found_vl, $subtree_l, $subtree_ul, $subtree_vl ) = subtree( $node->[0], $u, $v );
+	my ( $found_ur, $found_vr, $subtree_r, $subtree_ur, $subtree_vr ) = subtree( $node->[1], $u, $v );
 	
 	# both were left descendants of focal node, return result
 	if ( $found_ul and $found_vl ) {
@@ -147,8 +180,8 @@ sub subtree {
 	}
 	
 	# have we found either?
-	my $found_u = ( $found_ul or $found_ur or $tree->[2]->{"label"} == $u );
-	my $found_v = ( $found_vl or $found_vr or $tree->[2]->{"label"} == $v );
+	my $found_u = ( $found_ul or $found_ur or $node->[2]->{"label"} == $u );
+	my $found_v = ( $found_vl or $found_vr or $node->[2]->{"label"} == $v );
 	
 	# initialize and assign subtrees
 	my ( $subtree_u, $subtree_v );		
@@ -157,22 +190,86 @@ sub subtree {
 	$subtree_u = $subtree_ur if $found_ur;
 	$subtree_v = $subtree_vr if $found_vr;
 	if ( $found_u and (not $found_v) ) {
-		$subtree_u = $tree;
+		$subtree_u = $node;
 	}
 	elsif ( $found_v and (not $found_u) ) {
-		$subtree_v = $tree;
+		$subtree_v = $node;
 	}
-	$subtree_u = $tree if $tree->[2]->{"label"} == $u;
-	$subtree_v = $tree if $tree->[2]->{"label"} == $v;
+	$subtree_u = $node if $node->[2]->{"label"} == $u;
+	$subtree_v = $node if $node->[2]->{"label"} == $v;
 	
 	# return results
-	return $found_u, $found_v, $tree, $subtree_u, $subtree_v;
+	return $found_u, $found_v, $node, $subtree_u, $subtree_v;
 }
 
-# A version of rankprob which uses the function numDescendants
-sub rankprob {
+sub get_subtree {
+	my ($node,$u,$v) = @_;
+	
+	# node is terminal
+	my @child = @{ $node->get_children };
+	if ( not @child ) {
+		return False, False, False, False, False;
+	}
+	
+	# recurse left and right
+	my ( $found_ul, $found_vl, $subtree_l, $subtree_ul, $subtree_vl ) = get_subtree( $child[0], $u, $v );
+	my ( $found_ur, $found_vr, $subtree_r, $subtree_ur, $subtree_vr ) = get_subtree( $child[1], $u, $v );
+	
+	# both were left descendants of focal node, return result
+	if ( $found_ul and $found_vl ) {
+		return $found_ul, $found_vl, $subtree_l, $subtree_ul, $subtree_vl;
+	}
+	
+	# both were right descendants of focal node, return result
+	if ( $found_ur and $found_vr ) {
+		return $found_ur, $found_vr, $subtree_r, $subtree_ur, $subtree_vr;
+	}
+	
+	# have we found either?
+	my $found_u = ( $found_ul or $found_ur or $node->is_equal($u) );
+	my $found_v = ( $found_vl or $found_vr or $node->is_equal($v) );
+	
+	# initialize and assign subtrees
+	my ( $subtree_u, $subtree_v );		
+	$subtree_u = $subtree_ul if $found_ul;
+	$subtree_v = $subtree_vl if $found_vl;
+	$subtree_u = $subtree_ur if $found_ur;
+	$subtree_v = $subtree_vr if $found_vr;
+	if ( $found_u and (not $found_v) ) {
+		$subtree_u = $node;
+	}
+	elsif ( $found_v and (not $found_u) ) {
+		$subtree_v = $node;
+	}
+	$subtree_u = $node if $node->is_equal($u);
+	$subtree_v = $node if $node->is_equal($v);
+	
+	# return results
+	return $found_u, $found_v, $node, $subtree_u, $subtree_v;
+}
+
+=item calc_rankprob()
+
+Calculates the probabilities for all rank orderings that the invocant node can
+occupy among all possible labeled histories. Uses Stadler's RANKPROB algorithm as 
+described in: 
+
+B<Gernhard, T.> et al., 2006. Estimating the relative order of speciation 
+or coalescence events on a given phylogeny. I<Evolutionary Bioinformatics Online>. 
+B<2>:285. L<http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2674681/>.
+
+ Type    : Calculation
+ Title   : calc_rankprob
+ Usage   : my @rp = @{ $node->calc_rankprob() };
+ Function: Returns the rank probabilities of the invocant node
+ Returns : ARRAY, indices are ranks, values are probabilities
+ Args    : NONE
+
+=cut  
+
+sub calc_rankprob {
 	my ($t,$u) = @_;
-	my $x = numDescendants($t,$u);
+	my $x = numDescendants($t,$u); # XXX
 	$x = $x->[1];
 	my $lhsm = $x->[0];
 	my $k = scalar(@$x);
@@ -208,11 +305,27 @@ sub rankprob {
 	return $rp;
 }
 
-# For tree "t" and vertex "u" calculate the
-# expected rank and variance
-sub expectedrank {
+=item calc_expected_rank()
+
+Calculates the expected rank and variance that the invocant node occupies among all 
+possible labeled histories. Uses Stadler's RANKPROB algorithm as described in: 
+
+B<Gernhard, T.> et al., 2006. Estimating the relative order of speciation 
+or coalescence events on a given phylogeny. I<Evolutionary Bioinformatics Online>. 
+B<2>:285. L<http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2674681/>.
+
+ Type    : Calculation
+ Title   : calc_expected_rank
+ Usage   : my ( $rank, $variance ) = $node->calc_expected_rank();
+ Function: Calculates expected rank and variance
+ Returns : Two numbers: rank and variance
+ Args    : NONE
+
+=cut
+
+sub calc_expected_rank {
 	my ( $t, $u ) = @_;
-	my $rp = rankprob( $t, $u );
+	my $rp = calc_rankprob( $t, $u );
 	my $mu = 0;
 	my $sigma = 0;
 	for my $i ( 0 .. $#{ $rp } ) {
@@ -222,9 +335,24 @@ sub expectedrank {
 	return $mu, $sigma - $mu * $mu;
 }
 
-# Gives the probability that vertex labeled v is
-# below vertex labeled u
-# XXX test me
+=item calc_rankprob_compare()
+
+Calculates the probability that the argument node is below the invocant node over all 
+possible labeled histories. Uses Stadler's COMPARE algorithm as described in: 
+
+B<Gernhard, T.> et al., 2006. Estimating the relative order of speciation 
+or coalescence events on a given phylogeny. I<Evolutionary Bioinformatics Online>. 
+B<2>:285. L<http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2674681/>.
+
+ Type    : Calculation
+ Title   : calc_rankprob_compare
+ Usage   : my $prob = $u->calc_rankprob_compare($v);
+ Function: Compares rankings of nodes
+ Returns : A number (probability)
+ Args    : Bio::Phylo::Forest::Node
+
+=cut
+
 sub compare {
 	my ($t,$u,$v) = @_;
 	my ($found_u,$found_v,$subtree,$subtree_u,$subtree_v) = subtree($t,$u,$v);
@@ -249,10 +377,52 @@ sub compare {
 
 	# calculate rank probabilities in
 	# respective subtrees
-	my $x = rankprob($subtree_u,$u);
-	my $y = rankprob($subtree_v,$v);
+	my $x = calc_rankprob($subtree_u,$u);
+	my $y = calc_rankprob($subtree_v,$v);
 	my $usize = $subtree_u->[2]->{"leaves_below"} - 1;
 	my $vsize = $subtree_v->[2]->{"leaves_below"} - 1;	
+	
+	for my $i ( scalar(@$x) .. $usize + 1 ) {
+		push @$x, 0;
+	}
+	my $xcumulative = [0];
+	for my $i ( 1 .. $#{ $x } ) {
+		push @$xcumulative, $xcumulative->[$i-1] + $x->[$i];
+	}
+	my $rp = [0];
+	for my $i ( 1 .. $#{ $y } ) {
+		push @$rp, 0;
+		for my $j ( 1 .. $usize) {
+			my $a = $y->[$i] * nchoose($i-1+$j,$j) * nchoose($vsize-$i+$usize-$j, $usize-$j) * $xcumulative->[$j];
+			$rp->[$i] += $a;
+		}
+	}
+	my $tot = nchoose($usize+$vsize,$vsize);
+	return sum(@$rp)/$tot;	
+}
+
+sub calc_rankprob_compare {
+	my ($t,$u,$v) = @_;
+	my ($found_u,$found_v,$subtree,$subtree_u,$subtree_v) = get_subtree($t,$u,$v); # XXX
+	
+	# both vertices need to occur in the same tree, of course
+	if ( not ($found_u and $found_v) ) {
+		print "This tree does not have those vertices!";
+		return 0;
+	}
+	
+	# If either one is the root node of the
+	# subtree that connects them then their
+	# relative rankings are certain.
+	return 1.0 if $subtree->is_equal($u);
+	return 0.0 if $subtree->is_equal($v);
+
+	# calculate rank probabilities in
+	# respective subtrees
+	my $x = calc_rankprob($subtree_u,$u);
+	my $y = calc_rankprob($subtree_v,$v);
+	my $usize = $subtree_u->calc_terminals - 1;
+	my $vsize = $subtree_v->calc_terminals - 1;	
 	
 	for my $i ( scalar(@$x) .. $usize + 1 ) {
 		push @$x, 0;
@@ -306,5 +476,5 @@ my $t4 = [ $t1, $t3, { 'leaves_below' => 5, 'label' => 2 } ];
 my $t  = [ $t2, $t4, { 'leaves_below' => 9, 'label' => 1 } ];
 
 use Data::Dumper;
-my $result = compare($t4,5,4);
-print $result;
+my $result = numDescendants($t,2);
+print Dumper($result);
