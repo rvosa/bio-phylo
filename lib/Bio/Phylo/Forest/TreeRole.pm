@@ -3111,6 +3111,34 @@ Raises branch lengths to argument.
         return $tree;
     }
 
+=item multiply()
+
+Multiples branch lengths by argument.
+
+ Type    : Tree manipulator
+ Title   : multiply
+ Usage   : $tree->multiply($num);
+ Function: Multiplies branch lengths by $num.
+ Returns : The modified invocant.
+ Args    : A $number in any of perl's number formats.
+
+=cut
+    
+    sub multiply {
+    	my ( $tree, $num ) = @_;
+    	if ( !looks_like_number $num ) {
+    		throw => 'BadNumber' => "Number '$num' is a bad number";
+    	}
+    	$tree->visit(sub{
+    		my $node = shift;
+    		my $length = $node->get_branch_length;
+    		if ( $length ) {
+    			$node->set_branch_length( $length * $num );
+    		}
+    	});
+    	return $tree;
+    }
+
 =item log_transform()
 
 Log argument base transform branch lengths.
