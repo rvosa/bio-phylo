@@ -5,9 +5,11 @@ use base qw'Bio::Phylo::Taxa::TaxonLinker Bio::Phylo::Listable';
 use Bio::Phylo::Util::OptionalInterface 'Bio::Tree::NodeI';
 use Bio::Phylo::Util::CONSTANT qw':objecttypes /looks_like/';
 use Bio::Phylo::Util::Exceptions 'throw';
+use Bio::Phylo::Util::Math ':all';
 use Bio::Phylo::NeXML::Writable;
 use Bio::Phylo::Factory;
 use Scalar::Util 'weaken';
+use List::Util qw[sum min max];
 no warnings 'recursion';
 
 my $LOADED_WRAPPERS = 0;
@@ -1036,6 +1038,78 @@ Returns the tree subtended by the invocant
         return $tree->_analyze;
     }
 
+=item get_subtrees()
+
+Returns the subtree rooted at the common ancestor of u and v, and the respective
+subtrees that contain u and v
+
+ Type    : Query
+ Title   : get_subtrees
+ Usage   : my ( $found_u, $found_v, $subtree, $subtree_u, $subtree_v ) = $root->get_subtrees($u,$v);
+ Function: Returns the tree subtended by the invocant
+ Returns : A list containing the following variables:
+           - boolean: did we find u
+           - boolean: did we find v
+           - Bio::Phylo::Forest::Node - the root node of the connecting subtree
+           - Bio::Phylo::Forest::Node - the root node of the subtree for $u
+           - Bio::Phylo::Forest::Node - the root node of the subtree for $v           
+ Args    : Two nodes, $u and $v
+ Comments: This is a recursive method that is used by the RANKPROB calculations (see 
+           below). Typically you would invoke this method on the root node of the tree 
+           containing $u and $v, and the method then recurses up the tree. The tree must 
+           be bifurcating, or an exception is thrown.
+
+=cut
+
+    sub get_subtrees {
+		my ($node,$u,$v) = @_;
+	
+		# node is terminal
+		my @child = @{ $node->get_children };
+		if ( not @child ) {
+			return undef, undef, undef, undef, undef;
+		}
+		elsif ( @child != 2 ) {
+			throw 'BadArgs' => "Tree must be bifurcating";
+		}
+	
+		# recurse left and right
+		my ( $found_ul, $found_vl, $subtree_l, $subtree_ul, $subtree_vl ) = $child[0]->get_subtrees( $u, $v );
+		my ( $found_ur, $found_vr, $subtree_r, $subtree_ur, $subtree_vr ) = $child[1]->get_subtrees( $u, $v );
+	
+		# both were left descendants of focal node, return result
+		if ( $found_ul and $found_vl ) {
+			return $found_ul, $found_vl, $subtree_l, $subtree_ul, $subtree_vl;
+		}
+	
+		# both were right descendants of focal node, return result
+		if ( $found_ur and $found_vr ) {
+			return $found_ur, $found_vr, $subtree_r, $subtree_ur, $subtree_vr;
+		}
+	
+		# have we found either?
+		my $found_u = ( $found_ul or $found_ur or $node->is_equal($u) );
+		my $found_v = ( $found_vl or $found_vr or $node->is_equal($v) );
+	
+		# initialize and assign subtrees
+		my ( $subtree_u, $subtree_v );		
+		$subtree_u = $subtree_ul if $found_ul;
+		$subtree_v = $subtree_vl if $found_vl;
+		$subtree_u = $subtree_ur if $found_ur;
+		$subtree_v = $subtree_vr if $found_vr;
+		if ( $found_u and (not $found_v) ) {
+			$subtree_u = $node;
+		}
+		elsif ( $found_v and (not $found_u) ) {
+			$subtree_v = $node;
+		}
+		$subtree_u = $node if $node->is_equal($u);
+		$subtree_v = $node if $node->is_equal($v);
+	
+		# return results
+		return $found_u, $found_v, $node, $subtree_u, $subtree_v;
+	}
+
 =back
 
 =head2 TESTS
@@ -1635,9 +1709,217 @@ Calculates number of terminals subtended by the invocant
     sub calc_terminals {
     	my $self = shift;
     	my $tips = 0;
-    	$self->visit_depth_first( '-pre' => sub { $tips++ if shift->is_terminal } );
+    	$self->visit_level_order( sub { $tips++ if shift->is_terminal } );
     	return $tips;
     }
+
+=item calc_rankprob_tipcounts()
+
+Recurses from the root to the tips, returns an array reference at every step whose
+first element is a boolean set to true once the query node has been seen. The second
+element is an array that contains the number of subtended leaves - 1 for the query
+node and for all sisters of the nodes on the path from the query to the root. This 
+method is used by the RANKPROB calculations (see below)
+
+ Type    : Calculation
+ Title   : calc_rankprob_tipcounts
+ Usage   : my @rp = @{ $root->calc_rankprob_tipcounts($node) };
+ Function: Returns tip counts for RANKPROB
+ Returns : ARRAY
+ Args    : NONE
+
+=cut 
+
+sub calc_rankprob_tipcounts {
+	my ($node,$u) = @_;
+	
+	# focal node (subtree) is empty, i.e. a leaf 
+	my @child = @{ $node->get_children };
+	return [undef,undef] if not @child;
+	return [ 1, [ $node->calc_terminals - 1 ] ] if $node->is_equal($u);
+	
+	# recurse left
+	my $x = $child[0]->calc_rankprob_tipcounts( $u );
+	if ( $x->[0] ) {
+		my $n;
+		
+		# focal node has no sibling
+		if ( not $child[1] ) {
+			$n = 0;
+		}
+		else {
+			$n = $child[1]->calc_terminals - 1;
+		}
+		return [ 1, [ @{ $x->[1] }, $n ] ];
+	}
+
+	# recurse right
+	my $y = $child[1]->calc_rankprob_tipcounts( $u );
+	if ( $y->[0] ) {
+		my $n;
+		
+		# focal node has no sibling
+		if ( not $child[0] ) {
+			$n = 0;
+		}
+		else {
+			$n = $child[0]->calc_terminals - 1;
+		}
+		return [ 1, [ @{ $y->[1] }, $n ] ];
+	}
+	
+	# $u is neither left or right from here
+	else {
+		return [undef,undef];
+	}
+}
+
+=item calc_rankprob()
+
+Calculates the probabilities for all rank orderings that the invocant node can
+occupy among all possible labeled histories. Uses Stadler's RANKPROB algorithm as 
+described in: 
+
+B<Gernhard, T.> et al., 2006. Estimating the relative order of speciation 
+or coalescence events on a given phylogeny. I<Evolutionary Bioinformatics Online>. 
+B<2>:285. L<http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2674681/>.
+
+ Type    : Calculation
+ Title   : calc_rankprob
+ Usage   : my @rp = @{ $root->calc_rankprob($node) };
+ Function: Returns the rank probabilities of the invocant node
+ Returns : ARRAY, indices are ranks, values are probabilities
+ Args    : NONE
+
+=cut  
+
+sub calc_rankprob {
+	my ($t,$u) = @_;
+	my $x = $t->calc_rankprob_tipcounts($u);
+	$x = $x->[1];
+	my $lhsm = $x->[0];
+	my $k = scalar(@$x);
+	my $start = 1;
+	my $end = 1;
+	my $rp = [0,1];
+	my $step = 1;
+	while ( $step < $k ) {
+		my $rhsm = $x->[$step];
+		my $newstart = $start+1;
+		my $newend = $end + $rhsm + 1;
+		my $rp2 = [];
+		for my $i ( 0 .. $newend ) {
+			push @$rp2, 0;
+		}
+		for my $i ( $newstart .. $newend ) {
+			my $q = max( 0, $i - 1 - $end );
+			for my $j ( $q .. min( $rhsm, $i - 2 ) ) {
+				my $a = $rp->[$i-$j-1] * nchoose($lhsm + $rhsm - ($i-1),$rhsm-$j) * nchoose($i-2,$j);
+				$rp2->[$i]+=$a;
+			}
+		}
+		$rp = $rp2;
+		$start = $newstart;
+		$end = $newend;
+		$lhsm = $lhsm+$rhsm+1;
+		$step += 1;
+	}
+	my $tot = sum( @{ $rp } );
+	for my $i ( 0..$#{ $rp } ) {
+		$rp->[$i] = $rp->[$i] / $tot;
+	}
+	return $rp;
+}
+
+=item calc_expected_rank()
+
+Calculates the expected rank and variance that the invocant node occupies among all 
+possible labeled histories. Uses Stadler's RANKPROB algorithm as described in: 
+
+B<Gernhard, T.> et al., 2006. Estimating the relative order of speciation 
+or coalescence events on a given phylogeny. I<Evolutionary Bioinformatics Online>. 
+B<2>:285. L<http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2674681/>.
+
+ Type    : Calculation
+ Title   : calc_expected_rank
+ Usage   : my ( $rank, $variance ) = $root->calc_expected_rank($node);
+ Function: Calculates expected rank and variance
+ Returns : Two numbers: rank and variance
+ Args    : NONE
+
+=cut
+
+sub calc_expected_rank {
+	my ( $t, $u ) = @_;
+	my $rp = $t->calc_rankprob( $u );
+	my $mu = 0;
+	my $sigma = 0;
+	for my $i ( 0 .. $#{ $rp } ) {
+		$mu += $i * $rp->[$i];
+		$sigma += $i * $i * $rp->[$i];
+	}
+	return $mu, $sigma - $mu * $mu;
+}
+
+=item calc_rankprob_compare()
+
+Calculates the probability that the argument node is below the invocant node over all 
+possible labeled histories. Uses Stadler's COMPARE algorithm as described in: 
+
+B<Gernhard, T.> et al., 2006. Estimating the relative order of speciation 
+or coalescence events on a given phylogeny. I<Evolutionary Bioinformatics Online>. 
+B<2>:285. L<http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2674681/>.
+
+ Type    : Calculation
+ Title   : calc_rankprob_compare
+ Usage   : my $prob = $root->calc_rankprob_compare($u,$v);
+ Function: Compares rankings of nodes
+ Returns : A number (probability)
+ Args    : Bio::Phylo::Forest::Node
+
+=cut
+
+sub calc_rankprob_compare {
+	my ($t,$u,$v) = @_;
+	my ($found_u,$found_v,$root,$root_u,$root_v) = $t->get_subtrees($u,$v);
+	
+	# both vertices need to occur in the same tree, of course
+	if ( not ($found_u and $found_v) ) {
+		print "This tree does not have those vertices!";
+		return 0;
+	}
+	
+	# If either one is the root node of the
+	# subtree that connects them then their
+	# relative rankings are certain.
+	return 1.0 if $root->is_equal($u);
+	return 0.0 if $root->is_equal($v);
+
+	# calculate rank probabilities in
+	# respective subtrees
+	my $x = $root_u->calc_rankprob($u);
+	my $y = $root_v->calc_rankprob($v);
+	my $usize = $root_u->calc_terminals - 1;
+	my $vsize = $root_v->calc_terminals - 1;	
+	
+	for my $i ( scalar(@$x) .. $usize + 1 ) {
+		push @$x, 0;
+	}
+	my $xcumulative = [0];
+	for my $i ( 1 .. $#{ $x } ) {
+		push @$xcumulative, $xcumulative->[$i-1] + $x->[$i];
+	}
+	my $rp = [0];
+	for my $i ( 1 .. $#{ $y } ) {
+		push @$rp, 0;
+		for my $j ( 1 .. $usize) {
+			my $a = $y->[$i] * nchoose($i-1+$j,$j) * nchoose($vsize-$i+$usize-$j, $usize-$j) * $xcumulative->[$j];
+			$rp->[$i] += $a;
+		}
+	}
+	my $tot = nchoose($usize+$vsize,$vsize);
+	return sum(@$rp)/$tot;	
+}
 
 =back
 
