@@ -2440,6 +2440,50 @@ Converts node ages to branch lengths
         return $self;
     }
 
+=item rankprobbl()
+
+Generates branch lengths by calculating the rank probabilities for each node and applying
+the expected waiting times under a pure birth process to these ranks. Uses Stadler's 
+RANKPROB algorithm as described in: 
+
+B<Gernhard, T.> et al., 2006. Estimating the relative order of speciation 
+or coalescence events on a given phylogeny. I<Evolutionary Bioinformatics Online>. 
+B<2>:285. L<http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2674681/>.
+
+ Type    : Tree manipulator
+ Title   : rankprobbl
+ Usage   : $tree->rankprobbl;
+ Function: Generates pure birth branch lengths
+ Returns : The modified invocant.
+ Args    : NONE
+ Comments: Tree must be fully bifurcating
+
+=cut
+
+	sub rankprobbl {
+		my $self = shift;
+		my $root = $self->get_root;
+		my $intervals = $root->calc_terminals;
+		my @times;
+		for my $i ( 1 .. $intervals ) {
+			my $previous = $times[-1] || 0;
+			push @times, $previous + ( 1 / $i );
+		}
+		my $total = $times[-1];
+		for my $node ( @{ $self->get_internals } ) {
+			my $rankprobs = $root->calc_rankprob($node);
+			my @weighted_waiting_times;
+			for my $i ( 1 .. $#{ $rankprobs } ) {
+				push @weighted_waiting_times, $rankprobs->[$i] * $times[$i - 1];
+			}
+			my $age = $total - sum(@weighted_waiting_times);
+			$node->set_generic( 'age' => $age );
+		}
+		$self->agetobl;
+		$root->set_branch_length(1);
+		return $self;
+	}
+
 =item ultrametricize()
 
 Sets all root-to-tip path lengths equal.
