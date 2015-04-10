@@ -3,6 +3,7 @@ use strict;
 use Data::Dumper;
 use base qw'Bio::Phylo::Matrices::TypeSafeData Bio::Phylo::Taxa::TaxaLinker';
 use Bio::Phylo::Models::Substitution::Binary;
+use Bio::Phylo::Models::Substitution::Dna;
 use Bio::Phylo::Util::OptionalInterface 'Bio::Align::AlignI';
 use Bio::Phylo::Util::CONSTANT qw':objecttypes /looks_like/';
 use Bio::Phylo::Util::Exceptions qw'throw';
@@ -1272,7 +1273,7 @@ Creates simulated replicate.
 
     	# we will need 'ape', 'phylosim' (and 'phangorn' for model testing)
     	if ( looks_like_class 'Statistics::R' ) {
-	    
+			
 			# instantiate R			
 			my $R = Statistics::R->new;
 			$R->run(q[require("ape")]);
@@ -1280,8 +1281,8 @@ Creates simulated replicate.
 			
 			# check if phylosim (and therefore ape) is installed
 			if ( $R->get(q[phylosim]) eq 'FALSE' ) {
-				$logger->warn('R package phylosim must be installed to replicate alignment.');
-				return;
+					$logger->warn('R package phylosim must be installed to replicate alignment.');
+					return;
 			}
 		
 			# pass in the tree, scale it so that its length sums to 1.
@@ -1296,8 +1297,7 @@ Creates simulated replicate.
 			$R->run(q[t <- tree$phylo]);
 
 			# run the model test
-			my $class = 'Bio::Phylo::Models::Substitution::Dna';
-			my $model = $class->modeltest($self, $tree);
+			my $model = 'Bio::Phylo::Models::Substitution::Dna'->modeltest($self, $tree);
 
 			# prepare data for processes
 			my @ungapped   = @{ $self->get_ungapped_columns };
@@ -1311,60 +1311,99 @@ Creates simulated replicate.
 
 			my $m = ref($model);
 			if ( $m=~/([^::]+$)/ ) {
-				$m = $1;
+					$m = $1;
 			}
 			# mapping between model names (can differ between Bio::Phylo and phylosim)
 			my %models = ('JC69'=>'JC69', 'GTR'=>'GTR', 'F81'=>'F81', 'HKY85'=>'HKY', 'K80'=>'K80');
 			my $type = $models{$m} || 'GTR';
-		
+			
 			# collect model specific parameters in string passed to R
 			my $model_params;
 			if ( $type =~ /(?:F81|GTR|K80|HKY)/ ) {
-				$logger->debug("setting base frequencies for substitution model");
-				$model_params .= 'base.freqs=c(' . join(',', @{$model->get_pi}) .  ')';
+					$logger->debug("setting base frequencies for substitution model");
+					$model_params .= 'base.freqs=c(' . join(',', @{$model->get_pi}) .  ')';
 			}
 			if ( $type =~ /GTR/ ) {
-				$logger->debug("setting rate params for GTR model");
-				# (watch out for different column order in phangorn's and phylosim's Q matrix!)
-				my $a = $model->get_rate('C', 'T');
-				my $b = $model->get_rate('A', 'T');
-				my $c = $model->get_rate('G', 'T');
-				my $d = $model->get_rate('A', 'C');
-				my $e = $model->get_rate('G', 'C');
-				my $f = $model->get_rate('G', 'A');
-				$model_params .= ", rate.params=list(a=$a, b=$b, c=$c, d=$d, e=$e, f=$f)";
+					$logger->debug("setting rate params for GTR model");
+					# (watch out for different column order in phangorn's and phylosim's Q matrix!)
+					my $a = $model->get_rate('C', 'T');
+					my $b = $model->get_rate('A', 'T');
+					my $c = $model->get_rate('G', 'T');
+					my $d = $model->get_rate('A', 'C');
+					my $e = $model->get_rate('G', 'C');
+					my $f = $model->get_rate('G', 'A');
+					$model_params .= ", rate.params=list(a=$a, b=$b, c=$c, d=$d, e=$e, f=$f)";
 			}
 			if ( $type =~ /(?:K80|HKY)/) {
-				$logger->debug("setting kappa parameter for substitution model");
-				my $kappa = $model->get_kappa;
-				# get transition and transversion rates from kappa,
-				#  scale with number of nucleotides to obtain similar Q matrices
-				my $alpha = $kappa * 4;
-				my $beta = 4;						
-				$model_params .= ", rate.params=list(Alpha=$alpha, Beta=$beta)";		
+					$logger->debug("setting kappa parameter for substitution model");
+					my $kappa = $model->get_kappa;
+					# get transition and transversion rates from kappa,
+					#  scale with number of nucleotides to obtain similar Q matrices
+					my $alpha = $kappa * 4;
+					my $beta = 4;						
+					$model_params .= ", rate.params=list(Alpha=$alpha, Beta=$beta)";		
 			}
 			# create model for phylosim
 			$R->run(qq[model <- $type($model_params)]);
-		
+			
+				    # set parameters for indels
+			if ( keys %deletions ) {
+					# deletions
+					my @del_sizes = keys %deletions;
+					my $del_total = 0;
+					$del_total += $_ for values (%deletions);
+					my @del_probs = map {$_/$del_total} values %deletions;
+					my $size_str = 'c(' . join(',', @del_sizes) . ')';
+					my $prob_str = 'c(' . join(',', @del_probs) . ')';
+					my $rate = scalar(keys %deletions) / $self->get_nchar;
+					$logger->debug("Setting deletion rate to $rate");
+					$R->run(qq[attachProcess(root.seq, DiscreteDeletor(rate=$rate, sizes=$size_str, probs=$prob_str))]);
+			}
+			if ( keys %insertions ) {
+					# insertions
+					my @ins_sizes = keys %insertions;
+					my $ins_total = 0;
+					$ins_total += $_ for values (%insertions);
+					my @ins_probs = map {$_/$ins_total} values %insertions;
+					my $size_str = 'c(' . join(',', @ins_sizes) . ')';
+					my $prob_str = 'c(' . join(',', @ins_probs) . ')';
+					my $maxsize = (sort { $b <=> $a } keys(%insertions))[0];
+					my $rate = scalar(keys %insertions) / $self->get_nchar;
+					$logger->debug("Setting insertion rate to $rate");
+					$R->run(qq[i <- DiscreteInsertor(rate=$rate, sizes=$size_str, probs=$prob_str)]);
+					$R->run(qq[template <- NucleotideSequence(length=$maxsize,processes=list(list(model)))]);
+					$R->run(q[i$templateSeq <- template]);
+					$R->run(qq[attachProcess(root.seq, i)]);
+			}
+
+			# specify model that evolves root sequence
 			$R->run(q[attachProcess(root.seq, model)]);
-		
-			# do the simulation
+			
+			# set invariant sites
+			if ( scalar @invariant ) {
+					my $pinvar = $model->get_pinvar || scalar(@invariant)/$self->get_nchar;
+					# set a high value for gamma, then we approximate the empirical number of invariant sites
+					$R->run(qq[plusInvGamma(root.seq,model,pinv=$pinvar,shape=1e10)]);
+			}			
+
+			# run the simulation
 			$R->run(q[sim <- PhyloSim(root.seq=root.seq, phylo=t)]);
 			$R->run(q[Simulate(sim)]);
 		
 			# get alignment as Fasta string
 			my $aln = $R->get(q[paste('>', t$tip.label, '\n', apply(sim$alignment, 1, paste, collapse='')[t$tip.label], '\n', collapse='', sep='')]);
 			$aln =~ s/\\n/\n/g;
-
+			
+			# create matrix 
 			my $project = parse(
-				'-string'     => $aln,
-				'-format'     => 'fasta',
-				'-type'       => 'dna',
-				'-as_project' => 1,
-			);
-		
+					'-string'     => $aln,
+					'-format'     => 'fasta',
+					'-type'       => 'dna',
+					'-as_project' => 1,
+			    );
+			
 			my ($matrix) = @{ $project->get_items(_MATRIX_) };
-		
+			
 			return $matrix;
     	}    
     }
