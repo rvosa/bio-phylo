@@ -8,7 +8,7 @@ use Bio::Phylo::Util::CONSTANT qw':objecttypes /looks_like/';
 use Bio::Phylo::Util::Exceptions qw'throw';
 use Bio::Phylo::NeXML::Writable;
 use Bio::Phylo::Matrices::Datum;
-use Bio::Phylo::IO qw (parse unparse);
+use Bio::Phylo::IO qw(parse unparse);
 use Bio::Phylo::Factory;
 my $LOADED_WRAPPERS = 0;
 {
@@ -205,11 +205,9 @@ Matrix constructor from Bio::Align::AlignI argument.
                 @args
             );
 
-# XXX create raw getter/setter pairs for annotation, accession, consensus_meta source
-            for my $field (
-                qw(description accession id annotation consensus_meta score source)
-              )
-            {
+			# XXX create raw getter/setter pairs for annotation, 
+			# accession, consensus_meta source
+            for my $field ( qw(description accession id annotation consensus_meta score source) ) {
                 $self->$field( $aln->$field );
             }
             my $to = $self->get_type_object;
@@ -700,11 +698,11 @@ Calculates proportion of invariant sites.
  Returns : Scalar: a number
  Args    : Optional:
            # if true, counts missing (usually the '?' symbol) as a state
-	   # in the final tallies. Otherwise, missing states are ignored
+	       # in the final tallies. Otherwise, missing states are ignored
            -missing => 1
            # if true, counts gaps (usually the '-' symbol) as a state
-	   # in the final tallies. Otherwise, gap states are ignored
-	   -gap => 1
+	       # in the final tallies. Otherwise, gap states are ignored
+	       -gap => 1
 
 =cut
 
@@ -770,11 +768,11 @@ Calculates the frequencies of the states observed in the matrix.
  Returns : A hash, keys are state symbols, values are frequencies
  Args    : Optional:
            # if true, counts missing (usually the '?' symbol) as a state
-	   # in the final tallies. Otherwise, missing states are ignored
+	       # in the final tallies. Otherwise, missing states are ignored
            -missing => 1
            # if true, counts gaps (usually the '-' symbol) as a state
-	   # in the final tallies. Otherwise, gap states are ignored
-	   -gap => 1
+	       # in the final tallies. Otherwise, gap states are ignored
+	       -gap => 1
  Comments: Throws exception if matrix holds continuous values
 
 =cut
@@ -876,14 +874,14 @@ Calculates the G+C content as a fraction on the total
  Returns : A number between 0 and 1 (inclusive)
  Args    : Optional:
            # if true, counts missing (usually the '?' symbol) as a state
-	   # in the final tallies. Otherwise, missing states are ignored
+	       # in the final tallies. Otherwise, missing states are ignored
            -missing => 1
            # if true, counts gaps (usually the '-' symbol) as a state
-	   # in the final tallies. Otherwise, gap states are ignored
-	   -gap => 1
+	       # in the final tallies. Otherwise, gap states are ignored
+	       -gap => 1
  Comments: Throws 'BadArgs' exception if matrix holds anything other than DNA
            or RNA. The calculation also takes the IUPAC symbol S (which is C|G)
-	   into account, but no other symbols (such as V, for A|C|G);
+	       into account, but no other symbols (such as V, for A|C|G);
 
 =cut
 
@@ -1275,100 +1273,99 @@ Creates simulated replicate.
     	# we will need 'ape', 'phylosim' (and 'phangorn' for model testing)
     	if ( looks_like_class 'Statistics::R' ) {
 	    
-	    # instantiate R			
-	    my $R = Statistics::R->new;
-	    $R->run(q[require("ape")]);
-	    $R->run(q[phylosim <- require("phylosim")]);
+			# instantiate R			
+			my $R = Statistics::R->new;
+			$R->run(q[require("ape")]);
+			$R->run(q[phylosim <- require("phylosim")]);
 			
-	    # check if phylosim (and therefore ape) is installed
-	    if ( $R->get(q[phylosim]) eq 'FALSE' ) {
-		$logger->warn('R package phylosim must be installed to replicate alignment.');
-		return;
-	    }
-	    
-	    # pass in the tree, scale it so that its length sums to 1.
-	    # in combination with a gamma function and/or invariant sites
-	    # this should give us sequences that are reasonably realistic:
-	    # not overly divergent.				    
-	    my $newick = $tree->to_newick;
+			# check if phylosim (and therefore ape) is installed
+			if ( $R->get(q[phylosim]) eq 'FALSE' ) {
+				$logger->warn('R package phylosim must be installed to replicate alignment.');
+				return;
+			}
+		
+			# pass in the tree, scale it so that its length sums to 1.
+			# in combination with a gamma function and/or invariant sites
+			# this should give us sequences that are reasonably realistic:
+			# not overly divergent.				    
+			my $newick = $tree->to_newick;
 
-	    $R->run(qq[phylo <- read.tree(text="$newick")]);
-	    $R->run(q[tree <- PhyloSim(phylo)]);
-	    $R->run(q[scaleTree(tree,1/tree$treeLength)]);
-	    $R->run(q[t <- tree$phylo]);
+			$R->run(qq[phylo <- read.tree(text="$newick")]);
+			$R->run(q[tree <- PhyloSim(phylo)]);
+			$R->run(q[scaleTree(tree,1/tree$treeLength)]);
+			$R->run(q[t <- tree$phylo]);
 
-	    # run the model test
-	    my $class = 'Bio::Phylo::Models::Substitution::Dna';
-	    my $model = $class->modeltest($self, $tree);
+			# run the model test
+			my $class = 'Bio::Phylo::Models::Substitution::Dna';
+			my $model = $class->modeltest($self, $tree);
 
+			# prepare data for processes
+			my @ungapped   = @{ $self->get_ungapped_columns };
+			my @invariant  = @{ $self->get_invariant_columns };
+			my %deletions  = %{ $self->calc_indel_sizes( '-trim' => 1 ) };
+			my %insertions = %{ $self->calc_indel_sizes( '-trim' => 1, '-insertions' => 1 ) };
+			my $ancestral  = $self->calc_median_sequence;
+		
+			# ancestral sequence
+			$R->run(qq[root.seq <- NucleotideSequence(string='$ancestral')]);	    
 
-	    # prepare data for processes
-	    my @ungapped   = @{ $self->get_ungapped_columns };
-	    my @invariant  = @{ $self->get_invariant_columns };
-	    my %deletions  = %{ $self->calc_indel_sizes( '-trim' => 1 ) };
-	    my %insertions = %{ $self->calc_indel_sizes( '-trim' => 1, '-insertions' => 1 ) };
-	    my $ancestral  = $self->calc_median_sequence;
-	    
-	    # ancestral sequence
-	    $R->run(qq[root.seq <- NucleotideSequence(string='$ancestral')]);	    
+			my $m = ref($model);
+			if ( $m=~/([^::]+$)/ ) {
+				$m = $1;
+			}
+			# mapping between model names (can differ between Bio::Phylo and phylosim)
+			my %models = ('JC69'=>'JC69', 'GTR'=>'GTR', 'F81'=>'F81', 'HKY85'=>'HKY', 'K80'=>'K80');
+			my $type = $models{$m} || 'GTR';
+		
+			# collect model specific parameters in string passed to R
+			my $model_params;
+			if ( $type =~ /(?:F81|GTR|K80|HKY)/ ) {
+				$logger->debug("setting base frequencies for substitution model");
+				$model_params .= 'base.freqs=c(' . join(',', @{$model->get_pi}) .  ')';
+			}
+			if ( $type =~ /GTR/ ) {
+				$logger->debug("setting rate params for GTR model");
+				# (watch out for different column order in phangorn's and phylosim's Q matrix!)
+				my $a = $model->get_rate('C', 'T');
+				my $b = $model->get_rate('A', 'T');
+				my $c = $model->get_rate('G', 'T');
+				my $d = $model->get_rate('A', 'C');
+				my $e = $model->get_rate('G', 'C');
+				my $f = $model->get_rate('G', 'A');
+				$model_params .= ", rate.params=list(a=$a, b=$b, c=$c, d=$d, e=$e, f=$f)";
+			}
+			if ( $type =~ /(?:K80|HKY)/) {
+				$logger->debug("setting kappa parameter for substitution model");
+				my $kappa = $model->get_kappa;
+				# get transition and transversion rates from kappa,
+				#  scale with number of nucleotides to obtain similar Q matrices
+				my $alpha = $kappa * 4;
+				my $beta = 4;						
+				$model_params .= ", rate.params=list(Alpha=$alpha, Beta=$beta)";		
+			}
+			# create model for phylosim
+			$R->run(qq[model <- $type($model_params)]);
+		
+			$R->run(q[attachProcess(root.seq, model)]);
+		
+			# do the simulation
+			$R->run(q[sim <- PhyloSim(root.seq=root.seq, phylo=t)]);
+			$R->run(q[Simulate(sim)]);
+		
+			# get alignment as Fasta string
+			my $aln = $R->get(q[paste('>', t$tip.label, '\n', apply(sim$alignment, 1, paste, collapse='')[t$tip.label], '\n', collapse='', sep='')]);
+			$aln =~ s/\\n/\n/g;
 
-	    my $m = ref($model);
-	    if ( $m=~/([^::]+$)/ ) {
-		$m = $1;
-	    }
-	    # mapping between model names (can differ between Bio::Phylo and phylosim)
-	    my %models = ('JC69'=>'JC69', 'GTR'=>'GTR', 'F81'=>'F81', 'HKY85'=>'HKY', 'K80'=>'K80');
-	    my $type = $models{$m} || 'GTR';
-	    
-	    # collect model specific parameters in string passed to R
-	    my $model_params;
-	    if ( $type =~ /F81|GTR|K80|HKY/ ) {
-		$logger->debug("setting base frequencies for substitution model");
-		$model_params .= 'base.freqs=c(' . join(',', @{$model->get_pi}) .  ')';
-	    }
-	    if ( $type =~ /GTR/ ) {
-		$logger->debug("setting rate params for GTR model");
-		# (watch out for different column order in phangorn's and phylosim's Q matrix!)
-		my $a = $model->get_rate('C', 'T');
-		my $b = $model->get_rate('A', 'T');
-		my $c = $model->get_rate('G', 'T');
-		my $d = $model->get_rate('A', 'C');
-		my $e = $model->get_rate('G', 'C');
-		my $f = $model->get_rate('G', 'A');
-		$model_params .= ", rate.params=list(a=$a, b=$b, c=$c, d=$d, e=$e, f=$f)";
-	    }
-	    if ( $type =~ /K80|HKY/) {
-		$logger->debug("setting kappa parameter for substitution model");
-		my $kappa = $model->get_kappa;
-		# get transition and transversion rates from kappa,
-		#  scale with number of nucleotides to obtain similar Q matrices
-		my $alpha = $kappa * 4;
-		my $beta = 4;						
-		$model_params .= ", rate.params=list(Alpha=$alpha, Beta=$beta)";		
-	    }
-	    # create model for phylosim
-	    $R->run(qq[model <- $type($model_params)]);
-	    
-	    $R->run(q[attachProcess(root.seq, model)]);
-	    
-	    #do the simulation
-	    $R->run(q[sim <- PhyloSim(root.seq=root.seq, phylo=t)]);
-	    $R->run(q[Simulate(sim)]);
-	    
-	    # get alignment as Fasta string
-	    my $aln = $R->get(q[paste('>', t$tip.label, '\n', apply(sim$alignment, 1, paste, collapse='')[t$tip.label], '\n', collapse='', sep='')]);
-	    $aln =~ s/\\n/\n/g;
-
-	    my $project = parse(
-		-string => $aln,
-		-format => 'fasta',
-		-type => 'dna',
-		-as_project => 1,
-		);
-	    
-	    my ($matrix) = @{ $project->get_items(_MATRIX_) };
-	    
-	    return $matrix;
+			my $project = parse(
+				'-string'     => $aln,
+				'-format'     => 'fasta',
+				'-type'       => 'dna',
+				'-as_project' => 1,
+			);
+		
+			my ($matrix) = @{ $project->get_items(_MATRIX_) };
+		
+			return $matrix;
     	}    
     }
     
