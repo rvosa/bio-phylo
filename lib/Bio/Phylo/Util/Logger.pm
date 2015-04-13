@@ -82,7 +82,7 @@ BEGIN {
             # select one of the templates
             my $string;
             my $s = $STYLE{$STYLE};
-            $string = eval "qq[$s]";
+            $string = eval "qq[$s\n]";
             
             # dispatch to the listeners
             $_->( $string, $level, $sub, $file, $line, $message ) for @listeners;
