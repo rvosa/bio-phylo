@@ -13,7 +13,7 @@ use base 'Bio::Phylo::Forest::NodeRole';
 
 =head1 NAME
 
-Bio::Phylo::Forest::DrawNode - Tree node with extra methods for tree drawing
+Bio::Phylo::Forest::DrawNodeRole - Tree node with extra methods for tree drawing
 
 =head1 SYNOPSIS
 
