@@ -1842,26 +1842,6 @@ Calculates the Fair Proportion value for each terminal.
         }
         return $fp;
     }
-    
-=item calc_fp_mean()
-
-Calculates the mean Fair Proportion value over all terminals
-
- Type    : Calculation
- Title   : calc_fp_mean
- Usage   : my $pe = $tree->calc_fp_mean();
- Function: Returns the mean Fair Proportion value over all terminals
- Returns : FLOAT
- Args    : NONE
-
-=cut      
-    
-    sub calc_fp_mean {
-    	my $self = shift;
-    	my $per_tip = $self->calc_fp;
-    	my @values = values %{ $per_tip };
-    	return sum(@values)/scalar(@values);    
-    }
 
 =item calc_fp_mean() 
 
@@ -1917,27 +1897,7 @@ Calculates the Equal Splits value for each terminal
             $es->{$name} = $esi;
         }
         return $es;
-    }
-    
-=item calc_es_mean()
-
-Calculates the mean Equal Splits value over all terminals
-
- Type    : Calculation
- Title   : calc_es_mean
- Usage   : my $pe = $tree->calc_es_mean();
- Function: Returns the mean Equal Splits value over all terminals
- Returns : FLOAT
- Args    : NONE
-
-=cut      
-    
-    sub calc_es_mean {
-    	my $self = shift;
-    	my $per_tip = $self->calc_es;
-    	my @values = values %{ $per_tip };
-    	return sum(@values)/scalar(@values);    
-    }    
+    }  
 
 =item calc_es_mean()
 
@@ -1979,27 +1939,7 @@ Calculates the Pendant Edge value for each terminal.
         my $pe =
           { map { $_->get_name => $_->get_branch_length } @{$terminals} };
         return $pe;
-    }
-    
-=item calc_pe_mean()
-
-Calculates the mean Pendant Edge value over all terminals
-
- Type    : Calculation
- Title   : calc_pe_mean
- Usage   : my $pe = $tree->calc_pe_mean();
- Function: Returns the mean Pendant Edge value over all terminals
- Returns : FLOAT
- Args    : NONE
-
-=cut     
-    
-    sub calc_pe_mean {
-    	my $self = shift;
-    	my $per_tip = $self->calc_pe;
-    	my @values = values %{ $per_tip };
-    	return sum(@values)/scalar(@values);    
-    }     
+    }    
 
 =item calc_pe_mean()
 
@@ -2126,26 +2066,6 @@ Calculates the Shapley value for each terminal.
         return ( @core_terminals, @child_terminals, @parent_terminals );
     }
     
-=item calc_shapley_mean()
-
-Calculates the mean Shapley value over all terminals
-
- Type    : Calculation
- Title   : calc_shapley_mean
- Usage   : my $es = $tree->calc_shapley_mean();
- Function: Returns the mean Shapley value over all terminals
- Returns : FLOAT
- Args    : NONE
-
-=cut    
-    
-    sub calc_shapley_mean {
-    	my $self = shift;
-    	my $per_tip = $self->calc_shapley;
-    	my @values = values %{ $per_tip };
-    	return sum(@values)/scalar(@values);    
-    }    
-
 =item calc_shapley_mean()
 
 Calculates the mean Shapley value over all terminals
@@ -3171,7 +3091,7 @@ Multiples branch lengths by argument.
     sub multiply {
     	my ( $tree, $num ) = @_;
     	if ( !looks_like_number $num ) {
-    		throw => 'BadNumber' => "Number '$num' is a bad number";
+    		throw 'BadNumber' => "Number '$num' is a bad number";
     	}
     	$tree->visit(sub{
     		my $node = shift;
