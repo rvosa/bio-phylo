@@ -1310,7 +1310,7 @@ Creates simulated replicate.
 			$R->run(qq[root.seq <- NucleotideSequence(string='$ancestral')]);	    
 
 			my $m = ref($model);
-			if ( $m=~/([^::]+$)/ ) {
+			if ( $m=~/([^\:\:]+$)/ ) {
 					$m = $1;
 			}
 			# mapping between model names (can differ between Bio::Phylo and phylosim)
