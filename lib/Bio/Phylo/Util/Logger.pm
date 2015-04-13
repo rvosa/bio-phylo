@@ -4,7 +4,8 @@ use base 'Exporter';
 use Bio::Phylo::Util::Exceptions 'throw';
 use Bio::Phylo::Util::CONSTANT qw'/looks_like/';
 
-our ( %VERBOSITY, $PREFIX );
+our ( %VERBOSITY, $PREFIX, %STYLE );
+our $STYLE       = 'detailed';
 our $TRACEBACK   = 0;
 our @EXPORT_OK   = qw(DEBUG INFO WARN ERROR FATAL VERBOSE);
 our %EXPORT_TAGS = ( 'simple' => [@EXPORT_OK], 'levels' => [@EXPORT_OK] );
@@ -22,6 +23,12 @@ BEGIN {
     
     # set verbosity to 2, i.e. warn
     $VERBOSITY{'*'} = $ENV{'BIO_PHYLO_VERBOSITY'} || 2;
+    
+    # define verbosity styles
+    %STYLE = (
+    	'simple'   => '$level - $message',
+    	'detailed' => '$level $sub [$file $line] - $message',    
+    );
 }
 
 {
@@ -53,31 +60,32 @@ BEGIN {
     # this is never called directly. rather, messages are dispatched here
     # by the DEBUG() ... FATAL() subs below
     sub LOG ($$) {
-        my ( $msg, $lvl ) = @_;
+        my ( $message, $level ) = @_;
         
         # probe the call stack
-        my ( $pack2, $file2, $line2, $sub2 ) = caller( $TRACEBACK + 2 );
-        my ( $pack1, $file1, $line1, $sub1 ) = caller( $TRACEBACK + 1 );
+        my ( $pack2, $file2, $line2, $sub  ) = caller( $TRACEBACK + 2 );
+        my ( $pack1, $file,  $line,  $sub1 ) = caller( $TRACEBACK + 1 );
         
         # cascade verbosity from global to local
         my $verbosity = $VERBOSITY{'*'}; # global
         $verbosity = $VERBOSITY{$pack1} if exists $VERBOSITY{$pack1}; # package
-        $verbosity = $VERBOSITY{$sub2}  if $sub2 and exists $VERBOSITY{$sub2}; # sub
+        $verbosity = $VERBOSITY{$sub}  if $sub and exists $VERBOSITY{$sub}; # sub
         
         # verbosity is higher than the current caller, proceed
-        if ( $verbosity >= $levels{$lvl} ) {            
+        if ( $verbosity >= $levels{$level} ) {            
 
             # strip the prefix from the calling file's path
-            if ( index($file1, $PREFIX) == 0 ) {
-                $file1 =~ s/^\Q$PREFIX\E//;
+            if ( index($file, $PREFIX) == 0 ) {
+                $file =~ s/^\Q$PREFIX\E//;
             }
             
-            # make template, populate string
-            my $tmpl = "%s %s [%s: %i] - %s\n";
-            my $string = sprintf $tmpl, $lvl, ( $sub2 || '' ), $file1, $line1, $msg;
+            # select one of the templates
+            my $string;
+            my $s = $STYLE{$STYLE};
+            $string = eval "qq[$s]";
             
             # dispatch to the listeners
-            $_->( $string, $lvl, $sub2, $file1, $line1, $msg ) for @listeners;
+            $_->( $string, $level, $sub, $file, $line, $message ) for @listeners;
         }       
     }
     
@@ -166,6 +174,13 @@ BEGIN {
                 __PACKAGE__->PREFIX($opt{'-prefix'});
             }
             
+            # set logstyle
+            if ( $opt{'-style'} ) {
+            	my $s = lc $opt{'-style'};
+            	if ( exists $STYLE{$s} ) {
+            		$STYLE = $s;
+            	}
+            }            
         }
         return $VERBOSITY{'*'};
     }
