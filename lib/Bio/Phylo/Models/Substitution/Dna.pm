@@ -11,10 +11,6 @@ sub _INDEX_OF_ { { A => 0, C => 1, G => 2, T => 3 } }
 sub _BASE_AT_ { [qw(A C G T)] }
 
 my $logger = Bio::Phylo::Util::Logger->new;
-$logger->VERBOSE(
-     '-level' => DEBUG,
-     '-class' => 'Bio::Phylo::Models::Substitution::Dna',
- );
 
 sub new {
     my $class = shift;
