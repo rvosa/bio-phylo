@@ -5,10 +5,13 @@ use Test::More 'no_plan';
 use Bio::Phylo::IO 'parse_tree';
 use Bio::Phylo::Util::Logger ':levels';
 
-eval { require Statistics::R };
-
 SKIP: {
+	eval { require Statistics::R };
 	skip 'Statistics::R not installed', 2, if $@;
+
+	eval { require Math::Random };
+	skip 'Math::Random not installed', 2 if $@;
+
 	my $tree = parse_tree(
 		'-format' => 'newick',
 		'-handle' => \*DATA,
