@@ -16,7 +16,7 @@ use Bio::Phylo::Util::CONSTANT 'looks_like_hash';
 
 =head1 NAME
 
-Bio::Phylo::Forest::DrawTree - Tree with extra methods for tree drawing
+Bio::Phylo::Forest::DrawTreeRole - Tree with extra methods for tree drawing
 
 =head1 SYNOPSIS
 
