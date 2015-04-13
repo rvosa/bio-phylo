@@ -14,7 +14,7 @@ COMPATIBILITY
 Bio::Phylo installs without problems on most popular, current platforms (Win32, OSX, 
 Linux, Solaris, IRIX, FreeBSD, OpenBSD, NetBSD), on Perl versions >= 5.8.0
 
-For a list of automated CPAN smoke test results visit:
+For a list of automated test results for the latest release number visit:
 
 http://testers.cpan.org/show/Bio-Phylo.html
 
