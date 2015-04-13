@@ -14,28 +14,29 @@ COMPATIBILITY
 Bio::Phylo installs without problems on most popular, current platforms (Win32, OSX, 
 Linux, Solaris, IRIX, FreeBSD, OpenBSD, NetBSD), on Perl versions >= 5.8.0
 
-For a list of automated test results visit:
+For a list of automated CPAN smoke test results visit:
 
 http://testers.cpan.org/show/Bio-Phylo.html
 
-Currently, the build status is:
+Currently, the build status at Travis is:
 
 [![Build Status](https://travis-ci.org/rvosa/bio-phylo.svg?branch=master)](https://travis-ci.org/rvosa/bio-phylo)
 
 INSTALLATION
 ------------
 Bio::Phylo has no dependencies for its core install. However, some additional 
-functionality will not work (e.g. XML parsing) until the CPAN module that enables it has 
-been installed (e.g. XML::Twig). You can install these at a later date if and when need 
-arises. If any of such additional CPAN modules are found to be missing at installation 
-time, a warning will be emitted, but installation can continue.
+functionality will not work (e.g. XML parsing) until the CPAN module that enables 
+it has been installed (e.g. XML::Twig). You can install these at a later date if 
+and when need arises. For example, when you get an error message at runtime that 
+alerts you to a missing dependency. If any of such additional CPAN modules are 
+found to be missing at installation time, a warning will be emitted, but 
+installation and unit testing can continue.
 
-To install the Bio::Phylo distribution itself, run the
-following commands: 
+To install the Bio::Phylo distribution itself, run the following commands: 
 
 * `perl Makefile.PL`
 * `make`
-* `make test`
+* `make test` (Optional, runs unit tests, which should pass)
 * `make install`
  
 (For platform specific information on what 'make' command to use, check "perl -V:make". 
