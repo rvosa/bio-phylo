@@ -1276,6 +1276,7 @@ Creates simulated replicate.
 			
 			# instantiate R			
 			my $R = Statistics::R->new;
+			$R->run(q[options(device=NULL)]);
 			$R->run(q[require("ape")]);
 			$R->run(q[phylosim <- require("phylosim")]);
 			
