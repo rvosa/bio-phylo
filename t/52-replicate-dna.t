@@ -1,7 +1,6 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
-use Data::Dumper;
 use Test::More 'no_plan';
 use Bio::Phylo::IO 'parse';
 use Bio::Phylo::Util::CONSTANT ':objecttypes';
@@ -25,7 +24,7 @@ eval { require Statistics::R };
 		 }
 		 
 		 # get tree
-		 my $newick = '((taxon2:1000,taxon4:1):1,(taxon1:1,taxon3:1):1);';
+		 my $newick = '((taxon2:1,taxon4:1):1,(taxon1:1,taxon3:1):1);';
 		 my $tree = parse(
 				 '-format' => 'newick',
 				 '-string'   => $newick,

@@ -2603,18 +2603,21 @@ Bio::Phylo). More information about C<ape> can be found at L<http://ape-package.
 					my ( $counter, %genera ) = ( 0 );
 					$self->visit(sub{
 						my $node = shift;
-						if ( $node->get_rank eq 'genus' ) {
-							my $id     = $node->get_id;
-							my $height = $height - $node->calc_path_to_root;
-							my $size   = scalar(@{ $node->get_terminals });
-							my $name   = $node->get_name || 'Genus' . ++$counter;
-							$genera{$id} = {
-								'name'   => $name,
-								'size'   => $size,
-								'height' => $height,
-								'node'   => $node,
-							};
-						}
+                                                my $rank = $node->get_rank;
+						if ( $rank ) {
+                                                        if ( $rank eq 'genus' ) {
+                                                                my $id     = $node->get_id;
+                                                                my $height = $height - $node->calc_path_to_root;
+                                                                my $size   = scalar(@{ $node->get_terminals });
+                                                                my $name   = $node->get_name || 'Genus' . ++$counter;
+                                                                $genera{$id} = {
+                                                                        'name'   => $name,
+                                                                        'size'   => $size,
+                                                                        'height' => $height,
+                                                                        'node'   => $node,
+                                                                };
+                                                        }
+                                                }
 					});
 				
 					# get distribution of target node sizes and depths

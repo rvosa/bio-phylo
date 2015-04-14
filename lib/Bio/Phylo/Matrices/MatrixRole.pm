@@ -954,10 +954,10 @@ Calculates the median character sequence of the matrix
     			my $max = $seen{$sorted[0]};
     			my @top;
     			my $j = 0;
-    			while ( $seen{$sorted[$j]} == $max ) {
-    				push @top, $sorted[$j];
-    				$j++;
-    			}
+    			while ( $sorted[$j] and $seen{$sorted[$j]} == $max ) {
+                                push @top, $sorted[$j];
+                                $j++;
+   			}
     			if ( @top == 1 ) {
     				push @seq, @top;
     			}

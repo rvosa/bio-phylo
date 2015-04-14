@@ -8,7 +8,7 @@ use Bio::Phylo::Util::CONSTANT ':objecttypes';
 eval { require Statistics::R };
 
  SKIP: {
-     skip 'Statistics::R not installed', 4, if $@;
+     skip 'Statistics::R not installed', 5, if $@;
 
      use_ok( 'Bio::Phylo::Models::Substitution::Dna' );
 
@@ -39,7 +39,7 @@ eval { require Statistics::R };
      # test modeltest without tree
      $est = $class->modeltest($matrix);
      isa_ok ( $est,  'Bio::Phylo::Models::Substitution::Dna');
-     ok ( $est->get_rate );    
+     ok ( $est->get_rate( 'A' => 'C' ) );    
 }
 
 __DATA__

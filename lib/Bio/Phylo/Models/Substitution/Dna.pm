@@ -171,7 +171,8 @@ sub modeltest {
 				
 				# instanciate R and lcheck if phangorn is installed
 				my $R = Statistics::R->new;
-				$R->run(q[package <- require("phangorn")]);
+				$R->run(q[options(device=NULL)]);
+                                $R->run(q[package <- require("phangorn")]);
 				
 				if ( ! $R->get(q[package]) eq "TRUE") {
 						$logger->warn("R library phangorn must be installed to run modeltest");
@@ -224,7 +225,7 @@ sub modeltest {
 						    [ $q->[1], $q->[2], 1,       $q->[5] ],
 						    [ $q->[3], $q->[4], $q->[5], 1       ]
 				    ];
-
+                             
 				# create model with specific parameters dependent on primary model type
 				if ( $modeltype =~ /JC/ ) {
 						require Bio::Phylo::Models::Substitution::Dna::JC69;
@@ -233,7 +234,8 @@ sub modeltest {
 				}
 				elsif ( $modeltype =~ /F81/ ) {
 						require Bio::Phylo::Models::Substitution::Dna::F81;
-						$model = Bio::Phylo::Models::Substitution::Dna::F81->new('-pi' => $pi);
+                                                use Data::Dumper;
+                                                $model = Bio::Phylo::Models::Substitution::Dna::F81->new('-pi' => $pi);
 				}
 				elsif ( $modeltype =~ /GTR/ ) {
 						require Bio::Phylo::Models::Substitution::Dna::GTR;
@@ -258,7 +260,7 @@ sub modeltest {
 						$model = Bio::Phylo::Models::Substitution::Dna->new(
 								'-pi' => $pi );
 				}
-
+                            
 				# set gamma parameters
 				if ( $modeltype =~ /\+G/ ) {
 						$logger->debug("setting gamma parameters for $modeltype model");
@@ -280,7 +282,6 @@ sub modeltest {
 						my $pinvar = $R->get(q[fit$inv]);
 						$model->set_pinvar($pinvar);
 				}
-				
 				# set universal parameters
 				$model->set_rate($rate_matrix);
 				$model->set_mu($mu);
@@ -288,7 +289,6 @@ sub modeltest {
 		else {
 				$logger->warn("Statistics::R must be installed to run modeltest");
 		}
-		
 		return $model;
 }
 
