@@ -370,6 +370,29 @@ Gets the taxonomic rank of the node
 =begin comment
 
  Type    : Internal method
+ Title   : _json_data
+ Usage   : $node->_json_data;
+ Function: Populates a data structure to be serialized as JSON
+ Returns : 
+ Args    :
+
+=end comment
+
+=cut
+    
+    sub _json_data {
+    	my $self = shift;
+    	return {
+    		%{ $self->SUPER::_json_data },
+    		'length'   => $self->get_branch_length,
+    		'rank'     => $self->get_rank,
+    		'children' => [ map { $_->_json_data } @{ $self->get_children } ],
+    	};
+    }
+
+=begin comment
+
+ Type    : Internal method
  Title   : _cleanup
  Usage   : $trees->_cleanup;
  Function: Called during object destruction, for cleanup of instance data

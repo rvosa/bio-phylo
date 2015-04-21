@@ -755,6 +755,32 @@ Invocant destructor.
 		}
 		return $self;
     }
+    
+=item to_js()
+
+Serializes to simple JSON. For a conversion to NeXML/JSON, use C<to_json>.
+
+ Type    : Serializer
+ Title   : to_js
+ Usage   : my $json = $object->to_js;
+ Function: Serializes to JSON
+ Returns : A JSON string
+ Args    : None.
+ Comments: 
+
+=cut
+
+	sub to_js { JSON::encode_json( shift->_json_data ) if looks_like_class 'JSON' }    
+    
+    sub _json_data {
+    	my $self = shift;
+    	return {
+    		%{ $self->get_generic },
+    		'guid'  => $self->get_guid,
+    		'desc'  => $self->get_desc,
+    		'score' => $self->get_score,
+    	};
+    }
 
 =back
 

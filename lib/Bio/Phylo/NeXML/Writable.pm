@@ -1025,10 +1025,10 @@ Serializes invocant to XML.
             throw 'BadArgs' => 'DOM factory object not provided';
         }
     }
-
+    
 =item to_json()
 
-Serializes object to JSON string
+ Serializes object to JSON string
 
  Type    : Serializer
  Title   : to_json()
@@ -1042,7 +1042,18 @@ Serializes object to JSON string
 
     sub to_json {
         looks_like_class('XML::XML2JSON')->new->convert( shift->to_xml );
-    }
+    }    
+
+	sub _json_data {
+		my $self = shift;
+		my %meta = map { $_->get_predicate => $_->get_object } @{ $self->get_meta };
+		return {
+			%{ $self->SUPER::_json_data }, 
+			%meta,
+			'name' => $self->get_name,
+			'link' => $self->get_link,
+		}
+	}
 
 =item to_cdao()
 
