@@ -145,7 +145,8 @@ sub set_pi {
     ref $pi eq 'ARRAY' or throw 'BadArgs' => "Not an array ref!";
     my $total = 0;
     $total += $_ for @{$pi};
-    $total == 1 or throw 'BadArgs' => 'Frequencies must sum to one';
+    my $epsilon = 0.000001;    
+    abs(1 - $total) < $epsilon or throw 'BadArgs' => 'Frequencies must sum to one';
     $self->{'_pi'} = $pi;    
     return $self;
 }
@@ -230,11 +231,9 @@ sub modeltest {
 				if ( $modeltype =~ /JC/ ) {
 						require Bio::Phylo::Models::Substitution::Dna::JC69;
 						$model = Bio::Phylo::Models::Substitution::Dna::JC69->new();
-						
 				}
 				elsif ( $modeltype =~ /F81/ ) {
 						require Bio::Phylo::Models::Substitution::Dna::F81;
-                                                use Data::Dumper;
                                                 $model = Bio::Phylo::Models::Substitution::Dna::F81->new('-pi' => $pi);
 				}
 				elsif ( $modeltype =~ /GTR/ ) {

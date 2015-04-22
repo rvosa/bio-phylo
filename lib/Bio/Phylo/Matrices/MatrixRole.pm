@@ -1283,8 +1283,8 @@ Creates simulated replicate.
 			# instantiate R			
 			my $R = Statistics::R->new;
 			$R->run(q[options(device=NULL)]);
-			$R->run(q[require("ape")]);
-			$R->run(q[phylosim <- require("phylosim")]);
+			$R->run(q[require('ape')]);
+			$R->run(q[phylosim <- require('phylosim')]);
 			
 			# check if phylosim (and therefore ape) is installed
 			if ( $R->get(q[phylosim]) eq 'FALSE' ) {
@@ -1297,7 +1297,6 @@ Creates simulated replicate.
 			# this should give us sequences that are reasonably realistic:
 			# not overly divergent.				    
 			my $newick = $tree->to_newick;
-
 			$R->run(qq[phylo <- read.tree(text="$newick")]);
 			$R->run(q[tree <- PhyloSim(phylo)]);
 			$R->run(q[scaleTree(tree,1/tree$treeLength)]);
@@ -1305,17 +1304,22 @@ Creates simulated replicate.
 
 			# run the model test
 			my $model = 'Bio::Phylo::Models::Substitution::Dna'->modeltest($self, $tree);
-
+			
 			# prepare data for processes
 			my @ungapped   = @{ $self->get_ungapped_columns };
 			my @invariant  = @{ $self->get_invariant_columns };
 			my %deletions  = %{ $self->calc_indel_sizes( '-trim' => 1 ) };
 			my %insertions = %{ $self->calc_indel_sizes( '-trim' => 1, '-insertions' => 1 ) };
 			my $ancestral  = $self->calc_median_sequence;
-		
-			# ancestral sequence
-			$R->run(qq[root.seq <- NucleotideSequence(string='$ancestral')]);	    
 
+			# set ancestral sequence: phylosim does not accept ambiguity characters
+			# so for any of these characters, we draw a nucleotide from a uniform random distribution
+			$R->run(qq[seq.str <- paste(sapply(strsplit('$ancestral',''), 
+                                               function(x){
+                                                   ifelse(x %in% c('A','C','T','G'), x, sample(c('A','C','T','G'),1))
+                                                          }), collapse='')]);
+			$R->run(q[root.seq=NucleotideSequence(string=seq.str)]);
+			
 			my $m = ref($model);
 			if ( $m=~/([^\:\:]+$)/ ) {
 					$m = $1;
@@ -1350,9 +1354,8 @@ Creates simulated replicate.
 					my $beta = 4;						
 					$model_params .= ", rate.params=list(Alpha=$alpha, Beta=$beta)";		
 			}
-			# create model for phylosim
+			# create model for phylosim		       
 			$R->run(qq[model <- $type($model_params)]);
-			
 				    # set parameters for indels
 			if ( keys %deletions ) {
 					# deletions
