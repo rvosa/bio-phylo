@@ -382,12 +382,11 @@ Gets the taxonomic rank of the node
     
     sub _json_data {
     	my $self = shift;
-    	return {
-    		%{ $self->SUPER::_json_data },
-    		'length'   => $self->get_branch_length,
-    		'rank'     => $self->get_rank,
-    		'children' => [ map { $_->_json_data } @{ $self->get_children } ],
-    	};
+    	my %result = %{ $self->SUPER::_json_data };
+    	$result{'length'}   = $self->get_branch_length if defined $self->get_branch_length;
+    	$result{'rank'}     = $self->get_rank if $self->get_rank;
+    	$result{'children'} = [ map { $_->_json_data } @{ $self->get_children } ];
+    	return \%result;
     }
 
 =begin comment

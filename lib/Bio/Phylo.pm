@@ -774,12 +774,11 @@ Serializes to simple JSON. For a conversion to NeXML/JSON, use C<to_json>.
     
     sub _json_data {
     	my $self = shift;
-    	return {
-    		%{ $self->get_generic },
-    		'guid'  => $self->get_guid,
-    		'desc'  => $self->get_desc,
-    		'score' => $self->get_score,
-    	};
+    	my %data = %{ $self->get_generic };
+    	$data{'guid'}  = $self->get_guid if $self->get_guid;
+    	$data{'desc'}  = $self->get_desc if $self->get_desc;
+    	$data{'score'} = $self->get_score if $self->get_score;
+    	return \%data;
     }
 
 =back
