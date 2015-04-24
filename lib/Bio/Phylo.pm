@@ -770,7 +770,7 @@ Serializes to simple JSON. For a conversion to NeXML/JSON, use C<to_json>.
 
 =cut
 
-	sub to_js { JSON::encode_json( shift->_json_data ) if looks_like_class 'JSON' }    
+	sub to_js {JSON::to_json(shift->_json_data,{'pretty'=>1}) if looks_like_class 'JSON'}    
     
     sub _json_data {
     	my $self = shift;
