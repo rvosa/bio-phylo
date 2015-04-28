@@ -306,13 +306,26 @@ sub _parse_node_data {
 sub _next_token {
     my ( $self, $string ) = @_;
     $self->_logger->debug("tokenizing string '$string'");
+    my $ignore          = $self->_args->{'-ignore_comments'};
     my $QUOTED          = 0;
+    my $COMMENTED       = 0;
     my $token           = '';
     my $TOKEN_DELIMITER = qr/[():,;]/;
   TOKEN: for my $i ( 0 .. length($string) ) {
         $token .= substr( $string, $i, 1 );
         $self->_logger->debug("growing token: '$token'");
-        if ( !$QUOTED && $token =~ $TOKEN_DELIMITER ) {
+        
+        # if -ignore_comments was specified the string can still contain comments 
+        # that can contain token delimiters, so we still need to track
+        # whether we are inside a comment        
+        if ( $ignore && $token =~ /\[$/ ) {
+        	$COMMENTED++;
+        }
+        if ( $ignore && $token =~ /\]$/ ) {
+        	$COMMENTED--;
+        	next TOKEN;
+        }                
+        if ( !$QUOTED && !$COMMENTED && $token =~ $TOKEN_DELIMITER ) {
             my $length = length($token);
             if ( $length == 1 ) {
                 $self->_logger->debug("single char token: '$token'");
@@ -328,10 +341,10 @@ sub _next_token {
                   . substr( $string, ( $i + 1 ) );
             }
         }
-        if ( !$QUOTED && substr( $string, $i, 1 ) eq "'" ) {
+        if ( !$QUOTED && !$COMMENTED && substr( $string, $i, 1 ) eq "'" ) {
             $QUOTED++;
         }
-        elsif ($QUOTED
+        elsif ($QUOTED && !$COMMENTED
             && substr( $string, $i, 1 ) eq "'"
             && substr( $string, $i, 2 ) ne "''" )
         {
