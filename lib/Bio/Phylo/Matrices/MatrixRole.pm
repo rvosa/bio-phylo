@@ -1329,7 +1329,7 @@ Creates simulated replicate.
 			my $type = $models{$m} || 'GTR';
 			
 			# collect model specific parameters in string passed to R
-			my $model_params;
+			my $model_params = '';
 			if ( $type =~ /(?:F81|GTR|K80|HKY)/ ) {
 					$logger->debug("setting base frequencies for substitution model");
 					$model_params .= 'base.freqs=c(' . join(',', @{$model->get_pi}) .  ')';
