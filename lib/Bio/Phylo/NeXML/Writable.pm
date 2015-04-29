@@ -1045,14 +1045,13 @@ Serializes invocant to XML.
     }    
 
 	sub _json_data {
-		my $self = shift;
-		my %meta = map { $_->get_predicate => $_->get_object } @{ $self->get_meta };
-		return {
-			%{ $self->SUPER::_json_data }, 
-			%meta,
-			'name' => $self->get_name,
-			'link' => $self->get_link,
-		}
+		my $self   = shift;
+		my %meta   = map { $_->get_predicate => $_->get_object } @{ $self->get_meta };
+		my %result = %{ $self->SUPER::_json_data };
+		$result{$_} = $meta{$_} for keys %meta;
+		$result{'name'} = $self->get_name if $self->get_name;
+		$result{'link'} = $self->get_link if $self->get_link;
+		return \%result;
 	}
 
 =item to_cdao()

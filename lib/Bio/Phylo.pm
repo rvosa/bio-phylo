@@ -770,16 +770,15 @@ Serializes to simple JSON. For a conversion to NeXML/JSON, use C<to_json>.
 
 =cut
 
-	sub to_js { JSON::encode_json( shift->_json_data ) if looks_like_class 'JSON' }    
+	sub to_js {JSON::to_json(shift->_json_data,{'pretty'=>1}) if looks_like_class 'JSON'}    
     
     sub _json_data {
     	my $self = shift;
-    	return {
-    		%{ $self->get_generic },
-    		'guid'  => $self->get_guid,
-    		'desc'  => $self->get_desc,
-    		'score' => $self->get_score,
-    	};
+    	my %data = %{ $self->get_generic };
+    	$data{'guid'}  = $self->get_guid if $self->get_guid;
+    	$data{'desc'}  = $self->get_desc if $self->get_desc;
+    	$data{'score'} = $self->get_score if $self->get_score;
+    	return \%data;
     }
 
 =back

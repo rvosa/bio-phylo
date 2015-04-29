@@ -213,10 +213,13 @@ Creates a consensus tree.
  Function: Creates a consensus tree
  Returns : $tree
  Args    : Optional:
-	   -fraction => a fraction that specifies the cutoff frequency for including
-                    bipartitions in the consensus. Default is 0.5 (MajRule)
-	   -branches => 'frequency' or 'average', sets branch lengths to bipartition
-	                frequency or average branch length in input trees
+	   -fraction  => a fraction that specifies the cutoff frequency for including
+                     bipartitions in the consensus. Default is 0.5 (MajRule)
+	   -branches  => 'frequency' or 'average', sets branch lengths to bipartition
+	                 frequency or average branch length in input trees
+	   -summarize => 'fraction' or 'probability', sets node label as either the
+	                 fraction of this bipartition on the whole (e.g. "85/100") or
+	                 as a probability (e.g. "0.85")
 
 =cut
 
@@ -324,10 +327,13 @@ Creates a consensus tree.
                     $average->( @{ $clade_lengths{$partition} } ) );
             }
             else {
-                $new_parent->set_branch_length(
-                    $average->( @{ $clade_lengths{$partition} } ) );
-                $new_parent->set_name(
-                    $seen_partitions{$partition} / $tree_count );
+                $new_parent->set_branch_length( $average->( @{ $clade_lengths{$partition} } ) );
+                if ( $args{'-summarize'} =~ /^f/i ) {
+                	$new_parent->set_name( $seen_partitions{$partition} .'/'. $tree_count );
+                }
+                else {
+                	$new_parent->set_name( $seen_partitions{$partition} / $tree_count );
+                }
             }
             $tree->insert($new_parent);
 
