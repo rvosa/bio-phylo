@@ -1252,22 +1252,29 @@ Creates simulated replicate.
  Usage   : my $replicate = $matrix->replicate($tree);
  Function: Creates simulated replicate.
  Returns : A simulated replicate of the invocant.
- Args    : Tree to simulate the characters on.
+ Args    : Tree to simulate the characters on. 
+ Optional: a random integer seed
+
+
  Comments: Requires Statistics::R, with 'ape', 'phylosim', 'phangorn' and 'phytools'
 
 =cut    
     
     sub replicate {
-    	my ($self,$tree) = @_;
+    	my ($self,$tree,$seed) = @_;
     	if ( not looks_like_object $tree, _TREE_ ) {
     		throw 'BadArgs' => "Need tree as argument";
     	}
+
+	# generate random seed if not given
+	$seed = int(rand(1000_000)) if not $seed;
+
     	my $type = $self->get_type;
     	if ( $type =~ /dna/i ) {
-    		return $self->_replicate_dna($tree);
+    		return $self->_replicate_dna($tree, $seed);
     	}
     	elsif ( $type =~ /standard/i ) {
-    		return $self->_replicate_binary($tree);
+    		return $self->_replicate_binary($tree, $seed);
     	}
     	else {
     		throw 'BadArgs' => "Can't replicate $type matrices (yet?)";
@@ -1275,17 +1282,18 @@ Creates simulated replicate.
     }
     
     sub _replicate_dna {
-    	my ($self,$tree) = @_;
+    	my ($self,$tree,$seed) = @_;
 
     	# we will need 'ape', 'phylosim' (and 'phangorn' for model testing)
     	if ( looks_like_class 'Statistics::R' ) {
 			
 			# instantiate R			
 			my $R = Statistics::R->new;
+			$R->run(qq[set.seed($seed)]);
 			$R->run(q[options(device=NULL)]);
 			$R->run(q[require('ape')]);
 			$R->run(q[phylosim <- require('phylosim')]);
-			
+			$R->run(q[PSIM_FAST<-TRUE]);
 			# check if phylosim (and therefore ape) is installed
 			if ( $R->get(q[phylosim]) eq 'FALSE' ) {
 					$logger->warn('R package phylosim must be installed to replicate alignment.');
@@ -1419,7 +1427,7 @@ Creates simulated replicate.
     }
     
     sub _replicate_binary {
-    	my ($self,$tree) = @_;
+    	my ($self,$tree,$seed) = @_;
     	
     	# we will need both 'ape' and 'phytools'
     	if ( looks_like_class 'Statistics::R' ) {
@@ -1430,7 +1438,8 @@ Creates simulated replicate.
 			# instantiate R
 			my $newick = $tree->to_newick;
 			my $R = Statistics::R->new;
-			$R->run(q[library("ape")]);
+              		$R->run(qq[set.seed($seed)]);
+		        $R->run(q[library("ape")]);
 			$R->run(q[library("phytools")]);				
 			$R->run(qq[phylo <- read.tree(text="$newick")]);
 			
@@ -1460,7 +1469,12 @@ Creates simulated replicate.
 				
 					# pass model to R
 					my ( $fw, $rev ) = ( $model->get_forward, $model->get_reverse );
+
+					# add epsilon if one of the rates is zero, otherwise sim.history chokes
+					$fw = 1e-6 if $fw == 0;
+					$rev = 1e-6 if $rev == 0;					
 					$logger->info("0 -> 1 ($fw), 1 -> 0 ($rev)");
+
 					my $rates = [ 0, $fw, $rev, 0 ];
 					$R->set( 'rates' => $rates );
 					$R->run(qq[Q<-matrix(rates,2,2,byrow=TRUE)]); 
@@ -1468,7 +1482,7 @@ Creates simulated replicate.
 					$R->run(qq[diag(Q)<--rowSums(Q)]);
 				
 					# simulate character on tree, get states
-					$R->run(qq[tt<-sim.history(phylo,Q,message=FALSE)]);
+					$R->run(qq[tt<-sim.history(phylo,Q,message=FALSE)]);					
 					$R->run(qq[states<-as.double(getStates(tt,"tips"))]);
 					$states = $R->get(q[states]);
 				}
