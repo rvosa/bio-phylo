@@ -31,7 +31,7 @@ eval { require Statistics::R };
 		     )->first->resolve;
 		 
 		 # replicate dna data
-		 my $rep = $matrix->replicate($tree);
+		 my $rep = $matrix->replicate('-tree'=>$tree);
 		 ok($rep);
 }
 

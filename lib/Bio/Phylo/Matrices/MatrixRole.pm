@@ -1253,28 +1253,33 @@ Creates simulated replicate.
  Function: Creates simulated replicate.
  Returns : A simulated replicate of the invocant.
  Args    : Tree to simulate the characters on. 
- Optional: a random integer seed
+           Optional:
+           -seed     => a random integer seed
+           -model => an object of class Bio::Phylo::Models::Substitution::Dna 
+	             or Bio::Phylo::Models::Substitution::Binary
 
-
- Comments: Requires Statistics::R, with 'ape', 'phylosim', 'phangorn' and 'phytools'
+ Comments: Requires Statistics::R, with 'ape', 'phylosim', 'phangorn' and 'phytools'. 
+           If model is not given as argument, it will be estimated.
 
 =cut    
     
     sub replicate {
-    	my ($self,$tree,$seed) = @_;
+    	my ($self,%args) = @_;
+
+	my $tree = $args{'-tree'};
     	if ( not looks_like_object $tree, _TREE_ ) {
     		throw 'BadArgs' => "Need tree as argument";
     	}
-
+	
 	# generate random seed if not given
-	$seed = int(rand(1000_000)) if not $seed;
-
+	my $seed = $args{'-seed'} || int(rand(1000_000));
+	
     	my $type = $self->get_type;
     	if ( $type =~ /dna/i ) {
-    		return $self->_replicate_dna($tree, $seed);
+    		return $self->_replicate_dna('-tree'=>$tree, '-model'=>$args{'-model'}, '-seed'=>$seed);
     	}
     	elsif ( $type =~ /standard/i ) {
-    		return $self->_replicate_binary($tree, $seed);
+    		return $self->_replicate_binary('-tree'=>$tree, '-model'=>$args{'-model'}, '-seed'=>$seed);
     	}
     	else {
     		throw 'BadArgs' => "Can't replicate $type matrices (yet?)";
@@ -1282,7 +1287,11 @@ Creates simulated replicate.
     }
     
     sub _replicate_dna {
-    	my ($self,$tree,$seed) = @_;
+    	my ($self,%args) = @_;
+	
+	my $seed = $args{'-seed'};
+	my $tree = $args{'-tree'};
+	my $model = $args{'-model'};
 
     	# we will need 'ape', 'phylosim' (and 'phangorn' for model testing)
     	if ( looks_like_class 'Statistics::R' ) {
@@ -1310,9 +1319,11 @@ Creates simulated replicate.
 			$R->run(q[scaleTree(tree,1/tree$treeLength)]);
 			$R->run(q[t <- tree$phylo]);
 
-			# run the model test
-			my $model = 'Bio::Phylo::Models::Substitution::Dna'->modeltest($self, $tree);
-			
+			# run the model test if model not given as argument
+			if ( ! $model ) {
+				$logger->info("no model given as argument, determining model with phangorn's modelTest");
+				$model = 'Bio::Phylo::Models::Substitution::Dna'->modeltest($self, $tree);
+			}
 			# prepare data for processes
 			my @ungapped   = @{ $self->get_ungapped_columns };
 			my @invariant  = @{ $self->get_invariant_columns };
@@ -1427,8 +1438,11 @@ Creates simulated replicate.
     }
     
     sub _replicate_binary {
-    	my ($self,$tree,$seed) = @_;
-    	
+	my ($self,%args) = @_;
+	
+	my $seed = $args{'-seed'};
+	my $tree = $args{'-tree'};
+
     	# we will need both 'ape' and 'phytools'
     	if ( looks_like_class 'Statistics::R' ) {
     		my $pattern = $self->calc_distinct_site_patterns('with_indices_of_patterns');
@@ -1460,13 +1474,15 @@ Creates simulated replicate.
     				$states = $p->[1];
     			}
     			else {
-					$logger->info("going to test model for column(s) $i..*");
-					my $model = Bio::Phylo::Models::Substitution::Binary->modeltest(
-						'-tree'   => $tree,
-						'-matrix' => $self,
-						'-char'   => $characters->get_by_index($i),    				
-					);
-				
+				       my $model = $args{'-model'};
+				       if ( ! $model ) {
+						$logger->info("going to test model for column(s) $i..*");
+						$model = Bio::Phylo::Models::Substitution::Binary->modeltest(
+							'-tree'   => $tree,
+							'-matrix' => $self,
+							'-char'   => $characters->get_by_index($i),    				
+						    );
+					}
 					# pass model to R
 					my ( $fw, $rev ) = ( $model->get_forward, $model->get_reverse );
 
