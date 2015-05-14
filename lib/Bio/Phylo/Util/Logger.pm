@@ -1,14 +1,23 @@
 package Bio::Phylo::Util::Logger;
 use strict;
 use base 'Exporter';
+use Term::ANSIColor;
 use Bio::Phylo::Util::Exceptions 'throw';
 use Bio::Phylo::Util::CONSTANT qw'/looks_like/';
 
 our ( %VERBOSITY, $PREFIX, %STYLE );
 our $STYLE       = 'detailed';
+our $COLORED     = 1; # new default: we use colors
 our $TRACEBACK   = 0;
 our @EXPORT_OK   = qw(DEBUG INFO WARN ERROR FATAL VERBOSE);
 our %EXPORT_TAGS = ( 'simple' => [@EXPORT_OK], 'levels' => [@EXPORT_OK] );
+our %COLORS      = (
+	'DEBUG' => 'blue', 
+	'INFO'  => 'green',
+	'WARN'  => 'yellow',
+	'ERROR' => 'bold red',
+	'FATAL' => 'red',
+);
 
 BEGIN {
     
@@ -26,14 +35,22 @@ BEGIN {
     
     # define verbosity styles
     %STYLE = (
-    	'simple'   => '$level - $message',
+    	'simple'   => '${level}: $message',
     	'detailed' => '$level $sub [$file $line] - $message',    
     );
 }
 
 {
     my %levels = ( FATAL => 0, ERROR => 1, WARN => 2, INFO => 3, DEBUG => 4 );
-    my @listeners = ( sub { print STDERR shift } ); # default
+    my @listeners = ( sub {
+    	my ( $string, $level ) = @_;
+    	if ( $COLORED and -t STDERR ) {
+    		print STDERR colored( $string, $COLORS{$level} ); 
+    	}
+    	else {
+    		print STDERR $string;
+    	}
+    } ); # default
 
     # dummy constructor that dispatches to VERBOSE(),
     # then returns the package name
@@ -180,7 +197,10 @@ BEGIN {
             	if ( exists $STYLE{$s} ) {
             		$STYLE = $s;
             	}
-            }            
+            } 
+            
+            # turn colors on/off. default is on.
+            $COLORED = !!$opt{'-colors'} if defined $opt{'-colors'};
         }
         return $VERBOSITY{'*'};
     }
