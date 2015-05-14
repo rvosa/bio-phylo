@@ -23,7 +23,7 @@ SKIP: {
 	my ($taxa) = @{ $project->get_items(_TAXA_) };
 	
 	# do the replication
-	my $rep = $matrix->replicate($tree);
+	my $rep = $matrix->replicate('-tree'=>$tree);
 	ok($rep);
 	ok($rep->get_nchar == 4);
 	ok($rep->get_ntax == 200);

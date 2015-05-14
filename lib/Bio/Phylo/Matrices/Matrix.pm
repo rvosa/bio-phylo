@@ -41,7 +41,7 @@ Bio::Phylo::Matrices::Matrix - Character state matrix
          '1' => [ '1' ],
          '?' => [ '0', '1' ],
      },
-     '-labels' => [ 'Opposable big toes', 'Opposable thumbs', 'Not a pygmy' ],
+     '-charlabels' => [ 'Opposable big toes', 'Opposable thumbs', 'Not a pygmy' ],
      '-matrix' => [
          [ 'Homo sapiens'    => '0', '1', '1' ],
          [ 'Pan paniscus'    => '1', '1', '0' ],

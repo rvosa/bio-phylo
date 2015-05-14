@@ -1,7 +1,7 @@
 package Bio::Phylo::Models::Substitution::Dna;
 use Bio::Phylo::Util::CONSTANT qw'/looks_like/ :objecttypes';
 use Bio::Phylo::Util::Exceptions qw'throw';
-use Bio::Phylo::IO qw'unparse';
+use Bio::Phylo::IO qw(parse unparse);
 use Bio::Phylo::Util::Logger':levels';
 use File::Temp qw(tempfile);
 
@@ -165,7 +165,7 @@ sub modeltest {
 		
 		if ( looks_like_class 'Statistics::R' ) {
 				
-				# phangorn needs files as input
+			        # phangorn needs files as input
 				my ($fasta_fh, $fasta) = tempfile( 'CLEANUP' => 1 );
 				print $fasta_fh unparse('-phylo'=>$matrix, '-format'=>'fasta');
 				close $fasta_fh;
@@ -184,15 +184,17 @@ sub modeltest {
 				$R->run(qq[data <- read.FASTA("$fasta")]);
 				
 				if ( $tree ) {
-						# prune out taxa from tree that are not present in the data
+					        # make copy of tree since it is pruned
+					        my $current_tree = parse('-format'=>'newick', '-string'=>$tree->to_newick)->first;
+					        # prune out taxa from tree that are not present in the data
 						my @taxon_names = map {$_->get_name} @{ $matrix->get_entities };
 						$logger->debug('pruning input tree');
-						$tree->keep_tips(\@taxon_names);
-						if ( ! $tree ) {
+						$current_tree->keep_tips(\@taxon_names);
+						if ( ! $current_tree ) {
 								$logger->warn('tip labels of tree do not match data');
 								return $model;		    
 						}
-						my $newick = $tree->to_newick;
+						my $newick = $current_tree->to_newick;
 						$R->run(qq[tree <- read.tree(text="$newick")]);
 						# call modelTest
 						$logger->debug("calling modelTest from R package phangorn");
