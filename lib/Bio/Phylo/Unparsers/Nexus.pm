@@ -82,15 +82,47 @@ sub _to_string {
             $nexus .= $block->to_nexus(%args);
         }
     }
-
+	
+	# taxa?
+    elsif ( defined $type and $type == _TAXA_ ) {
+		my %args;
+        if ( exists $self->{'TAXA_ARGS'} ) {
+            %args = %{ $self->{'TAXA_ARGS'} };
+        }		
+        $nexus .= $blocks->to_nexus(%args);
+    }
+	
     # matrix?
     elsif ( defined $type and $type == _MATRIX_ ) {
-        $nexus .= $blocks->to_nexus;
+		my %args;
+        if ( exists $self->{'MATRIX_ARGS'} ) {
+            %args = %{ $self->{'MATRIX_ARGS'} };
+        }		
+        $nexus .= $blocks->to_nexus(%args);
     }
+	
+	# forest?
+	elsif ( defined $type and $type == _FOREST_ ) {
+        my %args;
+		if ( exists $self->{'FOREST_ARGS'} ) {
+            %args = %{ $self->{'FOREST_ARGS'} };
+        }		
+		$nexus .= $blocks->to_nexus(%args);
+	}
 
     # project?
     elsif ( defined $type and $type == _PROJECT_ ) {
-        $nexus = $blocks->to_nexus;
+		my ( %farg, %marg, %targ );
+        if ( exists $self->{'TAXA_ARGS'} ) {
+            %targ = %{ $self->{'TAXA_ARGS'} };
+        }
+        if ( exists $self->{'MATRIX_ARGS'} ) {
+            %marg = %{ $self->{'MATRIX_ARGS'} };
+        }
+		if ( exists $self->{'FOREST_ARGS'} ) {
+            %farg = %{ $self->{'FOREST_ARGS'} };
+        }		
+        $nexus = $blocks->to_nexus( %farg, %marg, %targ );
     }
 
     # wrong!
