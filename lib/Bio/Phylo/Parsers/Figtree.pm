@@ -2,9 +2,12 @@ package Bio::Phylo::Parsers::Figtree;
 use strict;
 use base 'Bio::Phylo::Parsers::Abstract';
 use Bio::Phylo::Util::CONSTANT qw':namespaces :objecttypes';
-use Bio::Phylo::IO 'parse';
+use Bio::Phylo::Factory;
+use Bio::Phylo::IO 'parse_tree';
 use Bio::Phylo::Util::Logger ':levels';
 
+my $fac = Bio::Phylo::Factory->new;
+my $log = Bio::Phylo::Util::Logger->new;
 my $ns  = _NS_FIGTREE_;
 my $pre = 'fig';
 
@@ -14,7 +17,7 @@ Bio::Phylo::Parsers::Figtree - Parser used by Bio::Phylo::IO, no serviceable par
 
 =head1 DESCRIPTION
 
-This module parses annotated trees in NEXUS format as produced by FigTree
+This module parses annotated trees in NEXUS format as interpreted by FigTree
 (L<http://tree.bio.ed.ac.uk/software/figtree/>), i.e. trees where nodes have
 additional 'hot comments' attached to them in the tree description. The
 implementation assumes syntax as follows:
@@ -23,156 +26,128 @@ implementation assumes syntax as follows:
  
 I.e. the first token inside the comments is an ampersand, the annotations are
 comma-separated key/value pairs, where ranges are between curly parentheses.
- 
+
+The annotations are stored as meta objects, e.g.:
+
+ $node->get_meta_object('fig:rate'); # 0.0075583392800736
+ $node->get_meta_object('fig:minmax_min'); # 0.1231
+ $node->get_meta_object('fig:minmax_max'); # 0.3254
+
+Annotations that have non-alphanumerical symbols in them will have these removed
+from them. For example, C<rate_95%_HPD={}> becomes two annotations:
+C<rate_95_HPD_min> and C<rate_95_HPD_max>.
+
 =cut
 
 sub _parse {
     my $self = shift;
 	my $fh = $self->_handle;
-	
-	# first we label all internal nodes with a UID
-	my $i = 1;
-	my $string = '';
-	while(<$fh>) {
-		my @parts = split /\)/, $_;
-		if ( scalar @parts > 1 ) {
-			$parts[$_] .= ')node' . $i++ for 0 .. $#parts - 1;
-		}
-		$string .= join '', @parts;		
-	}
-	
-	# parse all trees
-	my ($forest) = @{ parse( 
-		'-format' => 'nexus', 
-		'-string' => $string,
-		'-as_project' => 1,
-	)->get_items(_FOREST_) };
-	
-	# attach the figtree namespace
+	my $forest = $fac->create_forest;
 	$forest->set_namespaces( $pre => $ns );
-	
-	# parse out annotated tree description
-	my @desc;	
-	for(split /\n/, $string) {
-		chomp;
-		if ( /\s*tree\s\S+?\s=\s\[&(?:U|R)\]\s(.+)/ ) {
-			my $desc = $1;
-			push @desc, $desc;
+	my $tree_block;
+	my $tree_string;
+	my %translate;
+	while(<$fh>) {
+		$tree_block++ if /Begin trees;/i;
+		if ( /^TREE (TREE\d+) = \[&([RU])\] (.+)$/i ) {
+			my ( $name, $rooted, $newick ) = ( $1, $2, $3 );
+			$tree_string++;
+			my $tree = parse_tree(
+				'-format'          => 'newick',
+				'-string'          => $newick,
+				'-ignore_comments' => 1,
+			);
+			$tree->set_as_unrooted if $rooted eq 'U';
+			$tree->set_name( $name );
+			$self->_post_process( $tree );
+			for my $tip ( @{ $tree->get_terminals } ) {
+				my $name = $tip->get_name;
+				$tip->set_name( $translate{$name} );
+			}
+			$forest->insert($tree);
+		}
+		if ( $tree_block and not $tree_string and /\s+(\d+)\s+(.+)/ ) {
+			my ( $id, $name ) = ( $1, $2 );
+			$name =~ s/[,;]$//;
+			$translate{$id} = $name;
 		}
 	}
-	
-	$self->_process_annotations($forest, @desc);
 	return $forest;
 }
 
-sub _process_annotations {
-	my ( $self, $forest, @desc ) = @_;
-	my $log = $self->_logger;
-	
-	# visit trees and nodes in reading order
-	my $i = 0;
-	for my $tree ( @{ $forest->get_entities } ) {
-		my $desc = $desc[$i];
-		$tree->visit( sub { 
-			my $node = shift;
-			my $name = $node->get_internal_name;
-			$log->info("focal node is $name");
-			
-			# comment is a figtree processing instruction, starts with [&
-			if ( $desc =~ /[\(,\)]\Q$name\E\[&([^]]+)\]/ ) {
-				my $annotation = $1;
-				$log->debug("found annotation $annotation");
-				
-				# going to parse annotations
-				my %anno = $self->_parse_annotation($annotation);
-				
-				# attach annotations to focal node
-				$self->_attach_annotation( $node, %anno );
-
-			}
-			else {
-				$log->warn("comment is not a figtree annotation: $desc");
-			}
-			
-		} );
-		$i++;
-	}	
+sub _post_process {
+	my ( $self, $tree ) = @_;
+	$log->debug("going to post-process tree");
+    $tree->visit(sub{
+    	my $n = shift;
+    	my $name = $n->get_name;
+    	$name =~ s/\\//g;
+    	$log->debug("name: $name");
+    	if ( $name =~ /\[/ and $name =~ /^([^\[]+)\[(.+?)\]$/ ) {
+    		my ( $trimmed, $comments ) = ( $1, $2 );
+    		$n->set_name( $trimmed );
+    		$log->debug("trimmed name: $trimmed");
+    		
+    		# "hot comments" start with ampersand. ignore if not.
+    		if ( $comments =~ /^&(.+)/ ) {
+    			$log->debug("hot comments: $comments");
+    			$comments = $1;
+    			
+    			# string needs to be fully eaten up
+    			COMMENT: while( my $old_length = length($comments) ) {
+    			
+    				# grab the next key
+    				if ( $comments =~ /^(.+?)=/ ) {
+    					my $key = $1;
+    					$log->debug("key: $key");
+    					
+    					# remove the key and the =
+    					$comments =~ s/^\Q$key\E=//;
+						$key =~ s/\%//;
+    					
+    					# value is a comma separated range
+    					if ( $comments =~ /^{([^}]+)}/ ) {
+    						my $value = $1;
+							my ( $min, $max ) = split /,/, $value;
+							_meta( $n, "${key}_min" => $min );
+							_meta( $n, "${key}_max" => $max );
+    						
+    						# remove the range
+    						$value = "{$value}";
+    						$comments =~ s/^\Q$value\E//;
+    					}
+    					
+    					# value is a scalar
+    					elsif ( $comments =~ /^([^,]+)/ ) {
+    						my $value = $1;
+							_meta( $n, $key => $value );
+    						$comments =~ s/^\Q$value\E//;
+    						$log->debug("scalar value: $value");
+    					}
+    					
+    					# remove trailing comma, if any
+    					$comments =~ s/^,//;
+    				}
+    				if ( $old_length == length($comments) ) {
+    					$log->warn("couldn't parse newick comment: $comments");
+    					last COMMENT;
+    				}
+    			}
+    		}
+    		else {
+    			$log->debug("not hot: $comments");
+    		}
+    	}
+    });
 }
 
-# attach key/value pairs to focal node
-sub _attach_annotation {
-	my ( $self, $node, %anno ) = @_;
-	my $fac = $self->_factory;
-	
-	# iterate over key/value pairs of figtree annotation
-	for my $key ( keys %anno ) {
-		my $predicate = $key;
-		$predicate =~ s/[^a-zA-Z0-9]//g; # for safe CURIEs
-		
-		# value is an array reference, i.e. it's a min/max range
-		if ( ref $anno{$key} ) {
-			$node->add_meta(
-				$fac->create_meta(
-					'-triple' => { "${pre}:${predicate}_min" => $anno{$key}->[0] }
-				)
-			);
-			$node->add_meta(
-				$fac->create_meta(
-					'-triple' => { "${pre}:${predicate}_max" => $anno{$key}->[1] }
-				)
-			);					
-		}
-		
-		# value is a scalar
-		else {
-			$node->add_meta(
-				$fac->create_meta(
-					'-triple' => {
-						"${pre}:$predicate" => $anno{$key},
-					}
-				)
-			);
-		}
-	}	
+sub _meta {
+	my ( $node, $key, $value ) = @_;
+	$node->add_meta(
+		$fac->create_meta( '-triple' => { "${pre}:${key}" => $value } )
+	);
 }
 
-
-# parse fugtree annotation syntax
-sub _parse_annotation {
-	my ( $self, $string ) = @_;
-	my $log = $self->_logger;
-	$log->debug("going to parse annotation $string");
-	my %anno;
-	while($string) {
-	
-		# there is an equals sign with something in front of it
-		if ( $string =~ /^([^=]+)=(.+)$/ ) {
-			my ( $key, $remainder ) = ( $1, $2 );
-			$log->info("key is $key");
-			
-			# remainder is between {}, i.e. a range
-			if ( $remainder =~ /^{([^}]+)}/ ) {
-				my $seq = $1;
-				$log->info("value is $seq");
-				my @values = split /,/, $seq;
-				$anno{$key} = \@values;
-				$string = substr $string, length($key) + length($seq) + 3;
-				$log->debug("remainder is $string");
-			}
-			
-			# remainder is a scalar
-			elsif ( $remainder =~ /^([^,]+),?/ ) {
-				my $value = $1;
-				$log->info("value is $value");
-				$anno{$key} = $value;
-				$string = substr $string, length($key) + length($value) + 1;
-				$log->debug("remainder is $string");
-			}
-			$string =~ s/^,//;
-		}
-	}
-	return %anno;
-}
 
 # podinherit_insert_token
 
