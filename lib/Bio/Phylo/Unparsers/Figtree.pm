@@ -67,7 +67,16 @@ sub _figtree_handler {
 		}
 	}
 	my $anno = '[&' . join( ',',map { $_.'='.$merged{$_} } keys %merged ) . ']';
-	my $name = $id // $node->get_name // '';	
+	my $name;
+	if ( defined $id ) {
+		$name = $id;
+	} 
+	elsif ( defined $node->get_name ) {
+		$name = $node->get_name;
+	}
+	else {
+		$name = '';
+	}
 	my $annotated = $anno ne '[&]' ? $name . $anno : $name;
 	$log->debug($annotated);
 	return $annotated;
