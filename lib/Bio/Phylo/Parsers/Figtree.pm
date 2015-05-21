@@ -99,7 +99,6 @@ sub _post_process {
     				# grab the next key
     				if ( $comments =~ /^(.+?)=/ ) {
     					my $key = $1;
-    					$log->debug("key: $key");
     					
     					# remove the key and the =
     					$comments =~ s/^\Q$key\E=//;
@@ -111,6 +110,7 @@ sub _post_process {
 							my ( $min, $max ) = split /,/, $value;
 							_meta( $n, "${key}_min" => $min );
 							_meta( $n, "${key}_max" => $max );
+							$log->debug("$key: $min .. $max");
     						
     						# remove the range
     						$value = "{$value}";
@@ -122,7 +122,7 @@ sub _post_process {
     						my $value = $1;
 							_meta( $n, $key => $value );
     						$comments =~ s/^\Q$value\E//;
-    						$log->debug("scalar value: $value");
+    						$log->debug("$key: $value");
     					}
     					
     					# remove trailing comma, if any

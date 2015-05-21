@@ -3,6 +3,7 @@ use strict;
 use warnings;
 use Test::More 'no_plan';
 use Bio::Phylo::IO qw'parse unparse';
+use Bio::Phylo::Util::Logger ':levels';
 use Bio::Phylo::Util::CONSTANT ':objecttypes';
 
 my $project = parse(
@@ -70,9 +71,15 @@ isa_ok( $project, 'Bio::Phylo::Project' );
 	);
 	for my $key ( keys %exp ) {
 		my $obs = $tip->get_meta_object( 'fig:' . $key );
-		ok( $obs == $exp{$key}, "$obs == $exp{$key}" );
+		ok( $obs == $exp{$key}, "$key: $obs == $exp{$key}" );
 	}
 }
+
+my $output = unparse(
+	'-format' => 'figtree',
+	'-phylo'  => $project,
+);
+ok( $output );
 
 
 __DATA__
