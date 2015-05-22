@@ -2258,7 +2258,14 @@ Serializes subtree subtended by invocant to newick string.
             my $name;
             if ( $node->is_terminal or $args{'-nodelabels'} ) {
                 if ( ref $args{'-nodelabels'} and ref($args{'-nodelabels'}) eq 'CODE' ) {
-                    $name = $args{'-nodelabels'}->($node, $args{'-translate'}->{$node->get_name});
+                    my $id;
+                    if ( $node->is_terminal ) {
+                        $id = $args{'-translate'}->{$node->get_name};
+                    }
+                    else {
+                        $id = $node->get_name;
+                    }
+                    $name = $args{'-nodelabels'}->($node,$id);
                 }
                 elsif ( not $args{'-tipnames'} ) {
                     $name = $node->get_nexus_name(1);
