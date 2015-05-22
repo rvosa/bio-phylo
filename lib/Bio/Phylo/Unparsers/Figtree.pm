@@ -1,9 +1,12 @@
 package Bio::Phylo::Unparsers::Figtree;
 use strict;
 use base 'Bio::Phylo::Unparsers::Nexus';
-use Bio::Phylo::Util::CONSTANT qw':objecttypes :namespaces';
+use Bio::Phylo::Util::Logger ':levels';
 use Bio::Phylo::Util::Exceptions 'throw';
+use Bio::Phylo::Util::CONSTANT qw':objecttypes :namespaces';
+use Data::Dumper;
 
+my $log = Bio::Phylo::Util::Logger->new;
 my $ns  = _NS_FIGTREE_;
 my $pre = 'fig';
 
@@ -42,25 +45,41 @@ sub _to_string {
 
 sub _figtree_handler {
 	my ( $node, $id ) = @_;
+	my @meta = @{ $node->get_meta };
 	my %meta = map { $_->get_predicate_local => $_->get_object }
-	          grep { $_->get_predicate_namespace eq $ns }
-	              @{ $node->get_meta };
+	          grep { $_->get_predicate_namespace eq $ns } @meta;
+	$log->debug( Dumper(\%meta) );
+	
 	my %merged;
 	KEY: for my $key ( keys %meta ) {
 		if ( $key =~ /^(.+?)_min$/ ) {
 			my $stem = $1;
-			$merged{$stem} = '{'.$meta{$key}.','.$meta{"${stem}_max"}.'}';
+			my $max_key = $stem . '_max';
+			$stem =~ s/95/95%/;
+			$merged{$stem} = '{'.$meta{$key}.','.$meta{$max_key}.'}';
 		}
 		elsif ( $key =~ /^(.+?)_max$/ ) {
 			next KEY;
 		}
 		else {
+			$key =~ s/95/95%/;
 			$merged{$key} = $meta{$key};
 		}
 	}
 	my $anno = '[&' . join( ',',map { $_.'='.$merged{$_} } keys %merged ) . ']';
-	my $name = $id // $node->get_name // '';
-	return $anno ne '[&]' ? $name . $anno : $name;
+	my $name;
+	if ( defined $id ) {
+		$name = $id;
+	} 
+	elsif ( defined $node->get_name ) {
+		$name = $node->get_name;
+	}
+	else {
+		$name = '';
+	}
+	my $annotated = $anno ne '[&]' ? $name . $anno : $name;
+	$log->debug($annotated);
+	return $annotated;
 }
 
 # podinherit_insert_token
