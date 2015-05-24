@@ -83,7 +83,7 @@ sub _post_process {
     	my $name = $n->get_name;
     	$name =~ s/\\//g;
     	$log->debug("name: $name");
-    	if ( $name =~ /\[/ and $name =~ /^([^\[]+)\[(.+?)\]$/ ) {
+    	if ( $name =~ /\[/ and $name =~ /^([^\[]*?)\[(.+?)\]$/ ) {
     		my ( $trimmed, $comments ) = ( $1, $2 );
     		$n->set_name( $trimmed );
     		$log->debug("trimmed name: $trimmed");
