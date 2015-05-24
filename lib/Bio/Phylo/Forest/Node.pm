@@ -217,7 +217,7 @@ Sets argument as invocant's branch length.
         if ( defined $bl && looks_like_number $bl && !ref $bl ) {
             $branch_length{$id} = $bl;
 			if ( $bl < 0 ) {
-				$self->logger->warn("Setting length < 0: $bl");
+				$self->get_logger->warn("Setting length < 0: $bl");
 			}
         }
         elsif ( defined $bl && ( !looks_like_number $bl || ref $bl ) ) {
