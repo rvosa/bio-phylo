@@ -118,16 +118,16 @@ sub _parse {
 
     # remove comments, split on tree descriptions
     my $counter = 1;
+
     for my $newick ( $self->_split($string,$ignore,$whitespace,$quotes) ) {
-		$self->_logger->debug("going to process newick string " . $counter++);
-		
+	$self->_logger->debug("going to process newick string " . $counter++);
         # simplify tree
         if ($ids) {
             $newick = _simplify($string, $ids);
         }
-
+		
         # parse trees
-        my $tree = $self->_parse_string($newick);
+	my $tree = $self->_parse_string($newick);
 
         # adding labels to untagged nodes
         if ( $self->_args->{'-label'} ) {
@@ -165,7 +165,14 @@ sub _split {
     my @trees;
   TOKEN: for my $i ( 0 .. length($string) ) {
         my $token = substr( $string, $i, 1 );
-        if ( !$QUOTED && !$COMMENTED && $token eq "'" && ! $quotes ) {
+
+	# detect apostrophe as ' between two letters
+	my $prev = $i > 0 ? substr( $string, $i-1, 1 ) : 0;
+	my $next = $i< length($string) ? substr( $string, $i+1, 1 ) : 0;
+	my $apostr =  substr( $string, $i, 1 ) eq "'" && $prev=~/[a-z]/i && $next=~/[a-z]/i;
+	$log->debug("detected apostrophe") if $apostr;
+
+        if ( !$QUOTED && !$COMMENTED && $token eq "'" && ! $quotes && ! $apostr ) {
             $QUOTED++;
         }
         elsif ( !$QUOTED && !$COMMENTED && $token eq "[" && ! $ignore ) {
@@ -180,7 +187,7 @@ sub _split {
         elsif ($QUOTED
             && !$COMMENTED
             && $token eq "'"
-            && substr( $string, $i, 2 ) ne "''" && ! $quotes )
+            && substr( $string, $i, 2 ) ne "''" && ! $quotes && ! $apostr )
         {
             $QUOTED--;
         }
@@ -192,6 +199,7 @@ sub _split {
             push @trees, $decommented;
             $decommented = '';
         }
+
     }
     $log->debug("removed comments, split on tree descriptions");
     $log->debug("found ".scalar(@trees)." tree descriptions");
@@ -223,6 +231,7 @@ sub _parse_string {
     while ( ( $token, $remainder ) = $self->_next_token($remainder) ) {
         last if ( !defined $token || !defined $remainder );
         $self->_logger->debug("fetched token '$token'");
+
         push @tokens, $token;
     }
     my $i;
@@ -315,6 +324,12 @@ sub _next_token {
         $token .= substr( $string, $i, 1 );
         $self->_logger->debug("growing token: '$token'");
         
+	# detect apostrophe as ' between two letters
+	my $prev = $i > 0 ? substr( $string, $i-1, 1 ) : 0;
+	my $next = $i< length($string) ? substr( $string, $i+1, 1 ) : 0;
+	my $apostr =  substr( $string, $i, 1 ) eq "'" && $prev=~/[a-z]/i && $next=~/[a-z]/i;
+        $self->_logger->debug("detected apostrophe") if $apostr;
+
         # if -ignore_comments was specified the string can still contain comments 
         # that can contain token delimiters, so we still need to track
         # whether we are inside a comment        
@@ -341,12 +356,12 @@ sub _next_token {
                   . substr( $string, ( $i + 1 ) );
             }
         }
-        if ( !$QUOTED && !$COMMENTED && substr( $string, $i, 1 ) eq "'" ) {
+        if ( !$QUOTED && !$COMMENTED && substr( $string, $i, 1 ) eq "'" && ! $apostr ) {
             $QUOTED++;
         }
         elsif ($QUOTED && !$COMMENTED
             && substr( $string, $i, 1 ) eq "'"
-            && substr( $string, $i, 2 ) ne "''" )
+            && substr( $string, $i, 2 ) ne "''" && ! $apostr)
         {
             $QUOTED--;
         }
