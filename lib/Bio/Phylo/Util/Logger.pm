@@ -205,6 +205,27 @@ BEGIN {
         return $VERBOSITY{'*'};
     }
     
+    # Change the terminal to a predefined color. For example to make sure that
+    # an entire exception (or part of it) is marked up as FATAL, or so that the
+    # output from an external command is marked up as DEBUG.
+    sub start_color {
+    	my ( $self, $level, $handle ) = @_;
+    	$handle = \*STDERR if not $handle;    	
+    	if ( $COLORED and -t $handle ) {
+    		print $handle color $COLORS{$level}; 
+    	}
+    	return $COLORS{$level};
+    }
+    
+    sub stop_color {
+    	my ( $self, $handle ) = @_;
+    	$handle = \*STDERR if not $handle;    	
+    	if ( $COLORED and -t $handle ) {
+    		print $handle color 'reset'; 
+    	} 
+    	return $self;   
+    }    
+    
     # aliases for singleton methods
     sub fatal {
 		my $self = shift;
@@ -472,6 +493,32 @@ Adds listeners to send log messages to.
            $filename,   # filename where log method was called
            $line,       # line where log method was called
            $msg         # the unformatted message
+
+=item start_color()
+
+Changes color of output stream to that of specified logging level. This so that for 
+example all errors are automatically marked up as 'FATAL', or all output generated
+by an external program is marked up as 'DEBUG'
+
+ Type    : Mutator
+ Title   : start_color()
+ Usage   : $logger->start_color( 'DEBUG', \*STDOUT )
+ Function: Changes color of output stream
+ Returns : color name
+ Args    : Log level whose color to use, 
+           (optional) which stream to change, default is STDERR
+
+=item stop_color()
+
+Resets the color initiated by start_color()
+
+ Type    : Mutator
+ Title   : stop_color()
+ Usage   : $logger->stop_color( \*STDOUT )
+ Function: Changes color of output stream
+ Returns : color name
+ Args    : (Optional) which stream to reset, default is STDERR
+
 
 =item PREFIX()
 
