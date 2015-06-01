@@ -48,8 +48,8 @@ sub _parse {
 	my $tree_string;
 	my %translate;
 	while(<$fh>) {
-		$tree_block++ if /Begin trees;/i;
-		if ( /^TREE (TREE\d+) = \[&([RU])\] (.+)$/i ) {
+		$tree_block++ if /BEGIN TREES;/i;
+		if ( /^\s*TREE (TREE\d+) = \[&([RU])\] (.+)$/i ) {
 			my ( $name, $rooted, $newick ) = ( $1, $2, $3 );
 			$tree_string++;
 			my $tree = parse_tree(
@@ -83,7 +83,7 @@ sub _post_process {
     	my $name = $n->get_name;
     	$name =~ s/\\//g;
     	$log->debug("name: $name");
-    	if ( $name =~ /\[/ and $name =~ /^([^\[]+)\[(.+?)\]$/ ) {
+    	if ( $name =~ /\[/ and $name =~ /^([^\[]*?)\[(.+?)\]$/ ) {
     		my ( $trimmed, $comments ) = ( $1, $2 );
     		$n->set_name( $trimmed );
     		$log->debug("trimmed name: $trimmed");

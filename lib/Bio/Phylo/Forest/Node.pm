@@ -216,6 +216,9 @@ Sets argument as invocant's branch length.
         my $id = $self->get_id;
         if ( defined $bl && looks_like_number $bl && !ref $bl ) {
             $branch_length{$id} = $bl;
+			if ( $bl < 0 ) {
+				$self->get_logger->warn("Setting length < 0: $bl");
+			}
         }
         elsif ( defined $bl && ( !looks_like_number $bl || ref $bl ) ) {
             throw 'BadNumber' => "Branch length \"$bl\" is a bad number";
