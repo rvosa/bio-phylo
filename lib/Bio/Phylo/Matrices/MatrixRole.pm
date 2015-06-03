@@ -1564,11 +1564,11 @@ Insert argument in invocant.
                 throw 'ObjectMismatch' => 'row already inserted';
             }
             if ($taxon1) {
-				my $tname = $taxon1->get_name;
+		my $tname = $taxon1->get_name;
                 my $taxon2 = $ents->get_taxon;
                 if ( $taxon2 && $taxon1->get_id == $taxon2->get_id ) {
                 	my $tmpl = 'Note: a row linking to %s already exists in matrix %s';
-                    $logger->warn(sprintf $tmpl,$tname,$mname);
+                	$logger->info(sprintf $tmpl,$tname,$mname);
                 }
             }
         }
