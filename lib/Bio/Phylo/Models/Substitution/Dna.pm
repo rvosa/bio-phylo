@@ -182,7 +182,9 @@ sub modeltest {
 				
 				# read data
 				$R->run(qq[data <- read.FASTA("$fasta")]);
-				
+
+				# assume six rate categories for possible gamma model
+				my $rate_categories = 4;
 				if ( $tree ) {
 					        # make copy of tree since it is pruned
 					        my $current_tree = parse('-format'=>'newick', '-string'=>$tree->to_newick)->first;
@@ -197,14 +199,15 @@ sub modeltest {
 						my $newick = $current_tree->to_newick;
 						$R->run(qq[tree <- read.tree(text="$newick")]);
 						# call modelTest
-						$logger->debug("calling modelTest from R package phangorn");
-						$R->run(q[test <- modelTest(phyDat(data), tree=tree)]);
+						$logger->debug("calling modelTest from R package phangorn with tree $newick");
+						$R->run(qq[test <- modelTest(phyDat(data), tree=tree, k=$rate_categories)]);
 				}
 				else {
 						# modelTest will estimate tree
-						$R->run(q[test <- modelTest(phyDat(data))]);
+               					$logger->debug("calling modelTest from R package phangorn");
+						$R->run(qq[test <- modelTest(phyDat(data), k=$rate_categories)]);
 				}
-				
+				$logger->debug("phangorn's modeltest finished, chosing best model");
 				# get model with lowest Aikaike information criterion
 				$R->run(q[model <- test[which(test$AIC==min(test$AIC)),]$Model]);
 				my $modeltype = $R->get(q[model]);
