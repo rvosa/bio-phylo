@@ -2951,7 +2951,8 @@ Converts negative branch lengths to zero.
 
 =item ladderize()
 
-Sorts nodes in ascending (or descending) order of number of children.
+Sorts nodes in ascending (or descending) order of number of children. Tips are
+sorted alphabetically (ascending or descending) relative to their siblings.
 
  Type    : Tree manipulator
  Title   : ladderize
@@ -2967,25 +2968,48 @@ Sorts nodes in ascending (or descending) order of number of children.
         my %child_count;
         $self->visit_depth_first(
             '-post' => sub {
-                my $node     = shift;
-                my $id       = $node->get_id;
+                my $node = shift;
+                
+                # record the number of descendants for the focal
+                # node. because this is a post-order traversal
+                # we have already counted the children of the 
+                # children, recursively. bin nodes and tips in 
+                # separate containers.
+                my $id = $node->get_id;
                 my @children = @{ $node->get_children };
-                my $count    = 1;
+                my $count = 1;
+                my ( @tips, @nodes );
                 for my $child (@children) {
                     $count += $child_count{ $child->get_id };
+                    if ( $child->is_terminal ) {
+                    	push @tips, $child;
+                    }
+                    else {
+                    	push @nodes, $child;
+                    }
                 }
                 $child_count{$id} = $count;
+                
+                # sort the immediate children. if these are 
+                # tips we will sort alphabetically by name (so
+                # that cherries are sorted predictably), otherwise
+                # sort by descendant count
                 my @sorted;
-                if ($right) {
-                    @sorted = map { $_->[0] }
-                      sort { $b->[1] <=> $a->[1] }
-                      map { [ $_, $child_count{ $_->get_id } ] } @children;
-                }
-                else {
-                    @sorted = map { $_->[0] }
-                      sort { $a->[1] <=> $b->[1] }
-                      map { [ $_, $child_count{ $_->get_id } ] } @children;
-                }
+                
+				if ($right) {
+					@sorted = map { $_->[0] }
+					  sort { $b->[1] <=> $a->[1] }
+					  map { [ $_, $child_count{ $_->get_id } ] } @nodes;
+					push @sorted, sort { $b->get_name cmp $a->get_name } @tips;
+				}
+				else {					
+					@sorted = map { $_->[0] }
+					  sort { $a->[1] <=> $b->[1] }
+					  map { [ $_, $child_count{ $_->get_id } ] } @nodes;
+					unshift @sorted, sort { $a->get_name cmp $b->get_name } @tips;
+				}
+
+				# apply the new sort order                
                 for my $i ( 0 .. $#sorted ) {
                     $node->insert_at_index( $sorted[$i], $i );
                 }
