@@ -113,6 +113,27 @@ Sets argument as invocant's parent.
         return $self;
     }
 
+=item set_raw_parent()
+
+Sets argument as invocant's parent. This method does NO 
+sanity checks on the rest of the topology. Use with caution.
+
+ Type    : Mutator
+ Title   : set_raw_parent
+ Usage   : $node->set_raw_parent($parent);
+ Function: Assigns a node's parent.
+ Returns : Modified object.
+ Args    : If no argument is given, the current
+           parent is set to undefined. A valid
+           argument is Bio::Phylo::Forest::Node
+           object.
+
+=cut
+
+	sub set_raw_parent {
+		$set_raw_parent->(@_)
+	}
+
 =item set_child()
 
 Sets argument as invocant's child.
@@ -194,6 +215,25 @@ Sets argument as invocant's child.
         $set_raw_child->( $self, $child, $i );
         return $self;
     }
+
+=item set_raw_child()
+
+Sets argument as invocant's child. This method does NO 
+sanity checks on the rest of the topology. Use with caution.
+
+ Type    : Mutator
+ Title   : set_raw_child
+ Usage   : $node->set_raw_child($child);
+ Function: Assigns a new child to $node
+ Returns : Modified object.
+ Args    : A valid argument consists of a
+           Bio::Phylo::Forest::Node object.
+
+=cut
+
+	sub set_raw_child {
+		$set_raw_child->(@_);
+	}
     
 =item set_branch_length()
 
