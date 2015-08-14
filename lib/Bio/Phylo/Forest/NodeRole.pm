@@ -464,7 +464,7 @@ Reroots below invocant.
 		$dist = $tmp / 2 if ($dist < 0.0 || $dist > $tmp);
 
 		# instantiate new root, add $node as first child with new length
-		$q = $new_root = $fac->create_node;	
+		$q = $new_root = $fac->create_node( '-name' => 'root' );	
 		$q->set_raw_child( $node => 0 );
 		$node->set_raw_parent( $q );
 		$node->set_branch_length( $dist );
