@@ -512,7 +512,7 @@ Reroots below invocant.
 			}
 			pop @children;
 			$p->clear();
-			$p->insert( @children );
+			$p->insert( @children ) if @children;
 		}
 		$tree->insert($new_root);
 		return $new_root;
