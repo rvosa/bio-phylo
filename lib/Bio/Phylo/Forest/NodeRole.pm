@@ -432,131 +432,91 @@ Reroots below invocant.
  Function: Creates a new tree root below $node
  Returns : New root if tree was modified, undef otherwise
  Args    : NONE
- Comments: Implementation incomplete: returns spurious 
-           results when $node is grandchild of current root.
+ Comments: This implementation is a port of @lh3's kn_reroot algorithm
+           found here: http://lh3lh3.users.sourceforge.net/knhx.js
 
 =cut    
 
-    # Example tree to illustrate rerooting algorithm:
-    #
-    #  A     B     C     D     E     F
-    #   \   /     /     /     /     /
-    #    \_/     /     /     /     /
-    #     1     /     /     /     /
-    # new->\   /     /     /     /
-    #       \_/     /     /     /
-    #        2     /     /     /
-    #         \   /     /     /
-    #          \_/     /     /
-    #           3     /     /
-    #            \   /     /
-    #             \_/     /
-    #              4     /
-    #               \   /
-    #                \_/
-    #                 5
-    #                 |
-    sub set_root_below {
-        my $self             = shift;
-        my %constructor_args = @_;
-        $constructor_args{'-name'} = 'root' if not $constructor_args{'-name'};
+	sub set_root_below {
+		my $node = shift;
+		my $dist = shift || 0;
+		my $tree = $node->get_tree;		
+		my $root = $tree->get_root;
+		
+		# do nothing if the focal node already is the root, 
+		# or already has the root below it
+		return if $node->get_id == $root->get_id;
+		return if $node->get_parent and $node->get_parent->get_id == $root->get_id;
+	
+		# p: the central multi-parent node
+		# q: the new parent, previous a child of p
+		# r: old parent
+		# i: previous position of q in p
+		# d: previous distance p->d	
+		my ( $q, $s, $new_root );
+		my $p = $node->get_parent;
+		my $i = $p->get_index_of( $node );
+		my $r = $p->get_parent;
+		my $d = $p->get_branch_length;		
+		my $tmp = $node->get_branch_length;
+		
+		# adjust $dist to a useable value			
+		$dist = $tmp / 2 if ($dist < 0.0 || $dist > $tmp);
 
-        # $self is node 5, nothing to do,
-        # can't place root below root
-        if ( $self->is_root ) {
-            return;
-        }
-        my @ancestors = @{ $self->get_ancestors };
-
-        # if @ancestors = ( 5 ); i.e. $self is node 4
-        # root is already below $self
-        if ( scalar @ancestors == 1 ) {
-            return;
-        }
-
-        # let's say $self is node 1, ancestors is:
-        # ( 2, 3, 4, 5 ) -> ( 2, 3, 4 )
-        my $root = pop @ancestors;
-
-        # ( 2, 3, 4 ) -> ( 2, 3 )
-        my $node_above_root = pop @ancestors;
-
-        # collapse node 4
-        $node_above_root->collapse;
-
-        # ( 2, 3 ) -> ( 2, 3, 5 ); 4 doesn't exist anymore (collapsed)
-        push @ancestors, $root;
-
-        # ( 2, 3, 5 ) -> ( new, 2, 3, 5 )
-        unshift @ancestors, $self->set_node_below(%constructor_args);
-
-        # i.e. $self wasn't 3
-        if ( scalar @ancestors > 2 ) {
-            for ( my $i = $#ancestors ; $i >= 0 ; $i-- ) {
-
-                # flip parent & child
-                $ancestors[$i]->set_child( $ancestors[ $i + 1 ] );
-            }
-        }
-        else {
-
-            # XXX
-            $logger->info("Incomplete implementation reached");
-            $ancestors[0]->set_child( $ancestors[1] );
-        }
-        if ( my $tree = $self->get_tree ) {
-            $tree->insert( $ancestors[0] );
-        }
-        return $ancestors[0];
-    }
-
-    # 	sub set_root_below {
-    # 		my $node = shift;
-    # 		if ( $node->get_ancestors ) {
-    # 			my @ancestors = @{ $node->get_ancestors };
-    #
-    # 			# first collapse root
-    # 			my $root = $ancestors[-1];
-    # 			my $lineage_containing_node;
-    # 			my @children = @{ $root->get_children };
-    # 		  FIND_LINEAGE: for my $child (@children) {
-    # 				if ( $child->get_id == $node->get_id ) {
-    # 					$lineage_containing_node = $child;
-    # 					last FIND_LINEAGE;
-    # 				}
-    # 				for my $descendant ( @{ $child->get_descendants } ) {
-    # 					if ( $descendant->get_id == $node->get_id ) {
-    # 						$lineage_containing_node = $child;
-    # 						last FIND_LINEAGE;
-    # 					}
-    # 				}
-    # 			}
-    # 			for my $child (@children) {
-    # 				next if $child->get_id == $lineage_containing_node->get_id;
-    # 				$child->set_parent($lineage_containing_node);
-    # 			}
-    #
-    # 			# now create new root as parent of $node
-    # 			my $newroot = __PACKAGE__->new( '-name' => 'root' );
-    # 			$node->set_parent($newroot);
-    #
-    # 			# update list of ancestors, want to get rid of old root
-    # 			# at $ancestors[-1] and have new root as $ancestors[0]
-    # 			unshift @ancestors, $newroot;
-    # 			pop @ancestors;
-    #
-    # 			# update connections
-    # 			for ( my $i = $#ancestors ; $i >= 1 ; $i-- ) {
-    # 				$ancestors[$i]->set_parent( $ancestors[ $i - 1 ] );
-    # 			}
-    #
-    # 			# delete root if part of tree, insert new
-    # 			if ( my $tree = $node->_get_container ) {
-    # 				$tree->delete($root);
-    # 				$tree->insert($newroot);
-    # 			}
-    # 		}
-    # 	}
+		# instantiate new root, add $node as first child with new length
+		$q = $new_root = $fac->create_node;	
+		$q->set_raw_child( $node => 0 );
+		$node->set_raw_parent( $q );
+		$node->set_branch_length( $dist );
+	
+		# add $node's parent as child with new length
+		$q->set_raw_child( $p => 1 );
+		$p->set_raw_parent( $q );
+		$p->set_branch_length( $tmp - $dist );
+	
+		# traverse along previous ancestors, swap them 
+		# and update the branch lengths				
+		while ( $r ) {
+			$s = $r->get_parent; # store r's parent
+			$p->set_raw_child( $r => $i ); # change r to p's child
+			$i = $r->get_index_of( $p ); # update $i
+			$r->set_raw_parent( $p ); # update r's parent
+		
+			# swap r->d and d, i.e. update r->d
+			$tmp = $r->get_branch_length;
+			$r->set_branch_length( $d );
+			$d = $tmp;
+		
+			# update p, q and r
+			$q = $p; $p = $r; $r = $s;
+		}
+		
+		# now $p is the root node
+		my @children = @{ $p->get_children };
+		if ( scalar(@children) == 2 ) { # remove p and link the other child of p to q
+			$r = $children[1 - $i]; # get the other child
+			$i = $q->get_index_of( $p ); # the position of p in q
+			$r->set_branch_length( $r->get_branch_length + $p->get_branch_length );
+			
+			# link r to q
+			$q->set_raw_child( $r => $i );
+			$r->set_raw_parent( $q );
+		} 
+		
+		# remove one child in p
+		else {
+			my $k = 0;
+			for my $j ( 0 .. $#children ) {
+				$children[$k] = $children[$j];
+				$k++ if $j != $i;
+			}
+			pop @children;
+			$p->clear();
+			$p->insert( @children );
+		}
+		$tree->insert($new_root);
+		return $new_root;
+	}
 
 
 =back
