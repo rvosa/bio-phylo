@@ -1266,20 +1266,17 @@ Creates simulated replicate.
     sub replicate {
     	my ($self,%args) = @_;
 
-	my $tree = $args{'-tree'};
+		my $tree = $args{'-tree'};
     	if ( not looks_like_object $tree, _TREE_ ) {
     		throw 'BadArgs' => "Need tree as argument";
     	}
-	
-	# generate random seed if not given
-	my $seed = $args{'-seed'} || int(rand(1000_000));
-	
+		
     	my $type = $self->get_type;
     	if ( $type =~ /dna/i ) {
-    		return $self->_replicate_dna('-tree'=>$tree, '-model'=>$args{'-model'}, '-seed'=>$seed);
+    		return $self->_replicate_dna('-tree'=>$tree, '-model'=>$args{'-model'}, '-seed'=>$args{'-seed'});
     	}
     	elsif ( $type =~ /standard/i ) {
-    		return $self->_replicate_binary('-tree'=>$tree, '-model'=>$args{'-model'}, '-seed'=>$seed);
+    		return $self->_replicate_binary('-tree'=>$tree, '-model'=>$args{'-model'}, '-seed'=>$args{'-seed'});
     	}
     	else {
     		throw 'BadArgs' => "Can't replicate $type matrices (yet?)";
@@ -1289,16 +1286,16 @@ Creates simulated replicate.
     sub _replicate_dna {
     	my ($self,%args) = @_;
 	
-	my $seed = $args{'-seed'};
-	my $tree = $args{'-tree'};
-	my $model = $args{'-model'};
+		my $seed = $args{'-seed'};
+		my $tree = $args{'-tree'};
+		my $model = $args{'-model'};
 
     	# we will need 'ape', 'phylosim' (and 'phangorn' for model testing)
     	if ( looks_like_class 'Statistics::R' ) {
 			
 			# instantiate R			
 			my $R = Statistics::R->new;
-			$R->run(qq[set.seed($seed)]);
+			$R->run(qq[set.seed($seed)]) if $seed;
 			$R->run(q[options(device=NULL)]);
 			$R->run(q[require('ape')]);
 			$R->run(q[phylosim <- require('phylosim')]);
@@ -1452,8 +1449,8 @@ Creates simulated replicate.
 			# instantiate R
 			my $newick = $tree->to_newick;
 			my $R = Statistics::R->new;
-              		$R->run(qq[set.seed($seed)]);
-		        $R->run(q[library("ape")]);
+			$R->run(qq[set.seed($seed)]) if $seed;
+			$R->run(q[library("ape")]);
 			$R->run(q[library("phytools")]);				
 			$R->run(qq[phylo <- read.tree(text="$newick")]);
 			
