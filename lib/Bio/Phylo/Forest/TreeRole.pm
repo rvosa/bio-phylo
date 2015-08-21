@@ -2541,6 +2541,7 @@ Bio::Phylo). More information about C<ape> can be found at L<http://ape-package.
            Optional: -rootedge => keep the birth/death root branch, then scale the tree(s)
            Optional: -genera   => approximate distribution of source genus sizes and depths 
            (do this by tagging internal nodes: $node->set_rank('genus'))
+		   Optional: -seed     => a random integer seed for generating the birth/death tree
  Comments: Requires Statistics::R, and an R environment with 'ape' installed
            Expects to operate on an ultrametric tree
 
@@ -2549,11 +2550,14 @@ Bio::Phylo). More information about C<ape> can be found at L<http://ape-package.
     sub replicate {
     	my ( $self, %args ) = @_;
     	if ( looks_like_class('Statistics::R') and looks_like_class('Bio::Phylo::Generator') ) {
-    	
+
     		# get birthdeath parameters
     		$logger->info("going to estimate b/d");
     		my $newick = $self->to_newick;
     		my $R = Statistics::R->new;
+			if ( my $seed = $args{'-seed'} ) {
+				$R->run(qq[set.seed($seed)]);
+			}
     		$R->run(q[library("ape")]);
     		$R->run(qq[phylo <- read.tree(text="$newick")]);
     		$R->run(q[bd <- birthdeath(phylo)]);
@@ -2568,7 +2572,7 @@ Bio::Phylo). More information about C<ape> can be found at L<http://ape-package.
     			'-trees'    => $args{'-trees'} || 1,
     			'-killrate' => $b_over_d,
     			'-tips'     => scalar(@{ $self->get_terminals }),
-    		);
+				);
     		
     		# invent tip labels
     		$forest->visit(sub{
@@ -2597,29 +2601,29 @@ Bio::Phylo). More information about C<ape> can be found at L<http://ape-package.
     		
     			# iterate over trees
     			for my $replicate ( @{ $forest->get_entities } ) {
-    		
+					
 					# get distribution of source genus sizes and depths
 					$logger->info("calculating source genus sizes and depths");
 					my ( $counter, %genera ) = ( 0 );
 					$self->visit(sub{
 						my $node = shift;
-                                                my $rank = $node->get_rank;
+						my $rank = $node->get_rank;
 						if ( $rank ) {
-                                                        if ( $rank eq 'genus' ) {
-                                                                my $id     = $node->get_id;
-                                                                my $height = $height - $node->calc_path_to_root;
-                                                                my $size   = scalar(@{ $node->get_terminals });
-                                                                my $name   = $node->get_name || 'Genus' . ++$counter;
-                                                                $genera{$id} = {
-                                                                        'name'   => $name,
-                                                                        'size'   => $size,
-                                                                        'height' => $height,
-                                                                        'node'   => $node,
-                                                                };
-                                                        }
-                                                }
+							if ( $rank eq 'genus' ) {
+								my $id     = $node->get_id;
+								my $height = $height - $node->calc_path_to_root;
+								my $size   = scalar(@{ $node->get_terminals });
+								my $name   = $node->get_name || 'Genus' . ++$counter;
+								$genera{$id} = {
+									'name'   => $name,
+									'size'   => $size,
+									'height' => $height,
+									'node'   => $node,
+								};
+							}
+						}
 					});
-				
+					
 					# get distribution of target node sizes and depths
 					$logger->info("calculating target genus sizes and depths");					
 					my ( %node );
@@ -2630,14 +2634,21 @@ Bio::Phylo). More information about C<ape> can be found at L<http://ape-package.
 						my $size   = scalar(@{ $node->get_terminals });
 						push @{ $node{$size} }, [ $node, $height, $id ];
 					});
-				
+										
+					# keep track of which members from the genera have already been assigned
+					my %seen_labels;
+					
 					# start assigning genera, from big to small
 					for my $genus ( sort { $genera{$b}->{'size'} <=> $genera{$a}->{'size'} } keys %genera ) {
-
 						# get key for candidate set of nodes
 						my $name = $genera{$genus}->{'name'} || "Genus${genus}";						
 						my $size = $genera{$genus}->{'size'};
 						my @labels = shuffle map { $_->get_name } @{ $genera{$genus}->{'node'}->get_terminals };
+						
+						# avoid assigning labels more than once when genera are nested
+						@labels = grep { ! $seen_labels{$_} } @labels;
+						$seen_labels{$_}++ for @labels;
+
 						$logger->info("processing $name ($size tips)");
 						SIZE: while( not $node{$size} ) { last SIZE if --$size <= 1 }
 					
@@ -2653,6 +2664,7 @@ Bio::Phylo). More information about C<ape> can be found at L<http://ape-package.
 							# (and self!) from list of candidates, as we can't nest genera
 							my $sp = 0;							
 							$node->set_name($name);
+						
 							for my $n ( $node, @{ $node->get_descendants } ) {
 								$n->set_name($labels[$sp++]) if $n->is_terminal;
 								for my $i ( 1 .. $size ) {
