@@ -159,8 +159,12 @@ sub set_median {
 
 # get substitution model for DNA alignment and optional tree
 sub modeltest {
-	my ($self, $matrix, $tree ) = @_;
+	my ($self, %args) = @_;
 	
+	my $matrix = $args{'-matrix'};
+	my $tree = $args{'-tree'};
+	my $timeout = $args{'-timeout'} || -1;
+
 	my $model;
 	
 	if ( looks_like_class 'Statistics::R' ) {
@@ -183,31 +187,46 @@ sub modeltest {
 		# read data
 		$R->run(qq[data <- read.FASTA("$fasta")]);
 		
-		# assume six rate categories for possible gamma model
-		my $rate_categories = 6;
-		if ( $tree ) {
-			# make copy of tree since it is pruned
-			my $current_tree = parse('-format'=>'newick', '-string'=>$tree->to_newick)->first;
-			# prune out taxa from tree that are not present in the data
-			my @taxon_names = map {$_->get_name} @{ $matrix->get_entities };
-			$logger->debug('pruning input tree');
-			$current_tree->keep_tips(\@taxon_names);
-			if ( ! $current_tree ) {
-				$logger->warn('tip labels of tree do not match data');
-				return $model;		    
-			}
-			my $newick = $current_tree->to_newick;
-			$R->run(qq[tree <- read.tree(text="$newick")]);
-			# call modelTest
-			$logger->debug("calling modelTest from R package phangorn with tree $newick");
-			$R->run(qq[test <- modelTest(phyDat(data), tree=tree, k=$rate_categories)]);
+		# throw (and catch) signal when user timeout exceeded
+		eval {
+			local $SIG{ALRM} = sub { die("TimeOut"); };
+			alarm($timeout);
+			
+			if ( $tree ) {
+				# make copy of tree since it is pruned
+				my $current_tree = parse('-format'=>'newick', '-string'=>$tree->to_newick)->first;
+				# prune out taxa from tree that are not present in the data
+				my @taxon_names = map {$_->get_name} @{ $matrix->get_entities };
+				$logger->debug('pruning input tree');
+				$current_tree->keep_tips(\@taxon_names);
+				if ( ! $current_tree ) {
+					$logger->warn('tip labels of tree do not match data');
+					return $model;		    
 				}
-		else {
-			# modelTest will estimate tree
-			$logger->debug("calling modelTest from R package phangorn");
-			$R->run(qq[test <- modelTest(phyDat(data), k=$rate_categories)]);
+				my $newick = $current_tree->to_newick;
+				$R->run(qq[tree <- read.tree(text="$newick")]);
+				# call modelTest
+				$logger->debug("calling modelTest from R package phangorn");
+				$R->run(q[test <- modelTest(phyDat(data), tree=tree)]);
+			}
+			else {
+				# modelTest will estimate tree
+				$R->run(q[test <- modelTest(phyDat(data))]);
+			}
+			
+			alarm(0);			
+		};
+		
+		# catch timeout
+		if ( $@ ) {
+			if ($@ =~ m/TimeOut/) {
+				$logger->warn("Timeout of $timeout seconds for phangorn's modeltest exceeded.");
+				$R->stop;
+				return 0;
+			}
+			die($@);
 		}
-		$logger->debug("phangorn's modeltest finished, chosing best model");
+		
 		# get model with lowest Aikaike information criterion
 		$R->run(q[model <- test[which(test$AIC==min(test$AIC)),]$Model]);
 		my $modeltype = $R->get(q[model]);
@@ -265,7 +284,7 @@ sub modeltest {
 				'-pi' => $pi );
 		}
 		
-				# set gamma parameters
+		# set gamma parameters
 		if ( $modeltype =~ /\+G/ ) {
 			$logger->debug("setting gamma parameters for $modeltype model");
 			# shape of gamma distribution
@@ -288,11 +307,12 @@ sub modeltest {
 		}
 		# set universal parameters
 		$model->set_rate($rate_matrix);
-		$model->set_mu($mu);
+		$model->set_mu($mu);				
 	}
 	else {
 		$logger->warn("Statistics::R must be installed to run modeltest");
 	}
+
 	return $model;
 }
 

@@ -1319,7 +1319,7 @@ Creates simulated replicate.
 			# run the model test if model not given as argument
 			if ( ! $model ) {
 				$logger->info("no model given as argument, determining model with phangorn's modelTest");
-				$model = 'Bio::Phylo::Models::Substitution::Dna'->modeltest($self, $tree);
+				$model = 'Bio::Phylo::Models::Substitution::Dna'->modeltest( '-matrix' => $self, '-tree' => $tree );
 			}
 			# prepare data for processes
 			my @ungapped   = @{ $self->get_ungapped_columns };

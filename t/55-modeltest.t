@@ -33,11 +33,11 @@ eval { require Statistics::R };
 	 )->first->resolve;
      
      ok(my $class = 'Bio::Phylo::Models::Substitution::Dna');
-     my $est = $class->modeltest($matrix, $tree);
+     my $est = $class->modeltest( '-matrix' => $matrix, '-tree' => $tree );
      isa_ok ( $est,  'Bio::Phylo::Models::Substitution::Dna');
      
      # test modeltest without tree
-     $est = $class->modeltest($matrix);
+     $est = $class->modeltest( '-matrix' => $matrix );
      isa_ok ( $est,  'Bio::Phylo::Models::Substitution::Dna');
      ok ( $est->get_rate( 'A' => 'C' ) );    
 }
