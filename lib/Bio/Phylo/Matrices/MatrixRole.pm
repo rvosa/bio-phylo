@@ -648,12 +648,12 @@ Calculates size distribution of insertions or deletions
 						push @row_indels, { 'start' => $i };
 					}
     			} 
-			else {
-                                # gap of length 1 is closed: start==end
-                                if ( $previous and $previous eq $gap ){
-                                        $row_indels[-1]->{'end'} = $i-1;
-                                }
-                        }
+				else {
+					# gap of length 1 is closed: start==end
+					if ( $previous and $previous eq $gap ){
+						$row_indels[-1]->{'end'} = $i;
+					}
+				}
     			$previous = $row->[$i];
     		}
     		
