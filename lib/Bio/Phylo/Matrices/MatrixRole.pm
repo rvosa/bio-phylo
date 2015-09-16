@@ -648,12 +648,12 @@ Calculates size distribution of insertions or deletions
 						push @row_indels, { 'start' => $i };
 					}
     			} 
-			else {
-                                # gap of length 1 is closed: start==end
-                                if ( $previous and $previous eq $gap ){
-                                        $row_indels[-1]->{'end'} = $i-1;
-                                }
-                        }
+				else {
+					# gap of length 1 is closed: start==end
+					if ( $previous and $previous eq $gap ){
+						$row_indels[-1]->{'end'} = $i;
+					}
+				}
     			$previous = $row->[$i];
     		}
     		
@@ -1319,7 +1319,7 @@ Creates simulated replicate.
 			# run the model test if model not given as argument
 			if ( ! $model ) {
 				$logger->info("no model given as argument, determining model with phangorn's modelTest");
-				$model = 'Bio::Phylo::Models::Substitution::Dna'->modeltest($self, $tree);
+				$model = 'Bio::Phylo::Models::Substitution::Dna'->modeltest( '-matrix' => $self, '-tree' => $tree );
 			}
 			# prepare data for processes
 			my @ungapped   = @{ $self->get_ungapped_columns };
