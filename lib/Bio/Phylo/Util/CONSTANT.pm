@@ -66,6 +66,7 @@ BEGIN {
       _NS_FIGTREE_
       _NS_PHYLOMAP_
       _NS_BIOVEL_
+      _NS_NHX_
     );
     %EXPORT_TAGS = (
         'all'         => [@EXPORT_OK],
@@ -135,6 +136,7 @@ BEGIN {
               _NS_FIGTREE_
               _NS_PHYLOMAP_
               _NS_BIOVEL_
+              _NS_NHX_
             )
         ]
     );
@@ -164,6 +166,7 @@ sub _NS_TNRS_ ()     { 'http://phylotastic.org/tnrs/terms#' }
 sub _NS_FIGTREE_ ()  { 'http://tree.bio.ed.ac.uk/software/figtree/terms#' }
 sub _NS_PHYLOMAP_ () { 'http://phylomap.org/terms.owl#' }
 sub _NS_BIOVEL_ ()   { 'http://biovel.eu/terms#' }
+sub _NS_NHX_ ()      { 'http://sites.google.com/site/cmzmasek/home/software/forester/nhx' }
 
 our $NS = {
     'tnrs' => _NS_TNRS_(),
@@ -183,6 +186,7 @@ our $NS = {
     'bv'   => _NS_BIOVEL_(),
     'dcterms' => _NS_DCTERMS_(),
     'fig'     => _NS_FIGTREE_(),
+    'nhx'     => _NS_NHX_(),
 };
 
 sub _NEXML_VERSION_ () { '0.9' }
