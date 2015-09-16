@@ -2,7 +2,8 @@ package Bio::Phylo::Parsers::Nhx;
 use warnings;
 use strict;
 use Bio::Phylo::IO 'parse';
-use base 'Bio::Phylo::Parsers::Abstract';
+use base 'Bio::Phylo::Parsers::Newick';
+use Bio::Phylo::Util::CONSTANT ':namespaces';
 
 =head1 NAME
 
@@ -48,38 +49,47 @@ sub _return_is_scalar { 1 }
 
 sub _parse {
     my $self = shift;
+    $self->_args->{'-ignore_comments'} = 1;
+	return $self->SUPER::_parse;
+}
+
+sub _parse_node_data {
+    my ( $self, $node, @clade ) = @_;
+    $self->_logger->debug("parsing name and branch length for node");
+    my @tail;
+  PARSE_TAIL: for ( my $i = $#clade ; $i >= 0 ; $i-- ) {
+        if ( $clade[$i] eq ')' ) {
+            @tail = @clade[ ( $i + 1 ) .. $#clade ];
+            last PARSE_TAIL;
+        }
+        elsif ( $i == 0 ) {
+            @tail = @clade;
+        }
+    }
     
-    # modify arguments and delegate first pass 
-    # parsing to the newick parser
-    my %args = %{ $self->_args };
-    $args{'-ignore_comments'} = 1;
-    $args{'-handle'} = $self->_handle;
-    $args{'-format'} = 'newick';
-	delete $args{'-as_project'};	
-    my $forest = parse(%args);
-    
-    # process the NHX annotations in the
-    # second pass
-	$forest->visit(sub{
-		my $tree = shift;
-		$tree->visit(sub{
-			my $node = shift;
-			my $name = $node->get_name;
-			my $nhx;
-			
-			# interior nodes might only have nhx but no label
-			if ( $name =~ /^(.*?)\[&&NHX:(.+?)\]$/ ) {
-				( $name, $nhx ) = ( $1, $2 );
-				for my $tuple ( split /:/, $nhx ) {
-					my ( $k, $v ) = split /=/, $tuple;
-					$node->set_meta_object( 'nhx:' . $k => $v );
-				}
-				$node->set_name($name);
-			}
+    # process branch length, nhx is suffixed
+    my $bl = $tail[-1];
+	my $nhx;
+	if ( $bl =~ /^(.*?)\[&&NHX:(.+?)\]$/ ) {
+		$node->set_namespaces( 'nhx' => _NS_NHX_ );
+		( $bl, $nhx ) = ( $1, $2 );
+		for my $tuple ( split /:/, $nhx ) {
+			my ( $k, $v ) = split /=/, $tuple;
+			$node->set_meta_object( 'nhx:' . $k => $v );
 		}
-	});
-    
-    return $forest;
+	}
+
+    # name only
+    if ( scalar @tail == 1 ) {
+        $node->set_name( $tail[0] );
+    }
+    elsif ( scalar @tail == 2 ) {
+        $node->set_branch_length( $bl );
+    }
+    elsif ( scalar @tail == 3 ) {
+        $node->set_name( $tail[0] );
+        $node->set_branch_length( $bl );
+    }
 }
 
 # podinherit_insert_token
