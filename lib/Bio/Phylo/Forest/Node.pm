@@ -185,9 +185,9 @@ Sets argument as invocant's child.
             $parent_parent->prune_child($self);
 
             # step 2.
-            $set_raw_parent->( $self, $child_parent );    # XXX could be undef
+            $self->set_raw_parent( $child_parent );    # XXX could be undef
             if ($child_parent) {
-                $set_raw_child->( $child_parent, $self );
+                $child_parent->set_raw_child( $self );
             }
         }
 
@@ -195,7 +195,7 @@ Sets argument as invocant's child.
         if ($child_parent) {
             $child_parent->prune_child($child);
         }
-        $set_raw_parent->( $child, $self );
+        $child->set_raw_parent( $self );
 
         # now do the insert, first make room by shifting later siblings right
         my $children = $self->get_children;
@@ -212,7 +212,7 @@ Sets argument as invocant's child.
         }
 
         # step 4.
-        $set_raw_child->( $self, $child, $i );
+        $self->set_raw_child( $child, $i );
         return $self;
     }
 
