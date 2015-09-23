@@ -1408,6 +1408,10 @@ Creates simulated replicate.
 			# set invariant sites
 			if ( scalar @invariant ) {
 					my $pinvar = $model->get_pinvar || scalar(@invariant)/$self->get_nchar;
+					if ( $pinvar == 1){
+						my $epsilon = 0.01;
+						$pinvar -= $epsilon;
+					}
 					# set a high value for gamma, then we approximate the empirical number of invariant sites
 					$R->run(qq[plusInvGamma(root.seq,model,pinv=$pinvar,shape=1e10)]);
 			}			
