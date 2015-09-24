@@ -59,15 +59,14 @@ sub modeltest {
 		
 		# insert data
 		my $newick = $tree->to_newick;
-		$R->run(qq[phylo <- read.tree(text="$newick")]);
 		my %hash = $class->_data_hash($char,$matrix);
-		my @chars;
-		$tree->visit_depth_first( '-pre' => sub { push @chars, $hash{shift->get_name} } );
-		$R->set('chars',\@chars);
-		$R->run(q[x <- factor(chars)]);
+		$R->run(qq[phylo <- read.tree(text="$newick")]);
+		$R->set('chars', [values %hash]);
+		$R->set('labels', [keys %hash]);
+		$R->run(q[names(chars) <- labels]);
 		
 		# do calculation
-		$R->run(qq[ans <- ace(x,phylo,type="d",model="$model")]);
+		$R->run(qq[ans <- ace(chars,phylo,type="d",model="$model")]);
 		$R->run(q[rates <- ans$rates]);
 		my $rates = $R->get(q[rates]);
 		$logger->info("Rates: ".Dumper($rates));
