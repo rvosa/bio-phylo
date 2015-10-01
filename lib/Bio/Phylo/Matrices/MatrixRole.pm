@@ -648,12 +648,12 @@ Calculates size distribution of insertions or deletions
 						push @row_indels, { 'start' => $i };
 					}
     			} 
-			else {
-                                # gap of length 1 is closed: start==end
-                                if ( $previous and $previous eq $gap ){
-                                        $row_indels[-1]->{'end'} = $i-1;
-                                }
-                        }
+				else {
+					# gap of length 1 is closed: start==end
+					if ( $previous and $previous eq $gap ){
+						$row_indels[-1]->{'end'} = $i;
+					}
+				}
     			$previous = $row->[$i];
     		}
     		
@@ -1319,7 +1319,7 @@ Creates simulated replicate.
 			# run the model test if model not given as argument
 			if ( ! $model ) {
 				$logger->info("no model given as argument, determining model with phangorn's modelTest");
-				$model = 'Bio::Phylo::Models::Substitution::Dna'->modeltest($self, $tree);
+				$model = 'Bio::Phylo::Models::Substitution::Dna'->modeltest( '-matrix' => $self, '-tree' => $tree );
 			}
 			# prepare data for processes
 			my @ungapped   = @{ $self->get_ungapped_columns };
@@ -1408,6 +1408,10 @@ Creates simulated replicate.
 			# set invariant sites
 			if ( scalar @invariant ) {
 					my $pinvar = $model->get_pinvar || scalar(@invariant)/$self->get_nchar;
+					if ( $pinvar == 1){
+						my $epsilon = 0.01;
+						$pinvar -= $epsilon;
+					}
 					# set a high value for gamma, then we approximate the empirical number of invariant sites
 					$R->run(qq[plusInvGamma(root.seq,model,pinv=$pinvar,shape=1e10)]);
 			}			

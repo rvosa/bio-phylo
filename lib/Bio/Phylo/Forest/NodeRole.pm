@@ -2263,20 +2263,22 @@ Serializes subtree subtended by invocant to newick string.
             # now format nhx
             my $nhx;
             if ( $args{'-nhxkeys'} ) {
-                my $sep;
+                my ( $sep, $sp );
                 if ( $args{'-nhxstyle'} =~ /^mesquite$/i ) {
                     $sep = ',';
                     $nhx = '[%';
+                    $sp = ' ';
                 }
                 else {
                     $sep = ':';
                     $nhx = '[&&NHX:';
+                    $sp = '';
                 }
                 my @nhx;
                 for my $i ( 0 .. $#{ $args{'-nhxkeys'} } ) {
                     my $key   = $args{'-nhxkeys'}->[$i];
                     my $value = $node->get_generic($key);
-                    push @nhx, " $key = $value " if $value;
+                    push @nhx, "$sp$key$sp=$sp$value$sp" if $value;
                 }
                 if (@nhx) {
                     $nhx .= join $sep, @nhx;
