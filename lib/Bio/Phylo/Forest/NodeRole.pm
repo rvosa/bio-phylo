@@ -2310,6 +2310,9 @@ Serializes subtree subtended by invocant to newick string.
                 $string .= ',';
                 $next_sister->to_newick(%args);
             }
+            else {
+            	$string .= ')';
+            }
         }
     }
 
