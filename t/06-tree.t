@@ -153,7 +153,7 @@ ok( $tree->DESTROY,      '48 destroy' );
 my $left   = '((((A,B),C),D),E);';
 my $right  = '(E,(D,(C,(A,B))));';
 my $ladder = parse( '-format' => 'newick', '-string' => $left )->first;
-ok( $ladder->ladderize->to_newick eq $right, '49 ladderize' );
+ok( $ladder->ladderize->to_newick eq $right, '49 ladderize '. $ladder->ladderize->to_newick  );
 {
     my $n1 = '((C:0,(B:0,A:0):7):3,D:0):0;';
     my $n2 = '(((A:0,B:0):4,C:0):6,D:0):0;';

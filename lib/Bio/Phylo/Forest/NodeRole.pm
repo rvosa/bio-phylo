@@ -2313,7 +2313,7 @@ Serializes subtree subtended by invocant to newick string.
                 $next_sister->to_newick(%args);
             }
             else {
-            	$string .= ')';
+            	#$string .= ')';
             }
         }
     }
