@@ -340,7 +340,7 @@ sub _handle_chars {
     # create matrix object, send extra constructor args
     my $type = $characters_elt->att('xsi:type');
     my $compact = $type =~ /Seqs$/;
-    $type =~ s/^.+?:(.*?)(?:Cells|Seqs)/$1/;
+    $type =~ s/^(?:.+:)?(.*?)(?:Cells|Seqs)/$1/;
     my %args = ( '-type' => $type );
     my ( $matrix_obj, $matrix_id ) =
       $self->_obj_from_elt( $characters_elt, 'matrix', %args );
