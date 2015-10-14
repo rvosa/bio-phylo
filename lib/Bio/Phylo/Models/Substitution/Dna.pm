@@ -3,7 +3,7 @@ use Bio::Phylo::Util::CONSTANT qw'/looks_like/ :objecttypes';
 use Bio::Phylo::Util::Exceptions qw'throw';
 use Bio::Phylo::IO qw(parse unparse);
 use Bio::Phylo::Util::Logger':levels';
-use File::Temp qw(tempfile);
+use File::Temp qw(tempfile cleanup);
 
 use strict;
 
@@ -170,7 +170,7 @@ sub modeltest {
 	if ( looks_like_class 'Statistics::R' ) {
 
 		# phangorn needs files as input
-		my ($fasta_fh, $fasta) = tempfile( 'CLEANUP' => 1 );
+		my ($fasta_fh, $fasta) = tempfile();
 		print $fasta_fh unparse('-phylo'=>$matrix, '-format'=>'fasta');
 		close $fasta_fh;
 
@@ -183,10 +183,13 @@ sub modeltest {
 			$logger->warn("R library phangorn must be installed to run modeltest");
 			return $model;
 		}
-
+		
 		# read data
 		$R->run(qq[data <- read.FASTA("$fasta")]);
-
+		
+		# remove temp file 
+		cleanup();
+		
 		# throw (and catch) signal when user timeout exceeded
 		eval {
 			local $SIG{ALRM} = sub { die("TimeOut of $timeout seconds for phangorn's modeltest exceeded"); };
