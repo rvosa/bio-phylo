@@ -196,21 +196,26 @@ sub modeltest {
 			alarm($timeout);
 
 			if ( $tree ) {
-				# make copy of tree since it is pruned
+				# make copy of tree since it will be pruned
 				my $current_tree = parse('-format'=>'newick', '-string'=>$tree->to_newick)->first;
 				# prune out taxa from tree that are not present in the data
 				my @taxon_names = map {$_->get_name} @{ $matrix->get_entities };
 				$logger->debug('pruning input tree');
 				$current_tree->keep_tips(\@taxon_names);
-				if ( ! $current_tree or ! scalar( @{ $current_tree->get_terminals } ) ) {
-					die('tree has too few tips or tip labels of tree do not match data');
-				}
-				my $newick = $current_tree->to_newick;
+				$logger->debug('pruned input tree: ' . $current_tree->to_newick);
 
-				$R->run(qq[tree <- read.tree(text="$newick")]);
-				# call modelTest
-				$logger->debug("calling modelTest from R package phangorn");
-				$R->run(q[test <- modelTest(phyDat(data), tree=tree)]);
+				if ( ! $current_tree or scalar( @{ $current_tree->get_terminals } ) < 3 ) {					
+					$logger->warn('pruned tree has too few tip labels, simulating without tree');
+					$R->run(q[test <- modelTest(phyDat(data))]);
+				} 
+				else {
+					my $newick = $current_tree->to_newick;
+					
+					$R->run(qq[tree <- read.tree(text="$newick")]);
+					# call modelTest
+					$logger->debug("calling modelTest from R package phangorn");
+					$R->run(q[test <- modelTest(phyDat(data), tree=tree)]);
+				}
 			}
 			else {
 				# modelTest will estimate tree
