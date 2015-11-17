@@ -1329,16 +1329,18 @@ Creates simulated replicate.
 			# prepare data for processes
 			my @ungapped   = @{ $self->get_ungapped_columns };
 			my @invariant  = @{ $self->get_invariant_columns };
-			my %deletions  = %{ $self->calc_indel_sizes( '-trim' => 0 ) };
-			my %insertions = %{ $self->calc_indel_sizes( '-trim' => 0, '-insertions' => 1 ) };
+			my %deletions  = %{ $self->calc_indel_sizes( '-trim' => 1 ) };
+			my %insertions = %{ $self->calc_indel_sizes( '-trim' => 1, '-insertions' => 1 ) };
 			my $ancestral  = $self->calc_median_sequence;
 
 			# set ancestral sequence: phylosim does not accept ambiguity characters
 			# so for any of these characters, we draw a nucleotide from a uniform random distribution
-			$R->run(qq[seq.str <- paste(sapply(strsplit('$ancestral',''),
-                                               function(x){
-                                                   ifelse(x %in% c('A','C','T','G'), x, sample(c('A','C','T','G'),1))
-                                                          }), collapse='')]);
+			$R->run(qq[seq.str <- paste(sapply(unlist(strsplit('$ancestral','')),
+                                        function(x){
+                                             sub("[^ACTG]", sample(c('T', 'A', 'G', 'C'), 1), x)
+                                                   }), collapse='')]);
+			$ancestral = $R->get(q[seq.str]);
+			$logger->debug("ancestral sequence for simulation : $ancestral");
 			$R->run(q[root.seq=NucleotideSequence(string=seq.str)]);
 
 			my $m = ref($model);
