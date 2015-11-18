@@ -183,13 +183,13 @@ sub modeltest {
 			$logger->warn("R library phangorn must be installed to run modeltest");
 			return $model;
 		}
-		
+
 		# read data
 		$R->run(qq[data <- read.FASTA("$fasta")]);
-		
-		# remove temp file 
+
+		# remove temp file
 		cleanup();
-		
+
 		# throw (and catch) signal when user timeout exceeded
 		eval {
 			local $SIG{ALRM} = sub { die("TimeOut of $timeout seconds for phangorn's modeltest exceeded"); };
@@ -204,13 +204,13 @@ sub modeltest {
 				$current_tree->keep_tips(\@taxon_names);
 				$logger->debug('pruned input tree: ' . $current_tree->to_newick);
 
-				if ( ! $current_tree or scalar( @{ $current_tree->get_terminals } ) < 3 ) {					
+				if ( ! $current_tree or scalar( @{ $current_tree->get_terminals } ) < 3 ) {
 					$logger->warn('pruned tree has too few tip labels, simulating without tree');
 					$R->run(q[test <- modelTest(phyDat(data))]);
-				} 
+				}
 				else {
 					my $newick = $current_tree->to_newick;
-					
+
 					$R->run(qq[tree <- read.tree(text="$newick")]);
 					# call modelTest
 					$logger->debug("calling modelTest from R package phangorn");
@@ -228,6 +228,7 @@ sub modeltest {
 		if ( $@ ) {
 			$logger->warn($@);
 			$R->stop;
+			kill ('KILL', $R->pid);
 			return 0;
 		}
 
