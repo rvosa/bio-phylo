@@ -1330,7 +1330,7 @@ Creates simulated replicate.
 			my @ungapped   = @{ $self->get_ungapped_columns };
 			my @invariant  = @{ $self->get_invariant_columns };
 			my %deletions  = %{ $self->calc_indel_sizes( '-trim' => 0 ) };
-			my %insertions = %{ $self->calc_indel_sizes( '-trim' => 0, '-insertions' => 0 ) };
+			my %insertions = %{ $self->calc_indel_sizes( '-trim' => 0, '-insertions' => 1 ) };
 			my $ancestral  = $self->calc_median_sequence;
 
 			# set ancestral sequence: phylosim does not accept ambiguity characters
