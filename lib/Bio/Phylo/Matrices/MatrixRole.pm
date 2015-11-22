@@ -1254,9 +1254,11 @@ Creates simulated replicate.
  Returns : A simulated replicate of the invocant.
  Args    : Tree to simulate the characters on.
            Optional:
-           -seed     => a random integer seed
-           -model => an object of class Bio::Phylo::Models::Substitution::Dna
+           -seed           => a random integer seed
+           -model          => an object of class Bio::Phylo::Models::Substitution::Dna
 	             or Bio::Phylo::Models::Substitution::Binary
+		   -random_rootseq => start DNA sequence simulation from random ancestral sequence 
+		         instead of the  median sequence in the alignment. 
 
  Comments: Requires Statistics::R, with 'ape', 'phylosim', 'phangorn' and 'phytools'.
            If model is not given as argument, it will be estimated.
@@ -1273,7 +1275,8 @@ Creates simulated replicate.
 
     	my $type = $self->get_type;
     	if ( $type =~ /dna/i ) {
-    		return $self->_replicate_dna('-tree'=>$tree, '-model'=>$args{'-model'}, '-seed'=>$args{'-seed'});
+    		return $self->_replicate_dna('-tree'=>$tree, '-model'=>$args{'-model'}, 
+										 '-seed'=>$args{'-seed'}, '-random_rootseq' =>$args{'-random_rootseq'});
     	}
     	elsif ( $type =~ /standard/i ) {
     		return $self->_replicate_binary('-tree'=>$tree, '-model'=>$args{'-model'}, '-seed'=>$args{'-seed'});
@@ -1282,14 +1285,15 @@ Creates simulated replicate.
     		throw 'BadArgs' => "Can't replicate $type matrices (yet?)";
     	}
     }
-
+	
     sub _replicate_dna {
     	my ($self,%args) = @_;
-
+		
 		my $seed = $args{'-seed'};
 		my $tree = $args{'-tree'};
 		my $model = $args{'-model'};
-
+		my $random_rootseq = $args{'-random_rootseq'};
+		
 		if ( scalar @{ $self->get_entities } < 3 ) {
 			$logger->warn("Cannot replicate a matrix with less than three elements.");
 			return;
@@ -1331,17 +1335,24 @@ Creates simulated replicate.
 			my @invariant  = @{ $self->get_invariant_columns };
 			my %deletions  = %{ $self->calc_indel_sizes( '-trim' => 0 ) };
 			my %insertions = %{ $self->calc_indel_sizes( '-trim' => 0, '-insertions' => 1 ) };
-			my $ancestral  = $self->calc_median_sequence;
 
-			# set ancestral sequence: phylosim does not accept ambiguity characters
-			# so for any of these characters, we draw a nucleotide from a uniform random distribution
-			$R->run(qq[seq.str <- paste(sapply(unlist(strsplit('$ancestral','')),
-                                        function(x){
-                                             sub("[^ACTG]", sample(c('T', 'A', 'G', 'C'), 1), x)
-                                                   }), collapse='')]);
-			$ancestral = $R->get(q[seq.str]);
+			# set ancestral (root) sequence 
+			my $ancestral;
+			my @alphabet = ('A', 'T', 'C', 'G');				
+			if ( $random_rootseq ) {
+				# start from random sequence if requested
+				$logger->debug('simulating from random ancestral sequence');
+				$ancestral .= $alphabet[ rand @alphabet ] for 1..$self->length;
+			}
+			else {
+				$logger->debug('simulating from median ancestral sequence');
+				# start from median sequence
+				$ancestral = $self->calc_median_sequence;
+				# phylosim does not accept ambiguity characters, replace with random nucleotides
+				$ancestral =~ s/[^ATCG]/$alphabet[rand @alphabet]/g;
+			}
 			$logger->debug("ancestral sequence for simulation : $ancestral");
-			$R->run(q[root.seq=NucleotideSequence(string=seq.str)]);
+			$R->run(qq[root.seq=NucleotideSequence(string='$ancestral')]);
 
 			my $m = ref($model);
 			if ( $m=~/([^\:\:]+$)/ ) {
