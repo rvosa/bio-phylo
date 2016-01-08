@@ -75,6 +75,7 @@ sub _draw {
                         '-font_size'   => $node->get_font_size,
                         '-font_style'  => $node->get_font_style,
                         '-font_colour' => $node->get_font_colour,
+                        '-font_weight' => $node->get_font_weight,
                         'class'        => $is_terminal ? 'taxon_text' : 'node_text',
                     );
                 }
