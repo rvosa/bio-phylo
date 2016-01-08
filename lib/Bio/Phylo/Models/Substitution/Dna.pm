@@ -3,7 +3,7 @@ use Bio::Phylo::Util::CONSTANT qw'/looks_like/ :objecttypes';
 use Bio::Phylo::Util::Exceptions qw'throw';
 use Bio::Phylo::IO qw(parse unparse);
 use Bio::Phylo::Util::Logger':levels';
-use File::Temp qw(tempfile);
+use File::Temp qw(tempfile cleanup);
 
 use strict;
 
@@ -145,9 +145,9 @@ sub set_pi {
     ref $pi eq 'ARRAY' or throw 'BadArgs' => "Not an array ref!";
     my $total = 0;
     $total += $_ for @{$pi};
-    my $epsilon = 0.000001;    
+    my $epsilon = 0.000001;
     abs(1 - $total) < $epsilon or throw 'BadArgs' => 'Frequencies must sum to one';
-    $self->{'_pi'} = $pi;    
+    $self->{'_pi'} = $pi;
     return $self;
 }
 
@@ -160,88 +160,93 @@ sub set_median {
 # get substitution model for DNA alignment and optional tree
 sub modeltest {
 	my ($self, %args) = @_;
-	
+
 	my $matrix = $args{'-matrix'};
 	my $tree = $args{'-tree'};
 	my $timeout = $args{'-timeout'} || -1;
 
 	my $model;
-	
+
 	if ( looks_like_class 'Statistics::R' ) {
-		
+
 		# phangorn needs files as input
-		my ($fasta_fh, $fasta) = tempfile( 'CLEANUP' => 1 );
+		my ($fasta_fh, $fasta) = tempfile();
 		print $fasta_fh unparse('-phylo'=>$matrix, '-format'=>'fasta');
 		close $fasta_fh;
-		
+
 		# instanciate R and lcheck if phangorn is installed
 		my $R = Statistics::R->new;
 		$R->run(q[options(device=NULL)]);
 		$R->run(q[package <- require("phangorn")]);
-		
+
 		if ( ! $R->get(q[package]) eq "TRUE") {
 			$logger->warn("R library phangorn must be installed to run modeltest");
 			return $model;
 		}
-		
+
 		# read data
 		$R->run(qq[data <- read.FASTA("$fasta")]);
-		
+
+		# remove temp file
+		cleanup();
+
 		# throw (and catch) signal when user timeout exceeded
 		eval {
-			local $SIG{ALRM} = sub { die("TimeOut"); };
+			local $SIG{ALRM} = sub { die("TimeOut of $timeout seconds for phangorn's modeltest exceeded"); };
 			alarm($timeout);
-			
+
 			if ( $tree ) {
-				# make copy of tree since it is pruned
+				# make copy of tree since it will be pruned
 				my $current_tree = parse('-format'=>'newick', '-string'=>$tree->to_newick)->first;
 				# prune out taxa from tree that are not present in the data
 				my @taxon_names = map {$_->get_name} @{ $matrix->get_entities };
 				$logger->debug('pruning input tree');
 				$current_tree->keep_tips(\@taxon_names);
-				if ( ! $current_tree ) {
-					$logger->warn('tip labels of tree do not match data');
-					return $model;		    
+				$logger->debug('pruned input tree: ' . $current_tree->to_newick);
+
+				if ( ! $current_tree or scalar( @{ $current_tree->get_terminals } ) < 3 ) {
+					$logger->warn('pruned tree has too few tip labels, simulating without tree');
+					$R->run(q[test <- modelTest(phyDat(data))]);
 				}
-				my $newick = $current_tree->to_newick;
-				$R->run(qq[tree <- read.tree(text="$newick")]);
-				# call modelTest
-				$logger->debug("calling modelTest from R package phangorn");
-				$R->run(q[test <- modelTest(phyDat(data), tree=tree)]);
+				else {
+					my $newick = $current_tree->to_newick;
+
+					$R->run(qq[tree <- read.tree(text="$newick")]);
+					# call modelTest
+					$logger->debug("calling modelTest from R package phangorn");
+					$R->run(q[test <- modelTest(phyDat(data), tree=tree)]);
+				}
 			}
 			else {
 				# modelTest will estimate tree
 				$R->run(q[test <- modelTest(phyDat(data))]);
 			}
-			
-			alarm(0);			
+			alarm(0);
 		};
-		
-		# catch timeout
+
+		# catch timeout and other possible errors from phangorn
 		if ( $@ ) {
-			if ($@ =~ m/TimeOut/) {
-				$logger->warn("Timeout of $timeout seconds for phangorn's modeltest exceeded.");
-				$R->stop;
-				return 0;
-			}
-			die($@);
+			$logger->warn($@);
+			$R->stop;
+			kill ('KILL', $R->pid);
+			return 0;
 		}
-		
+
 		# get model with lowest Aikaike information criterion
 		$R->run(q[model <- test[which(test$AIC==min(test$AIC)),]$Model]);
 		my $modeltype = $R->get(q[model]);
 		$logger->info("estimated DNA evolution model $modeltype");
-		
+
 		# determine model parameters
 		$R->run(q[env <- attr(test, "env")]);
 		$R->run(q[fit <- eval(get(model, env), env)]);
-				
+
 		#  get base freqs
 		my $pi = $R->get(q[fit$bf]);
-		
+
 		# get overall mutation rate
 		my $mu = $R->get(q[fit$rate]);
-		
+
 		# get lower triangle of rate matrix (column order ACGT)
 		# and fill whole matrix; set diagonal values to 1
 		my $q = $R->get(q[fit$Q]);
@@ -250,7 +255,7 @@ sub modeltest {
 						    [ $q->[1], $q->[2], 1,       $q->[5] ],
 						    [ $q->[3], $q->[4], $q->[5], 1       ]
 			];
-		
+
 		# create model with specific parameters dependent on primary model type
 		if ( $modeltype =~ /JC/ ) {
 			require Bio::Phylo::Models::Substitution::Dna::JC69;
@@ -262,13 +267,13 @@ sub modeltest {
 		}
 		elsif ( $modeltype =~ /GTR/ ) {
 			require Bio::Phylo::Models::Substitution::Dna::GTR;
-			$model = Bio::Phylo::Models::Substitution::Dna::GTR->new('-pi' => $pi);	    
+			$model = Bio::Phylo::Models::Substitution::Dna::GTR->new('-pi' => $pi);
 		}
 		elsif ( $modeltype =~ /HKY/ ) {
 			require Bio::Phylo::Models::Substitution::Dna::HKY85;
 			# transition/transversion ratio kappa determined by transiton A->G/A->C in Q matrix
 			my $kappa = $R->get(q[fit$Q[2]/fit$Q[1]]);
-			$model = Bio::Phylo::Models::Substitution::Dna::HKY85->new('-kappa' => $kappa, '-pi' => $pi );	    
+			$model = Bio::Phylo::Models::Substitution::Dna::HKY85->new('-kappa' => $kappa, '-pi' => $pi );
 		}
 		elsif ( $modeltype =~ /K80/ ) {
 			require Bio::Phylo::Models::Substitution::Dna::K80;
@@ -283,7 +288,7 @@ sub modeltest {
 			$model = Bio::Phylo::Models::Substitution::Dna->new(
 				'-pi' => $pi );
 		}
-		
+
 		# set gamma parameters
 		if ( $modeltype =~ /\+G/ ) {
 			$logger->debug("setting gamma parameters for $modeltype model");
@@ -297,7 +302,7 @@ sub modeltest {
 			my $catweights = $R->get(q[fit$w]);
 			$model->set_catweights($catweights);
 		}
-		
+
 		# set invariant parameters
 		if ( $modeltype =~ /\+I/ ) {
 			$logger->debug("setting invariant site parameters for $modeltype model");
@@ -307,7 +312,7 @@ sub modeltest {
 		}
 		# set universal parameters
 		$model->set_rate($rate_matrix);
-		$model->set_mu($mu);				
+		$model->set_mu($mu);
 	}
 	else {
 		$logger->warn("Statistics::R must be installed to run modeltest");

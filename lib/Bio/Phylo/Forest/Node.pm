@@ -108,7 +108,7 @@ Sets argument as invocant's parent.
             $parent->set_child($self);
         }
         elsif ( not $parent ) {
-            $set_raw_parent->($self);
+            $self->set_raw_parent;
         }
         return $self;
     }
@@ -202,7 +202,7 @@ Sets argument as invocant's child.
         if ( defined $i ) {
             for ( my $j = $#{$children} ; $j >= 0 ; $j-- ) {
                 my $sibling = $children->[$j];
-                $set_raw_child->( $self, $sibling, $j + 1 );
+                $self->set_raw_child( $sibling, $j + 1 );
             }
         }
 

@@ -39,7 +39,7 @@ Bio::Phylo::Matrices::MatrixRole - Extra behaviours for a character state matrix
  my $standard_matrix = $fac->create_matrix(
      '-type'   => 'STANDARD',
      '-taxa'   => $taxa,
-     '-lookup' => { 
+     '-lookup' => {
          '-' => [],
          '0' => [ '0' ],
          '1' => [ '1' ],
@@ -52,28 +52,28 @@ Bio::Phylo::Matrices::MatrixRole - Extra behaviours for a character state matrix
          [ 'Pan troglodytes' => '1', '1', '1' ],
      ],
  );
- 
+
  # note: complicated constructor for mixed data!
- my $mixed_matrix = Bio::Phylo::Matrices::Matrix->new( 
-    
+ my $mixed_matrix = Bio::Phylo::Matrices::Matrix->new(
+
     # if you want to create 'mixed', value for '-type' is array ref...
-    '-type' =>  [ 
-    
-        # ...with first field 'mixed'...                
+    '-type' =>  [
+
+        # ...with first field 'mixed'...
         'mixed',
-        
+
         # ...second field is an array ref...
         [
-            
+
             # ...with _ordered_ key/value pairs...
             'dna'      => 10, # value is length of type range
             'standard' => 10, # value is length of type range
-            
+
             # ... or, more complicated, value is a hash ref...
             'rna'      => {
                 '-length' => 10, # value is length of type range
-                
-                # ...value for '-args' is an array ref with args 
+
+                # ...value for '-args' is an array ref with args
                 # as can be passed to 'unmixed' datatype constructors,
                 # for example, here we modify the lookup table for
                 # rna to allow both 'U' (default) and 'T'
@@ -102,7 +102,7 @@ Bio::Phylo::Matrices::MatrixRole - Extra behaviours for a character state matrix
         ],
     ],
  );
- 
+
  # prints 'mixed(Dna:1-10, Standard:11-20, Rna:21-30)'
  print $mixed_matrix->get_type;
 
@@ -129,7 +129,7 @@ Matrix constructor.
  Function: Instantiates a Bio::Phylo::Matrices::Matrix
            object.
  Returns : A Bio::Phylo::Matrices::Matrix object.
- Args    : -type   => optional, but if used must be FIRST argument, 
+ Args    : -type   => optional, but if used must be FIRST argument,
                       defines datatype, one of dna|rna|protein|
                       continuous|standard|restriction|[ mixed => [] ]
 
@@ -169,11 +169,11 @@ Matrix constructor from Bio::Align::AlignI argument.
 
  Type    : Constructor
  Title   : new_from_bioperl
- Usage   : my $matrix = 
+ Usage   : my $matrix =
            Bio::Phylo::Matrices::Matrix->new_from_bioperl(
-               $aln           
+               $aln
            );
- Function: Instantiates a 
+ Function: Instantiates a
            Bio::Phylo::Matrices::Matrix object.
  Returns : A Bio::Phylo::Matrices::Matrix object.
  Args    : An alignment that implements Bio::Align::AlignI
@@ -206,7 +206,7 @@ Matrix constructor from Bio::Align::AlignI argument.
                 @args
             );
 
-			# XXX create raw getter/setter pairs for annotation, 
+			# XXX create raw getter/setter pairs for annotation,
 			# accession, consensus_meta source
             for my $field ( qw(description accession id annotation consensus_meta score source) ) {
                 $self->$field( $aln->$field );
@@ -236,16 +236,16 @@ Sets three special symbols in one call
 
  Type    : Mutator
  Title   : set_special_symbols
- Usage   : $matrix->set_special_symbols( 
- 		       -missing   => '?', 
- 		       -gap       => '-', 
- 		       -matchchar => '.' 
+ Usage   : $matrix->set_special_symbols(
+ 		       -missing   => '?',
+ 		       -gap       => '-',
+ 		       -matchchar => '.'
  		   );
  Function: Assigns state labels.
  Returns : $self
  Args    : Three args (with distinct $x, $y and $z):
-  		       -missing   => $x, 
- 		       -gap       => $y, 
+  		       -missing   => $x,
+ 		       -gap       => $y,
  		       -matchchar => $z
  Notes   : This method is here to ensure
            you don't accidentally use the
@@ -349,7 +349,7 @@ Sets argument character labels.
         {
             throw 'BadArgs' => "charlabels must be an array ref of scalars";
         }
-		
+
 		# there might be more labels than currently existing characters.
 		# here we add however more are needed
 		my $characters = $self->get_characters;
@@ -527,7 +527,7 @@ Retrieves a 'raw' (two-dimensional array) representation of the matrix's content
         }
         return \@raw;
     }
-    
+
 =item get_ungapped_columns()
 
  Type    : Accessor
@@ -537,8 +537,8 @@ Retrieves a 'raw' (two-dimensional array) representation of the matrix's content
  Returns : An array reference with zero or more indices (i.e. integers)
  Args    : NONE
 
-=cut    
-    
+=cut
+
     sub get_ungapped_columns {
     	my $self  = shift;
 		my $raw   = $self->get_raw;
@@ -552,8 +552,8 @@ Retrieves a 'raw' (two-dimensional array) representation of the matrix's content
 				$seen{$c}++;
 			}
 			push @ungapped, $i - 1 unless $seen{$gap};
-		} 
-		return \@ungapped;   
+		}
+		return \@ungapped;
     }
 
 =item get_invariant_columns()
@@ -568,7 +568,7 @@ Retrieves a 'raw' (two-dimensional array) representation of the matrix's content
            -missing => if true, counts the missing symbol (probably '?') as a variant
 
 =cut
-    
+
     sub get_invariant_columns {
     	my ( $self, %args ) = @_;
     	my $raw   = $self->get_raw;
@@ -589,7 +589,7 @@ Retrieves a 'raw' (two-dimensional array) representation of the matrix's content
     	}
     	return \@invariant;
     }
-    
+
 
 =back
 
@@ -619,35 +619,35 @@ Calculates size distribution of insertions or deletions
     	my $raw   = $self->get_raw;
     	my $gap   = $self->get_gap;
     	my @indels;
-    	
+
     	# iterate over rows
     	for my $row ( @$raw ) {
     		my $previous;
     		my @row_indels;
-    		
+
     		# iterate over columns
     		for my $i ( 1 .. $nchar ) {
-    		
+
     			# focal cell is a gap
     			if ( $row->[$i] eq $gap ) {
 					if ( $previous ) {
-					
+
 						# we're extending an indel
 						if ( $previous eq $gap ) {
 							$row_indels[-1]->{'end'} = $i;
 						}
-						
+
 						# we're starting an indel
 						else {
 							push @row_indels, { 'start' => $i };
 						}
 					}
-					
+
 					# sequence starts with an indel
 					else {
 						push @row_indels, { 'start' => $i };
 					}
-    			} 
+    			}
 				else {
 					# gap of length 1 is closed: start==end
 					if ( $previous and $previous eq $gap ){
@@ -656,17 +656,17 @@ Calculates size distribution of insertions or deletions
 				}
     			$previous = $row->[$i];
     		}
-    		
+
     		# flatten the lists
     		push @indels, @row_indels;
     	}
-    	
+
     	# remove tops and tails
     	if ( $args{'-trim'} ) {
     		@indels = grep { $_->{'start'} > 1 } @indels;
     		@indels = grep { $_->{'end'} < $nchar } @indels;
     	}
-    	
+
     	# count sizes
     	my %sizes;
     	for my $i ( 1 .. $nchar ) {
@@ -676,7 +676,7 @@ Calculates size distribution of insertions or deletions
     				my @ending_here = grep { $_->{'end'} == $j } @starting_here;
     				if ( @ending_here ) {
     					my $size = $j - $i;
-    					
+
     					# more taxa have an indel here than don't. crudely, we
     					# say this is probably an insertion
     					if ( scalar(@ending_here) > ( $ntax / 2 ) ) {
@@ -923,13 +923,13 @@ Calculates the median character sequence of the matrix
            -gaps    => if true, keeps the gap symbol (probably '-') if this is the most
                        frequent for a given character. Otherwise strips it.
  Comments: The intent of this method is to provide a crude approximation of the most
-           commonly occurring sequences in an alignment, for example as a starting 
+           commonly occurring sequences in an alignment, for example as a starting
            sequence for a sequence simulator. This gives you something to work with if
            ancestral sequence calculation is too computationally intensive and/or not
            really necessary.
 
 =cut
-    
+
     sub calc_median_sequence {
     	my ( $self, %args ) = @_;
     	my $to = $self->get_type_object;
@@ -988,7 +988,7 @@ Calculates the median character sequence of the matrix
 
 =item keep_chars()
 
-Creates a cloned matrix that only keeps the characters at 
+Creates a cloned matrix that only keeps the characters at
 the supplied (zero-based) indices.
 
  Type    : Utility method
@@ -997,7 +997,7 @@ the supplied (zero-based) indices.
  Function: Creates spliced clone.
  Returns : A spliced clone of the invocant.
  Args    : Required, an array ref of integers
- Comments: The columns are retained in the order in 
+ Comments: The columns are retained in the order in
            which they were supplied.
 
 =cut
@@ -1020,7 +1020,7 @@ the supplied (zero-based) indices.
 
 =item prune_chars()
 
-Creates a cloned matrix that omits the characters at 
+Creates a cloned matrix that omits the characters at
 the supplied (zero-based) indices.
 
  Type    : Utility method
@@ -1029,7 +1029,7 @@ the supplied (zero-based) indices.
  Function: Creates spliced clone.
  Returns : A spliced clone of the invocant.
  Args    : Required, an array ref of integers
- Comments: The columns are retained in the order in 
+ Comments: The columns are retained in the order in
            which they were supplied.
 
 =cut
@@ -1056,7 +1056,7 @@ have the same state (or missing);
  Function: Creates spliced clone.
  Returns : A spliced clone of the invocant.
  Args    : None
- Comments: The columns are retained in the order in 
+ Comments: The columns are retained in the order in
            which they were supplied.
 
 =cut
@@ -1091,11 +1091,11 @@ or autapomorphies.
  Function: Creates spliced clone.
  Returns : A spliced clone of the invocant.
  Args    : None
- Comments: The columns are retained in the order in 
+ Comments: The columns are retained in the order in
            which they were supplied.
 
 =cut
-	
+
 	sub prune_uninformative {
 		my $self = shift;
 		my $nchar = $self->get_nchar;
@@ -1128,7 +1128,7 @@ or autapomorphies.
 				push @indices, $i unless $seen_informative;
 			}
 		}
-		return $self->prune_chars(\@indices);		
+		return $self->prune_chars(\@indices);
 	}
 
 =item prune_missing_and_gaps()
@@ -1142,11 +1142,11 @@ has missing and/or gap states.
  Function: Creates spliced clone.
  Returns : A spliced clone of the invocant.
  Args    : None
- Comments: The columns are retained in the order in 
+ Comments: The columns are retained in the order in
            which they were supplied.
 
 =cut
-	
+
 	sub prune_missing_and_gaps {
 		my $self = shift;
 		my $nchar = $self->get_nchar;
@@ -1167,7 +1167,7 @@ has missing and/or gap states.
 		}
 		return $self->prune_chars(\@indices);
 	}
-	
+
 =item bootstrap()
 
 Creates bootstrapped clone.
@@ -1186,7 +1186,7 @@ Creates bootstrapped clone.
  Comments: The bootstrapping algorithm uses perl's random number
            generator to create a new series of indices (without
            replacement) of the same length as the original matrix.
-           These indices are first sorted, then applied to the 
+           These indices are first sorted, then applied to the
            cloned sequences. Annotations (if present) stay connected
            to the resampled cells.
 
@@ -1212,7 +1212,7 @@ Creates jackknifed clone.
  Function: Creates jackknifed clone.
  Returns : A jackknifed clone of the invocant.
  Args    : * Required, a number between 0 and 1, representing the
-             fraction of characters to jackknife. 
+             fraction of characters to jackknife.
            * Optional, a subroutine reference that returns a random
              integer between 0 (inclusive) and the argument provided
              to it (exclusive). The default implementation is to use
@@ -1221,7 +1221,7 @@ Creates jackknifed clone.
              generator.
  Comments: The jackknife algorithm uses perl's random number
            generator to create a new series of indices of cells to keep.
-           These indices are first sorted, then applied to the 
+           These indices are first sorted, then applied to the
            cloned sequences. Annotations (if present) stay connected
            to the resampled cells.
 
@@ -1242,7 +1242,7 @@ Creates jackknifed clone.
         @indices = sort { $a <=> $b } keys %indices;
         return $self->keep_chars( \@indices );
     }
-    
+
 =item replicate()
 
 Creates simulated replicate.
@@ -1252,17 +1252,19 @@ Creates simulated replicate.
  Usage   : my $replicate = $matrix->replicate($tree);
  Function: Creates simulated replicate.
  Returns : A simulated replicate of the invocant.
- Args    : Tree to simulate the characters on. 
+ Args    : Tree to simulate the characters on.
            Optional:
-           -seed     => a random integer seed
-           -model => an object of class Bio::Phylo::Models::Substitution::Dna 
+           -seed           => a random integer seed
+           -model          => an object of class Bio::Phylo::Models::Substitution::Dna
 	             or Bio::Phylo::Models::Substitution::Binary
+		   -random_rootseq => start DNA sequence simulation from random ancestral sequence 
+		         instead of the  median sequence in the alignment. 
 
- Comments: Requires Statistics::R, with 'ape', 'phylosim', 'phangorn' and 'phytools'. 
+ Comments: Requires Statistics::R, with 'ape', 'phylosim', 'phangorn' and 'phytools'.
            If model is not given as argument, it will be estimated.
 
-=cut    
-    
+=cut
+
     sub replicate {
     	my ($self,%args) = @_;
 
@@ -1270,10 +1272,11 @@ Creates simulated replicate.
     	if ( not looks_like_object $tree, _TREE_ ) {
     		throw 'BadArgs' => "Need tree as argument";
     	}
-		
+
     	my $type = $self->get_type;
     	if ( $type =~ /dna/i ) {
-    		return $self->_replicate_dna('-tree'=>$tree, '-model'=>$args{'-model'}, '-seed'=>$args{'-seed'});
+    		return $self->_replicate_dna('-tree'=>$tree, '-model'=>$args{'-model'}, 
+										 '-seed'=>$args{'-seed'}, '-random_rootseq' =>$args{'-random_rootseq'});
     	}
     	elsif ( $type =~ /standard/i ) {
     		return $self->_replicate_binary('-tree'=>$tree, '-model'=>$args{'-model'}, '-seed'=>$args{'-seed'});
@@ -1282,18 +1285,24 @@ Creates simulated replicate.
     		throw 'BadArgs' => "Can't replicate $type matrices (yet?)";
     	}
     }
-    
+	
     sub _replicate_dna {
     	my ($self,%args) = @_;
-	
+		
 		my $seed = $args{'-seed'};
 		my $tree = $args{'-tree'};
 		my $model = $args{'-model'};
+		my $random_rootseq = $args{'-random_rootseq'};
+		
+		if ( scalar @{ $self->get_entities } < 3 ) {
+			$logger->warn("Cannot replicate a matrix with less than three elements.");
+			return;
+		}
 
     	# we will need 'ape', 'phylosim' (and 'phangorn' for model testing)
     	if ( looks_like_class 'Statistics::R' ) {
-			
-			# instantiate R			
+
+			# instantiate R
 			my $R = Statistics::R->new;
 			$R->run(qq[set.seed($seed)]) if $seed;
 			$R->run(q[options(device=NULL)]);
@@ -1302,14 +1311,14 @@ Creates simulated replicate.
 			$R->run(q[PSIM_FAST<-TRUE]);
 			# check if phylosim (and therefore ape) is installed
 			if ( $R->get(q[phylosim]) eq 'FALSE' ) {
-					$logger->warn('R package phylosim must be installed to replicate alignment.');
+				    $logger->warn('R package phylosim must be installed to replicate alignment.');
 					return;
 			}
-		
+
 			# pass in the tree, scale it so that its length sums to 1.
 			# in combination with a gamma function and/or invariant sites
 			# this should give us sequences that are reasonably realistic:
-			# not overly divergent.				    
+			# not overly divergent.
 			my $newick = $tree->to_newick;
 			$R->run(qq[phylo <- read.tree(text="$newick")]);
 			$R->run(q[tree <- PhyloSim(phylo)]);
@@ -1324,18 +1333,27 @@ Creates simulated replicate.
 			# prepare data for processes
 			my @ungapped   = @{ $self->get_ungapped_columns };
 			my @invariant  = @{ $self->get_invariant_columns };
-			my %deletions  = %{ $self->calc_indel_sizes( '-trim' => 1 ) };
-			my %insertions = %{ $self->calc_indel_sizes( '-trim' => 1, '-insertions' => 1 ) };
-			my $ancestral  = $self->calc_median_sequence;
+			my %deletions  = %{ $self->calc_indel_sizes( '-trim' => 0 ) };
+			my %insertions = %{ $self->calc_indel_sizes( '-trim' => 0, '-insertions' => 1 ) };
 
-			# set ancestral sequence: phylosim does not accept ambiguity characters
-			# so for any of these characters, we draw a nucleotide from a uniform random distribution
-			$R->run(qq[seq.str <- paste(sapply(strsplit('$ancestral',''), 
-                                               function(x){
-                                                   ifelse(x %in% c('A','C','T','G'), x, sample(c('A','C','T','G'),1))
-                                                          }), collapse='')]);
-			$R->run(q[root.seq=NucleotideSequence(string=seq.str)]);
-			
+			# set ancestral (root) sequence 
+			my $ancestral;
+			my @alphabet = ('A', 'T', 'C', 'G');				
+			if ( $random_rootseq ) {
+				# start from random sequence if requested
+				$logger->debug('simulating from random ancestral sequence');
+				$ancestral .= $alphabet[ rand @alphabet ] for 1..$self->length;
+			}
+			else {
+				$logger->debug('simulating from median ancestral sequence');
+				# start from median sequence
+				$ancestral = $self->calc_median_sequence;
+				# phylosim does not accept ambiguity characters, replace with random nucleotides
+				$ancestral =~ s/[^ATCG]/$alphabet[rand @alphabet]/g;
+			}
+			$logger->debug("ancestral sequence for simulation : $ancestral");
+			$R->run(qq[root.seq=NucleotideSequence(string='$ancestral')]);
+
 			my $m = ref($model);
 			if ( $m=~/([^\:\:]+$)/ ) {
 					$m = $1;
@@ -1343,7 +1361,7 @@ Creates simulated replicate.
 			# mapping between model names (can differ between Bio::Phylo and phylosim)
 			my %models = ('JC69'=>'JC69', 'GTR'=>'GTR', 'F81'=>'F81', 'HKY85'=>'HKY', 'K80'=>'K80');
 			my $type = $models{$m} || 'GTR';
-			
+
 			# collect model specific parameters in string passed to R
 			my $model_params = '';
 			if ( $type =~ /(?:F81|GTR|K80|HKY)/ ) {
@@ -1367,10 +1385,10 @@ Creates simulated replicate.
 					# get transition and transversion rates from kappa,
 					#  scale with number of nucleotides to obtain similar Q matrices
 					my $alpha = $kappa * 4;
-					my $beta = 4;						
-					$model_params .= ", rate.params=list(Alpha=$alpha, Beta=$beta)";		
+					my $beta = 4;
+					$model_params .= ", rate.params=list(Alpha=$alpha, Beta=$beta)";
 			}
-			# create model for phylosim		       
+			# create model for phylosim
 			$R->run(qq[model <- $type($model_params)]);
 				    # set parameters for indels
 			if ( keys %deletions ) {
@@ -1404,39 +1422,43 @@ Creates simulated replicate.
 
 			# specify model that evolves root sequence
 			$R->run(q[attachProcess(root.seq, model)]);
-			
+
 			# set invariant sites
 			if ( scalar @invariant ) {
 					my $pinvar = $model->get_pinvar || scalar(@invariant)/$self->get_nchar;
+					if ( $pinvar == 1){
+						my $epsilon = 0.01;
+						$pinvar -= $epsilon;
+					}
 					# set a high value for gamma, then we approximate the empirical number of invariant sites
 					$R->run(qq[plusInvGamma(root.seq,model,pinv=$pinvar,shape=1e10)]);
-			}			
+			}
 
 			# run the simulation
 			$R->run(q[sim <- PhyloSim(root.seq=root.seq, phylo=t)]);
 			$R->run(q[Simulate(sim)]);
-		
+
 			# get alignment as Fasta string
 			my $aln = $R->get(q[paste('>', t$tip.label, '\n', apply(sim$alignment, 1, paste, collapse='')[t$tip.label], '\n', collapse='', sep='')]);
 			$aln =~ s/\\n/\n/g;
-			
-			# create matrix 
+
+			# create matrix
 			my $project = parse(
 					'-string'     => $aln,
 					'-format'     => 'fasta',
 					'-type'       => 'dna',
 					'-as_project' => 1,
 			    );
-			
+
 			my ($matrix) = @{ $project->get_items(_MATRIX_) };
-			
+
 			return $matrix;
-    	}    
+    	}
     }
-    
+
     sub _replicate_binary {
 	my ($self,%args) = @_;
-	
+
 	my $seed = $args{'-seed'};
 	my $tree = $args{'-tree'};
 
@@ -1445,15 +1467,15 @@ Creates simulated replicate.
     		my $pattern = $self->calc_distinct_site_patterns('with_indices_of_patterns');
     		my $characters = $self->get_characters;
     		$logger->info("matrix has ".scalar(@$pattern)." distinct patterns");
-    		
+
 			# instantiate R
 			my $newick = $tree->to_newick;
 			my $R = Statistics::R->new;
 			$R->run(qq[set.seed($seed)]) if $seed;
 			$R->run(q[library("ape")]);
-			$R->run(q[library("phytools")]);				
+			$R->run(q[library("phytools")]);
 			$R->run(qq[phylo <- read.tree(text="$newick")]);
-			
+
 			# start the matrix
 			my @matrix;
 			push @matrix, [] for 1 .. $self->get_ntax;
@@ -1463,7 +1485,7 @@ Creates simulated replicate.
     			my $i = $p->[2]->[0];
     			my %pat = map { $_ => 1 } @{ $p->[1] };
     			my $states;
-    			
+
     			# if this column is completely invariant, the model
     			# estimator is unhappy, so we just copy it over
     			if ( keys(%pat) == 1 ) {
@@ -1477,7 +1499,7 @@ Creates simulated replicate.
 						$model = Bio::Phylo::Models::Substitution::Binary->modeltest(
 							'-tree'   => $tree,
 							'-matrix' => $self,
-							'-char'   => $characters->get_by_index($i),    				
+							'-char'   => $characters->get_by_index($i),
 						    );
 					}
 					# pass model to R
@@ -1485,21 +1507,21 @@ Creates simulated replicate.
 
 					# add epsilon if one of the rates is zero, otherwise sim.history chokes
 					$fw = 1e-6 if $fw == 0;
-					$rev = 1e-6 if $rev == 0;					
+					$rev = 1e-6 if $rev == 0;
 					$logger->info("0 -> 1 ($fw), 1 -> 0 ($rev)");
 
 					my $rates = [ 0, $fw, $rev, 0 ];
 					$R->set( 'rates' => $rates );
-					$R->run(qq[Q<-matrix(rates,2,2,byrow=TRUE)]); 
-					$R->run(qq[rownames(Q)<-colnames(Q)<-c("0","1")]);   			
+					$R->run(qq[Q<-matrix(rates,2,2,byrow=TRUE)]);
+					$R->run(qq[rownames(Q)<-colnames(Q)<-c("0","1")]);
 					$R->run(qq[diag(Q)<--rowSums(Q)]);
-				
+
 					# simulate character on tree, get states
-					$R->run(qq[tt<-sim.history(phylo,Q,message=FALSE)]);					
+					$R->run(qq[tt<-sim.history(phylo,Q,message=FALSE)]);
 					$R->run(qq[states<-as.double(getStates(tt,"tips"))]);
 					$states = $R->get(q[states]);
 				}
-				
+
 				# add states to matrix
 				my @indices = @{ $p->[2] };
 				for my $row ( 0 .. $#{ $states } ) {
@@ -1509,11 +1531,11 @@ Creates simulated replicate.
 					}
 				}
     		}
-    		
+
     		# create matrix
     		my $i = 0;
     		$tree->visit_depth_first(
-    			'-pre' => sub { 
+    			'-pre' => sub {
     				my $node = shift;
     				if ( $node->is_terminal ) {
     					unshift @{ $matrix[$i++] }, $node->get_name
@@ -1525,7 +1547,7 @@ Creates simulated replicate.
     			'-type' => $self->get_type,
     			'-raw'  => \@matrix,
     		);
-    	}    
+    	}
     }
 
 =item insert()
@@ -1632,7 +1654,7 @@ Validates taxa associations.
  Type    : Method
  Title   : check_taxa
  Usage   : $obj->check_taxa
- Function: Validates relation between matrix and taxa block 
+ Function: Validates relation between matrix and taxa block
  Returns : Modified object
  Args    : None
  Comments: This method implements the interface method by the same
@@ -1820,35 +1842,35 @@ Serializes matrix to nexus format.
  Function: Converts matrix object into a nexus data block.
  Returns : Nexus data block (SCALAR).
  Args    : The following options are available:
- 
+
             # if set, writes TITLE & LINK tokens
             '-links' => 1
-            
+
             # if set, writes block as a "data" block (deprecated, but used by mrbayes),
             # otherwise writes "characters" block (default)
             -data_block => 1
-            
+
             # if set, writes "RESPECTCASE" token
             -respectcase => 1
-            
+
             # if set, writes "GAPMODE=(NEWSTATE or MISSING)" token
             -gapmode => 1
-            
+
             # if set, writes "MSTAXA=(POLYMORPH or UNCERTAIN)" token
             -polymorphism => 1
-            
+
             # if set, writes character labels
             -charlabels => 1
-            
+
             # if set, writes state labels
             -statelabels => 1
-            
+
             # if set, writes mesquite-style charstatelabels
             -charstatelabels => 1
-            
-            # by default, names for sequences are derived from $datum->get_name, if 
+
+            # by default, names for sequences are derived from $datum->get_name, if
             # 'internal' is specified, uses $datum->get_internal_name, if 'taxon'
-            # uses $datum->get_taxon->get_name, if 'taxon_internal' uses 
+            # uses $datum->get_taxon->get_name, if 'taxon_internal' uses
             # $datum->get_taxon->get_internal_name, if $key, uses $datum->get_generic($key)
             -seqnames => one of (internal|taxon|taxon_internal|$key)
 
@@ -2117,12 +2139,12 @@ Analog to to_xml.
     sub _tag       { 'characters' }
     sub _type      { $CONSTANT_TYPE }
     sub _container { $CONSTANT_CONTAINER }
-    
+
     sub _update_characters {
 	my $self        = shift;
 	my $nchar       = $self->get_nchar;
 	my $characters  = $self->get_characters;
-	my $type_object = $self->get_type_object; 
+	my $type_object = $self->get_type_object;
 	my @chars       = @{ $characters->get_entities };
 	my @defined     = grep { defined $_ } @chars;
 	if ( scalar @defined != $nchar ) {
@@ -2151,7 +2173,7 @@ Analog to to_xml.
 
 =head1 SEE ALSO
 
-There is a mailing list at L<https://groups.google.com/forum/#!forum/bio-phylo> 
+There is a mailing list at L<https://groups.google.com/forum/#!forum/bio-phylo>
 for any user or developer questions and discussions.
 
 =over
@@ -2255,7 +2277,7 @@ sub remove_seq {
 }
 
 sub purge {
- $logger->warn 
+ $logger->warn
 }
 
 sub sort_alphabetically {
@@ -2283,7 +2305,7 @@ sub each_alphabetically {
 
 sub each_seq_with_id {
     my ( $self, $name ) = @_;
-    return @{ 
+    return @{
         $self->get_by_regular_expression(
             '-value' => 'get_name',
             '-match' => qr/^\Q$name\E$/
@@ -2446,7 +2468,7 @@ sub match {
         $self->set_matchchar('.');
     }
     $match = $self->get_matchchar;
-    my $lookup = $self->get_type_object->get_lookup->{$match} = [ $match ];    
+    my $lookup = $self->get_type_object->get_lookup->{$match} = [ $match ];
     my @seqs = @{ $self->get_entities };
     my @firstseq = $seqs[0]->get_char;
     for my $i ( 1 .. $#seqs ) {
@@ -2547,7 +2569,7 @@ sub consensus_string {
 }
 
 sub consensus_iupac {
- $logger->warn 
+ $logger->warn
 }
 
 sub is_flush { 1 }
@@ -2624,7 +2646,7 @@ sub overall_percentage_identity{
 
    my %enum = map {$_ => 1} qw (align short long);
 
-   throw 'Generic' => "Unknown argument [$length_measure]" 
+   throw 'Generic' => "Unknown argument [$length_measure]"
        if $length_measure and not $enum{$length_measure};
    $length_measure ||= 'align';
 
@@ -2717,7 +2739,7 @@ sub displayname {
     }
     elsif( defined $disnames->{$name} ) {
 		return  $disnames->{$name};
-    } 
+    }
     else {
 		return $name;
     }
@@ -2729,7 +2751,7 @@ sub maxdisplayname_length {
     my $maxname = (-1);
     my ($seq,$len);
     foreach $seq ( $self->each_seq() ) {
-		$len = CORE::length $self->displayname($seq->get_nse());	
+		$len = CORE::length $self->displayname($seq->get_nse());
 		if( $len > $maxname ) {
 		    $maxname = $len;
 		}
@@ -2790,7 +2812,7 @@ sub max_metaname_length {
     my $self = shift;
     my $maxname = (-1);
     my ($seq,$len);
-    
+
     # check seq meta first
     for $seq ( $self->each_seq() ) {
         next if !$seq->isa('Bio::Seq::MetaI' || !$seq->meta_names);
@@ -2801,7 +2823,7 @@ sub max_metaname_length {
             }
         }
     }
-    
+
     # alignment meta
     for my $meta ($self->consensus_meta) {
         next unless $meta;

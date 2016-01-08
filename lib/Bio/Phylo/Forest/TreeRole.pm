@@ -922,12 +922,12 @@ Calculates the squared Euclidean branch length distance between two trees.
 
 =begin comment
 
-Returns an array of triples, with the first element of each triple representing
-the length of the branch subtending a particular split on the invocant, 
-the second element the length of the same branch on argument, and the third
-element a boolean to indicate whether the split was present in both trees. If a
-particular split is found on one tree but not in the other, a value of zero
-is used for the missing split.
+Returns an array ref containing array references, with the first element of 
+each nested array ref representing the length of the branch subtending a 
+particular split on the invocant (or 0), the second element the length of the 
+same branch on argument (or 0), the third element a boolean to indicate whether 
+the split was present in both trees, and the fourth element a sorted, comma-separated
+list of the MD5-hashed names of all tips subtended by that split.
 
  Type    : Calculation
  Title   : calc_branch_diffs
@@ -970,7 +970,7 @@ is used for the missing split.
                     # we only enter into this case AFTER tips
                     # have been processed, so %hash_for_node
                     # values will be assigned for all children
-                    if (@children) {
+                    if (@children and $node->get_parent) {
 
                         # these will be growing lists from
                         # tips to root
@@ -985,15 +985,16 @@ is used for the missing split.
                           $unsorted;
 
                         # coerce to a numeric type
-                        $length_for_split{$hash} = $node->get_branch_length;
+                        $length_for_split{$hash} = $node->get_branch_length || 0;
                     }
                     else {
 
-                        # this is how we ensure that every
-                        # tip name is a single, unique line.
+                        # this is how we ensure that every tip name is a 
+                        # single, unique string without unexpected characters
+                        # (especially, commas).
                         # Digest::MD5 was in CORE since 5.7
                         require Digest::MD5;
-                        $hash = Digest::MD5::md5( $node->get_name );
+                        $hash = Digest::MD5::md5( $node->get_name );                        
                     }
 
                     # store for the next recursion
@@ -1016,10 +1017,10 @@ is used for the missing split.
             my $tuple;
             if ( exists $lengths_other{$split} ) {
                 $tuple =
-                  [ $lengths_self{$split}, $lengths_other{$split} || 0, 1 ];
+                  [ $lengths_self{$split}, $lengths_other{$split} || 0, 1, $split ];
             }
             else {
-                $tuple = [ $lengths_self{$split}, 0, 0 ];
+                $tuple = [ $lengths_self{$split}, 0, 0, $split ];
             }
             push @tuples, $tuple;
         }
@@ -1027,7 +1028,7 @@ is used for the missing split.
         # then check if there are splits in $other but not in $self
         for my $split ( keys %lengths_other ) {
             if ( not exists $lengths_self{$split} ) {
-                push @tuples, [ 0, $lengths_other{$split}, 1 ];
+                push @tuples, [ 0, $lengths_other{$split}, 0, $split ];
             }
         }
         return \@tuples;
@@ -1757,7 +1758,8 @@ L<http://dx.doi.org/10.1016/0025-5564(81)90043-2>
            metric between $tree and $other_tree, 
            sensu Penny and Hendy, 1985.
  Returns : SCALAR
- Args    : A Bio::Phylo::Forest::Tree object
+ Args    : A Bio::Phylo::Forest::Tree object,
+           Optional second argument flags that results should be normalized
  Comments: Trees in comparison must span 
            the same set of terminal taxa
            or results are meaningless.
@@ -1765,13 +1767,15 @@ L<http://dx.doi.org/10.1016/0025-5564(81)90043-2>
 =cut
 
     sub calc_symdiff {
-        my ( $tree, $other_tree ) = @_;
+        my ( $tree, $other_tree, $normalize ) = @_;
         my $tuples  = $tree->_calc_branch_diffs($other_tree);
         my $symdiff = 0;
+        #use Data::Dumper;
+        #warn Dumper($tuples);
         for my $tuple ( @{$tuples} ) {
             $symdiff++ unless $tuple->[2];
         }
-        return $symdiff;
+        return $normalize ? $symdiff / scalar(@{$tuples}) : $symdiff;
     }
 
 =item calc_avtd()
@@ -3200,7 +3204,7 @@ Collapses internal nodes with fewer than 2 children.
                 my $node = shift;
                 my @children = @{ $node->get_children };
                 
-                #Êthe node is interior, now need to check for each child
+                #Â the node is interior, now need to check for each child
                 # if it's interior as well
                 if ( @children ) {
                 
