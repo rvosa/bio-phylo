@@ -9,7 +9,7 @@ use base 'Bio::Phylo::Forest::NodeRole';
 	my @properties = qw(x y radius tip_radius node_color node_outline_color
 	node_shape node_image branch_color branch_shape branch_width branch_style
 	collapsed collapsed_width font_face font_size font_style font_color
-	text_horiz_offset text_vert_offset rotation);
+	font_weight text_horiz_offset text_vert_offset rotation);
 
 =head1 NAME
 
@@ -200,6 +200,15 @@ Sets collapsed clade width.
  Function: Sets font_style
  Returns : $self
  Args    : font_style
+
+=item set_font_weight()
+
+ Type    : Mutator
+ Title   : set_font_weight
+ Usage   : $node->set_font_weight($font_weight);
+ Function: Sets font_weight
+ Returns : $self
+ Args    : font_weight
 
 =item set_font_color()
 
@@ -460,6 +469,15 @@ Gets collapsed clade width.
  Usage   : my $font_style = $node->get_font_style();
  Function: Gets font_style
  Returns : font_style
+ Args    : NONE
+ 
+ =item get_font_weight()
+
+ Type    : Mutator
+ Title   : get_font_weight
+ Usage   : my $font_weight = $node->get_font_weight();
+ Function: Gets font_weight
+ Returns : font_weight
  Args    : NONE
 
 =item get_font_color()
