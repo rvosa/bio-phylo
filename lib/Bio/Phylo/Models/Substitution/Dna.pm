@@ -163,7 +163,7 @@ sub modeltest {
 
 	my $matrix = $args{'-matrix'};
 	my $tree = $args{'-tree'};
-	my $timeout = $args{'-timeout'} || -1;
+	my $timeout = $args{'-timeout'};
 
 	my $model;
 
@@ -176,6 +176,7 @@ sub modeltest {
 
 		# instanciate R and lcheck if phangorn is installed
 		my $R = Statistics::R->new;
+		$R->timeout($timeout) if $timeout;
 		$R->run(q[options(device=NULL)]);
 		$R->run(q[package <- require("phangorn")]);
 
@@ -189,47 +190,32 @@ sub modeltest {
 
 		# remove temp file
 		cleanup();
-
-		# throw (and catch) signal when user timeout exceeded
-		eval {
-			local $SIG{ALRM} = sub { die("TimeOut of $timeout seconds for phangorn's modeltest exceeded"); };
-			alarm($timeout);
-
-			if ( $tree ) {
-				# make copy of tree since it will be pruned
-				my $current_tree = parse('-format'=>'newick', '-string'=>$tree->to_newick)->first;
-				# prune out taxa from tree that are not present in the data
-				my @taxon_names = map {$_->get_name} @{ $matrix->get_entities };
-				$logger->debug('pruning input tree');
-				$current_tree->keep_tips(\@taxon_names);
-				$logger->debug('pruned input tree: ' . $current_tree->to_newick);
-
-				if ( ! $current_tree or scalar( @{ $current_tree->get_terminals } ) < 3 ) {
-					$logger->warn('pruned tree has too few tip labels, simulating without tree');
-					$R->run(q[test <- modelTest(phyDat(data))]);
-				}
-				else {
-					my $newick = $current_tree->to_newick;
-
-					$R->run(qq[tree <- read.tree(text="$newick")]);
-					# call modelTest
-					$logger->debug("calling modelTest from R package phangorn");
-					$R->run(q[test <- modelTest(phyDat(data), tree=tree)]);
-				}
-			}
-			else {
-				# modelTest will estimate tree
+		
+		if ( $tree ) {
+			# make copy of tree since it will be pruned
+			my $current_tree = parse('-format'=>'newick', '-string'=>$tree->to_newick)->first;
+			# prune out taxa from tree that are not present in the data
+			my @taxon_names = map {$_->get_name} @{ $matrix->get_entities };
+			$logger->debug('pruning input tree');
+			$current_tree->keep_tips(\@taxon_names);
+			$logger->debug('pruned input tree: ' . $current_tree->to_newick);
+			
+			if ( ! $current_tree or scalar( @{ $current_tree->get_terminals } ) < 3 ) {
+				$logger->warn('pruned tree has too few tip labels, simulating without tree');
 				$R->run(q[test <- modelTest(phyDat(data))]);
 			}
-			alarm(0);
-		};
-
-		# catch timeout and other possible errors from phangorn
-		if ( $@ ) {
-			$logger->warn($@);
-			$R->stop;
-			kill ('KILL', $R->pid);
-			return 0;
+			else {
+				my $newick = $current_tree->to_newick;
+				
+				$R->run(qq[tree <- read.tree(text="$newick")]);
+				# call modelTest
+				$logger->debug("calling modelTest from R package phangorn");
+				$R->run(q[test <- modelTest(phyDat(data), tree=tree)]);
+			}
+		}
+		else {
+			# modelTest will estimate tree
+			$R->run(q[test <- modelTest(phyDat(data))]);
 		}
 
 		# get model with lowest Aikaike information criterion
