@@ -160,6 +160,9 @@ sub _draw_text {
 	if ( my $colour = $args{'-font_colour'} ) {
 		push @style, "fill: ${colour}";
 	}
+	if ( my $weight = $args{'-font_weight'} ) {
+		push @style, "font-weight: ${weight}";
+	}
 	no warnings 'uninitialized';
     return $api->tag(
 		'text',
