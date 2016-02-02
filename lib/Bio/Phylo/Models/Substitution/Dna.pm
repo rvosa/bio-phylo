@@ -201,7 +201,7 @@ sub modeltest {
 			$logger->debug('pruned input tree: ' . $current_tree->to_newick);
 			
 			if ( ! $current_tree or scalar( @{ $current_tree->get_terminals } ) < 3 ) {
-				$logger->warn('pruned tree has too few tip labels, simulating without tree');
+				$logger->warn('pruned tree has too few tip labels, determining substitution model using NJ tree');
 				$R->run(q[test <- modelTest(phyDat(data))]);
 			}
 			else {
