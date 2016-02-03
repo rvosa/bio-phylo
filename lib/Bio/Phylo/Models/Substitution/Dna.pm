@@ -169,141 +169,147 @@ sub modeltest {
 
 	if ( looks_like_class 'Statistics::R' ) {
 
-		# phangorn needs files as input
-		my ($fasta_fh, $fasta) = tempfile();
-		print $fasta_fh unparse('-phylo'=>$matrix, '-format'=>'fasta');
-		close $fasta_fh;
-
-		# instanciate R and lcheck if phangorn is installed
-		my $R = Statistics::R->new;
-		$R->timeout($timeout) if $timeout;
-		$R->run(q[options(device=NULL)]);
-		$R->run(q[package <- require("phangorn")]);
-
-		if ( ! $R->get(q[package]) eq "TRUE") {
-			$logger->warn("R library phangorn must be installed to run modeltest");
-			return $model;
-		}
-
-		# read data
-		$R->run(qq[data <- read.FASTA("$fasta")]);
-
-		# remove temp file
-		cleanup();
-		
-		if ( $tree ) {
-			# make copy of tree since it will be pruned
-			my $current_tree = parse('-format'=>'newick', '-string'=>$tree->to_newick)->first;
-			# prune out taxa from tree that are not present in the data
-			my @taxon_names = map {$_->get_name} @{ $matrix->get_entities };
-			$logger->debug('pruning input tree');
-			$current_tree->keep_tips(\@taxon_names);
-			$logger->debug('pruned input tree: ' . $current_tree->to_newick);
+		eval {
+			# phangorn needs files as input
+			my ($fasta_fh, $fasta) = tempfile();
+			print $fasta_fh unparse('-phylo'=>$matrix, '-format'=>'fasta');
+			close $fasta_fh;
 			
-			if ( ! $current_tree or scalar( @{ $current_tree->get_terminals } ) < 3 ) {
-				$logger->warn('pruned tree has too few tip labels, determining substitution model using NJ tree');
-				$R->run(q[test <- modelTest(phyDat(data))]);
+			# instanciate R and lcheck if phangorn is installed
+			my $R = Statistics::R->new;
+			$R->timeout($timeout) if $timeout;
+			$R->run(q[options(device=NULL)]);
+			$R->run(q[package <- require("phangorn")]);
+			
+			if ( ! $R->get(q[package]) eq "TRUE") {
+				$logger->warn("R library phangorn must be installed to run modeltest");
+				return $model;
+			}
+
+			# read data
+			$R->run(qq[data <- read.FASTA("$fasta")]);
+			
+			# remove temp file
+			cleanup();
+			
+			if ( $tree ) {
+				# make copy of tree since it will be pruned
+				my $current_tree = parse('-format'=>'newick', '-string'=>$tree->to_newick)->first;
+				# prune out taxa from tree that are not present in the data
+				my @taxon_names = map {$_->get_name} @{ $matrix->get_entities };
+				$logger->debug('pruning input tree');
+				$current_tree->keep_tips(\@taxon_names);
+				$logger->debug('pruned input tree: ' . $current_tree->to_newick);
+				
+				if ( ! $current_tree or scalar( @{ $current_tree->get_terminals } ) < 3 ) {
+					$logger->warn('pruned tree has too few tip labels, determining substitution model using NJ tree');
+					$R->run(q[test <- modelTest(phyDat(data))]);
+				}
+				else {
+					my $newick = $current_tree->to_newick;
+					
+					$R->run(qq[tree <- read.tree(text="$newick")]);
+					# call modelTest
+					$logger->debug("calling modelTest from R package phangorn");
+					$R->run(q[test <- modelTest(phyDat(data), tree=tree)]);
+				}
 			}
 			else {
-				my $newick = $current_tree->to_newick;
-				
-				$R->run(qq[tree <- read.tree(text="$newick")]);
-				# call modelTest
-				$logger->debug("calling modelTest from R package phangorn");
-				$R->run(q[test <- modelTest(phyDat(data), tree=tree)]);
+				# modelTest will estimate tree
+				$R->run(q[test <- modelTest(phyDat(data))]);
 			}
-		}
-		else {
-			# modelTest will estimate tree
-			$R->run(q[test <- modelTest(phyDat(data))]);
-		}
+			
+			# get model with lowest Aikaike information criterion
+			$R->run(q[model <- test[which(test$AIC==min(test$AIC)),]$Model]);
+			my $modeltype = $R->get(q[model]);
+			$logger->info("estimated DNA evolution model $modeltype");
+			
+			# determine model parameters
+			$R->run(q[env <- attr(test, "env")]);
+			$R->run(q[fit <- eval(get(model, env), env)]);
 
-		# get model with lowest Aikaike information criterion
-		$R->run(q[model <- test[which(test$AIC==min(test$AIC)),]$Model]);
-		my $modeltype = $R->get(q[model]);
-		$logger->info("estimated DNA evolution model $modeltype");
+			#  get base freqs
+			my $pi = $R->get(q[fit$bf]);
+			
+			# get overall mutation rate
+			my $mu = $R->get(q[fit$rate]);
+			
+			# get lower triangle of rate matrix (column order ACGT)
+			# and fill whole matrix; set diagonal values to 1
+			my $q = $R->get(q[fit$Q]);
+			my $rate_matrix = [ [ 1,       $q->[0], $q->[1], $q->[3] ],
+								[ $q->[0], 1,       $q->[2], $q->[4] ],
+								[ $q->[1], $q->[2], 1,       $q->[5] ],
+								[ $q->[3], $q->[4], $q->[5], 1       ]
+				];
 
-		# determine model parameters
-		$R->run(q[env <- attr(test, "env")]);
-		$R->run(q[fit <- eval(get(model, env), env)]);
-
-		#  get base freqs
-		my $pi = $R->get(q[fit$bf]);
-
-		# get overall mutation rate
-		my $mu = $R->get(q[fit$rate]);
-
-		# get lower triangle of rate matrix (column order ACGT)
-		# and fill whole matrix; set diagonal values to 1
-		my $q = $R->get(q[fit$Q]);
-		my $rate_matrix = [ [ 1,       $q->[0], $q->[1], $q->[3] ],
-						    [ $q->[0], 1,       $q->[2], $q->[4] ],
-						    [ $q->[1], $q->[2], 1,       $q->[5] ],
-						    [ $q->[3], $q->[4], $q->[5], 1       ]
-			];
-
-		# create model with specific parameters dependent on primary model type
-		if ( $modeltype =~ /JC/ ) {
-			require Bio::Phylo::Models::Substitution::Dna::JC69;
-			$model = Bio::Phylo::Models::Substitution::Dna::JC69->new();
-		}
-		elsif ( $modeltype =~ /F81/ ) {
-			require Bio::Phylo::Models::Substitution::Dna::F81;
-			$model = Bio::Phylo::Models::Substitution::Dna::F81->new('-pi' => $pi);
-		}
-		elsif ( $modeltype =~ /GTR/ ) {
-			require Bio::Phylo::Models::Substitution::Dna::GTR;
-			$model = Bio::Phylo::Models::Substitution::Dna::GTR->new('-pi' => $pi);
-		}
-		elsif ( $modeltype =~ /HKY/ ) {
-			require Bio::Phylo::Models::Substitution::Dna::HKY85;
-			# transition/transversion ratio kappa determined by transiton A->G/A->C in Q matrix
-			my $kappa = $R->get(q[fit$Q[2]/fit$Q[1]]);
-			$model = Bio::Phylo::Models::Substitution::Dna::HKY85->new('-kappa' => $kappa, '-pi' => $pi );
-		}
-		elsif ( $modeltype =~ /K80/ ) {
-			require Bio::Phylo::Models::Substitution::Dna::K80;
+			# create model with specific parameters dependent on primary model type
+			if ( $modeltype =~ /JC/ ) {
+				require Bio::Phylo::Models::Substitution::Dna::JC69;
+				$model = Bio::Phylo::Models::Substitution::Dna::JC69->new();
+			}
+			elsif ( $modeltype =~ /F81/ ) {
+				require Bio::Phylo::Models::Substitution::Dna::F81;
+				$model = Bio::Phylo::Models::Substitution::Dna::F81->new('-pi' => $pi);
+			}
+			elsif ( $modeltype =~ /GTR/ ) {
+				require Bio::Phylo::Models::Substitution::Dna::GTR;
+				$model = Bio::Phylo::Models::Substitution::Dna::GTR->new('-pi' => $pi);
+			}
+			elsif ( $modeltype =~ /HKY/ ) {
+				require Bio::Phylo::Models::Substitution::Dna::HKY85;
+				# transition/transversion ratio kappa determined by transiton A->G/A->C in Q matrix
+				my $kappa = $R->get(q[fit$Q[2]/fit$Q[1]]);
+				$model = Bio::Phylo::Models::Substitution::Dna::HKY85->new('-kappa' => $kappa, '-pi' => $pi );
+			}
+			elsif ( $modeltype =~ /K80/ ) {
+				require Bio::Phylo::Models::Substitution::Dna::K80;
 			my $kappa = $R->get(q[fit$Q[2]]);
-			$model = Bio::Phylo::Models::Substitution::Dna::K80->new(
-				'-pi' => $pi,
-				'-kappa' => $kappa );
+				$model = Bio::Phylo::Models::Substitution::Dna::K80->new(
+					'-pi' => $pi,
+					'-kappa' => $kappa );
+			}
+			# Model is unknown  (e.g. phangorn's SYM ?)
+			else {
+				$logger->debug("unknown model type, setting to generic DNA substitution model");
+				$model = Bio::Phylo::Models::Substitution::Dna->new(
+					'-pi' => $pi );
+			}
+			
+			# set gamma parameters
+			if ( $modeltype =~ /\+G/ ) {
+				$logger->debug("setting gamma parameters for $modeltype model");
+				# shape of gamma distribution
+				my $alpha = $R->get(q[fit$shape]);
+				$model->set_alpha($alpha);
+				# number of categories for Gamma distribution
+				my $ncat = $R->get(q[fit$k]);
+				$model->set_ncat($ncat);
+				# weights for rate categories
+				my $catweights = $R->get(q[fit$w]);
+				$model->set_catweights($catweights);
+			}
+			
+			# set invariant parameters
+			if ( $modeltype =~ /\+I/ ) {
+				$logger->debug("setting invariant site parameters for $modeltype model");
+				# get proportion of invariant sites
+				my $pinvar = $R->get(q[fit$inv]);
+				$model->set_pinvar($pinvar);
+			}
+			# set universal parameters
+			$model->set_rate($rate_matrix);
+			$model->set_mu($mu);
+		};
+		# catch possible R errors (e.g. timeout)
+		if ($@) {
+			$logger->warn("modeltest not successful : " . $@);
 		}
-		# Model is unknown  (e.g. phangorn's SYM ?)
-		else {
-			$logger->debug("unknown model type, setting to generic DNA substitution model");
-			$model = Bio::Phylo::Models::Substitution::Dna->new(
-				'-pi' => $pi );
-		}
-
-		# set gamma parameters
-		if ( $modeltype =~ /\+G/ ) {
-			$logger->debug("setting gamma parameters for $modeltype model");
-			# shape of gamma distribution
-			my $alpha = $R->get(q[fit$shape]);
-			$model->set_alpha($alpha);
-			# number of categories for Gamma distribution
-			my $ncat = $R->get(q[fit$k]);
-			$model->set_ncat($ncat);
-			# weights for rate categories
-			my $catweights = $R->get(q[fit$w]);
-			$model->set_catweights($catweights);
-		}
-
-		# set invariant parameters
-		if ( $modeltype =~ /\+I/ ) {
-			$logger->debug("setting invariant site parameters for $modeltype model");
-			# get proportion of invariant sites
-			my $pinvar = $R->get(q[fit$inv]);
-			$model->set_pinvar($pinvar);
-		}
-		# set universal parameters
-		$model->set_rate($rate_matrix);
-		$model->set_mu($mu);
 	}
 	else {
 		$logger->warn("Statistics::R must be installed to run modeltest");
 	}
-
+	
 	return $model;
 }
 
