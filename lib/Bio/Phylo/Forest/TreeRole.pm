@@ -905,20 +905,21 @@ Calculates the squared Euclidean branch length distance between two trees.
  Function: Calculates the squared Euclidean branch
            length distance between two trees
  Returns : SCALAR, number
- Args    : NONE
-
+ Args    : A Bio::Phylo::Forest::Tree object,           
+           Optional second argument flags that results should be normalized
 =cut
 
     sub calc_branch_length_score {
-        my ( $self, $other ) = @_;
+        my ( $self, $other, $normalize ) = @_;
         my $tuples = $self->_calc_branch_diffs($other);
         my $sum    = 0;
         for my $tuple ( @{$tuples} ) {
             my $diff = ( $tuple->[0] || 0 ) - ( $tuple->[1] || 0 );
             $sum += $diff**2;
         }
-        return $sum;
+        return $normalize ? $sum / scalar(@{$tuples}) : $sum;
     }
+
 
 =begin comment
 
