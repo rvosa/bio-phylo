@@ -852,7 +852,9 @@ Tests if tree is a cladogram (i.e. no branch lengths)
 
 =item calc_branch_length_distance()
 
-Calculates the Euclidean branch length distance between two trees.
+Calculates the Euclidean branch length distance between two trees. See
+Kuhner & Felsenstein (1994). A simulation comparison of phylogeny algorithms
+under equal and uneqaul evolutionary rates. MBE 11(3):459-468.
 
  Type    : Calculation
  Title   : calc_branch_length_distance
