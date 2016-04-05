@@ -458,7 +458,7 @@ Reroots below invocant.
 		my $i = $p->get_index_of( $node );
 		my $r = $p->get_parent;
 		my $d = $p->get_branch_length;		
-		my $tmp = $node->get_branch_length;
+		my $tmp = $node->get_branch_length || 0;
 		
 		# adjust $dist to a useable value			
 		$dist = $tmp / 2 if ($dist < 0.0 || $dist > $tmp);
@@ -496,7 +496,8 @@ Reroots below invocant.
 		if ( scalar(@children) == 2 ) { # remove p and link the other child of p to q
 			$r = $children[1 - $i]; # get the other child
 			$i = $q->get_index_of( $p ); # the position of p in q
-			$r->set_branch_length( $r->get_branch_length + $p->get_branch_length );
+			my $bl = ( $r->get_branch_length || 0 ) + ( $p->get_branch_length || 0 );
+			$r->set_branch_length( $bl );
 			
 			# link r to q
 			$q->set_raw_child( $r => $i );
