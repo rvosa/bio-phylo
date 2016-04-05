@@ -92,49 +92,56 @@ sub _to_string {
         my $name = $seq->get_internal_name;
         push @ids, $id;
         
-        
-        if ( length($name) <= 10 ) {
-            
-            # pad name with spaces until 10 characters
-            my $phylip_name = $name . ( ( 10 - length($name) ) x ' ' );
-            
-            # not yet seen name, use as as
-            if ( !$seen_name{$phylip_name} ) {
-                $seen_name{$phylip_name}++;
-                $phylip_name_for_id{$id} = $phylip_name;
-            }
-            
-            # have seen name
-            else {
-                
-                # attach incrementing integer until name is new
-                my $counter = 1;
-                while ( $seen_name{$phylip_name} ) {
-                    $phylip_name =
-                      substr( $phylip_name, 0, ( 10 - length($counter) ) );
-                    $phylip_name .= $counter;
-                    $counter++;
-                }
-                $seen_name{$phylip_name}++;
-                $phylip_name_for_id{$id} = $phylip_name;
-            }
+        # relaxed phylip names may exceed 10 characters
+        if ( $self->_args && $self->_args->{'-relaxed'} ) {
+        	$phylip_name_for_id{$id} = $name;
         }
-        elsif ( length($name) > 10 ) {
-            my $phylip_name = substr( $name, 0, 10 );
-            if ( !$seen_name{$phylip_name} ) {
-                $seen_name{$phylip_name}++;
-                $phylip_name_for_id{$id} = $phylip_name;
-            }
-            else {
-                my $counter = 1;
-                while ( $seen_name{$phylip_name} ) {
-                    $phylip_name =
-                      substr( $phylip_name, 0, ( 10 - length($counter) ) );
-                    $phylip_name .= $counter;
-                    $counter++;
-                }
-                $phylip_name_for_id{$id} = $phylip_name;
-            }
+        
+        # strict phylip names may not exceed 10 characters
+        else {
+			if ( length($name) <= 10 ) {
+			
+				# pad name with spaces until 10 characters
+				my $phylip_name = $name . ( ( 10 - length($name) ) x ' ' );
+			
+				# not yet seen name, use as as
+				if ( !$seen_name{$phylip_name} ) {
+					$seen_name{$phylip_name}++;
+					$phylip_name_for_id{$id} = $phylip_name;
+				}
+			
+				# have seen name
+				else {
+				
+					# attach incrementing integer until name is new
+					my $counter = 1;
+					while ( $seen_name{$phylip_name} ) {
+						$phylip_name =
+						  substr( $phylip_name, 0, ( 10 - length($counter) ) );
+						$phylip_name .= $counter;
+						$counter++;
+					}
+					$seen_name{$phylip_name}++;
+					$phylip_name_for_id{$id} = $phylip_name;
+				}
+			}
+			elsif ( length($name) > 10 ) {
+				my $phylip_name = substr( $name, 0, 10 );
+				if ( !$seen_name{$phylip_name} ) {
+					$seen_name{$phylip_name}++;
+					$phylip_name_for_id{$id} = $phylip_name;
+				}
+				else {
+					my $counter = 1;
+					while ( $seen_name{$phylip_name} ) {
+						$phylip_name =
+						  substr( $phylip_name, 0, ( 10 - length($counter) ) );
+						$phylip_name .= $counter;
+						$counter++;
+					}
+					$phylip_name_for_id{$id} = $phylip_name;
+				}
+			}
         }
         $seq->set_generic( 'phylip_name' => $phylip_name_for_id{$id} );
     }
