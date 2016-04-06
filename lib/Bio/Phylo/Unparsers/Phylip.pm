@@ -49,6 +49,16 @@ to the 'phylip_name' slot of set_generic. Example:
  	my $phylip_name = $seq->get_generic('phylip_name');
  }
 
+This default behavior enforces strict compliance with the phylip 
+rule for 10-character row names. It is possible to turn this off
+by passing in the optional C<-relaxed> flag with a true value, e.g.:
+
+ my $phylip_string = unparse(
+ 	-format  => 'phylip',
+ 	-phylo   => $matrix,
+ 	-relaxed => 1,
+ );
+
 The phylip module is called by the L<Bio::Phylo::IO> object, so
 look there to learn about parsing and serializing in general.
 
