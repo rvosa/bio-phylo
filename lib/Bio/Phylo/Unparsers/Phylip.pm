@@ -90,12 +90,12 @@ sub _to_string {
         my $id = $seq->get_id;
         $seq_for_id{$id} = $seq->get_char;
         my $name = $seq->get_internal_name;
-        push @ids, $id;
+        push @ids, $id;        
         
         # relaxed phylip names may exceed 10 characters
-        if ( $self->_args && $self->_args->{'-relaxed'} ) {
+        if ( $self->{'RELAXED'} ) {
         	$phylip_name_for_id{$id} = $name;
-        }
+        }        
         
         # strict phylip names may not exceed 10 characters
         else {
