@@ -175,8 +175,9 @@ prefix, uid and query string.
 		# the interaction is a query
 		if ( my $query = $self->get_query ) {
 			$logger->info("Constructing query URL");
-			$uri .= 'find';
-			$args{'-query'} = $query;
+			$uri .= $self->get_action;
+			my $kw = $self->get_query_keyword;
+			$args{'-'.$kw} = $query;
 		}
 	
 		# the interaction is a record lookup
@@ -187,6 +188,41 @@ prefix, uid and query string.
 	    
         return $build_query_string->($uri,%args,@_);
     }
+
+=item get_action()
+
+Returns any appropriate action verb that needs to be composed into the URL.
+By default this is C<find>, but child classes can override this to something
+else (or nothing at all).
+
+ Type    : Accessor
+ Title   : get_action
+ Usage   : my $action = $obj->get_action;
+ Function: Returns the object's url action.
+ Returns : A string
+ Args    :
+
+=cut
+
+	sub get_action { 'find' }
+
+=item get_query_keyword()
+
+Returns any appropriate action verb that needs to be composed into the query
+string as the keyword to identify the search string.
+By default this is C<query>, but child classes can override this to something
+else (or nothing at all).
+
+ Type    : Accessor
+ Title   : get_query_keyword
+ Usage   : my $keyword = $obj->get_query_keyword;
+ Function: Returns the object's query keyword
+ Returns : A string
+ Args    :
+
+=cut
+
+	sub get_query_keyword { 'query' }
 
 =item get_url_prefix()
 
