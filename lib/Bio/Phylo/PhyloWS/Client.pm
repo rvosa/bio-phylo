@@ -193,20 +193,7 @@ Gets search query result
 			if ( $response->is_success ) {
 				my $content = $response->content;
 				$self->set_section($rs);
-				my $desc;
-				eval {
-					XML::Twig->new(
-						'TwigHandlers' => {
-							'channel' => sub {
-								$desc = $rss_handler->('create_description',$self,@_);
-							},
-							'item' => sub {
-								my $res = $rss_handler->('create_resource',$self,@_);
-								$desc->insert($res);
-							},
-						}
-					)->parse($content);
-				};
+				my $desc = $self->parse_query_result($content);
 				if ( $@ ) {
 					$logger->fatal("Error fetching from $url");
 					$logger->fatal($content);
@@ -222,6 +209,38 @@ Gets search query result
 					. $response->status_line;
 			}
         }
+    }
+
+=item parse_query_result()
+
+Parses a raw query result
+
+ Type    : Accessor
+ Title   : parse_query_result
+ Usage   : my $desc = $obj->parse_query_result($content);
+ Function: Parses a raw query result
+ Returns : Bio::Phylo::PhyloWS::Resource::Description object
+ Args    : Raw result content
+
+=cut
+    
+    sub parse_query_result {
+    	my ( $self, $content ) = @_;
+		my $desc;
+		eval {
+			XML::Twig->new(
+				'TwigHandlers' => {
+					'channel' => sub {
+						$desc = $rss_handler->('create_description',$self,@_);
+					},
+					'item' => sub {
+						my $res = $rss_handler->('create_resource',$self,@_);
+						$desc->insert($res);
+					},
+				}
+			)->parse($content);
+		};
+		return $desc;    
     }
 
 =item get_record()
