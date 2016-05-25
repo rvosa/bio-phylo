@@ -49,7 +49,7 @@ sub _parse {
 	my %translate;
 	while(<$fh>) {
 		$tree_block++ if /BEGIN TREES;/i;
-		if ( /^\s*TREE (TREE\d+) = \[&([RU])\] (.+)$/i ) {
+		if ( /^\s*TREE (\S+) = \[&([RU])\] (.+)$/i ) {
 			my ( $name, $rooted, $newick ) = ( $1, $2, $3 );
 			$tree_string++;
 			my $tree = parse_tree(
