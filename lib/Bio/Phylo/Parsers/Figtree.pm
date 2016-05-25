@@ -143,6 +143,12 @@ sub _post_process {
 
 sub _meta {
 	my ( $node, $key, $value ) = @_;
+	if ( $key =~ /[()+]/ ) {
+		$log->warn("cleaning up CURIE candidate $key");
+		$key =~ s/\(/_/g;
+		$key =~ s/\)/_/g;
+		$key =~ s/\+/_/g;
+	}
 	$node->add_meta(
 		$fac->create_meta( '-triple' => { "${pre}:${key}" => $value } )
 	);
