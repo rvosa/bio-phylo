@@ -438,15 +438,16 @@ Reroots below invocant.
 =cut    
 
 	sub set_root_below {
-		my $node = shift;
-		my $dist = shift || 0;
-		my $tree = $node->get_tree;		
-		my $root = $tree->get_root;
+		my $node  = shift;
+		my $dist  = shift || 0;
+		my $force = shift || 0;
+		my $tree  = $node->get_tree;		
+		my $root  = $tree->get_root;
 		
 		# do nothing if the focal node already is the root, 
 		# or already has the root below it
 		return if $node->get_id == $root->get_id;
-		return if $node->get_parent and $node->get_parent->get_id == $root->get_id;
+		return if $node->get_parent and $node->get_parent->get_id == $root->get_id and not $force;
 	
 		# p: the central multi-parent node
 		# q: the new parent, previous a child of p
