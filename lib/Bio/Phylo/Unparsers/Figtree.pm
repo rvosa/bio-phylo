@@ -39,6 +39,7 @@ sub _to_string {
     my $self = shift;
 	$self->{'FOREST_ARGS'} = {
 		'-nodelabels' => \&_figtree_handler,
+		'-figtree' => 1,
 	};
 	return $self->SUPER::_to_string(@_);
 }
