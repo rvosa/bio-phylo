@@ -299,10 +299,10 @@ sub _parse_node_data {
         }
     }
     
-    if ( defined($tail[-1]) and $tail[-1] =~ /(\[.+\])$/ ) {
-	my $anno = $1;
-	$self->_logger->info("discarding branch comment $anno");
-	$tail[-1] =~ s/\Q$anno\E//;
+    if ( defined($tail[-1]) and $tail[-1] =~ /(\[.+\])$/ and scalar @tail != 1 ) {
+        my $anno = $1;
+        $self->_logger->info("discarding branch comment $anno");
+        $tail[-1] =~ s/\Q$anno\E//;
     }    
 
     # name only
