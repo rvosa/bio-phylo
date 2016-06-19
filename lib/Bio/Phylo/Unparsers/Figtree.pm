@@ -45,12 +45,22 @@ sub _to_string {
 }
 
 sub _figtree_handler {
+
+	# node object, translation table ID, if any
 	my ( $node, $id ) = @_;
+
+	# fetch Meta objects, filter out the ones that are _NS_FIGTREE_,
+	# turn them into a hash without the fig prefix	
 	my @meta = @{ $node->get_meta };
 	my %meta = map { $_->get_predicate_local => $_->get_object }
 	          grep { $_->get_predicate_namespace eq $ns } @meta;
 	$log->debug( Dumper(\%meta) );
 	
+	# there can be separate annotations that are _min and _max for
+	# the same variable name stem. We combine these into a range
+	# between curly braces. Also add % percentage symbol for 95%
+	# HPD ranges - the % symbol is disallowed in CURIEs, hence we
+	# have to bring it back here.
 	my %merged;
 	KEY: for my $key ( keys %meta ) {
 		if ( $key =~ /^(.+?)_min$/ ) {
@@ -67,17 +77,29 @@ sub _figtree_handler {
 			$merged{$key} = $meta{$key};
 		}
 	}
+	
+	# create the concatenated annotation string
 	my $anno = '[&' . join( ',',map { $_.'='.$merged{$_} } keys %merged ) . ']';
+	
+	# construct the name:
 	my $name;
-	if ( defined $id ) {
+	
+	# case 1 - a translation table index was provided, this now replaces the name
+	if ( defined $id ) {		
 		$name = $id;
-	} 
+	}
+	
+	# case 2 - no translation table index, use the node name
 	elsif ( defined $node->get_name ) {
 		$name = $node->get_name;
 	}
+	
+	# case 3 - use the empty string, to avoid uninitialized warnings.
 	else {
 		$name = '';
 	}
+	
+	# append the annotation string, if we have it
 	my $annotated = $anno ne '[&]' ? $name . $anno : $name;
 	$log->debug($annotated);
 	return $annotated;
