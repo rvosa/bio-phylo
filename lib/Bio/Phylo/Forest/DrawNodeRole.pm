@@ -9,7 +9,7 @@ use base 'Bio::Phylo::Forest::NodeRole';
 	my @properties = qw(x y radius tip_radius node_color node_outline_color
 	node_shape node_image branch_color branch_shape branch_width branch_style
 	collapsed collapsed_width font_face font_size font_style font_color
-	font_weight text_horiz_offset text_vert_offset rotation);
+	font_weight text_horiz_offset text_vert_offset rotation clade_label);
 
 =head1 NAME
 
@@ -247,6 +247,15 @@ Sets collapsed clade width.
  Function: Sets rotation
  Returns : $self
  Args    : rotation
+
+=item set_clade_label()
+
+ Type    : Mutator
+ Title   : set_clade_label
+ Usage   : $node->set_clade_label('Mammalia');
+ Function: Sets a label for an entire clade to be visualized outside the tree
+ Returns : $self
+ Args    : string 
 
 =back
 
@@ -514,6 +523,15 @@ Gets collapsed clade width.
  Usage   : my $rotation = $node->get_rotation();
  Function: Gets rotation
  Returns : rotation
+ Args    : NONE
+
+=item get_clade_label()
+
+ Type    : Accessor
+ Title   : get_clade_label
+ Usage   : my $l = $node->get_clade_label();
+ Function: Gets a label for an entire clade to be visualized outside the tree
+ Returns : string
  Args    : NONE
 
 =back
