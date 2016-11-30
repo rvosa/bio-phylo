@@ -177,21 +177,29 @@ Gets search query result
 
     sub get_query_result {
         my $self = shift;
+        $logger->debug("going to get query result");
         if ( my %args = looks_like_hash @_ ) {
 			
 			# these fields need to be set first before get_url returns
 			# a sane response
 			$self->set_query( $args{'-query'} || throw 'BadArgs' => "Need query argument" );
+			$logger->debug("set query ".$args{'-query'});
+			
 			$self->set_section( $args{'-section'} || 'taxon' );
 			$self->set_format( 'rss1' );
 			my $rs  = $args{'-recordSchema'}  || $args{'-section'} || 'taxon';
 			my $url = $self->get_url( '-recordSchema' => $rs );
 			$url =~ s/&amp;/&/g;
+			$logger->debug("URL: $url");
 			
 			# do the request
 			my $response = $ua->($self)->get($url);
 			if ( $response->is_success ) {
+				$logger->debug("request succeeded");
 				my $content = $response->content;
+				use Data::Dumper;
+				print Dumper($response);
+				
 				$self->set_section($rs);
 				my $desc = $self->parse_query_result($content);
 				if ( $@ ) {

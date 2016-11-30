@@ -562,6 +562,10 @@ Serializer to nexus format.
           . ref($self) . " "
           . $self->VERSION . " on "
           . localtime() . " ]\n";
+		if ( $args{'-figtree'} ) {
+			delete $args{'-figtree'};
+			$nexus .= "[! Tree(s) include FigTree node annotations ]\n";
+		}
         if ( $args{'-links'} ) {
             delete $args{'-links'};
             $nexus .= "\tTITLE " . $self->get_nexus_name . ";\n";

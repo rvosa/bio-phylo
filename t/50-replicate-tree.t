@@ -21,6 +21,7 @@ SKIP: {
 		'-monotypic' => 1,
 		'-polypara'  => 1,
 	);
+	$tree->get_logger->VERBOSE( '-level' => ERROR );
 
 	my $rep = $tree->replicate( '-genera' => 1 )->first;
 	ok( $rep );
