@@ -142,6 +142,55 @@ sub _draw_triangle {
     throw 'NotImplemented' => ref($self) . " can't draw triangle";
 }
 
+# XXX incomplete!
+sub _draw_clade_label {
+    $logger->info("drawing clade label");
+    my ( $self, $node ) = @_;
+    my $td  = $self->_drawer;
+    my $tho = $td->get_text_horiz_offset;
+    my $tw  = $td->get_text_width;
+    
+    # handle radial projection, either phylogram or cladogram
+    if ( $td->get_shape =~ /radial/i ) {
+        my $lmtl = $node->get_leftmost_terminal;
+        my $rmtl = $node->get_rightmost_terminal;
+        my $root = $node->get_tree->get_root;
+        my $desc = $node->get_descendants;
+        
+        # get cartesian coordinates for root and leftmost and rightmost tip
+        my ( $cx, $cy ) = ( $root->get_x, $root->get_y );
+        my ( $rx, $ry ) = ( $rmtl->get_x, $rmtl->get_y );
+        my ( $lx, $ly ) = ( $lmtl->get_x, $lmtl->get_y );
+        
+        # fetch the tallest node in the clade, compute radius from the root
+        my ( $radius, $tallest );
+        for my $d ( @$desc ) {
+            my ( $x1, $y1 ) = ( $d->get_x, $d->get_y );
+            my $h1 = sqrt(abs($cx-$x1)*abs($cx-$x1)+abs($cy-$y1)*abs($cy-$y1));
+            $radius = $h1 if not defined $radius;
+            $tallest = $d if $radius >= $h1;
+        }
+        
+        # compute coordinates of start and end of arc
+        $radius += $tho * 2 + $tw;
+        my ( $rr, $ra ) = $td->cartesian_to_polar( ($rx-$cx), ($ry-$cy) ); # rightmost
+        my ( $lr, $la ) = $td->cartesian_to_polar( ($lx-$cx), ($ly-$cy) ); # leftmost
+        my ( $x1, $y1 ) = $td->polar_to_cartesian( $radius, $ra ); # + add origin!
+        my ( $x2, $y2 ) = $td->polar_to_cartesian( $radius, $la ); # + add origin!
+        $self->_draw_arc(
+            '-x1' => $x1 + $cx,
+            '-y1' => $y1 + $cy,
+            '-x2' => $x2 + $cx,
+            '-y2' => $y2 + $cy,
+            '-radius' => $radius,
+        );
+    }
+    
+    # can do the same thing for clado and phylo
+    
+    
+}
+
 sub _draw_collapsed {
     $logger->info("drawing collapsed node");
     my ( $self, $node ) = @_;
