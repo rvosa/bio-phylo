@@ -22,6 +22,7 @@ my @fields = qw(
   SCALE
   FORMAT
   COLLAPSED_CLADE_WIDTH
+  PIE_COLORS;
 );
 
 my $PI     = _PI_;
@@ -105,6 +106,7 @@ sub new {
         'SCALE'                 => undef,
         'BRANCH_WIDTH'          => 1,
         'COLLAPSED_CLADE_WIDTH' => 6,
+        'PIE_COLORS'            => {},
     };
     bless $self, $class;
     if (@_) {
@@ -465,6 +467,31 @@ sub set_scale_options {
     return $self;
 }
 
+=item set_pie_colors
+
+Sets a hash reference whose keys are (unique) names for the different segments in a
+likelihood pie chart, and whose values are color codes.
+
+ Type    : Mutator
+ Title   : set_pie_colors
+ Usage   : $treedrawer->set_pie_colors({ 'p1' => 'red', 'p2' => 'blue' });
+ Function: sets likelihood pie colors
+ Returns :
+ Args    : HASH
+
+=cut
+
+sub set_pie_colors {
+	my ( $self, $hash ) = @_;
+	if ( ref($hash) eq 'HASH' ) {
+		$self->{'PIE_COLORS'} = $hash;
+	}
+	else {
+		throw 'BadArgs' => "Not a hash reference!";
+	}
+	return $self;
+}
+
 =back
 
 =head2 CASCADING MUTATORS
@@ -776,6 +803,22 @@ Gets time scale option.
 =cut
 
 sub get_scale_options { shift->{'SCALE'} }
+
+=item get_pie_colors
+
+Gets a hash reference whose keys are (unique) names for the different segments in a
+likelihood pie chart, and whose values are color codes.
+
+ Type    : Accessor
+ Title   : get_pie_colors
+ Usage   : my %h = %{ $treedrawer->get_pie_colors() };
+ Function: gets likelihood pie colors
+ Returns :
+ Args    : None
+
+=cut
+
+sub get_pie_colors { shift->{'PIE_COLORS'} }
 
 =back
 
