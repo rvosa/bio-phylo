@@ -150,33 +150,38 @@ sub _draw_clade_label {
     my $tho = $td->get_text_horiz_offset;
     my $tw  = $td->get_text_width;
     
+    my $lmtl = $node->get_leftmost_terminal;
+    my $rmtl = $node->get_rightmost_terminal;
+    my $root = $node->get_tree->get_root;
+    my $desc = $node->get_descendants;
+   
+    # get cartesian coordinates for root and leftmost and rightmost tip
+    my ( $cx, $cy ) = ( $root->get_x, $root->get_y );
+    my ( $rx, $ry ) = ( $rmtl->get_x, $rmtl->get_y );
+    my ( $lx, $ly ) = ( $lmtl->get_x, $lmtl->get_y );
+    
     # handle radial projection, either phylogram or cladogram
     if ( $td->get_shape =~ /radial/i ) {
-        my $lmtl = $node->get_leftmost_terminal;
-        my $rmtl = $node->get_rightmost_terminal;
-        my $root = $node->get_tree->get_root;
-        my $desc = $node->get_descendants;
         
-        # get cartesian coordinates for root and leftmost and rightmost tip
-        my ( $cx, $cy ) = ( $root->get_x, $root->get_y );
-        my ( $rx, $ry ) = ( $rmtl->get_x, $rmtl->get_y );
-        my ( $lx, $ly ) = ( $lmtl->get_x, $lmtl->get_y );
-        
-        # fetch the tallest node in the clade, compute radius from the root
-        my ( $radius, $tallest );
+        # compute tallest node in the clade and radius from the root
+        my $radius;
         for my $d ( @$desc ) {
-            my ( $x1, $y1 ) = ( $d->get_x, $d->get_y );
-            my $h1 = sqrt(abs($cx-$x1)*abs($cx-$x1)+abs($cy-$y1)*abs($cy-$y1));
-            $radius = $h1 if not defined $radius;
-            $tallest = $d if $radius >= $h1;
+            
+            # pythagoras
+            my ( $x1, $y1 ) = ( $d->get_x, $d->get_y );            
+            my $h1 = sqrt( abs($cx-$x1)*abs($cx-$x1) + abs($cy-$y1)*abs($cy-$y1) );
+            $radius = $h1 if not defined $radius; # initialize
+            $radius = $h1 if $h1 >= $radius; # bump up if higher value
         }
         
-        # compute coordinates of start and end of arc
-        $radius += $tho * 2 + $tw;
+        # compute angles and coordinates of start and end of arc
+        $radius += ( $tho * 2 + $tw );
         my ( $rr, $ra ) = $td->cartesian_to_polar( ($rx-$cx), ($ry-$cy) ); # rightmost
         my ( $lr, $la ) = $td->cartesian_to_polar( ($lx-$cx), ($ly-$cy) ); # leftmost
         my ( $x1, $y1 ) = $td->polar_to_cartesian( $radius, $ra ); # + add origin!
         my ( $x2, $y2 ) = $td->polar_to_cartesian( $radius, $la ); # + add origin!
+        
+        # draw the arc around the clade
         $self->_draw_arc(
             '-x1' => $x1 + $cx,
             '-y1' => $y1 + $cy,
@@ -187,6 +192,25 @@ sub _draw_clade_label {
     }
     
     # can do the same thing for clado and phylo
+    else {
+                
+        # fetch the tallest node in t
+        my $x1;
+        for my $d ( @$desc ) {
+            my $x = $d->get_x;
+            $x1 = $x if not defined $x1; # initialize
+            $x1 = $x if $x >= $x1; # bump if $higher
+        }
+        
+        # add offset and text width and draw line
+        $x1 += ( $tho * 2 + $tw );
+        $self->_draw_line(
+            '-x1' => $x1,
+            '-x2' => $x1,            
+            '-y1' => $lmtl->get_y,
+            '-y2' => $rmtl->get_y,
+        );
+    }
     
     
 }
