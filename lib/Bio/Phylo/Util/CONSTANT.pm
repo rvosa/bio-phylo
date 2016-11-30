@@ -67,6 +67,7 @@ BEGIN {
       _NS_PHYLOMAP_
       _NS_BIOVEL_
       _NS_NHX_
+      _NS_DWC_
     );
     %EXPORT_TAGS = (
         'all'         => [@EXPORT_OK],
@@ -137,6 +138,7 @@ BEGIN {
               _NS_PHYLOMAP_
               _NS_BIOVEL_
               _NS_NHX_
+              _NS_DWC_
             )
         ]
     );
@@ -167,6 +169,7 @@ sub _NS_FIGTREE_ ()  { 'http://tree.bio.ed.ac.uk/software/figtree/terms#' }
 sub _NS_PHYLOMAP_ () { 'http://phylomap.org/terms.owl#' }
 sub _NS_BIOVEL_ ()   { 'http://biovel.eu/terms#' }
 sub _NS_NHX_ ()      { 'http://sites.google.com/site/cmzmasek/home/software/forester/nhx' }
+sub _NS_DWC_ ()      { 'http://rs.tdwg.org/dwc/terms/' }
 
 our $NS = {
     'tnrs' => _NS_TNRS_(),
@@ -187,6 +190,7 @@ our $NS = {
     'dcterms' => _NS_DCTERMS_(),
     'fig'     => _NS_FIGTREE_(),
     'nhx'     => _NS_NHX_(),
+    'dwc'     => _NS_DWC_(),
 };
 
 sub _NEXML_VERSION_ () { '0.9' }
