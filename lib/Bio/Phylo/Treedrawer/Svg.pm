@@ -363,6 +363,12 @@ sub _draw_line {
 
 sub _draw_pies {
     my $self = shift;
+    
+    # normally, the colors for the likelihood pie are generated on the fly, but if 
+    # set_pie_colors has been set in the superclass then we use those instead
+    my %c = %{ $self->_drawer->get_pie_colors };
+	%colors = %c if scalar keys %c;
+	
     $self->_tree->visit_level_order(
         sub {
             my $node = shift;
