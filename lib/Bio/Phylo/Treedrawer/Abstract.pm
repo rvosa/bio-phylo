@@ -143,9 +143,9 @@ sub _draw_triangle {
 }
 
 # XXX incomplete!
-sub _draw_clade_label {
-    $logger->info("drawing clade label");
+sub _draw_clade_label {    
     my ( $self, $node ) = @_;
+    $logger->info("drawing clade label ".$node->get_clade_label);
     my $td  = $self->_drawer;
     my $tho = $td->get_text_horiz_offset;
     my $tw  = $td->get_text_width;
@@ -202,13 +202,20 @@ sub _draw_clade_label {
             $x1 = $x if $x >= $x1; # bump if $higher
         }
         
-        # add offset and text width and draw line
+        # draw line and label
         $x1 += ( $tho * 2 + $tw );
+        my ( $y1, $y2 ) = ( $lmtl->get_y, $rmtl->get_y );
         $self->_draw_line(
             '-x1' => $x1,
             '-x2' => $x1,            
-            '-y1' => $lmtl->get_y,
-            '-y2' => $rmtl->get_y,
+            '-y1' => $y1,
+            '-y2' => $y2,
+        );
+        $self->_draw_text(
+            '-x'    => ($x1+$tho),
+            '-y'    => (($y1+$y2)/2),
+            '-text' => $node->get_clade_label,
+            '-rotation' => [ -90, ($x1+$tho), (($y1+$y2)/2) ],
         );
     }
     
