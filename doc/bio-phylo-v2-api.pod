@@ -2,6 +2,8 @@
 
 =head1 Introduction
 
+=head1 Overview
+
 =head1 Installation
 
 Bio::Phylo can be installed automatically by a number of different package managers. However,
