@@ -36,17 +36,15 @@ on Windows) include a package manager called C<ppm>. While this is very useful f
 install compiled extensions, this too relies on old versions of Bio::Phylo, so is best 
 avoided, as are Linux-based package managers, such as C<apt-get> and C<yum>.
 
-=head1 Core applications
-
-=head2 Simulation
+=head1 Applications
 
 =head2 Data management
 
-=head1 Extended functionality
+=head2 NeXML management
 
 =head2 Visualization
 
-=head2 NeXML management
+=head2 Simulation
 
 =head2 Compiled extensions
 
@@ -55,6 +53,10 @@ avoided, as are Linux-based package managers, such as C<apt-get> and C<yum>.
 =head2 Database mappings
 
 =head1 Internal design
+
+=head2 "Roles"
+
+=head2 Meta-Object Programming
 
 =head1 Availability
 
