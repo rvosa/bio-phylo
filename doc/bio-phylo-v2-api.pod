@@ -11,11 +11,11 @@ these usually rely on outdated versions, and because there is nothing that needs
 compiled for the core installation there is no need to let a package manager do a system
 wide installation, which is typically only useful for packages that include compiled
 binaries and not just pure Perl source code. Bio::Phylo is pure Perl, so it is recommended 
-to have the project's directory tree checked out from the source code repository 
+to have the project's directory tree "cloned" from the source code repository 
 (see Availability), and have the C<PERL5LIB> environment variable point to the C<lib> 
 folder inside the directory tree. This way all functionality will be available in user 
 scripts, and the user can update to the latest release (or skip back to any previous one) 
-with a single command. Source code can be checked out from code repositories using the 
+with a single command. Source code can be cloned from code repositories using the 
 L<git|http://git-scm.org> tool on most common operating systems, it is outside of the scope 
 of this document to discuss how this is done: good documentation for C<git> can be found 
 L<online|https://help.github.com/articles/cloning-a-repository/>. How to update an 
