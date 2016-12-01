@@ -42,9 +42,11 @@ so it is still better to check out the code as described above).
 
 =head2 NeXML management
 
-=head2 XS compiled extensions
+=head2 Compiled extensions
 
-=head2 Object-relational mappings
+=head2 Likelihood calculations
+
+=head2 Database mappings
 
 =head1 Internal design
 
