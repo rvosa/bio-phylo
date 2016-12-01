@@ -73,6 +73,8 @@ licenses fits best with your own project, should you want to reuse all (or part)
 This is certainly the spirit: feel free to use these libraries however you see fit. 
 No warranties.
 
+=head1 Glossary
+
 =head1 Acknowledgements
 
 =head1 References
