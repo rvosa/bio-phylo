@@ -31,6 +31,14 @@ Perl Archive Network (CPAN) at L<http://search.cpan.org/dist/Bio-Phylo>. Accompa
 publication is a uniquely identifiable release, stamped with a Digital Object
 Identifier (DOI) issued by L<Zenodo.org>: C<doi:10.5281/zenodo.tbd>.
 
+As is a common convention in Perl software releases, a dual licensing scheme applies to
+Bio::Phylo - both the L<Artistic License|https://github.com/rvosa/bio-phylo/blob/master/COPYING>
+as well as the L<GNU General Public License|https://github.com/rvosa/bio-phylo/blob/master/LICENSE>
+applies. This is generally interpreted to mean that you are free to choose whichever of these
+licenses fits best with your own project, should you want to reuse all (or part) of Bio::Phylo.
+This is certainly the spirit: feel free to use these libraries however you see fit. 
+No warranties.
+
 =head1 Acknowledgements
 
 =head1 References
