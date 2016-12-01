@@ -30,6 +30,10 @@ which is somewhat more user friendly, and it can install modules directly from G
 then it will do a system-wide install that from that moment on cannot be updated from GitHub, 
 so it is still better to check out the code as described above).
 
+Certain installations of Perl (historically, on Windows) include a package manager called
+C<ppm>. While this is very useful for hard-to-install compiled extensions, this too
+relies on old versions of Bio::Phylo, so is best avoided.
+
 =head1 Core applications
 
 =head2 Simulation
