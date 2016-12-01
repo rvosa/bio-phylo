@@ -4,33 +4,31 @@
 
 =head1 Installation
 
-Bio::Phylo can be installed for you by a number of different package managers. However,
+Bio::Phylo can be installed automatically by a number of different package managers. However,
 these usually rely on outdated versions, and because there is nothing that needs to be
-compiled for the core installation, there is no need to let a package manager do a system
+compiled for the core installation there is no need to let a package manager do a system
 wide installation, which is typically only useful for packages that include compiled
-binaries and not just pure Perl source code. Bio::Phylo is pure Perl, so my recommendation 
-would be to have the project's directory tree checked out from the source code repository 
+binaries and not just pure Perl source code. Bio::Phylo is pure Perl, so it is recommended 
+to have the project's directory tree checked out from the source code repository 
 (see Availability), and have the C<PERL5LIB> environment variable point to the C<lib> 
-folder inside the directory tree. This way all the functionality will be available in your 
-scripts, and you can update to the latest release (or skip back to any previous one) with 
-a single command. Assuming you have C<git> installed and you have navigated to the location
-where the directory can be stored, the checkout is done as follows:
+folder inside the directory tree. This way all functionality will be available in user 
+scripts, and the user can update to the latest release (or skip back to any previous one) 
+with a single command. 
 
- # This downloads the source tree
- git clone https://github.com/rvosa/bio-phylo.git
- 
- # This adds the location to PERL5LIB - Note: check to see if this is how environment
- # variables are added to the user profile of your operating system
- echo 'export PERL5LIB=$PERL5LIB:'`pwd`/bio-phylo/lib >> ~/.bash_profile
+Source code can be checked out from code repositories using the L<git|http://git-scm.org> 
+tool on most common operating systems, it is outside of the scope of this document to discuss 
+how this is done: good documentation for C<git> can be found online. How to update an 
+environment variable to add an additional location to it, on any particular operating system,
+is likewise best searched for online.
 
 Having said that, Bio::Phylo is also available from CPAN, which means that any tools built
 around this system will be able to install the latest release, for example using the 
 standard command line program C<cpan>, which is installed on almost any computer that has
-C<perl> installed, such as on Linux and MacOSX. Experienced Perl users commonly install the
-non-standard package management tool C<cpanm> (CPAN-minus, a play on the name of a previous 
-tool called CPAN-plus), which is somewhat more user friendly, and it can install modules 
-directly from GitHub (but then it will do a system-wide install that can't be updated from
-GitHub, so it is still better to check out the code as described above).
+C<perl> installed. Experienced Perl users commonly install the non-standard package 
+management tool C<cpanm> (CPAN-minus, a play on the name of a previous tool called CPAN-plus), 
+which is somewhat more user friendly, and it can install modules directly from GitHub (but 
+then it will do a system-wide install that from that moment on cannot be updated from GitHub, 
+so it is still better to check out the code as described above).
 
 =head1 Core applications
 
