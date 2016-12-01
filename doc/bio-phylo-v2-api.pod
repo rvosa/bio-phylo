@@ -19,7 +19,7 @@ Source code can be checked out from code repositories using the L<git|http://git
 tool on most common operating systems, it is outside of the scope of this document to discuss 
 how this is done: good documentation for C<git> can be found online. How to update an 
 environment variable to add an additional location to it, on any particular operating system,
-is likewise best searched for online.
+is likewise best searched for online. \cite{foo}
 
 Having said that, Bio::Phylo is also available from CPAN, which means that any tools built
 around this system will be able to install the latest release, for example using the 
