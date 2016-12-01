@@ -2,6 +2,7 @@ package Bio::Phylo::Taxa;
 use strict;
 use base 'Bio::Phylo::Listable';
 use Bio::Phylo::Util::CONSTANT qw':objecttypes /looks_like/ :namespaces';
+use Bio::Phylo::Util::Exceptions 'throw';
 use Bio::Phylo::Mediators::TaxaMediator;
 use Bio::Phylo::Factory;
 
@@ -374,6 +375,43 @@ Merges argument Bio::Phylo::Taxa object with invocant.
         }
         return $merged;
     }
+
+=item prune_taxa()
+
+Removes taxa by name or object
+
+ Type    : Method
+ Title   : prune_taxa
+ Usage   : $taxa->prune_taxa([$t1, $t2]);
+ Function: Prunes taxa from the taxa object           
+ Returns : A pruned Bio::Phylo::Taxa object.
+ Args    : An array reference of taxa, either by name or as taxon objects
+
+=cut
+
+	sub prune_taxa {
+		my ( $self, $arrayref ) = @_;
+		if ( ref($arrayref) eq 'ARRAY' ) {
+			for my $t ( @{ $arrayref } ) {
+				if ( not ref $t ) {
+					if ( my $obj = $self->get_by_name($t) ) {
+						$self->delete($obj);
+					}
+					else {
+						$logger->warn("Couldn't find taxon with name '$t'");
+					}				
+				}
+				elsif ( looks_like_object $t, _TAXON_ ) {
+					$self->delete($t);
+				}			
+			}		
+		}
+		else {
+			throw 'BadArgs' => 'Argument is not an array reference';
+		}
+		return $self;
+	}
+
 
 =item to_nexus()
 
