@@ -1,0 +1,29 @@
+=head1 The Bio::Phylo libraries for phyloinformatic analysis, version 2.0
+
+=head1 Introduction
+
+=head1 Installation
+
+=head1 Core applications
+
+=head2 Simulation
+
+=head2 Data management
+
+=head1 Extended functionality
+
+=head2 Visualization
+
+=head2 NeXML management
+
+=head2 XS compiled extensions
+
+=head2 Object-relational mappings
+
+=head1 Internal design
+
+=head1 Availability
+
+=head1 Acknowledgements
+
+=head1 References
