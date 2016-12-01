@@ -15,13 +15,11 @@ to have the project's directory tree checked out from the source code repository
 (see Availability), and have the C<PERL5LIB> environment variable point to the C<lib> 
 folder inside the directory tree. This way all functionality will be available in user 
 scripts, and the user can update to the latest release (or skip back to any previous one) 
-with a single command. 
-
-Source code can be checked out from code repositories using the L<git|http://git-scm.org> 
-tool on most common operating systems, it is outside of the scope of this document to discuss 
-how this is done: good documentation for C<git> can be found online. How to update an 
-environment variable to add an additional location to it, on any particular operating system,
-is likewise best searched for online.
+with a single command. Source code can be checked out from code repositories using the 
+L<git|http://git-scm.org> tool on most common operating systems, it is outside of the scope 
+of this document to discuss how this is done: good documentation for C<git> can be found 
+online. How to update an environment variable to add an additional location to it, on any 
+particular operating system, is likewise best searched for online.
 
 Having said that, Bio::Phylo is also available from CPAN, which means that any tools built
 around this system will be able to install the latest release, for example using the 
@@ -30,11 +28,10 @@ C<perl> installed. Experienced Perl users commonly install the non-standard pack
 management tool C<cpanm> (CPAN-minus, a play on the name of a previous tool called CPAN-plus), 
 which is somewhat more user friendly, and it can install modules directly from GitHub (but 
 then it will do a system-wide install that from that moment on cannot be updated from GitHub, 
-so it is still better to check out the code as described above).
-
-Certain installations of Perl (historically, on Windows) include a package manager called
-C<ppm>. While this is very useful for hard-to-install compiled extensions, this too
-relies on old versions of Bio::Phylo, so is best avoided.
+so it is still better to check out the code as described above). Certain installations of 
+Perl (historically, on Windows) include a package manager called C<ppm>. While this is very 
+useful for hard-to-install compiled extensions, this too relies on old versions of Bio::Phylo, 
+so is best avoided, as are Linux-based package managers, such as C<apt-get> and C<yum>.
 
 =head1 Core applications
 
