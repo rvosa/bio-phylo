@@ -24,6 +24,13 @@
 
 =head1 Availability
 
+The latest revisions of the source code are available from the source code repository at
+L<http://github.com/rvosa/bio-phylo>. The latest stable release version, which is usually 
+considerably far behind the latest source code revision, is available from the Comprehensive
+Perl Archive Network (CPAN) at L<http://search.cpan.org/dist/Bio-Phylo>. Accompanying this
+publication is a uniquely identifiable release, stamped with a Digital Object
+Identifier (DOI) issued by L<Zenodo.org>: c<doi:tbd>.
+
 =head1 Acknowledgements
 
 =head1 References
