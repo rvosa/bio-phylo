@@ -29,7 +29,7 @@ L<http://github.com/rvosa/bio-phylo>. The latest stable release version, which i
 considerably far behind the latest source code revision, is available from the Comprehensive
 Perl Archive Network (CPAN) at L<http://search.cpan.org/dist/Bio-Phylo>. Accompanying this
 publication is a uniquely identifiable release, stamped with a Digital Object
-Identifier (DOI) issued by L<Zenodo.org>: c<doi:tbd>.
+Identifier (DOI) issued by L<Zenodo.org>: C<doi:10.5281/zenodo.tbd>.
 
 =head1 Acknowledgements
 
