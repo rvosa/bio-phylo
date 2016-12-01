@@ -22,17 +22,19 @@ L<online|https://help.github.com/articles/cloning-a-repository/>. How to update 
 environment variable to add an additional location to it, on any particular operating 
 system, is likewise best searched for online.
 
-Having said that, Bio::Phylo is also available from CPAN, which means that any tools built
-around this system will be able to install the latest release, for example using the 
-standard command line program C<cpan>, which is installed on almost any computer that has
-C<perl> installed. Experienced Perl users commonly install the non-standard package 
-management tool C<cpanm> (CPAN-minus, a play on the name of a previous tool called CPAN-plus), 
-which is somewhat more user friendly, and it can install modules directly from GitHub (but 
-then it will do a system-wide install that from that moment on cannot be updated from GitHub, 
-so it is still better to check out the code as described above). Certain installations of 
-Perl (historically, on Windows) include a package manager called C<ppm>. While this is very 
-useful for hard-to-install compiled extensions, this too relies on old versions of Bio::Phylo, 
-so is best avoided, as are Linux-based package managers, such as C<apt-get> and C<yum>.
+Although this is not the recommended way to install, Bio::Phylo is also available from CPAN, 
+which means that any tools built around this system will be able to install the latest 
+release, for example using the standard command line program C<cpan>, which is installed 
+on almost any computer that has C<perl> installed. Installation from CPAN is typically the 
+approach taken by a system administrator on high-performance computing infrastructure. 
+Experienced Perl users commonly install the non-standard package management tool C<cpanm> 
+(CPAN-minus, a play on the name of a previous tool called CPAN-plus), which is somewhat more 
+user friendly, and it can install modules directly from GitHub (but then it will do a 
+system-wide install that from that moment on cannot be updated from GitHub, so it is still 
+better to check out the code as described above). Certain installations of Perl (historically, 
+on Windows) include a package manager called C<ppm>. While this is very useful for hard-to-
+install compiled extensions, this too relies on old versions of Bio::Phylo, so is best 
+avoided, as are Linux-based package managers, such as C<apt-get> and C<yum>.
 
 =head1 Core applications
 
