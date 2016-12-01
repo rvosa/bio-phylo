@@ -10,7 +10,7 @@ compiled for the core installation, there is no need to let a package manager do
 wide installation, which is typically only useful for packages that include compiled
 binaries and not just pure Perl source code. Bio::Phylo is pure Perl, so my recommendation 
 would be to have the project's directory tree checked out from the source code repository 
-(see Availibility), and have the C<PERL5LIB> environment variable point to the C<lib> 
+(see Availability), and have the C<PERL5LIB> environment variable point to the C<lib> 
 folder inside the directory tree. This way all the functionality will be available in your 
 scripts, and you can update to the latest release (or skip back to any previous one) with 
 a single command. Assuming you have C<git> installed and you have navigated to the location
