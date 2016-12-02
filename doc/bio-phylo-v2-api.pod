@@ -1,5 +1,11 @@
 =head1 The Bio::Phylo libraries for phyloinformatic analysis, version 2.0
 
+=over
+
+=item Rutger A. Vos, Naturalis Biodiversity Center, Leiden, the Netherlands
+
+=back
+
 =head2 Abstract
 
 =head2 Introduction
