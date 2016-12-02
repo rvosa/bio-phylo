@@ -51,27 +51,111 @@ sections, with emphasis on the new features provided in version 2.0.
 
 =head3 Data management
 
+=over
+
+=item basic object model: is-a relationships
+
+=item instantiating objects standalone, using factory, from files
+
+=item linking objects together: has-a, has-many relationships
+
+=item exporting objects to text files
+
+=back
+
 =head3 NeXML management
+
+=over
+
+=item NeXML description
+
+=item semantic annotations
+
+=item other representations of NeXML: RDF and JSON
+
+=item additional dependencies
+
+=back
 
 =head3 Visualization
 
+=over
+
+=item cladograms versus phylograms
+
+=item projections: rectangular, unrooted, radial
+
+=item extra annotations: collapsed clades, clade labels, pie charts
+
+=item additional dependencies
+
+=back
+
 =head3 Simulation
+
+=over
+
+=item basic tree simulation and evolutionary models
+
+=item simulation of expected waiting times
+
+=item simulating sequence data
+
+=back
 
 =head3 Web services
 
+=over
+
+=item clients
+
+=item services
+
+=item PhyloWS
+
+=item BioVeL
+
+=item Monophylizer, NeXML website
+
+=back
+
 =head3 Compiled extensions
+
+=over
+
+=item Bio::Phylo::XS
+
+=back
 
 =head3 Likelihood calculations
 
+=over
+
+=item Beagle
+
+=item PLL
+
+=back
+
 =head3 Database mappings
+
+=over
+
+=item Bio::Phylo::Megatree
+
+=back
 
 =head2 Internal design
 
-=head3 Semantic annotations
+=over
 
-=head3 "Roles"
+=item Semantic annotations
 
-=head3 Meta-Object Programming
+=item "Roles"
+
+=item Meta-Object Programming
+
+=back
 
 =head2 Installation
 
