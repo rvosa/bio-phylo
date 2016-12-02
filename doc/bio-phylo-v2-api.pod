@@ -2,7 +2,11 @@
 
 =over
 
-=item Rutger A. Vos, Naturalis Biodiversity Center, Leiden, the Netherlands
+=item Rutger A. Vos1
+
+=item Hannes Hettling1
+
+1. Naturalis Biodiversity Center, Leiden, the Netherlands
 
 =back
 
