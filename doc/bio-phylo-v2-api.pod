@@ -1,10 +1,12 @@
 =head1 The Bio::Phylo libraries for phyloinformatic analysis, version 2.0
 
-=head1 Introduction
+=head2 Abstract
 
-=head1 Overview
+=head2 Introduction
 
-=head1 Installation
+=head2 Overview
+
+=head2 Installation
 
 Bio::Phylo can be installed automatically by a number of different package managers. However,
 these usually rely on outdated versions, and because there is nothing that needs to be
@@ -36,31 +38,31 @@ on Windows) include a package manager called C<ppm>. While this is very useful f
 install compiled extensions, this too relies on old versions of Bio::Phylo, so is best 
 avoided, as are Linux-based package managers, such as C<apt-get> and C<yum>.
 
-=head1 Applications
+=head2 Applications
 
-=head2 Data management
+=head3 Data management
 
-=head2 NeXML management
+=head3 NeXML management
 
-=head2 Visualization
+=head3 Visualization
 
-=head2 Simulation
+=head3 Simulation
 
-=head2 Compiled extensions
+=head3 Compiled extensions
 
-=head2 Likelihood calculations
+=head3 Likelihood calculations
 
-=head2 Database mappings
+=head3 Database mappings
 
-=head1 Internal design
+=head2 Internal design
 
-=head2 Semantic annotations
+=head3 Semantic annotations
 
-=head2 "Roles"
+=head3 "Roles"
 
-=head2 Meta-Object Programming
+=head3 Meta-Object Programming
 
-=head1 Availability
+=head2 Availability
 
 All revisions of the source code are available from the source code repository at
 L<http://github.com/rvosa/bio-phylo>. The latest stable release version, which is usually 
@@ -77,8 +79,8 @@ licenses fits best with your own project, should you want to reuse all (or part)
 This is certainly the spirit: feel free to use these libraries however you see fit. 
 No warranties.
 
-=head1 Glossary
+=head2 Glossary
 
-=head1 Acknowledgements
+=head2 Acknowledgements
 
-=head1 References
+=head2 References
