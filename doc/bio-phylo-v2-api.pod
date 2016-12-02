@@ -1,3 +1,15 @@
+# Possible reviewers for this probably include:
+# - Chris Fields
+# - Denis Baurain
+# - Daisie Huang
+# The general idea here is that these are people I haven't published with (yet).
+# The BioPerl people's page provides a murderer's row of other candidates, though
+# quite a few I already have published with, so there's a potential for COI.
+# Likewise, all people on the previous publication, or people that have since 
+# been added to the Acknowledgements in the README.md are obviously out.
+
+=pod
+
 =head1 The Bio::Phylo libraries for phylogenetic data analysis, version 2.0
 
 =over
