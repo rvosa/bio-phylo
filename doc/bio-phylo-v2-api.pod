@@ -14,6 +14,15 @@
 
 =head2 Introduction
 
+=cut
+
+$foo;
+sub bar {
+
+}
+
+=pod
+
 =head2 Overview
 
 =head2 Applications
