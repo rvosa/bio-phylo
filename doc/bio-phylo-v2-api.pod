@@ -58,7 +58,7 @@ L<git|http://git-scm.org> tool on most common operating systems, it is outside o
 of this document to discuss how this is done: good documentation for C<git> can be found 
 L<online|https://help.github.com/articles/cloning-a-repository/>. How to update an 
 environment variable to add an additional location to it, on any particular operating 
-system, is likewise best searched for online.
+system, is likewise best searched for online. #
 
 Although this is not the recommended way to install, Bio::Phylo is also available from CPAN, 
 which means that any tools built around this system will be able to install the latest 
