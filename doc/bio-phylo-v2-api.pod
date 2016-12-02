@@ -36,9 +36,11 @@ characters of character state matrices, and the character state sequences in the
 functionality to create these objects from scratch, or to read them from various data sources, or to 
 simulate them; and, subsequently, to transform them, perform calculations on them, and to report the results of 
 these operations by exporting data in various formats or by visualizing them. As such, the Bio::Phylo libraries
-form a modular toolkit whose components can be used in anything from quick scripts, e.g. to convert some data 
+form a modular toolkit whose components are used in anything from quick scripts, e.g. to convert some data 
 to the right format for some other program, to larger applications, such as the SUPERSMART pipeline [Antonelli10092016] 
-or the Monophylizer [Mutanen01112016] web service.
+or the Monophylizer [Mutanen01112016] web service. In addition, other libraries for bioinformatics and computational
+biology depend upon Bio::Phylo in order to re-use some of its functionality. The most widely-used and well-known
+of these is BioPerl 
 
 =head3 Data management
 
