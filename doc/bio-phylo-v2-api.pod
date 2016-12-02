@@ -16,6 +16,17 @@
 
 =head2 Overview
 
+The Bio::Phylo libraries are designed around the notion that phylogenetic data can be modeled as consisting of 
+the properties of, and relationships between, objects from a limited number of classes. These classes are things
+such as phylogenetic trees, the tree nodes in them, and the taxa that terminal tree nodes represent; or the 
+characters of character state matrices, and the character state sequences in them. Bio::Phylo provides the 
+functionality to create these objects from scratch, or to read them from various data sources, or to 
+simulate them; and, subsequently, to transform them, perform calculations on them, and to report the results of 
+these operations by exporting data in various formats or by visualizing them. As such, the Bio::Phylo libraries
+form a modular toolkit whose components can be used in anything from quick scripts, e.g. to convert some data 
+to the right format for some other program, to larger applications, such as the SUPERSMART pipeline [ref] or the
+Monophylizer [ref] web service.
+
 =head2 Applications
 
 =head3 Data management
@@ -90,6 +101,8 @@ applies. This is generally interpreted to mean that you are free to choose which
 licenses fits best with your own project, should you want to reuse all (or part) of Bio::Phylo.
 This is certainly the spirit: feel free to use these libraries however you see fit. 
 No warranties.
+
+=head2 Community
 
 =head2 Glossary
 
