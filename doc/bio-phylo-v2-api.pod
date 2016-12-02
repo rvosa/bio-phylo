@@ -16,6 +16,32 @@
 
 =head2 Overview
 
+=head2 Applications
+
+=head3 Data management
+
+=head3 NeXML management
+
+=head3 Visualization
+
+=head3 Simulation
+
+=head3 Web services
+
+=head3 Compiled extensions
+
+=head3 Likelihood calculations
+
+=head3 Database mappings
+
+=head2 Internal design
+
+=head3 Semantic annotations
+
+=head3 "Roles"
+
+=head3 Meta-Object Programming
+
 =head2 Installation
 
 Bio::Phylo can be installed automatically by a number of different package managers. However,
@@ -47,32 +73,6 @@ better to check out the code as described above). Certain installations of Perl 
 on Windows) include a package manager called C<ppm>. While this is very useful for hard-to-
 install compiled extensions, this too relies on old versions of Bio::Phylo, so is best 
 avoided, as are Linux-based package managers, such as C<apt-get> and C<yum>.
-
-=head2 Applications
-
-=head3 Data management
-
-=head3 NeXML management
-
-=head3 Visualization
-
-=head3 Simulation
-
-=head3 Web services
-
-=head3 Compiled extensions
-
-=head3 Likelihood calculations
-
-=head3 Database mappings
-
-=head2 Internal design
-
-=head3 Semantic annotations
-
-=head3 "Roles"
-
-=head3 Meta-Object Programming
 
 =head2 Availability
 
