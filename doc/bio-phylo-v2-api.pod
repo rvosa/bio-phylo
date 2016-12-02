@@ -44,7 +44,8 @@ as part of a larger analysis (numerous publications cite this usage, some high-i
 [hayward2015pan], [hayward2013broad] and [de2013convergent]), to larger applications, such as the SUPERSMART 
 pipeline [Antonelli10092016] or the Monophylizer [Mutanen01112016] web service. In addition, other libraries 
 for bioinformatics and computational biology depend on Bio::Phylo in order to re-use some of its functionality. 
-The most widely-used and well-known of these is BioPerl [stajich2002bioperl].
+The most widely-used and well-known of these is BioPerl [stajich2002bioperl], which uses Bio::Phylo for 
+reading and writing NeXML [vos2012nexml] data.
 
 =head3 Data management
 
