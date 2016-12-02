@@ -54,6 +54,8 @@ avoided, as are Linux-based package managers, such as C<apt-get> and C<yum>.
 
 =head1 Internal design
 
+=head2 Semantic annotations
+
 =head2 "Roles"
 
 =head2 Meta-Object Programming
