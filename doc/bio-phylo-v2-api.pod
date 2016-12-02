@@ -1,4 +1,4 @@
-=head1 The Bio::Phylo libraries for phyloinformatic analysis, version 2.0
+=head1 The Bio::Phylo libraries for phylogenetic data analysis, version 2.0
 
 =over
 
@@ -25,9 +25,7 @@ simulate them; and, subsequently, to transform them, perform calculations on the
 these operations by exporting data in various formats or by visualizing them. As such, the Bio::Phylo libraries
 form a modular toolkit whose components can be used in anything from quick scripts, e.g. to convert some data 
 to the right format for some other program, to larger applications, such as the SUPERSMART pipeline [Antonelli10092016] 
-or the Monophylizer [ref] web service.
-
-=head2 Applications
+or the Monophylizer [Mutanen01112016] web service.
 
 =head3 Data management
 
