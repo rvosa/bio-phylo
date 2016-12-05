@@ -51,13 +51,17 @@ sections, with emphasis on the new features provided in version 2.0.
 
 =head3 Data management
 
+The Bio::Phylo API models a number of relationships between different classes of data objects. For example, a 
+phylogenetic tree has zero or more nodes in it, and, conversely, a node belongs at most to a single tree. These 
+relationships, which can be termed "has-a" and "has-many" relationships, have been exhaustively described previously 
+(see [Vos2011] and Figure 1 therein) and have not changed in version 2.0. In addition, the API models relationships 
+between classes of objects in terms of their inheritance from one another, i.e. "is-a" relationships. In the new 
+API, these latter relationships have subtly changed, although this does not affect the behavior experienced by 
+users of the toolkit. These changes are discussed in the section on L<Internal design>.
+
 =over
 
-=item basic object model: is-a relationships
-
 =item instantiating objects standalone, using factory, from files
-
-=item linking objects together: has-a, has-many relationships
 
 =item exporting objects to text files
 
