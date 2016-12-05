@@ -63,7 +63,11 @@ users of the toolkit. These changes are discussed in the section on L<Internal d
 
 =item instantiating objects standalone, using factory, from files
 
+New parsers: Adjacency, CDAO, FASTQ, Figtree, NHX
+
 =item exporting objects to text files
+
+New unparsers: Adjacency, CDAO, Figtree, HTML, NHX, Nwmsrdf
 
 =back
 
