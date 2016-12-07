@@ -33,6 +33,25 @@ You can pass the following additional arguments to the unparse call:
 	# specifies a branch length sprintf number formatting template, default is %f
 	-blformat => '%e'
 
+In addition, you can influence what key/value pairs are inserted into the NHX "hot 
+comments" in two ways. The first way (and the way that is least likely to cause 
+unintentional mishaps) is by attaching a Meta annotation to a node. This annotation
+has to be associated with the NHX namespace. Here is an example:
+
+	use Bio::Phylo::Util::CONSTANT ':classnames';
+	
+	# ...other things happening...
+	$node->set_namespaces( 'nhx' => _NS_NHX_ );
+	$node->set_meta_object( 'nhx:foo' => 'bar' );
+	
+	# which results in: [&&NHX:foo=bar]
+
+The other way is by using the set/get generic methods, e.g.:
+
+	$node->set_generic( 'foo' => 'bar');
+
+However, this is riskier because everything you attach to an object using these methods
+will be inserted into the NHX, including references (which won't serialize well).
 
 =begin comment
 
