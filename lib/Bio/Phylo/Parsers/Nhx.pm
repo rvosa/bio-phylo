@@ -70,7 +70,7 @@ sub _parse_node_data {
     # process branch length, nhx is suffixed
     my $bl = $tail[-1];
 	my $nhx;
-	if ( $bl =~ /^(.*?)\[&&NHX:(.+?)\]$/ ) {
+	if ( $bl and $bl =~ /^(.*?)\[&&NHX:(.+?)\]$/ ) {
 		$node->set_namespaces( 'nhx' => _NS_NHX_ );
 		( $bl, $nhx ) = ( $1, $2 );
 		for my $tuple ( split /:/, $nhx ) {
