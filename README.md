@@ -6,9 +6,9 @@ Documentation branch
 
 Welcome to the `gh-pages` branch of the Bio::Phylo repository.
 This branch is primarily used to create and manage content for
-the [website](rvosa.github.io/bio-phylo). Hence, this branch 
-contains documentation-related files that are not part of 
-Bio::Phylo's POD. In other words, the following things are 
+the [website](http://rvosa.github.io/bio-phylo). Hence, this 
+branch contains documentation-related files that are not part 
+of Bio::Phylo's POD. In other words, the following things are 
 welcome here:
 
 - anything to set up HTML generation to produce the web pages
