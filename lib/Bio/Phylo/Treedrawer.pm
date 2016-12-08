@@ -1011,6 +1011,7 @@ sub cartesian_to_polar {
 sub _compute_unrooted_coordinates {
     my $self = shift;
     my $tre  = $self->get_tree;
+    my $phy  = $self->get_mode =~ /^p/i ? $tre->is_cladogram ? 0 : 1 : 0; # phylogram?
     
     # compute unscaled rotation, depth and tip count
     my ( %unscaled_rotation, %depth );
@@ -1018,7 +1019,7 @@ sub _compute_unrooted_coordinates {
     
     $tre->visit_depth_first(
         # process tips first
-        '-no_daughter' => sub {	
+        '-no_daughter' => sub {
             my $node = shift;
             my $id = $node->get_id;
             ( $unscaled_rotation{$id}, $depth{$id} ) = ( $total_tips, 0 );
@@ -1028,18 +1029,29 @@ sub _compute_unrooted_coordinates {
         # then process internals
         '-post_daughter' => sub {
             my $node = shift;
-            my $id   = $node->get_id;		
+            my $id   = $node->get_id;
             
             # get deepest child and average rotation
             my @child = @{ $node->get_children };
-            my ( $unscaled_rotation, $depth ) = ( 0, 0 );		
+            my ( $unscaled_rotation, $depth ) = ( 0, 0 );
             for my $c ( @child ) {
                 my $cid = $c->get_id;
                 my $c_depth = $depth{$cid};
                 $unscaled_rotation += $unscaled_rotation{$cid};
                 $depth = $c_depth if $c_depth > $depth;
             }
-            $depth++;
+            
+            # increment depth
+            if ( $phy ) {
+                my @mapped    = map { $_->get_branch_length } @child;
+                my ($tallest) = sort { $b <=> $a } @mapped;
+                $depth += $tallest;
+            }
+            else {
+                $depth++;
+            }
+            
+            # update rotation
             $unscaled_rotation /= scalar(@child);
             
             # check to see if current depth is overal deepest
