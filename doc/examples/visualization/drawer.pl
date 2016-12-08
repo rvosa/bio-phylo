@@ -42,8 +42,9 @@ $tree->visit(sub{
 open my $fh, '>', $outfile or die $!;
 print $fh Bio::Phylo::Treedrawer->new(
 	'-format' => 'svg',
-	'-width'  => 1000,
-	'-height' => 10000,
+	'-width'  => 4000,
+	'-height' => 4000,
 	'-tree'   => $tree,
-	'-shape'  => 'rect',
+	'-shape'  => 'radial',
+	'-mode'   => 'phylo',
 )->draw;
