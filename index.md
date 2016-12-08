@@ -2,20 +2,7 @@
 layout: index
 ---
 
-<header>
-<h1>Bio-phylo</h1>
-<p>Bio::Phylo - Phyloinformatic analysis using Perl</p>
 
-<p class="view"><a href="https://github.com/rvosa/bio-phylo">View the Project on GitHub <small>rvosa/bio-phylo</small></a></p>
-
-
-<ul>
-<li><a href="https://github.com/rvosa/bio-phylo/zipball/master">Download <strong>ZIP File</strong></a></li>
-<li><a href="https://github.com/rvosa/bio-phylo/tarball/master">Download <strong>TAR Ball</strong></a></li>
-<li><a href="https://github.com/rvosa/bio-phylo">View On <strong>GitHub</strong></a></li>
-</ul>
-</header>
-<section>
 <h1>
 <a id="biophylo" class="anchor" href="#biophylo" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Bio::Phylo</h1>
 
@@ -120,8 +107,3 @@ doi:10.1186/1471-2105-12-63</p>
 
 <p>Copyright 2005-2015 Rutger Vos, All Rights Reserved. This program is free software; 
 you can redistribute it and/or modify it under the same terms as Perl itself.</p>
-</section>
-<footer>
-<p>This project is maintained by <a href="https://github.com/rvosa">rvosa</a></p>
-<p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
-</footer>
