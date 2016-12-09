@@ -39,17 +39,17 @@ my $model = Bio::Phylo::Models::Substitution::Dna->new(
 
 # get substitution rate from A to C
 my $rate = $model->get_rate('A', 'C');
- 
+
 # get model representation that can be used by Garli
 my $modelstr = $model->to_string( '-format' => 'garli' )
 
 =head1 DESCRIPTION
 
 This is a superclass for models of DNA evolution. Classes that inherit from this
-class provide methods for retreiving general parameters such as substitution rates 
+class provide methods for retreiving general parameters such as substitution rates
 or the number of states as well as model-specific parameters. Currently most of the
 popular models are implemented. The static function C<modeltest> determines the
-substitution model from a L<Bio::Phylo::Matrices::Matrix> object and returns the 
+substitution model from a L<Bio::Phylo::Matrices::Matrix> object and returns the
 appropriate instance of the subclass. This class also provides serialization
 of a model to standard phylogenetics file formats.
 
@@ -59,7 +59,7 @@ of a model to standard phylogenetics file formats.
 
 =over
 
-=item new 
+=item new
 
 Dna model constructor.
 
@@ -249,7 +249,7 @@ Getter for overall mutation rate.
  Args    : None
 
 =cut
- 
+
 sub get_mu { shift->{'_mu'} }
 
 =item get_pinvar
@@ -276,7 +276,7 @@ Getter for base frequencies.
  Usage   : $model->get_pi;
  Function: Getter for base frequencies.
  Returns : array
- Args    : Optional: 
+ Args    : Optional:
            Base (A, C, T or G)
 
 =cut
@@ -310,7 +310,7 @@ sub get_median { shift->{'_median'} }
 
 =item set_rate
 
-Setter for substitution rate. 
+Setter for substitution rate.
 
  Type    : method
  Title   : set_rate
@@ -318,7 +318,7 @@ Setter for substitution rate.
  Function: Set nucleotide transition rates.
  Returns : A Bio::Phylo::Models::Substitution::Dna object.
  Args    : scalar or array of arrays (4x4)
-           
+
 =cut
 
 sub set_rate {
@@ -342,7 +342,7 @@ Setter for number of rate categories.
  Function: Set the number of rate categoeries.
  Returns : A Bio::Phylo::Models::Substitution::Dna object.
  Args    : scalar
-           
+
 =cut
 
 sub set_ncat {
@@ -420,7 +420,7 @@ Setter for overall mutation rate.
  Args    : scalar
 
 =cut
- 
+
 sub set_mu {
     my $self = shift;
     $self->{'_mu'} = shift;
@@ -496,10 +496,10 @@ sub set_median {
 
 =item modeltest
 
-Performing a modeltest using the package 'phangorn' in 
-R (Schliep, Bioinformatics (2011) 27 (4): 592-593) from an 
+Performing a modeltest using the package 'phangorn' in
+R (Schliep, Bioinformatics (2011) 27 (4): 592-593) from an
 DNA alignment. If no tree is given as argument, a neighbor-joining
-tree is generated from the alignment to perform model testing. 
+tree is generated from the alignment to perform model testing.
 Selects the model with the minimum AIC.
 
  Type    : method
@@ -510,8 +510,8 @@ Selects the model with the minimum AIC.
  Args    : -matrix: A Bio::Phylo::Matrices::Matrix object
            Optional:
            -tree: A Bio::Phylo::Forest::Tree object
-           -timeout: Timeout in seconds to prevent getting stuck in an R process. 
- Comments: Prerequisites: Statistics::R, R, and the R package phangorn.          
+           -timeout: Timeout in seconds to prevent getting stuck in an R process.
+ Comments: Prerequisites: Statistics::R, R, and the R package phangorn.
 
 =cut
 
@@ -531,13 +531,13 @@ sub modeltest {
 			my ($fasta_fh, $fasta) = tempfile();
 			print $fasta_fh unparse('-phylo'=>$matrix, '-format'=>'fasta');
 			close $fasta_fh;
-			
+
 			# instanciate R and lcheck if phangorn is installed
 			my $R = Statistics::R->new;
 			$R->timeout($timeout) if $timeout;
 			$R->run(q[options(device=NULL)]);
 			$R->run(q[package <- require("phangorn")]);
-			
+
 			if ( ! $R->get(q[package]) eq "TRUE") {
 				$logger->warn("R library phangorn must be installed to run modeltest");
 				return $model;
@@ -545,10 +545,10 @@ sub modeltest {
 
 			# read data
 			$R->run(qq[data <- read.FASTA("$fasta")]);
-			
+
 			# remove temp file
 			cleanup();
-			
+
 			if ( $tree ) {
 				# make copy of tree since it will be pruned
 				my $current_tree = parse('-format'=>'newick', '-string'=>$tree->to_newick)->first;
@@ -557,14 +557,14 @@ sub modeltest {
 				$logger->debug('pruning input tree');
 				$current_tree->keep_tips(\@taxon_names);
 				$logger->debug('pruned input tree: ' . $current_tree->to_newick);
-				
+
 				if ( ! $current_tree or scalar( @{ $current_tree->get_terminals } ) < 3 ) {
 					$logger->warn('pruned tree has too few tip labels, determining substitution model using NJ tree');
 					$R->run(q[test <- modelTest(phyDat(data))]);
 				}
 				else {
 					my $newick = $current_tree->to_newick;
-					
+
 					$R->run(qq[tree <- read.tree(text="$newick")]);
 					# call modelTest
 					$logger->debug("calling modelTest from R package phangorn");
@@ -575,22 +575,22 @@ sub modeltest {
 				# modelTest will estimate tree
 				$R->run(q[test <- modelTest(phyDat(data))]);
 			}
-			
+
 			# get model with lowest Aikaike information criterion
 			$R->run(q[model <- test[which(test$AIC==min(test$AIC)),]$Model]);
 			my $modeltype = $R->get(q[model]);
 			$logger->info("estimated DNA evolution model $modeltype");
-			
+
 			# determine model parameters
 			$R->run(q[env <- attr(test, "env")]);
 			$R->run(q[fit <- eval(get(model, env), env)]);
 
 			#  get base freqs
 			my $pi = $R->get(q[fit$bf]);
-			
+
 			# get overall mutation rate
 			my $mu = $R->get(q[fit$rate]);
-			
+
 			# get lower triangle of rate matrix (column order ACGT)
 			# and fill whole matrix; set diagonal values to 1
 			my $q = $R->get(q[fit$Q]);
@@ -632,7 +632,7 @@ sub modeltest {
 				$model = Bio::Phylo::Models::Substitution::Dna->new(
 					'-pi' => $pi );
 			}
-			
+
 			# set gamma parameters
 			if ( $modeltype =~ /\+G/ ) {
 				$logger->debug("setting gamma parameters for $modeltype model");
@@ -646,7 +646,7 @@ sub modeltest {
 				my $catweights = $R->get(q[fit$w]);
 				$model->set_catweights($catweights);
 			}
-			
+
 			# set invariant parameters
 			if ( $modeltype =~ /\+I/ ) {
 				$logger->debug("setting invariant site parameters for $modeltype model");
@@ -666,13 +666,13 @@ sub modeltest {
 	else {
 		$logger->warn("Statistics::R must be installed to run modeltest");
 	}
-	
+
 	return $model;
 }
 
 =item to_string
 
-Get string representation of model in specified format 
+Get string representation of model in specified format
 (paup, phyml, mrbayes or garli)
 
  Type    : method
@@ -840,5 +840,9 @@ sub _to_paup_string {
 }
 
 sub _type { _MODEL_ }
+
+=back
+
+=cut
 
 1;
