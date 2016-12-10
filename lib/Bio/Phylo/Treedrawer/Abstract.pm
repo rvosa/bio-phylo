@@ -50,6 +50,7 @@ sub _tree   { shift->{'TREE'} }
 sub _draw {
     my $self = shift;
     my $td   = $self->_drawer;
+    $self->_draw_scale;
     $self->_tree->visit_depth_first(
         '-post' => sub {
             my $node        = shift;
@@ -91,7 +92,6 @@ sub _draw {
             );
         }
     );
-    $self->_draw_scale;
     $self->_draw_pies;
     $self->_draw_legend;
     return $self->_finish;
@@ -340,6 +340,15 @@ sub _draw_scale {
     my $height  = $drawer->get_height;
     my $options = $drawer->get_scale_options;
     if ($options) {
+	my %font;
+	if ( $options->{'-font'} and ref $options->{'-font'} eq 'HASH' ) {
+	    for my $key ( keys %{ $options->{'-font'} } ) {
+	        my $nk = $key;
+                $nk =~ s/-/-font_/;
+                $font{$nk} = $options->{'-fontÂ'}->{$key};	
+	    }
+	}
+
         my ( $major, $minor ) = ( $options->{'-major'}, $options->{'-minor'} );
         my $width = $options->{'-width'};
         if ( $width =~ m/^(\d+)%$/ ) {
@@ -370,7 +379,7 @@ sub _draw_scale {
             '-y2'   => ( $height - 5 ),
             'class' => 'scale_bar',
         );
-        $self->_draw_text(
+        $self->_draw_text( %font,
             '-x'    => ( $rootx + $width + $drawer->get_text_horiz_offset ),
             '-y'    => ( $height - 5 ),
             '-text' => $options->{'-label'} || ' ',
@@ -384,7 +393,7 @@ sub _draw_scale {
                 '-y2'   => ( $height - 25 ),
                 'class' => 'scale_major',
             );
-            $self->_draw_text(
+            $self->_draw_text( %font,
                 '-x'    => $i,
                 '-y'    => ( $height - 35 ),
                 '-text' => $major_text,
