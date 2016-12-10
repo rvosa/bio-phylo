@@ -411,10 +411,15 @@ Sets time scale options.
  Type    : Mutator
  Title   : set_scale_options
  Usage   : $treedrawer->set_scale_options(
-                -width => 400,
-                -major => '10%', # major cross hatch interval
-                -minor => '2%',  # minor cross hatch interval
-                -label => 'MYA',
+                -width   => 400,
+                -major   => '10%', # major cross hatch interval
+                -minor   => '2%',  # minor cross hatch interval
+                -label   => 'MYA',
+		-reverse => 1, # tips are 0
+		-font    => {
+			-face => 'Verdana',
+			-size => 11,
+		}
             );
  Function: Sets the options for time (distance) scale
  Returns :
@@ -433,33 +438,43 @@ sub set_scale_options {
     my $self = shift;
     if ( ( @_ && !scalar @_ % 2 ) || ( scalar @_ == 1 && ref $_[0] eq 'HASH' ) )
     {
-        my %o;    # %options
+        my %o; # %options
         if ( scalar @_ == 1 && ref $_[0] eq 'HASH' ) {
             %o = %{ $_[0] };
         }
         else {
             %o = looks_like_hash @_;
         }
-        $self->{'SCALE'}->{'-units'} = $o{'-units'};
+	
+	# copy verbatim
+	$self->{'SCALE'}->{'-label'}   = $o{'-label'};
+        $self->{'SCALE'}->{'-units'}   = $o{'-units'};
+	$self->{'SCALE'}->{'-reverse'} = $o{'-reverse'};
+	$self->{'SCALE'}->{'-font'}    = $o{'-font'};
+	
+	# set scale width, either pixels or relative to tree
         if ( looks_like_number $o{'-width'} or $o{'-width'} =~ m/^\d+%$/ ) {
             $self->{'SCALE'}->{'-width'} = $o{'-width'};
         }
         else {
             throw 'BadArgs' => "\"$o{'-width'}\" is invalid for '-width'";
         }
+	
+	# set major tick mark distances
         if ( looks_like_number $o{'-major'} or $o{'-major'} =~ m/^\d+%$/ ) {
             $self->{'SCALE'}->{'-major'} = $o{'-major'};
         }
         else {
             throw 'BadArgs' => "\"$o{'-major'}\" is invalid for '-major'";
         }
+	
+	# set minor tick mark distances
         if ( looks_like_number $o{'-minor'} or $o{'-minor'} =~ m/^\d+%$/ ) {
             $self->{'SCALE'}->{'-minor'} = $o{'-minor'};
         }
         else {
             throw 'BadArgs' => "\"$o{'-minor'}\" is invalid for '-minor'";
         }
-        $self->{'SCALE'}->{'-label'} = $o{'-label'};
     }
     else {
         throw 'OddHash' => 'Odd number of elements in hash assignment';
