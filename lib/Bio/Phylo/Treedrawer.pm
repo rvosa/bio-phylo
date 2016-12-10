@@ -415,11 +415,12 @@ Sets time scale options.
                 -major   => '10%', # major cross hatch interval
                 -minor   => '2%',  # minor cross hatch interval
                 -label   => 'MYA',
-		-reverse => 1, # tips are 0
-		-font    => {
-			-face => 'Verdana',
-			-size => 11,
-		}
+                -reverse => 1, # tips are 0
+                -tmpl    => '%d', # sprintf template for major cross hatch numbers
+                -font    => {
+                   -face => 'Verdana',
+                   -size => 11,
+                }
             );
  Function: Sets the options for time (distance) scale
  Returns :
@@ -431,13 +432,18 @@ Sets time scale options.
            -minor => ( ditto, value for minor tick marks )
            -label => ( text string displayed next to scale )
            -units => TRUE
+           -reverse => 1, # tips are 0
+           -tmpl    => '%d', # sprintf template for major cross hatch numbers
+           -font    => {
+              -face => 'Verdana',
+              -size => 11,
+           }           
 
 =cut
 
 sub set_scale_options {
     my $self = shift;
-    if ( ( @_ && !scalar @_ % 2 ) || ( scalar @_ == 1 && ref $_[0] eq 'HASH' ) )
-    {
+    if ( ( @_ && !scalar @_ % 2 ) || ( scalar @_ == 1 && ref $_[0] eq 'HASH' ) ) {
         my %o; # %options
         if ( scalar @_ == 1 && ref $_[0] eq 'HASH' ) {
             %o = %{ $_[0] };
@@ -445,30 +451,31 @@ sub set_scale_options {
         else {
             %o = looks_like_hash @_;
         }
-	
-	# copy verbatim
-	$self->{'SCALE'}->{'-label'}   = $o{'-label'};
+    
+        # copy verbatim
+        $self->{'SCALE'}->{'-label'}   = $o{'-label'};
         $self->{'SCALE'}->{'-units'}   = $o{'-units'};
-	$self->{'SCALE'}->{'-reverse'} = $o{'-reverse'};
-	$self->{'SCALE'}->{'-font'}    = $o{'-font'};
-	
-	# set scale width, either pixels or relative to tree
+        $self->{'SCALE'}->{'-reverse'} = $o{'-reverse'};
+        $self->{'SCALE'}->{'-font'}    = $o{'-font'};
+        $self->{'SCALE'}->{'-tmpl'}    = $o{'-tmpl'};
+    
+        # set scale width, either pixels or relative to tree
         if ( looks_like_number $o{'-width'} or $o{'-width'} =~ m/^\d+%$/ ) {
             $self->{'SCALE'}->{'-width'} = $o{'-width'};
         }
         else {
             throw 'BadArgs' => "\"$o{'-width'}\" is invalid for '-width'";
         }
-	
-	# set major tick mark distances
+    
+        # set major tick mark distances
         if ( looks_like_number $o{'-major'} or $o{'-major'} =~ m/^\d+%$/ ) {
             $self->{'SCALE'}->{'-major'} = $o{'-major'};
         }
         else {
             throw 'BadArgs' => "\"$o{'-major'}\" is invalid for '-major'";
         }
-	
-	# set minor tick mark distances
+    
+        # set minor tick mark distances
         if ( looks_like_number $o{'-minor'} or $o{'-minor'} =~ m/^\d+%$/ ) {
             $self->{'SCALE'}->{'-minor'} = $o{'-minor'};
         }
