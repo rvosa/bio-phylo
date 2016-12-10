@@ -340,14 +340,14 @@ sub _draw_scale {
     my $height  = $drawer->get_height;
     my $options = $drawer->get_scale_options;
     if ($options) {
-	my %font;
-	if ( $options->{'-font'} and ref $options->{'-font'} eq 'HASH' ) {
-	    for my $key ( keys %{ $options->{'-font'} } ) {
-	        my $nk = $key;
+        my %font;
+        if ( $options->{'-font'} and ref $options->{'-font'} eq 'HASH' ) {
+            for my $key ( keys %{ $options->{'-font'} } ) {
+                my $nk = $key;
                 $nk =~ s/-/-font_/;
-                $font{$nk} = $options->{'-fontÂ'}->{$key};	
-	    }
-	}
+                $font{$nk} = $options->{'-font'}->{$key};  
+            }
+        }
 
         my ( $major, $minor ) = ( $options->{'-major'}, $options->{'-minor'} );
         my $width = $options->{'-width'};
@@ -385,6 +385,9 @@ sub _draw_scale {
             '-text' => $options->{'-label'} || ' ',
             'class' => 'scale_label',
         );
+        
+        my $tmpl = $options->{'-tmpl'} || '%s';
+        my $code = ref $tmpl ? $tmpl : sub { sprintf $tmpl, shift };
         for ( my $i = $rootx ; $i <= ( $rootx + $width ) ; $i += $major ) {
             $self->_draw_line(
                 '-x1'   => $i,
@@ -396,7 +399,7 @@ sub _draw_scale {
             $self->_draw_text( %font,
                 '-x'    => $i,
                 '-y'    => ( $height - 35 ),
-                '-text' => $major_text,
+                '-text' => $code->( $major_text ),
                 'class' => 'major_label',
             );
             $major_text += $major_scale;
