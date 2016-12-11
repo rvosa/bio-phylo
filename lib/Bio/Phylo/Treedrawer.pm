@@ -140,13 +140,22 @@ sub _cascading_getter {
     my ( $package, $filename, $line, $subroutine ) = caller(1);
     $subroutine =~ s/.*://;
     $logger->debug($subroutine);
-    if ($invocant) {
-        if ( $invocant->can($subroutine) ) {
+    if ( $invocant ) {
+        
+        # The general idea is that there are certain properties that can potentially be
+        # set globally (i.e. in this package) or at the level of the object it applies
+        # to. For example, maybe we want to set the node radius globally here, or maybe
+        # we want to set it on the node. The idea, here, is then that we might first
+        # check to see if the values are set on $invocant, and if not, return the global
+        # value. The way this used to be done was by calling ->can(), however, because of
+        # the way in which method calls are handled by the Draw*Role classes, we can't
+        # do that.
+        #if ( $invocant->can($subroutine) ) {
             my $value = $invocant->$subroutine();
             if ( defined $value ) {
                 return $value;
             }
-        }
+        #}
     }
     $subroutine =~ s/^get_//;
     return $self->{ uc $subroutine };
@@ -1143,15 +1152,8 @@ sub _compute_rooted_coordinates {
         
         # process this only on tips
         '-no_daughter' => sub {
-            my $node = shift;
-            if ( $node->get_collapsed ) {
-                $tip_counter += ( ( $cladew - 2 ) / 2 );
-                $node->set_y($tip_counter);
-                $tip_counter += ( ( $cladew - 2 ) / 2 ) + 1;
-            }
-            else {
-                $node->set_y( $tip_counter++ );
-            }
+            my $node = shift;            
+            $node->set_y( $tip_counter++ );
             my $x = $node->get_x;
             $tallest_tip = $x if $x > $tallest_tip;
         },
