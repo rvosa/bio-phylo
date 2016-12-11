@@ -409,6 +409,11 @@ sub set_tree {
     my ( $self, $tree ) = @_;
     if ( looks_like_object $tree, _TREE_ ) {
         $self->{'TREE'} = $tree->negative_to_zero;
+        my $root = $tree->get_root;
+        if ( my $length = $root->get_branch_length ) {
+            $logger->warn("Collapsing root branch length of $length");
+            $root->set_branch_length(0);
+        }
     }
     return $self;
 }
