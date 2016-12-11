@@ -11,7 +11,7 @@ my $node = new_ok('Bio::Phylo::Forest::DrawNodeRole');
 
 my @properties = qw(x y radius tip_radius node_color node_outline_color
 node_shape node_image branch_color branch_shape branch_width branch_style
-collapsed collapsed_width font_face font_size font_style font_color
+collapsed collapsed_clade_width font_face font_size font_style font_color
 text_horiz_offset text_vert_offset rotation);
 
 for my $p ( @properties ) {
