@@ -228,13 +228,17 @@ sub _draw_collapsed {
     my $td = $self->_drawer;
     $node->set_collapsed(0);
 
-    # get the height of the tallest node inside the collapsed clade, for
-    # cladograms this is 1, for phylograms it's the
-    # sum of the branch lengths
+    # Get the height of the tallest node above the collapsed clade; for cladograms this
+    # is 1, for phylograms it's the sum of the branch lengths. Then, compute x1 and x2,
+    # i.e. the tip and the base of the triangle, which consequently are different between
+    # cladograms and phylograms.
     my $tallest = 0;
+    my ( $x1, $x2 );
     my $clado = $td->get_mode =~ m/clado/i;
     if ( $clado ) {
-        $tallest = 1;
+        $tallest = 1;        
+        $x1 = $node->get_x - $tallest * $td->_get_scalex;
+        $x2 = $node->get_x;
     }
     else {
         $node->visit_depth_first(
@@ -245,75 +249,47 @@ sub _draw_collapsed {
                 $tallest = $height if $height > $tallest;
             }
         );
+        $tallest -= $node->get_branch_length;
+        $x1 = $node->get_x;
+        $x2 = ( $tallest * $td->_get_scalex + $node->get_x );         
     }
     
-    if ( $clado ) {
-        my ( $x1, $y1 ) = ( $node->get_x, $node->get_y );
-        my $x2      = $node->get_x;
-        my $padding = $td->get_padding;
-        my $cladew  = $td->get_collapsed_clade_width($node);
-        $self->_draw_triangle(
-            '-x1'     => $node->get_x - $tallest * $td->_get_scalex,
-            '-y1'     => $y1,
-            '-x2'     => $x2,
-            '-y2'     => $y1 + $cladew / 2.7 * $td->_get_scaley - $padding,
-            '-x3'     => $x2,
-            '-y3'     => $y1 - $cladew / 2.7 * $td->_get_scaley + $padding,
-            '-fill'   => $node->get_node_colour,
-            '-stroke' => $node->get_node_outline_colour,
-            '-width'  => $td->get_branch_width($node),
-            '-url'    => $node->get_link,
-            'id'      => 'collapsed' . $node->get_id,
-            'class'   => 'collapsed',
+    # draw the collapsed triangle
+    my $padding = $td->get_padding;
+    my $cladew  = $td->get_collapsed_clade_width($node);
+    my $y1 = $node->get_y;
+    $self->_draw_triangle(
+        '-fill'   => $node->get_node_colour,
+        '-stroke' => $node->get_node_outline_colour,
+        '-width'  => $td->get_branch_width($node),
+        '-url'    => $node->get_link,
+        'id'      => 'collapsed' . $node->get_id,
+        'class'   => 'collapsed',         
+        '-x1'     => $x1,
+        '-y1'     => $y1,
+        '-x2'     => $x2,
+        '-y2'     => $y1 + $cladew / 2 * $td->_get_scaley,
+        '-x3'     => $x2,
+        '-y3'     => $y1 - $cladew / 2 * $td->_get_scaley,
+    );
+    
+    # draw the collapsed clade label
+    if ( my $name = $node->get_name ) {
+        $name =~ s/_/ /g;
+        $name =~ s/^'(.*)'$/$1/;
+        $name =~ s/^"(.*)"$/$1/;
+        $self->_draw_text(
+            'id'           => 'collapsed_text' . $node->get_id,
+            'class'        => 'collapsed_text',
+            '-font_face'   => $node->get_font_face,
+            '-font_size'   => $node->get_font_size,
+            '-font_style'  => $node->get_font_style,
+            '-font_colour' => $node->get_font_colour,
+            '-font_weight' => $node->get_font_weight,              
+            '-x'           => int( $x2 + $td->get_text_horiz_offset ),
+            '-y'           => int( $y1 + $td->get_text_vert_offset ),
+            '-text'        => $name,
         );
-        if ( my $name = $node->get_name ) {
-            $name =~ s/_/ /g;
-            $name =~ s/^'(.*)'$/$1/;
-            $name =~ s/^"(.*)"$/$1/;
-            $self->_draw_text(
-                '-x'    => int( $x2 + $td->get_text_horiz_offset ),
-                '-y'    => int( $y1 + $td->get_text_vert_offset ),
-                '-text' => $name,
-                'id'    => 'collapsed_text' . $node->get_id,
-                'class' => 'collapsed_text',
-                '-font_face'   => $node->get_font_face,
-                '-font_size'   => $node->get_font_size,
-                '-font_style'  => $node->get_font_style,
-                '-font_colour' => $node->get_font_colour,                
-            );
-        }        
-    }
-    else {
-        my ( $x1, $y1 ) = ( $node->get_x, $node->get_y );
-        my $x2      = ( $tallest * $td->_get_scalex + $node->get_x );
-        my $padding = $td->get_padding;
-        my $cladew  = $td->get_collapsed_clade_width($node);
-        $self->_draw_triangle(
-            '-x1'     => $x1,
-            '-y1'     => $y1,
-            '-x2'     => $x2,
-            '-y2'     => $y1 + $cladew / 2 * $td->_get_scaley - $padding,
-            '-x3'     => $x2,
-            '-y3'     => $y1 - $cladew / 2 * $td->_get_scaley + $padding,
-            '-fill'   => $node->get_node_colour,
-            '-stroke' => $node->get_node_outline_colour,
-            '-width'  => $td->get_branch_width($node),
-            '-url'    => $node->get_link,
-            'id'      => 'collapsed' . $node->get_id,
-            'class'   => 'collapsed',
-        );
-        if ( my $name = $node->get_name ) {
-            $name =~ s/_/ /g;
-            $name =~ s/^'(.*)'$/$1/;
-            $name =~ s/^"(.*)"$/$1/;
-            $self->_draw_text(
-                '-x'    => int( $x2 + $td->get_text_horiz_offset ),
-                '-y'    => int( $y1 + $td->get_text_vert_offset ),
-                '-text' => $name,
-                'id'    => 'collapsed_text' . $node->get_id,
-                'class' => 'collapsed_text',
-            );
-        }
     }
     $node->set_collapsed(1);
 }
@@ -355,17 +331,19 @@ sub _draw_scale {
 		# convert width and major/minor ticks to absolute pixel values
         my ( $major, $minor ) = ( $options->{'-major'}, $options->{'-minor'} );
         my $width = $options->{'-width'};
-        my $ttx = $tree->get_tallest_tip->get_x;
+        
+        # find the tallest tip, irrespective of it being collapsed
+        my ($tt) = sort { $b->get_x <=> $a->get_x } @{ $tree->get_entities };        
+        my $ttx = $tt->get_x;
+        my $ptr = $tt->calc_path_to_root;
         if ( $width =~ m/^(\d+)%$/ ) {
-            $width = ( $1 / 100 ) * ( $tree->get_tallest_tip->get_x - $rootx );
+            $width = ( $1 / 100 ) * ( $ttx - $rootx );
         }        
         if ( my $units = $options->{'-units'} ) {
             
             # now we need to calculate how much each branch length unit (e.g.
             # substitutions) is in pixels. The $width then becomes the length
-            # of one branch length unit in pixels times $units
-            my $tt = $tree->get_tallest_tip;
-            my $ptr = $tt->calc_path_to_root;
+            # of one branch length unit in pixels times $units                        
             my $unit_in_pixels = ( $ttx - $rootx ) / $ptr;
             $width = $units * $unit_in_pixels;
         }
@@ -413,7 +391,7 @@ sub _draw_scale {
         
         # draw ticks and labels
         my $major_text = 0;
-        my $major_scale = ( $major / $width ) * $root->calc_max_path_to_tips;
+        my $major_scale = ( $major / $width ) * $ptr;
         my $tmpl = $options->{'-tmpl'} || '%s';
         my $code = ref $tmpl ? $tmpl : sub { sprintf $tmpl, shift };                
         for my $i ( @maji ) {
