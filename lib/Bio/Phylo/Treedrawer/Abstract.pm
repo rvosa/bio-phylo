@@ -332,14 +332,17 @@ sub _draw_collapsed {
 =cut
 
 sub _draw_scale {
-    my $self    = shift;
-    my $drawer  = $self->_drawer;
-    my $tree    = $self->_tree;
-    my $root    = $tree->get_root;
-    my $rootx   = $root->get_x;
-    my $height  = $drawer->get_height;
-    my $options = $drawer->get_scale_options;
-    if ($options) {
+    my $self   = shift;
+    my $drawer = $self->_drawer;
+    
+    # if not options provided, won't attempt to draw a scale
+    if ( my $options = $drawer->get_scale_options ) {
+		my $tree   = $self->_tree;
+		my $root   = $tree->get_root;
+		my $rootx  = $root->get_x;
+		my $height = $drawer->get_height;
+    
+    	# read and convert the font preferences for the _draw_text method
         my %font;
         if ( $options->{'-font'} and ref $options->{'-font'} eq 'HASH' ) {
             for my $key ( keys %{ $options->{'-font'} } ) {
@@ -349,17 +352,19 @@ sub _draw_scale {
             }
         }
 
+		# convert width and major/minor ticks to absolute pixel values
         my ( $major, $minor ) = ( $options->{'-major'}, $options->{'-minor'} );
         my $width = $options->{'-width'};
+        my $ttx = $tree->get_tallest_tip->get_x;
         if ( $width =~ m/^(\d+)%$/ ) {
             $width = ( $1 / 100 ) * ( $tree->get_tallest_tip->get_x - $rootx );
-        }
+        }        
         if ( my $units = $options->{'-units'} ) {
+            
             # now we need to calculate how much each branch length unit (e.g.
             # substitutions) is in pixels. The $width then becomes the length
             # of one branch length unit in pixels times $units
             my $tt = $tree->get_tallest_tip;
-            my $ttx = $tt->get_x;
             my $ptr = $tt->calc_path_to_root;
             my $unit_in_pixels = ( $ttx - $rootx ) / $ptr;
             $width = $units * $unit_in_pixels;
@@ -370,25 +375,48 @@ sub _draw_scale {
         if ( $minor =~ m/^(\d+)%$/ ) {
             $minor = ( $1 / 100 ) * $width;
         }
-        my $major_text  = 0;
-        my $major_scale = ( $major / $width ) * $root->calc_max_path_to_tips;
+        
+        # draw scale line and apply label
+        my $x1 = $options->{'-reverse'} ? $ttx : $rootx;
+        my $ws = $options->{'-reverse'} ? -1 : 1;
+        my $ts = $options->{'-reverse'} ?  0 : 1;        
         $self->_draw_line(
-            '-x1'   => $rootx,
+            '-x1'   => $x1,
             '-y1'   => ( $height - 5 ),
-            '-x2'   => $rootx + $width,
+            '-x2'   => $x1 + ($width*$ws),
             '-y2'   => ( $height - 5 ),
             'class' => 'scale_bar',
         );
         $self->_draw_text( %font,
-            '-x'    => ( $rootx + $width + $drawer->get_text_horiz_offset ),
+            '-x'    => ( $x1 + ($width*$ts) + $drawer->get_text_horiz_offset ),
             '-y'    => ( $height - 5 ),
             '-text' => $options->{'-label'} || ' ',
             'class' => 'scale_label',
         );
         
+        # pre-compute indexes so we can reverse
+        my ( @maji, @mini, $j ); # major/minor indexes
+        if ( $options->{'-reverse'} ) {
+            for ( my $i = $ttx ; $i >= ( $ttx - $width ) ; $i -= $minor ) {
+                push @maji, $i if not $j % 5;
+                push @mini, $i;
+                $j++;
+            }
+        }
+        else {
+            for ( my $i = $rootx ; $i <= ( $rootx + $width ) ; $i += $minor ) {
+                push @maji, $i if not $j % 5;
+                push @mini, $i;
+                $j++;
+            }
+        }        
+        
+        # draw ticks and labels
+        my $major_text = 0;
+        my $major_scale = ( $major / $width ) * $root->calc_max_path_to_tips;
         my $tmpl = $options->{'-tmpl'} || '%s';
-        my $code = ref $tmpl ? $tmpl : sub { sprintf $tmpl, shift };
-        for ( my $i = $rootx ; $i <= ( $rootx + $width ) ; $i += $major ) {
+        my $code = ref $tmpl ? $tmpl : sub { sprintf $tmpl, shift };                
+        for my $i ( @maji ) {
             $self->_draw_line(
                 '-x1'   => $i,
                 '-y1'   => ( $height - 5 ),
@@ -404,7 +432,7 @@ sub _draw_scale {
             );
             $major_text += $major_scale;
         }
-        for ( my $i = $rootx ; $i <= ( $rootx + $width ) ; $i += $minor ) {
+        for my $i ( @mini ) {
             next if not $i % $major;
             $self->_draw_line(
                 '-x1'   => $i,
