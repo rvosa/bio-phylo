@@ -8,7 +8,7 @@ use base 'Bio::Phylo::Forest::NodeRole';
 	our $AUTOLOAD;
 	my @properties = qw(x y radius tip_radius node_color node_outline_color
 	node_shape node_image branch_color branch_shape branch_width branch_style
-	collapsed collapsed_width font_face font_size font_style font_color
+	collapsed collapsed_clade_width font_face font_size font_style font_color
 	font_weight text_horiz_offset text_vert_offset rotation clade_label);
 
 =head1 NAME
@@ -57,7 +57,7 @@ Sets collapsed clade width.
 
  Type    : Mutator
  Title   : set_collapsed_clade_width
- Usage   : $tree->set_collapsed_clade_width(6);
+ Usage   : $node->set_collapsed_clade_width(6);
  Function: sets the width of collapsed clade triangles relative to uncollapsed tips
  Returns :
  Args    : Positive number
@@ -92,6 +92,7 @@ Sets collapsed clade width.
 =cut
 
     *set_node_radius = \&set_radius;
+	*get_node_radius = \&get_radius;
 
 =item set_tip_radius()
 
@@ -412,7 +413,7 @@ Gets collapsed clade width.
 
  Type    : Mutator
  Title   : get_collapsed_clade_width
- Usage   : $w = $tree->get_collapsed_clade_width();
+ Usage   : $w = $node->get_collapsed_clade_width();
  Function: gets the width of collapsed clade triangles relative to uncollapsed tips
  Returns : Positive number
  Args    : None
