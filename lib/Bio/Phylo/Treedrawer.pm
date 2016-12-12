@@ -428,6 +428,7 @@ Sets time scale options.
                 -width   => 400,
                 -major   => '10%', # major cross hatch interval
                 -minor   => '2%',  # minor cross hatch interval
+                -blocks  => '10%', # alternating blocks in light-gray
                 -label   => 'MYA',
                 -reverse => 1, # tips are 0
                 -tmpl    => '%d', # sprintf template for major cross hatch numbers
@@ -438,20 +439,18 @@ Sets time scale options.
             );
  Function: Sets the options for time (distance) scale
  Returns :
- Args    : -width => (if a number, like 100, pixel 
-                      width is assumed, if a percentage, 
-                      scale width relative to longest root
-                      to tip path)
-           -major => ( ditto, value for major tick marks )
-           -minor => ( ditto, value for minor tick marks )
-           -label => ( text string displayed next to scale )
-           -units => TRUE
-           -reverse => 1, # tips are 0
-           -tmpl    => '%d', # sprintf template for major cross hatch numbers
-           -font    => {
-              -face => 'Verdana',
-              -size => 11,
-           }           
+ Args    :
+	-width   => 400,
+	-major   => '10%', # major cross hatch interval
+	-minor   => '2%',  # minor cross hatch interval
+	-blocks  => '10%', # alternating blocks in light-gray
+	-label   => 'MYA',
+	-reverse => 1, # tips are 0
+	-tmpl    => '%d', # sprintf template for major cross hatch numbers
+	-font    => {
+	   -face => 'Verdana',
+	   -size => 11,
+	}           
 
 =cut
 
@@ -472,6 +471,7 @@ sub set_scale_options {
         $self->{'SCALE'}->{'-reverse'} = $o{'-reverse'};
         $self->{'SCALE'}->{'-font'}    = $o{'-font'};
         $self->{'SCALE'}->{'-tmpl'}    = $o{'-tmpl'};
+        $self->{'SCALE'}->{'-blocks'}  = $o{'-blocks'};
     
         # set scale width, either pixels or relative to tree
         if ( looks_like_number $o{'-width'} or $o{'-width'} =~ m/^\d+%$/ ) {

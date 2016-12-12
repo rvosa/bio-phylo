@@ -123,6 +123,49 @@ sub _draw_triangle {
 =begin comment
 
 # required:
+# -x      => $x,
+# -y      => $y,
+# -width  => $width,
+# -height => $height,
+
+# optional:
+# -fill         => $fill,
+# -stroke       => $stroke,
+# -stroke_width => $stroke_width,
+# -api          => $api,
+
+=end comment
+
+=cut
+
+sub _draw_rectangle {
+	my $self  = shift;
+	my %args  = @_;
+	my @coord = qw(-x -y -width -height);
+	my ( $x, $y, $width, $height ) = @args{@coord};
+    my @optional = qw(-fill -stroke -stroke_width -api);
+    my $fill     = $args{'-fill'} || 'white';
+    my $stroke   = $args{'-stroke'} || 'black';
+    my $s_width  = $args{'-stroke_width'} || 1;
+    my $api      = $args{'-api'} || $self->_api;
+    delete @args{@coord};
+    delete @args{@optional};	
+	return $api->rectangle(
+		'x'      => $x,
+		'y'      => $y,
+		'width'  => $width,
+		'height' => $height,
+		'style'  => {
+			'fill'         => $fill,
+			'stroke'       => $stroke,
+			'stroke-width' => $s_width,
+		},
+	);
+}
+
+=begin comment
+
+# required:
 # -x => $x,
 # -y => $y,
 # -text => $text,

@@ -142,6 +142,11 @@ sub _draw_triangle {
     throw 'NotImplemented' => ref($self) . " can't draw triangle";
 }
 
+sub _draw_rectangle {
+	my $self = shift;
+	throw 'NotImplemented' => ref($self) . " can't draw rectangle";
+}
+
 # XXX incomplete!
 sub _draw_clade_label {    
     my ( $self, $node ) = @_;
@@ -330,7 +335,8 @@ sub _draw_scale {
 
 		# convert width and major/minor ticks to absolute pixel values
         my ( $major, $minor ) = ( $options->{'-major'}, $options->{'-minor'} );
-        my $width = $options->{'-width'};
+        my $width  = $options->{'-width'};
+        my $blocks = $options->{'-blocks'};
         
         # find the tallest tip, irrespective of it being collapsed
         my ($tt) = sort { $b->get_x <=> $a->get_x } @{ $tree->get_entities };        
@@ -353,6 +359,9 @@ sub _draw_scale {
         if ( $minor =~ m/^(\d+)%$/ ) {
             $minor = ( $1 / 100 ) * $width;
         }
+        if ( $blocks and $blocks =~ m/^(\d+)%$/ ) {
+        	$blocks = ( $1 / 100 ) * $width;
+        }
         
         # draw scale line and apply label
         my $x1 = $options->{'-reverse'} ? $ttx : $rootx;
@@ -360,30 +369,40 @@ sub _draw_scale {
         my $ts = $options->{'-reverse'} ?  0 : 1;        
         $self->_draw_line(
             '-x1'   => $x1,
-            '-y1'   => ( $height - 5 ),
+            '-y1'   => ( $height - 40 ),
             '-x2'   => $x1 + ($width*$ws),
-            '-y2'   => ( $height - 5 ),
+            '-y2'   => ( $height - 40 ),
             'class' => 'scale_bar',
         );
         $self->_draw_text( %font,
             '-x'    => ( $x1 + ($width*$ts) + $drawer->get_text_horiz_offset ),
-            '-y'    => ( $height - 5 ),
+            '-y'    => ( $height - 30 ),
             '-text' => $options->{'-label'} || ' ',
             'class' => 'scale_label',
         );
         
         # pre-compute indexes so we can reverse
-        my ( @maji, @mini, $j ); # major/minor indexes
+        my ( @maji, @mini, @blocksi, $j ); # major/minor/blocks indexes
         if ( $options->{'-reverse'} ) {
             for ( my $i = $ttx ; $i >= ( $ttx - $width ) ; $i -= $minor ) {
-                push @maji, $i if not $j % 5;
+                if ( not $j % sprintf('%.0f', $major/$minor) ) {
+                	push @maji, $i;
+                	if ( $blocks and not scalar(@maji) % 2 ) {
+                		push @blocksi, $i;
+                	}
+                }
                 push @mini, $i;
                 $j++;
             }
         }
         else {
             for ( my $i = $rootx ; $i <= ( $rootx + $width ) ; $i += $minor ) {
-                push @maji, $i if not $j % 5;
+                if ( not $j % sprintf('%.0f', $major/$minor) ) {
+                	push @maji, $i;
+                	if ( $blocks and not scalar(@maji) % 2 ) {
+                		push @blocksi, $i;
+                	}
+                }
                 push @mini, $i;
                 $j++;
             }
@@ -397,14 +416,14 @@ sub _draw_scale {
         for my $i ( @maji ) {
             $self->_draw_line(
                 '-x1'   => $i,
-                '-y1'   => ( $height - 5 ),
+                '-y1'   => ( $height - 40 ),
                 '-x2'   => $i,
                 '-y2'   => ( $height - 25 ),
                 'class' => 'scale_major',
             );
             $self->_draw_text( %font,
                 '-x'    => $i,
-                '-y'    => ( $height - 35 ),
+                '-y'    => ( $height - 5 ),
                 '-text' => $code->( $major_text ),
                 'class' => 'major_label',
             );
@@ -414,11 +433,30 @@ sub _draw_scale {
             next if not $i % $major;
             $self->_draw_line(
                 '-x1'   => $i,
-                '-y1'   => ( $height - 5 ),
+                '-y1'   => ( $height - 40 ),
                 '-x2'   => $i,
-                '-y2'   => ( $height - 15 ),
+                '-y2'   => ( $height - 35 ),
                 'class' => 'scale_minor',
             );
+        }
+        
+        # draw blocks
+        if ( @blocksi ) {
+        	my @y = map { $_->get_y } sort { $a->get_y <=> $b->get_y } @{ $tree->get_entities };
+        	my $y = $y[0] - 20;
+        	my $height = ( $y[-1] - $y[0] ) + 40;
+        	my $width  = ( $blocksi[0] - $blocksi[1] ) / 2;        
+			for my $i ( @blocksi ) {
+				$self->_draw_rectangle(
+					'-x'      => $i,
+					'-y'      => $y,
+					'-height' => $height,
+					'-width'  => $width,
+					'-fill'   => 'whitesmoke',
+					'-stroke_width' => 0,
+					'-stroke'       => 'whitesmoke',					
+				);
+			}
         }
     }
 }
