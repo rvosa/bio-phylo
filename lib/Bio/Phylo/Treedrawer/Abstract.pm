@@ -90,6 +90,9 @@ sub _draw {
                 '-fill'   => $node->get_node_colour,
                 '-url'    => $node->get_link,
             );
+            if ( $node->get_clade_label ) {
+            	$self->_draw_clade_label($node);
+            }
         }
     );
     $self->_draw_pies;
@@ -147,7 +150,7 @@ sub _draw_rectangle {
 	throw 'NotImplemented' => ref($self) . " can't draw rectangle";
 }
 
-# XXX incomplete!
+# XXX incomplete, still needs work for the radial part
 sub _draw_clade_label {    
     my ( $self, $node ) = @_;
     $logger->info("drawing clade label ".$node->get_clade_label);
@@ -159,6 +162,15 @@ sub _draw_clade_label {
     my $rmtl = $node->get_rightmost_terminal;
     my $root = $node->get_tree->get_root;
     my $desc = $node->get_descendants;
+    my $ncl  = scalar( grep { $_->get_clade_label } @{ $node->get_ancestors } );
+    
+    # copy font preferences, if any
+    my %font;
+    $font{'-font_face'}   = $node->get_font_face   if $node->get_font_face;
+    $font{'-font_size'}   = $node->get_font_size   if $node->get_font_size;
+    $font{'-font_style'}  = $node->get_font_style  if $node->get_font_style;
+    $font{'-font_weight'} = $node->get_font_weight if $node->get_font_weight;
+    $font{'-font_colour'} = $node->get_font_color  if $node->get_font_color;      
    
     # get cartesian coordinates for root and leftmost and rightmost tip
     my ( $cx, $cy ) = ( $root->get_x, $root->get_y );
@@ -208,7 +220,8 @@ sub _draw_clade_label {
         }
         
         # draw line and label
-        $x1 += ( $tho * 2 + $tw );
+        my $offset = $td->get_clade_label_width * $ncl;
+        $x1 += ( $tho * 2 + $tw + $offset );
         my ( $y1, $y2 ) = ( $lmtl->get_y, $rmtl->get_y );
         $self->_draw_line(
             '-x1' => $x1,
@@ -216,11 +229,11 @@ sub _draw_clade_label {
             '-y1' => $y1,
             '-y2' => $y2,
         );
-        $self->_draw_text(
+        $self->_draw_text( %font,
             '-x'    => ($x1+$tho),
-            '-y'    => (($y1+$y2)/2),
+            '-y'    => $y1,
             '-text' => $node->get_clade_label,
-            '-rotation' => [ -90, ($x1+$tho), (($y1+$y2)/2) ],
+            '-rotation' => [ 90, ($x1+$tho), $y1 ],
         );
     }
     

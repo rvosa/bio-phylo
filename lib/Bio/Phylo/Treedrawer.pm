@@ -22,6 +22,7 @@ my @fields = qw(
   SCALE
   FORMAT
   COLLAPSED_CLADE_WIDTH
+  CLADE_LABEL_WIDTH
   PIE_COLORS;
 );
 
@@ -106,6 +107,7 @@ sub new {
         'SCALE'                 => undef,
         'BRANCH_WIDTH'          => 1,
         'COLLAPSED_CLADE_WIDTH' => 6,
+        'CLADE_LABEL_WIDTH'     => 36,
         'PIE_COLORS'            => {},
     };
     bless $self, $class;
@@ -606,6 +608,30 @@ sub set_collapsed_clade_width {
     return $self;
 }
 
+=item set_clade_label_width
+
+Sets clade label width, i.e. the spacing between nested clade annotations
+
+ Type    : Mutator
+ Title   : set_clade_label_width
+ Usage   : $treedrawer->set_clade_label_width(6);
+ Function: sets the spacing between nested clade annotations
+ Returns :
+ Args    : Positive number
+
+=cut
+
+sub set_clade_label_width {
+	my ( $self, $width ) = @_;
+	if ( looks_like_number $width && $width >= 0 ) {
+		$self->{'CLADE_LABEL_WIDTH'} = $width;
+	}
+	else {
+		throw 'BadNumber' => "'$width' is not a valid clade label width value";
+	}
+	return $self;
+}
+
 =item set_tip_radius()
 
 Sets tip radius.
@@ -855,6 +881,21 @@ likelihood pie chart, and whose values are color codes.
 =cut
 
 sub get_pie_colors { shift->{'PIE_COLORS'} }
+
+=item get_clade_label_width
+
+Gets clade label width, i.e. the spacing between nested clade annotations
+
+ Type    : Mutator
+ Title   : get_clade_label_width
+ Usage   : my $width = $treedrawer->get_clade_label_width();
+ Function: gets the spacing between nested clade annotations
+ Returns :
+ Args    : None
+
+=cut
+
+sub get_clade_label_width { shift->{'CLADE_LABEL_WIDTH'} }
 
 =back
 
