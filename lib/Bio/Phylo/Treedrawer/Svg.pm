@@ -292,8 +292,10 @@ sub _draw_curve {
 # -y1 => $y1,
 # -y2 => $y2,
 # -radius => $radius
-# -width => $width,
-# -color => $color
+# -width  => $width,
+# -color  => $color,
+# -large  => $large,
+# -sweep  => $sweep
 
 =end comment
 
@@ -306,6 +308,8 @@ sub _draw_arc {
     my %args = @_;
     my @keys = qw(-x1 -y1 -x2 -y2 -radius -width -color -linecap);
     my ($x1, $y1, $x2, $y2, $radius, $width, $stroke, $linecap) = @args{@keys};
+	my $large = defined $args{'-large'} ? $args{'-large'} : 0; # default 0
+	my $sweep = defined $args{'-sweep'} ? $args{'-sweep'} : 1; # default 1
 	
 	# M = "moveto", i.e. the starting coordinates
 	# A = "elliptical Arc", The size and orientation of the ellipse are
@@ -317,7 +321,9 @@ sub _draw_arc {
 	#      sweep-flag (1) contribute to the automatic calculations and
 	#      help determine how the arc is drawn
     $self->_api->path(
-        'd' => "M $x1 $y1 A $radius $radius 0 0 1 $x2 $y2",		
+		
+		# https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Paths#Arcs
+        'd' => "M $x1 $y1 A $radius $radius, 0, $large, $sweep, $x2 $y2",		
         'style' => {
 			'fill'           => 'none',			
 			'stroke'         => $stroke  || 'black',
