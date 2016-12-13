@@ -28,6 +28,8 @@ my $tree = parse_tree(
 # first argument of the code reference.
 $tree->visit(sub{
 	my $node = shift;
+	$node->set_font_face('Verdana');
+	$node->set_font_style('Italic') if $node->is_terminal;
 	
 	# Annotations that are parsed from New Hampshire eXtended are stored as Meta objects
 	# whose predicates have the 'nhx' namespace prefix. Hence, this method returns, if
@@ -35,6 +37,10 @@ $tree->visit(sub{
 	# be applied by the tree visualizer.
 	if ( my $class = $node->get_meta_object('nhx:class') ) {
 		$node->set_clade_label($class);
+		$node->set_clade_label_font({ 
+			'-weight' => 'bold',
+			'-style'  => 'normal',
+		});
 	}
 });
 
@@ -47,4 +53,6 @@ print $fh Bio::Phylo::Treedrawer->new(
 	'-tree'   => $tree,
 	'-shape'  => 'radial',
 	'-mode'   => 'phylo',
+	'-text_width' => 300,
+	'-padding'    => 250,
 )->draw;
