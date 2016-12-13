@@ -170,7 +170,8 @@ sub _draw_clade_label {
     $font{'-font_size'}   = $node->get_font_size   if $node->get_font_size;
     $font{'-font_style'}  = $node->get_font_style  if $node->get_font_style;
     $font{'-font_weight'} = $node->get_font_weight if $node->get_font_weight;
-    $font{'-font_colour'} = $node->get_font_color  if $node->get_font_color;      
+    $font{'-font_colour'} = $node->get_font_color  if $node->get_font_color;  
+    $font{'-text'}        = $node->get_clade_label;    
    
     # get cartesian coordinates for root and leftmost and rightmost tip
     my ( $cx, $cy ) = ( $root->get_x, $root->get_y );
@@ -199,13 +200,18 @@ sub _draw_clade_label {
         my ( $x1, $y1 ) = $td->polar_to_cartesian( $radius, $ra ); # + add origin!
         my ( $x2, $y2 ) = $td->polar_to_cartesian( $radius, $la ); # + add origin!
         
-        # draw the arc around the clade
+        # draw line and label
         $self->_draw_arc(
             '-x1' => $x1 + $cx,
             '-y1' => $y1 + $cy,
             '-x2' => $x2 + $cx,
             '-y2' => $y2 + $cy,
             '-radius' => $radius,
+        );
+        $self->_draw_text( %font,
+        	'-x' => $x1 + $cx,
+        	'-y' => $y1 + $cy,
+        	'-rotation' => [ $la, $x1 + $cx, $y1 + $cy ],
         );
     }
     
@@ -231,9 +237,8 @@ sub _draw_clade_label {
             '-y2' => $y2,
         );
         $self->_draw_text( %font,
-            '-x'    => ($x1+$tho),
-            '-y'    => $y1,
-            '-text' => $node->get_clade_label,
+            '-x' => ($x1+$tho),
+            '-y' => $y1,
             '-rotation' => [ 90, ($x1+$tho), $y1 ],
         );
     }
