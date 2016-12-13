@@ -165,13 +165,21 @@ sub _draw_clade_label {
     my $ncl  = scalar( grep { $_->get_clade_label } @{ $node->get_ancestors } );
     
     # copy font preferences, if any
-    my %font;
-    $font{'-font_face'}   = $node->get_font_face   if $node->get_font_face;
-    $font{'-font_size'}   = $node->get_font_size   if $node->get_font_size;
-    $font{'-font_style'}  = $node->get_font_style  if $node->get_font_style;
-    $font{'-font_weight'} = $node->get_font_weight if $node->get_font_weight;
-    $font{'-font_colour'} = $node->get_font_color  if $node->get_font_color;  
-    $font{'-text'}        = $node->get_clade_label;    
+    my %font = ( '-text' => $node->get_clade_label );
+    if ( my $f = $node->get_clade_label_font ) {
+        my @properties = qw(face size style weight colour);
+        for my $p ( @properties ) {
+            if ( my $value = $f->{"-$p"} ) {
+                $font{"-font_$p"} = $value;
+            }
+            else {
+                my $method = "get_font_$p";
+                if ( $value = $node->$method ) {
+                    $font{"-font_$p"} = $value;
+                }
+            }
+        }
+    }
    
     # get cartesian coordinates for root and leftmost and rightmost tip
     my ( $cx, $cy ) = ( $root->get_x, $root->get_y );
@@ -183,13 +191,20 @@ sub _draw_clade_label {
         
         # compute tallest node in the clade and radius from the root
         my $radius;
-        for my $d ( @$desc ) {
-            
-            # pythagoras
-            my ( $x1, $y1 ) = ( $d->get_x, $d->get_y );            
-            my $h1 = sqrt( abs($cx-$x1)*abs($cx-$x1) + abs($cy-$y1)*abs($cy-$y1) );
-            $radius = $h1 if not defined $radius; # initialize
-            $radius = $h1 if $h1 >= $radius; # bump up if higher value
+        if ( @$desc ) {
+            for my $d ( @$desc ) {
+                
+                # pythagoras
+                my ( $x1, $y1 ) = ( $d->get_x, $d->get_y );            
+                my $h1 = sqrt( abs($cx-$x1)*abs($cx-$x1) + abs($cy-$y1)*abs($cy-$y1) );
+                $radius = $h1 if not defined $radius; # initialize
+                $radius = $h1 if $h1 >= $radius; # bump up if higher value
+            }
+        }
+        else {
+                # pythagoras
+                my ( $x1, $y1 ) = ( $node->get_x, $node->get_y );            
+                $radius = sqrt( abs($cx-$x1)*abs($cx-$x1) + abs($cy-$y1)*abs($cy-$y1) );            
         }
         
         # compute angles and coordinates of start and end of arc
@@ -201,17 +216,25 @@ sub _draw_clade_label {
         my ( $x2, $y2 ) = $td->polar_to_cartesian( $radius, $la ); # + add origin!
         
         # draw line and label
+        my $ntips = $node->get_terminals;
+        my $rtips = $root->get_terminals;
+        my $large = (scalar(@$ntips)/scalar(@$rtips)) > 1/2 ? 1 : 0; # spans majority of tips
         $self->_draw_arc(
             '-x1' => $x1 + $cx,
             '-y1' => $y1 + $cy,
             '-x2' => $x2 + $cx,
             '-y2' => $y2 + $cy,
             '-radius' => $radius,
+            '-large'  => $large,
+            '-sweep'  => 0,
         );
+        
+        # include $tho
+        my ( $tx1, $ty1 ) = $td->polar_to_cartesian(($radius+$tho),$ra); # + add origin!
         $self->_draw_text( %font,
-        	'-x' => $x1 + $cx,
-        	'-y' => $y1 + $cy,
-        	'-rotation' => [ $la, $x1 + $cx, $y1 + $cy ],
+        	'-x' => $tx1 + $cx,
+        	'-y' => $ty1 + $cy,
+        	'-rotation' => [ $ra, $tx1 + $cx, $ty1 + $cy ],
         );
     }
     
