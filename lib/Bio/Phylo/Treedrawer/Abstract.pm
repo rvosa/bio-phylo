@@ -192,7 +192,8 @@ sub _draw_clade_label {
         }
         
         # compute angles and coordinates of start and end of arc
-        $radius += ( $tho * 2 + $tw );
+        my $offset = $td->get_clade_label_width * $ncl;
+        $radius += ( $tho * 2 + $tw + $offset );
         my ( $rr, $ra ) = $td->cartesian_to_polar( ($rx-$cx), ($ry-$cy) ); # rightmost
         my ( $lr, $la ) = $td->cartesian_to_polar( ($lx-$cx), ($ly-$cy) ); # leftmost
         my ( $x1, $y1 ) = $td->polar_to_cartesian( $radius, $ra ); # + add origin!
