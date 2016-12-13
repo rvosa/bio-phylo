@@ -9,7 +9,8 @@ use base 'Bio::Phylo::Forest::NodeRole';
 	my @properties = qw(x y radius tip_radius node_color node_outline_color
 	node_shape node_image branch_color branch_shape branch_width branch_style
 	collapsed collapsed_clade_width font_face font_size font_style font_color
-	font_weight text_horiz_offset text_vert_offset rotation clade_label);
+	font_weight text_horiz_offset text_vert_offset rotation clade_label
+	clade_label_font);
 
 =head1 NAME
 
@@ -258,6 +259,20 @@ Sets collapsed clade width.
  Returns : $self
  Args    : string 
 
+=item set_clade_label_font()
+
+ Type    : Mutator
+ Title   : set_clade_label_font
+ Usage   : $node->set_clade_label_font({ '-face' => 'Verdana' });
+ Function: Sets font properties for the clade label
+ Returns : $self
+ Args    : {
+	'-face'   => 'Verdana', # Arial, Times, etc.
+	'-weight' => 'bold',
+	'-style'  => 'italic',
+	'-colour' => 'red',
+ }
+ 
 =back
 
 =head2 ACCESSORS
@@ -535,6 +550,15 @@ Gets collapsed clade width.
  Returns : string
  Args    : NONE
 
+=item get_clade_label_font()
+
+ Type    : Accessor
+ Title   : get_clade_label_font
+ Usage   : my %h = %{ $node->get_clade_label_font() };
+ Function: gets font properties for the clade label
+ Returns : undef or hashref
+ Args    : NONE
+ 
 =back
 
 =cut
