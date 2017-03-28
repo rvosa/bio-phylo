@@ -107,6 +107,7 @@ sub AUTOLOAD {
     my $self  = shift;
     my $field = $AUTOLOAD;
     $field =~ s/.*://;
+    return if $field eq 'DESTROY';
     return $self->{$field};
 }
 

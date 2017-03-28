@@ -18,7 +18,7 @@ use Bio::Phylo::Util::CONSTANT qw'/looks_like/ :namespaces :objecttypes';
         'xsi' => _NS_XSI_,
         'rdf' => _NS_RDF_,
         'xsd' => _NS_XSD_,
-		'map' => _NS_PHYLOMAP_,
+        'map' => _NS_PHYLOMAP_,
     );
     my @fields =
       \( my ( %tag, %id, %attributes, %identifiable, %suppress_ns, %meta, %url ) );

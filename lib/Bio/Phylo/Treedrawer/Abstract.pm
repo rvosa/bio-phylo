@@ -166,20 +166,19 @@ sub _draw_clade_label {
     
     # copy font preferences, if any
     my %font = ( '-text' => $node->get_clade_label );
-    if ( my $f = $node->get_clade_label_font ) {
-        my @properties = qw(face size style weight colour);
-        for my $p ( @properties ) {
-            if ( my $value = $f->{"-$p"} ) {
-                $font{"-font_$p"} = $value;
-            }
-            else {
-                my $method = "get_font_$p";
-                if ( $value = $node->$method ) {
-                    $font{"-font_$p"} = $value;
-                }
-            }
-        }
-    }
+    my $f = $node->get_clade_label_font || {};
+	my @properties = qw(face size style weight colour);
+	for my $p ( @properties ) {
+		if ( my $value = $f->{"-$p"} ) {
+			$font{"-font_$p"} = $value;
+		}
+		else {
+			my $method = "get_font_$p";
+			if ( $value = $node->$method ) {
+				$font{"-font_$p"} = $value;
+			}
+		}
+	}
    
     # get cartesian coordinates for root and leftmost and rightmost tip
     my ( $cx, $cy ) = ( $root->get_x, $root->get_y );
