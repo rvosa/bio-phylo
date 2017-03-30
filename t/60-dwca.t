@@ -1,4 +1,13 @@
-use Test::More 'no_plan';
+use Test::More;
+BEGIN {
+    eval { require XML::Twig };
+    if ($@) {
+        plan 'skip_all' => 'XML::Twig not installed';
+    }
+    else {
+        Test::More->import('no_plan');
+    }
+}
 use Bio::Phylo::IO 'parse';
 use Bio::Phylo::Util::CONSTANT ':objecttypes';
 
