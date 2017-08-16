@@ -13,6 +13,7 @@
 % been added to the Acknowledgements in the README.md are obviously out.
 
 
+
 \documentclass{bioinfo}
 \copyrightyear{2017} \pubyear{2017}
 
@@ -28,7 +29,7 @@
 
 \title[short Title]{The Bio::Phylo libraries for phylogenetic data analysis, version 2.0}
 \author[Sample \textit{et~al}.]{Rutger A. Vos\,$^{\text{\sfb 1,2}*}$ and Hannes Hettling\,$^{\text{\sfb 1}}$}
-\address{$^{\text{\sf 1}}$"Endless Forms", Naturalis Biodiversity Center, Leiden, P.O. Box 9517, 2300RA, The Netherlands and \\
+\address{$^{\text{\sf 1}}$Research group \textit{Endless Forms}, Naturalis Biodiversity Center, Leiden, P.O. Box 9517, 2300RA, The Netherlands and \\
 $^{\text{\sf 2}}$Institute for Biodiversity and Ecosystem Dynamics, University of Amsterdam, Amsterdam, P.O. Box 94248   
 1090 GE, The Netherlands.}
 
@@ -64,34 +65,32 @@ online.}
 
 \section{Introduction}
 
-This section will have a general introduction into phylogenetic data handling and a brief
-review of the prior art and of competing packages, in other programming languages and in
-Perl.
-
-\section{Overview}
+The analysis of phylogenetic trees and associated data is a common operation in 
+bioinformatics. To do so in the face of large data volumes requires automation, for 
+example using scripting toolkits. The Bio::Phylo libraries \citep{Vos2011} provide such 
+functionality for the Perl scripting language, in a modular toolkit whose components are 
+used in anything from quick scripts, e.g. to process some data as part of a larger 
+analysis (numerous publications cite this usage, some high-impact ones among these include 
+\citet{Hayward2015} and \citet{Smet2013}), to larger applications, such as the SUPERSMART 
+pipeline \citep{Antonelli2017} or the Monophylizer \citep{Mutanen2016} web service. In 
+addition, other libraries for bioinformatics and computational biology depend on 
+Bio::Phylo in order to re-use some of its functionality. The most widely-used and 
+well-known of these is BioPerl \citep{Stajich2002}, which uses Bio::Phylo for reading and 
+writing NeXML \citep{Vos2012} data. 
 
 The Bio::Phylo libraries are designed around the notion that phylogenetic data can be 
 modeled as consisting of the properties of, and relationships between, objects from a 
 limited number of classes. These classes are things such as phylogenetic trees, the tree 
 nodes in them, and the taxa that terminal tree nodes represent; or the characters of 
 character state matrices, and the character state sequences in them. Bio::Phylo provides 
-the functionality to create these objects from scratch, or to read them from various data 
+the functionality to create these objects from scratch, to read them from various data 
 sources, or to simulate them; and, subsequently, to transform them, perform calculations 
 on them, and to report the results of these operations by exporting data in various 
-formats or by visualizing them. As such, the Bio::Phylo libraries form a modular toolkit 
-whose components are used in anything from quick scripts, e.g. to process some data as 
-part of a larger analysis (numerous publications cite this usage, some high-impact ones 
-among these include \citet{Hayward2015}, \citet{Hayward2013} and \citet{Smet2013}), to 
-larger applications, such as the SUPERSMART pipeline \citep{Antonelli2017} or the 
-Monophylizer \citep{Mutanen2016} web service. In addition, other libraries for 
-bioinformatics and computational biology depend on Bio::Phylo in order to re-use some of 
-its functionality. The most widely-used and well-known of these is BioPerl 
-\citep{Stajich2002}, which uses Bio::Phylo for reading and writing NeXML \citep{Vos2012} 
-data. Despite these different usage patterns, some application areas can be identified for 
-which Bio::Phylo is particularly well suited. These are briefly discussed in the following 
-sections, with emphasis on the new features provided in version 2.0.
+formats or by visualizing them. Some application areas can be identified for which 
+Bio::Phylo is particularly well suited. These are briefly described in the following 
+sections, with emphasis on new features implemented in version 2.0.
 
-\section{Data management}
+\section{Description}
 
 The Bio::Phylo API models a number of relationships between different classes of data 
 objects. For example, a phylogenetic tree has zero or more nodes in it, and, conversely, 
@@ -147,7 +146,7 @@ row4 & row4 & row4 & row4\\\botrule
 %\caption{Caption, caption.}\label{fig:02}
 %\end{figure}
 
-\section{Visualization}
+\subsection{Visualization}
 
 \begin{itemize}
 \item cladograms versus phylograms
@@ -156,7 +155,7 @@ row4 & row4 & row4 & row4\\\botrule
 \item required dependencies
 \end{itemize}
 
-\section{Molecular evolution}
+\subsection{Molecular evolution}
 
 \begin{itemize}
 \item substitution model objects
@@ -164,7 +163,7 @@ row4 & row4 & row4 & row4\\\botrule
 \item model serialization
 \end{itemize}
 
-\section{Simulation}
+\subsection{Simulation}
 
 \begin{itemize}
 \item basic tree simulation and evolutionary models
@@ -172,7 +171,7 @@ row4 & row4 & row4 & row4\\\botrule
 \item simulating sequence data
 \end{itemize}
 
-\section{Web services}
+\subsection{Web services}
 
 \begin{itemize}
 \item clients
@@ -183,7 +182,7 @@ row4 & row4 & row4 & row4\\\botrule
 \item NeXML website
 \end{itemize}
 
-\section{Compiled extensions}
+\subsection{Compiled extensions}
 
 \begin{itemize}
 \item Bio::Phylo::XS
@@ -191,14 +190,14 @@ row4 & row4 & row4 & row4\\\botrule
 \item PLL
 \end{itemize}
 
-\section{Database mappings}
+\subsection{Database mappings}
 
 \begin{itemize}
 \item SUPERSMART
 \item Bio::Phylo::Megatree
 \end{itemize}
 
-\section{Internal design}
+\subsection{Internal design}
 
 \begin{itemize}
 \item Semantic annotations
@@ -257,57 +256,12 @@ generally interpreted to mean that you are free to choose whichever of these lic
 best with your own project, should you want to reuse all (or part) of Bio::Phylo. This is 
 certainly the spirit: feel free to use these libraries however you see fit. No warranties.
 
-\section{Community}
-
-\section{Glossary}
-
 \section*{Acknowledgements}
 
 \section*{Funding}
 
 \bibliographystyle{natbib}
-%\bibliographystyle{achemnat}
-%\bibliographystyle{plainnat}
-%\bibliographystyle{abbrv}
-%\bibliographystyle{bioinformatics}
-%
-%\bibliographystyle{plain}
-%
+
 \bibliography{document}
 
-
-%\begin{thebibliography}{}
-%
-%\bibitem[Bofelli {\it et~al}., 2000]{Boffelli03}
-%Bofelli,F., Name2, Name3 (2003) Article title, {\it Journal Name}, {\bf 199}, 133-154.
-%
-%\bibitem[Bag {\it et~al}., 2001]{Bag01}
-%Bag,M., Name2, Name3 (2001) Article title, {\it Journal Name}, {\bf 99}, 33-54.
-%
-%\bibitem[Yoo \textit{et~al}., 2003]{Yoo03}
-%Yoo,M.S. \textit{et~al}. (2003) Oxidative stress regulated genes
-%in nigral dopaminergic neurnol cell: correlation with the known
-%pathology in Parkinson's disease. \textit{Brain Res. Mol. Brain
-%Res.}, \textbf{110}(Suppl. 1), 76--84.
-%
-%\bibitem[Lehmann, 1986]{Leh86}
-%Lehmann,E.L. (1986) Chapter title. \textit{Book Title}. Vol.~1, 2nd edn. Springer-Verlag, New York.
-%
-%\bibitem[Crenshaw and Jones, 2003]{Cre03}
-%Crenshaw, B.,III, and Jones, W.B.,Jr (2003) The future of clinical
-%cancer management: one tumor, one chip. \textit{Bioinformatics},
-%doi:10.1093/bioinformatics/btn000.
-%
-%\bibitem[Auhtor \textit{et~al}. (2000)]{Aut00}
-%Auhtor,A.B. \textit{et~al}. (2000) Chapter title. In Smith, A.C.
-%(ed.), \textit{Book Title}, 2nd edn. Publisher, Location, Vol. 1, pp.
-%???--???.
-%
-%\bibitem[Bardet, 1920]{Bar20}
-%Bardet, G. (1920) Sur un syndrome d'obesite infantile avec
-%polydactylie et retinite pigmentaire (contribution a l'etude des
-%formes cliniques de l'obesite hypophysaire). PhD Thesis, name of
-%institution, Paris, France.
-%
-%\end{thebibliography}
 \end{document}
