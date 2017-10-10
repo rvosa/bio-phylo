@@ -3,63 +3,50 @@
 % For capitals in titles:
 % https://tex.stackexchange.com/questions/10772/bibtex-loses-capitals-when-creating-bbl-file
 
-% SUPERSMART
-@article{Antonelli2017,
-	author = {Antonelli, Alexandre and Hettling, Hannes and Condamine, Fabien L. and Vos, Karin and Nilsson, R. Henrik and Sanderson, Michael J. and Sauquet, Hervé and Scharn, Ruud and Silvestro, Daniele and T{\"o}pel, Mats and Bacon, Christine D. and Oxelman, Bengt and Vos, Rutger A.}, 
-	title = {Toward a Self-Updating Platform for Estimating Rates of Speciation and Migration, Ages, and Relationships of Taxa},
-	journal = {Systematic Biology},
-	volume={66},
-	number={2},
-	pages={152--166},
-	year={2017},
-	publisher={Oxford University Press}	
-}
+% H1: Introduction
+% history
 
-% RankProb
-@article{Gernhard2006,
-	title={Estimating the relative order of speciation or coalescence events on a given phylogeny},
-	author={Gernhard, Tanja and Ford, Daniel and Vos, Rutger and Steel, Mike},
-	journal={Evolutionary Bioinformatics Online},
-	volume={2},
-	pages={285},
+% Bio::Phylo prototype
+@phdthesis{Vos2006,
+	title={Inferring large phylogenies: The big tree problem},
+	author={Vos, Rutger Aldo},
 	year={2006},
-	publisher={Libertas Academica}
+	school={Simon Fraser University}
 }
 
-% BioVeL
-@article{Hardisty2016,
-	title={{BioVeL}: A virtual laboratory for data analysis and modelling in biodiversity science and ecology},
-	author={Hardisty, Alex R and Bacall, Finn and Beard, Niall and Balc{\'a}zar-Vargas, Maria-Paula and Balech, Bachir and Barcza, Zolt{\'a}n and Bourlat, Sarah J and Giovanni, Renato and Jong, Yde and Leo, Francesca and others},
-	journal={BMC ecology},
-	volume={16},
-	number={1},
-	pages={49},
-	year={2016},
-	publisher={BioMed Central}
+% Bio::Phylo prototype
+@article{Vos2017,
+	title={Design Patterns in Phylogenetics: Practical Tree Data Structures and Objects for Serialization},
+	author={Vos, Rutger Aldo},
+	journal={https://doi.org/10.6084/m9.figshare.4524569.v1},
+	year={2017}
 }
 
-% PNAS citation
-@article{Hayward2013,
-	title={Broad-scale phylogenomics provides insights into retrovirus--host evolution},
-	author={Hayward, Alexander and Grabherr, Manfred and Jern, Patric},
-	journal={Proceedings of the National Academy of Sciences},
-	volume={110},
-	number={50},
-	pages={20146--20151},
-	year={2013},
-	publisher={National Acad Sciences}
+% Bio::Phylo v1.0
+@article{Vos2011,
+	author="Vos, Rutger A. and Caravas, Jason and Hartmann, Klaas and Jensen, Mark A. and Miller, Chase",
+	title="{Bio::Phylo} -- Phyloinformatic analysis using perl",
+	journal="BMC Bioinformatics",
+	year="2011",
+	volume="12",
+	number="1",
+	pages="63",
+	issn="1471-2105",
+	doi="10.1186/1471-2105-12-63",
+	url="http://dx.doi.org/10.1186/1471-2105-12-63"
 }
 
-% PNAS citation
-@article{Hayward2015,
-	title={Pan-vertebrate comparative genomics unmasks retrovirus macroevolution},
-	author={Hayward, Alexander and Cornwallis, Charlie K and Jern, Patric},
-	journal={Proceedings of the National Academy of Sciences},
-	volume={112},
+% hakathons
+% ALSO ADD OTHER HACKATHONS!
+
+% BioDiversity data
+@article{Vos2014,
+	title={Enriched biodiversity data as a resource and service},
+	author={Vos, Rutger Aldo and Biserkov, Mr Jordan Valkov and Balech, Bachir and Beard, Niall and Blissett, Matthew and Brenninkmeijer, Christian and van Dooren, Tom and Eades, David and Gosline, George and Groom, Quentin John and others},
+	journal={Biodiversity data journal},
 	number={2},
-	pages={464--469},
-	year={2015},
-	publisher={National Acad Sciences}
+	year={2014},
+	publisher={Pensoft Publishers}
 }
 
 % PhyloWS
@@ -85,19 +72,9 @@
 	publisher={BioMed Central}
 }
 
-% Monophylizer
-@article{Mutanen2016,
-	author = {Mutanen, Marko and Kivel{\" a}, Sami M. and Vos, Rutger A. and Doorenweerd, Camiel and Ratnasingham, Sujeevan and Hausmann, Axel and Huemer, Peter and Dinc{\v a}, Vlad and van Nieukerken, Erik J. and Lopez-Vaamonde, Carlos and Vila, Roger and Aarvik, Leif and Deca{\" e}ns, Thibaud and Efetov, Konstantin A. and Hebert, Paul D. N. and Johnsen, Arild and Karsholt, Ole and Pentinsaari, Mikko and Rougerie, Rodolphe and Segerer, Andreas and Tarmann, Gerhard and Zahiri, Reza and Godfray, H. Charles J.}, 
-	title = {Species-Level Para- and Polyphyly in {DNA} Barcode Gene Trees: Strong Operational Bias in {European} {Lepidoptera}},
-	volume = {65}, 
-	number = {6}, 
-	pages = {1024-1040}, 
-	year = {2016}, 
-	doi = {10.1093/sysbio/syw044}, 
-	URL = {http://sysbio.oxfordjournals.org/content/65/6/1024.abstract}, 
-	eprint = {http://sysbio.oxfordjournals.org/content/65/6/1024.full.pdf+html}, 
-	journal = {Systematic Biology} 
-}
+% H1: Design and functionality
+% H2: Data input and output
+% ALSO CITE FIGSHARE DATA SETS!
 
 % PhyloTree
 @article {Oven2009,
@@ -113,19 +90,6 @@
 	pages = {E386--E394},
 	keywords = {mitochondrial DNA, phylogenetic tree, haplogroup, mtDNA variation, human evolution},
 	year = {2009},
-}
-
-% TreeBASE v2.0
-@inproceedings{Piel2009,
-    author = {Piel, William H. and Chan, Lucie and Dominus, Mark J. and Ruan, Jin and Vos, Rutger A. and Tannen, Val},
-    booktitle = {e-BioSphere 2009},
-    citeulike-article-id = {4680867},
-    keywords = {databases, software},
-    location = {London},
-    posted-at = {2009-05-30 04:07:35},
-    priority = {2},
-    title = {{TreeBASE} v. 2: A Database of Phylogenetic Knowledge},
-    year = {2009}
 }
 
 % for the CDAO file format
@@ -147,17 +111,61 @@
 	year={2007}
 }
 
-% PNAS citation
-@article{Smet2013,
-	title={Convergent gene loss following gene and genome duplications creates single-copy families in flowering plants},
-	author={De Smet, Riet and Adams, Keith L and Vandepoele, Klaas and Van Montagu, Marc CE and Maere, Steven and Van de Peer, Yves},
-	journal={Proceedings of the National Academy of Sciences},
-	volume={110},
-	number={8},
-	pages={2898--2903},
-	year={2013},
-	publisher={National Acad Sciences}
+% NeXML
+@article{Vos2012,
+	title={{NeXML}: Rich, extensible, and verifiable representation of comparative data and metadata},
+	author={Vos, Rutger A and Balhoff, James P and Caravas, Jason A and Holder, Mark T and Lapp, Hilmar and Maddison, Wayne P and Midford, Peter E and Priyam, Anurag and Sukumaran, Jeet and Xia, Xuhua and others},
+	journal={Systematic biology},
+	volume={61},
+	number={4},
+	pages={675--689},
+	year={2012},
+	publisher={Oxford University Press}
 }
+
+% for the NHX/New Hampshire eXtended file format
+@article{Zmasek2001,
+	title={{ATV}: Display and manipulation of annotated phylogenetic trees},
+	author={Zmasek, Christian M and Eddy, Sean R},
+	journal={Bioinformatics},
+	volume={17},
+	number={4},
+	pages={383--384},
+	year={2001},
+	publisher={Oxford Univ Press}
+}
+
+% H2: Analysis algorithms
+% ALSO CITE R BRIDGE AND MODEL TESTING!
+
+% RankProb
+@article{Gernhard2006,
+	title={Estimating the relative order of speciation or coalescence events on a given phylogeny},
+	author={Gernhard, Tanja and Ford, Daniel and Vos, Rutger and Steel, Mike},
+	journal={Evolutionary Bioinformatics Online},
+	volume={2},
+	pages={285},
+	year={2006},
+	publisher={Libertas Academica}
+}
+
+% Topology indices
+@article{Martyn2012,
+	author={Martyn, Iain and Kuhn, Tyler S. and Mooers, Arne O. and Moulton, Vincent and Spillner, Andreas},
+	title={Computing evolutionary distinctiveness indices in large scale analysis},
+	journal={Algorithms for Molecular Biology},
+	year={2012},
+	volume={7},
+	number={1},
+	pages={6},
+	doi={10.1186/1748-7188-7-6},
+	url={https://doi.org/10.1186/1748-7188-7-6}
+}
+
+% H2: Visualization
+
+% H1: Impact and re-use
+% INTEGRATION IN WIDER INFRASTRUCTURE
 
 % BioPerl
 @article{Stajich2002,
@@ -171,66 +179,130 @@
 	publisher={Cold Spring Harbor Lab}
 }
 
-% Bio::Phylo prototype
-@phdthesis{Vos2006,
-	title={Inferring large phylogenies: The big tree problem},
-	author={Vos, Rutger Aldo},
-	year={2006},
-	school={Simon Fraser University}
-}
-
-% Bio::Phylo v1.0
-@article{Vos2011,
-	author="Vos, Rutger A. and Caravas, Jason and Hartmann, Klaas and Jensen, Mark A. and Miller, Chase",
-	title="{Bio::Phylo} -- Phyloinformatic analysis using perl",
-	journal="BMC Bioinformatics",
-	year="2011",
-	volume="12",
-	number="1",
-	pages="63",
-	issn="1471-2105",
-	doi="10.1186/1471-2105-12-63",
-	url="http://dx.doi.org/10.1186/1471-2105-12-63"
-}
-
-% NeXML
-@article{Vos2012,
-	title={{NeXML}: Rich, extensible, and verifiable representation of comparative data and metadata},
-	author={Vos, Rutger A and Balhoff, James P and Caravas, Jason A and Holder, Mark T and Lapp, Hilmar and Maddison, Wayne P and Midford, Peter E and Priyam, Anurag and Sukumaran, Jeet and Xia, Xuhua and others},
-	journal={Systematic biology},
-	volume={61},
-	number={4},
-	pages={675--689},
-	year={2012},
-	publisher={Oxford University Press}
-}
-
-% BioDiversity data
-@article{Vos2014,
-	title={Enriched biodiversity data as a resource and service},
-	author={Vos, Rutger Aldo and Biserkov, Mr Jordan Valkov and Balech, Bachir and Beard, Niall and Blissett, Matthew and Brenninkmeijer, Christian and van Dooren, Tom and Eades, David and Gosline, George and Groom, Quentin John and others},
-	journal={Biodiversity data journal},
+% SUPERSMART
+@article{Antonelli2017,
+	author = {Antonelli, Alexandre and Hettling, Hannes and Condamine, Fabien L. and Vos, Karin and Nilsson, R. Henrik and Sanderson, Michael J. and Sauquet, Hervé and Scharn, Ruud and Silvestro, Daniele and T{\"o}pel, Mats and Bacon, Christine D. and Oxelman, Bengt and Vos, Rutger A.}, 
+	title = {Toward a Self-Updating Platform for Estimating Rates of Speciation and Migration, Ages, and Relationships of Taxa},
+	journal = {Systematic Biology},
+	volume={66},
 	number={2},
+	pages={152--166},
+	year={2017},
+	publisher={Oxford University Press}	
+}
+
+% BioVeL
+@article{Hardisty2016,
+	title={{BioVeL}: A virtual laboratory for data analysis and modelling in biodiversity science and ecology},
+	author={Hardisty, Alex R and Bacall, Finn and Beard, Niall and Balc{\'a}zar-Vargas, Maria-Paula and Balech, Bachir and Barcza, Zolt{\'a}n and Bourlat, Sarah J and Giovanni, Renato and Jong, Yde and Leo, Francesca and others},
+	journal={BMC ecology},
+	volume={16},
+	number={1},
+	pages={49},
+	year={2016},
+	publisher={BioMed Central}
+}
+
+% Monophylizer
+@article{Mutanen2016,
+	author = {Mutanen, Marko and Kivel{\" a}, Sami M. and Vos, Rutger A. and Doorenweerd, Camiel and Ratnasingham, Sujeevan and Hausmann, Axel and Huemer, Peter and Dinc{\v a}, Vlad and van Nieukerken, Erik J. and Lopez-Vaamonde, Carlos and Vila, Roger and Aarvik, Leif and Deca{\" e}ns, Thibaud and Efetov, Konstantin A. and Hebert, Paul D. N. and Johnsen, Arild and Karsholt, Ole and Pentinsaari, Mikko and Rougerie, Rodolphe and Segerer, Andreas and Tarmann, Gerhard and Zahiri, Reza and Godfray, H. Charles J.}, 
+	title = {Species-Level Para- and Polyphyly in {DNA} Barcode Gene Trees: Strong Operational Bias in {European} {Lepidoptera}},
+	volume = {65}, 
+	number = {6}, 
+	pages = {1024-1040}, 
+	year = {2016}, 
+	doi = {10.1093/sysbio/syw044}, 
+	URL = {http://sysbio.oxfordjournals.org/content/65/6/1024.abstract}, 
+	eprint = {http://sysbio.oxfordjournals.org/content/65/6/1024.full.pdf+html}, 
+	journal = {Systematic Biology} 
+}
+@article{Mutanen2016a,
+	author = {Pentinsaari, Mikko and Vos, Rutger  A. and Mutanen, Marko}, 
+	title = {Algorithmic single-locus species delimitation: effects of sampling effort, variation and non-monophyly in four methods and 1870 species of beetles},
+	volume = {17}, 
+	number = {3}, 
+	pages = {393–404}, 
+	year = {2016}, 
+	doi = {10.1111/1755-0998.12557}, 
+	URL = {http://onlinelibrary.wiley.com/doi/10.1111/1755-0998.12557/full}, 
+	eprint = {http://onlinelibrary.wiley.com/doi/10.1111/1755-0998.12557/full}, 
+	journal = {Molecular Ecology Resources} 
+}
+
+% TreeBASE v2.0
+@inproceedings{Piel2009,
+    author = {Piel, William H. and Chan, Lucie and Dominus, Mark J. and Ruan, Jin and Vos, Rutger A. and Tannen, Val},
+    booktitle = {e-BioSphere 2009},
+    citeulike-article-id = {4680867},
+    keywords = {databases, software},
+    location = {London},
+    posted-at = {2009-05-30 04:07:35},
+    priority = {2},
+    title = {{TreeBASE} v. 2: A Database of Phylogenetic Knowledge},
+    year = {2009}
+}
+
+% CopyRighter
+@article{Angly2014,
+	author={Angly, Florent E. and Dennis, Paul G. and Skarshewski, Adam and Vanwonterghem, Inka and Hugenholtz, Philip and Tyson, Gene W.},
+	title={{CopyRighter}: a rapid tool for improving the accuracy of microbial community profiles through lineage-specific gene copy number correction},
+	journal={Microbiome},
 	year={2014},
-	publisher={Pensoft Publishers}
+	volume={2},
+	number={1},
+	pages={11},
+	doi={10.1186/2049-2618-2-11},
+	url={https://doi.org/10.1186/2049-2618-2-11}
 }
 
-% Bio::Phylo prototype
-@article{Vos2017,
-	title={Design Patterns in Phylogenetics: Practical Tree Data Structures and Objects for Serialization},
-	author={Vos, Rutger Aldo},
-	journal={https://doi.org/10.6084/m9.figshare.4524569.v1},
-	year={2017}
+% PhyloMatch
+@article{Ramazzotti2012,
+	author = {Ramazzotti, Matteo and Bern{\'a}, Luisa and Stefanini, Irene and Cavalieri, Duccio},
+	title = {A computational pipeline to discover highly phylogenetically informative genes in sequenced genomes: application to {Saccharomyces cerevisiae} natural strains},
+	journal = {Nucleic Acids Research},
+	volume = {40},
+	number = {9},
+	pages = {3834-3848},
+	year = {2012},
+	doi = {10.1093/nar/gks005},
+	url = {http://dx.doi.org/10.1093/nar/gks005}
 }
 
-% for the NHX/New Hampshire eXtended file format
-@article{Zmasek2001,
-	title={{ATV}: Display and manipulation of annotated phylogenetic trees},
-	author={Zmasek, Christian M and Eddy, Sean R},
-	journal={Bioinformatics},
-	volume={17},
-	number={4},
-	pages={383--384},
-	year={2001},
-	publisher={Oxford Univ Press}
+% MARQUEE/HIGH-IMPACT CITATIONS
+% ADD MORE AND ORGANIZE BY TOPIC!
+
+% PNAS citation
+@article{Hayward2013,
+	title={Broad-scale phylogenomics provides insights into retrovirus--host evolution},
+	author={Hayward, Alexander and Grabherr, Manfred and Jern, Patric},
+	journal={Proceedings of the National Academy of Sciences},
+	volume={110},
+	number={50},
+	pages={20146--20151},
+	year={2013},
+	publisher={National Acad Sciences}
+}
+
+% PNAS citation
+@article{Hayward2015,
+	title={Pan-vertebrate comparative genomics unmasks retrovirus macroevolution},
+	author={Hayward, Alexander and Cornwallis, Charlie K and Jern, Patric},
+	journal={Proceedings of the National Academy of Sciences},
+	volume={112},
+	number={2},
+	pages={464--469},
+	year={2015},
+	publisher={National Acad Sciences}
+}
+
+% PNAS citation
+@article{Smet2013,
+	title={Convergent gene loss following gene and genome duplications creates single-copy families in flowering plants},
+	author={De Smet, Riet and Adams, Keith L and Vandepoele, Klaas and Van Montagu, Marc CE and Maere, Steven and Van de Peer, Yves},
+	journal={Proceedings of the National Academy of Sciences},
+	volume={110},
+	number={8},
+	pages={2898--2903},
+	year={2013},
+	publisher={National Acad Sciences}
 }
