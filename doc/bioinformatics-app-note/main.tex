@@ -30,8 +30,7 @@
 \title[short Title]{The Bio::Phylo libraries for phylogenetic data analysis, version 2.0}
 \author[Sample \textit{et~al}.]{Rutger A. Vos\,$^{\text{\sfb 1,2}*}$ and Hannes Hettling\,$^{\text{\sfb 1}}$}
 \address{$^{\text{\sf 1}}$Research group \textit{Endless Forms}, Naturalis Biodiversity Center, Leiden, P.O. Box 9517, 2300RA, The Netherlands and \\
-$^{\text{\sf 2}}$Institute for Biodiversity and Ecosystem Dynamics, University of Amsterdam, Amsterdam, P.O. Box 94248   
-1090 GE, The Netherlands.}
+$^{\text{\sf 2}}$Institute of Biology Leiden, Leiden University, Leiden, P.O. Box 9500, 2300RA, The Netherlands.}
 
 \corresp{$^\ast$To whom correspondence should be addressed.}
 
@@ -39,15 +38,16 @@ $^{\text{\sf 2}}$Institute for Biodiversity and Ecosystem Dynamics, University o
 
 \editor{Associate Editor: XXXXXXX}
 
-\abstract{\textbf{Motivation:} Text Text Text Text Text Text Text Text Text Text Text Text Text
-Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text
-Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text
-Text Text Text Text Text Text
-Text Text Text Text Text.\\
-\textbf{Results:} Text  Text Text Text Text Text Text Text Text Text  Text Text Text Text Text
-Text Text Text Text Text Text Text Text Text Text Text Text Text  Text Text Text Text Text Text\\
-\textbf{Availability:} Text  Text Text Text Text Text Text Text Text Text  Text Text Text Text
-Text Text Text Text Text Text Text Text Text Text Text Text Text Text  Text\\
+\abstract{\textbf{Motivation:} Phylogenetic analysis is a broad and expanding field that
+requires versatile programming toolkits to manage the various data types, file formats,
+and needs for scalability, simulation, visualization, and data exploration.\\
+\textbf{Results:} We present version 2.0 of the Bio::Phylo libraries for phylogenetic data
+analysis. This new release represents a rewrite of the internal architecture, allowing
+for extensions that improve speed and persistence, as well as greatly increased 
+functionality in terms of analysis, data reading and writing, and visualization.\\
+\textbf{Availability:} The package is released as open source software under the same terms as 
+Perl itself and available from the comprehensive Perl archive network as well as directly
+from the source code repository.\\
 \textbf{Contact:} \href{rutger.vos@naturalis.nl}{rutger.vos@naturalis.nl}\\
 \textbf{Supplementary information:} Supplementary data are available at \textit{Bioinformatics}
 online.}
@@ -68,7 +68,7 @@ online.}
 The analysis of phylogenetic trees and associated data is a common operation in 
 bioinformatics. To do so in the face of large data volumes requires automation, for 
 example using scripting toolkits. The Bio::Phylo libraries \citep{Vos2011} provide such 
-functionality for the Perl scripting language, in a modular toolkit whose components are 
+functionality for the Perl programming language, in a modular toolkit whose components are 
 used in anything from quick scripts, e.g. to process some data as part of a larger 
 analysis (numerous publications cite this usage, some high-impact ones among these include 
 \citet{Hayward2015} and \citet{Smet2013}), to larger applications, such as the SUPERSMART 
