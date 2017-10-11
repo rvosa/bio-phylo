@@ -1255,10 +1255,10 @@ Creates simulated replicate.
  Args    : Tree to simulate the characters on.
            Optional:
            -seed           => a random integer seed
-           -model          => an object of class Bio::Phylo::Models::Substitution::Dna
-	             or Bio::Phylo::Models::Substitution::Binary
-		   -random_rootseq => start DNA sequence simulation from random ancestral sequence 
-		         instead of the  median sequence in the alignment. 
+           -model          => an object of class Bio::Phylo::Models::Substitution::Dna or 
+	                      Bio::Phylo::Models::Substitution::Binary
+           -random_rootseq => start DNA sequence simulation from random ancestral sequence 
+		              instead of the  median sequence in the alignment. 
 
  Comments: Requires Statistics::R, with 'ape', 'phylosim', 'phangorn' and 'phytools'.
            If model is not given as argument, it will be estimated.
@@ -1268,18 +1268,26 @@ Creates simulated replicate.
     sub replicate {
     	my ($self,%args) = @_;
 
-		my $tree = $args{'-tree'};
+	my $tree = $args{'-tree'};
     	if ( not looks_like_object $tree, _TREE_ ) {
     		throw 'BadArgs' => "Need tree as argument";
     	}
 
     	my $type = $self->get_type;
     	if ( $type =~ /dna/i ) {
-    		return $self->_replicate_dna('-tree'=>$tree, '-model'=>$args{'-model'}, 
-										 '-seed'=>$args{'-seed'}, '-random_rootseq' =>$args{'-random_rootseq'});
+    		return $self->_replicate_dna(
+		        '-tree'  => $tree, 
+			'-model' => $args{'-model'}, 
+			'-seed'  => $args{'-seed'}, 
+			'-random_rootseq' => $args{'-random_rootseq'}
+		);
     	}
     	elsif ( $type =~ /standard/i ) {
-    		return $self->_replicate_binary('-tree'=>$tree, '-model'=>$args{'-model'}, '-seed'=>$args{'-seed'});
+    		return $self->_replicate_binary(
+			'-tree'  => $tree, 
+			'-model' => $args{'-model'}, 
+			'-seed'  => $args{'-seed'}
+		);
     	}
     	else {
     		throw 'BadArgs' => "Can't replicate $type matrices (yet?)";
@@ -1311,8 +1319,8 @@ Creates simulated replicate.
 			$R->run(q[PSIM_FAST<-TRUE]);
 			# check if phylosim (and therefore ape) is installed
 			if ( $R->get(q[phylosim]) eq 'FALSE' ) {
-				    $logger->warn('R package phylosim must be installed to replicate alignment.');
-					return;
+				$logger->warn('R package phylosim must be installed to replicate alignment.');
+				return;
 			}
 
 			# pass in the tree, scale it so that its length sums to 1.
@@ -1328,7 +1336,10 @@ Creates simulated replicate.
 			# run the model test if model not given as argument
 			if ( ! $model ) {
 				$logger->info("no model given as argument, determining model with phangorn's modelTest");
-				$model = 'Bio::Phylo::Models::Substitution::Dna'->modeltest( '-matrix' => $self, '-tree' => $tree );
+				$model = 'Bio::Phylo::Models::Substitution::Dna'->modeltest( 
+					'-matrix' => $self, 
+					'-tree'   => $tree 
+				);
 			}
 			# prepare data for processes
 			my @ungapped   = @{ $self->get_ungapped_columns };
