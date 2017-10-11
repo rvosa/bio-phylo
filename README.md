@@ -18,7 +18,7 @@ For a list of automated test results for the latest release number visit:
 
 http://testers.cpan.org/show/Bio-Phylo.html
 
-Currently, the build status at Travis is:
+Currently, the build status at Travis for the head revision is:
 
 [![Build Status](https://travis-ci.org/rvosa/bio-phylo.svg?branch=master)](https://travis-ci.org/rvosa/bio-phylo)
 
@@ -79,10 +79,10 @@ CITATION
 --------
 If you use Bio::Phylo in published research, please cite it:
 
-Rutger A Vos, Jason Caravas, Klaas Hartmann, Mark A Jensen
-and Chase Miller, 2011. Bio::Phylo - phyloinformatic analysis using Perl.
-BMC Bioinformatics 12:63.
-doi:10.1186/1471-2105-12-63
+**Rutger A Vos, Jason Caravas, Klaas Hartmann, Mark A Jensen
+and Chase Miller**, 2011. Bio::Phylo - phyloinformatic analysis using Perl.
+_BMC Bioinformatics_ 12:63.
+doi:[10.1186/1471-2105-12-63](http://doi.org/10.1186/1471-2105-12-63)
 
 COPYRIGHT & LICENSE
 -------------------
