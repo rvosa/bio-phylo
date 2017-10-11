@@ -71,14 +71,14 @@ Dna model constructor.
  Args    : Optional:
 	       -type       => type of model, one of GTR, F81, HKY85, JC69, K80
 	       -pi         => base frequencies of bases A, C, G, T
-           -kappa      => ratio transitions/transversions
-           -alpha      => shape parameter (for models of GTR family)
+               -kappa      => ratio transitions/transversions
+               -alpha      => shape parameter (for models of GTR family)
 	       -mu         => overall mutation rate
-           -pinvar     => proportion of invariant sites
-           -ncat       => number of distinct rate categories
-           -median     => median for gamma-modeled rate categories
+               -pinvar     => proportion of invariant sites
+               -ncat       => number of distinct rate categories
+               -median     => median for gamma-modeled rate categories
 	       -rate       => Array of Arrays (4x4) giving substitution rates betwen A, C, T, G
-           -catweights => weights for rate categories
+               -catweights => weights for rate categories
 =cut
 
 sub new {
