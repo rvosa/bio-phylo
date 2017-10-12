@@ -6,4 +6,4 @@ latex main.tex
 latex main.tex
 dvips main.dvi
 ps2pdf main.ps
-open main.pdf
+#open main.pdf

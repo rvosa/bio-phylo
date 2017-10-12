@@ -67,18 +67,53 @@ online.}
 \section{Introduction}
 
 % history
+Phylogenetic data is multi-faceted, encompassing morphological observations, molecular 
+sequences, biological taxa, and tree and network topologies, and is ubiquitous in a 
+variety of research fields including comparative genomics, systematics, evolution, 
+biodiversity research, and ecology. The types of operations that are performed on 
+phylogenetic data range from data cleaning, integration, and conversions, to simulation,
+character analysis and inference, and visualization. Flexible programming toolkits that
+operate on phylogenetic data and aid in scripting these operations are therefore very 
+useful and available in a variety programming languages. Bio::Phylo \citep{Vos2011} is 
+the most versatile toolkit for handling phylogenetic data in the Perl programming
+language.
 
 % development process, including hackathons
-Numerous people of contributed to the development of Bio::Phylo, by writing code - as 
-volunteers and Google Summer of Code students - by submitting bug reports, and by 
+Conceived about ten years ago \citep{Vos2006,Vos2017}, Bio::Phylo has been under
+ongoing development ever since. Numerous people have contributed to it, by writing code 
+- as volunteers and Google Summer of Code students - by submitting bug reports, and by 
 providing inspiration and impetus in larger collaborative networks (e.g. 
-\cite{Stoltzfus2010}, \cite{Koureas2016}, \cite{Koureas2016a}) and hackathons (e.g. 
+\citet{Stoltzfus2010}, \citet{Koureas2016}, \citet{Koureas2016a}) and hackathons (e.g. 
 \citet{Lapp2007}, \citet{Katayama2010}, \citet{Katayama2011}, \citet{Katayama2013}, 
-\citet{Stoltzfus2013}, \citet{Katayama2014}, \citet{Vos2014}).
+\citet{Stoltzfus2013}, \citet{Katayama2014}, \citet{Vos2014}). In the process, additional
+requirements surfaced, which have been addressed by a rewrite of the internal architecture
+and the addition of functional modules. These have been integrated in a version 2.0
+release, which we present here.
 
 \section{Design}
 
 % extensible design with XS subclasses
+In `object-oriented' programming, the different concepts within the problem domain that
+the software addresses are modelled as different classes (e.g. a class to model 
+phylogenetic trees, and one to model multiple sequence alignments) that inherit some of 
+their functionality from other such classes. For example, a class that represents the 
+blueprint for a multiple sequence alignment might inherit certain generalized attributes 
+of character state matrices (e.g. the number of characters and taxa) from a `super-class'. 
+In turn, this multiple sequence alignment class can be inherited from to create a 
+blueprint for a more specialized class, for example one that models amino-acid alignments. 
+
+The object-oriented programming paradigm allows other programmers to extend the 
+functionality of toolkits by inheriting from classes to address additional use cases, for 
+example by improving performance in various ways. Bio::Phylo has always allowed for this, 
+but the version 1.0 design made this relatively cumbersome because a lot of functionality 
+would have to be re-implemented for any newly created class to integrate well in the rest 
+of the toolkit. In the new design, each class has been reworked into two separate modules, 
+one that performs the actual changes to any data associated with the class, and one that 
+performs all the other user-friendly operations that do not directly affect the data. With 
+this new design, a new class that only re-implements the changes to the data can re-use 
+all the other operations, and thus be much more compact and easily written. In addition, 
+the integration of such new classes has been made far more flexible (by adopting, in the 
+parlance of software design patterns \citep{Gamma1995}, the `Factory' pattern throughout).
 
 % object relational mapping
 
