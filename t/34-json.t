@@ -1,6 +1,7 @@
 use Test::More;
 
 BEGIN {
+	plan 'skip_all' => 'XML::XML2JSON is permanently broken';
     eval { require XML::XML2JSON };
     if ($@) {
         plan 'skip_all' => 'XML::XML2JSON not installed';
@@ -11,7 +12,7 @@ BEGIN {
     }
     else {
         Test::More->import('no_plan');
-    }
+    }    
 }
 use Bio::Phylo::IO 'parse';
 use Bio::Phylo::Factory;
