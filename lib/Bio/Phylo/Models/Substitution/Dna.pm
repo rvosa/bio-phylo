@@ -69,16 +69,16 @@ Dna model constructor.
  Function: Instantiates a Bio::Phylo::Models::Substitution::Dna object.
  Returns : A Bio::Phylo::Models::Substitution::Dna object.
  Args    : Optional:
-	       -type       => type of model, one of GTR, F81, HKY85, JC69, K80
-	       -pi         => base frequencies of bases A, C, G, T
-               -kappa      => ratio transitions/transversions
-               -alpha      => shape parameter (for models of GTR family)
-	       -mu         => overall mutation rate
-               -pinvar     => proportion of invariant sites
-               -ncat       => number of distinct rate categories
-               -median     => median for gamma-modeled rate categories
-	       -rate       => Array of Arrays (4x4) giving substitution rates betwen A, C, T, G
-               -catweights => weights for rate categories
+		   -type       => type of model, one of GTR, F81, HKY85, JC69, K80
+		   -pi         => base frequencies of bases A, C, G, T
+		   -kappa      => ratio transitions/transversions
+		   -alpha      => shape parameter (for models of GTR family)
+		   -mu         => overall mutation rate
+		   -pinvar     => proportion of invariant sites
+		   -ncat       => number of distinct rate categories
+		   -median     => median for gamma-modeled rate categories
+		   -rate       => Array of Arrays (4x4) giving substitution rates betwen A, C, T, G
+		   -catweights => weights for rate categories
 =cut
 
 sub new {
@@ -842,6 +842,28 @@ sub _to_paup_string {
 sub _type { _MODEL_ }
 
 =back
+
+=head1 SEE ALSO
+
+There is a mailing list at L<https://groups.google.com/forum/#!forum/bio-phylo> 
+for any user or developer questions and discussions.
+
+=over
+
+=item L<Bio::Phylo::Manual>
+
+Also see the manual: L<Bio::Phylo::Manual> and L<http://rutgervos.blogspot.com>.
+
+=back
+
+=head1 CITATION
+
+If you use Bio::Phylo in published research, please cite it:
+
+B<Rutger A Vos>, B<Jason Caravas>, B<Klaas Hartmann>, B<Mark A Jensen>
+and B<Chase Miller>, 2011. Bio::Phylo - phyloinformatic analysis using Perl.
+I<BMC Bioinformatics> B<12>:63.
+L<http://dx.doi.org/10.1186/1471-2105-12-63>
 
 =cut
 
