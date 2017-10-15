@@ -11,3 +11,10 @@ perl:
   - "5.8"
 before_install:
   - cpanm XML::Twig
+  - cpanm XML::LibXML
+  - cpanm XML::XML2JSON
+  - cpanm JSON
+  - cpanm JSON::Syck
+  - cpanm SVG
+  - cpanm Math::CDF
+  - cpanm Math::Random
