@@ -89,5 +89,7 @@ doi:[10.1186/1471-2105-12-63](http://doi.org/10.1186/1471-2105-12-63)
 COPYRIGHT & LICENSE
 -------------------
 Copyright 2005-2017 Rutger Vos, All Rights Reserved. This program is free software; 
-you can redistribute it and/or modify it under the same terms as Perl itself.
-
+you can redistribute it and/or modify it under the same terms as Perl itself, i.e.
+a choice between the following licenses:
+- [The Artistic License](COPYING)
+- [GNU General Public License v3.0](LICENSE)
