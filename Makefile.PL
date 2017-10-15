@@ -7,15 +7,16 @@ use File::Find;
 my %recommended = (
     'SVG'           => '0',
     'Math::Random'  => '0',
+    'Math::CDF'     => '0',
+    'XML::XML2JSON' => '0',    
     'XML::Twig'     => '0',
     'XML::LibXML'   => '0',
-    'Math::CDF'     => '0',
     'List::Util'    => '0',
     'SWF::Builder'  => '0',
-    'XML::XML2JSON' => '0',
     'PDF::API2'     => '0',
     'GD'            => '0',
     'JSON'          => '0',
+    'Archive::Zip'  => '0',
 );
 
 check_prereq( keys %recommended );
