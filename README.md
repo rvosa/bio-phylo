@@ -34,10 +34,10 @@ installation and unit testing can continue.
 
 To install the Bio::Phylo distribution itself, run the following commands: 
 
-* `perl Makefile.PL`
-* `make`
-* `make test` (Optional, runs unit tests, which should pass)
-* `make install`
+    perl Makefile.PL
+    make
+    make test # Optional, runs unit tests, which should pass
+    make install
  
 (For platform specific information on what 'make' command to use, check "perl -V:make". 
 On Windows this usually returns "make='nmake';", which means you'll need the free 'nmake' 
