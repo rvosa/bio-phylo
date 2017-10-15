@@ -1,7 +1,7 @@
 # $Id: 17-parse.t 1247 2010-03-04 15:47:17Z rvos $
 use strict;
 use Bio::Phylo::Util::CONSTANT 'looks_like_instance';
-use Test::More tests => 7;
+use Test::More tests => 6;
 use Bio::Phylo::IO qw(parse unparse);
 eval { parse() };
 ok( looks_like_instance( $@, 'Bio::Phylo::Util::Exceptions::OddHash' ),
@@ -19,7 +19,7 @@ ok( looks_like_instance( $@, 'Bio::Phylo::Util::Exceptions::BadArgs' ),
 my $taxa = 'A|B|C|D|E';
 ok( parse( -format => 'taxlist', -fieldsep => '|', -string => $taxa ),
     '6 parse taxon list' );
-eval { parse( '-handle' => \*DATA, '-format' => 'newick' ) };
-ok( looks_like_instance( $@, 'Bio::Phylo::Util::Exceptions::NoData' ),
-    '7 parse no data' );
-__DATA__
+#eval { parse( '-handle' => \*DATA, '-format' => 'newick' ) };
+#ok( looks_like_instance( $@, 'Bio::Phylo::Util::Exceptions::NoData' ),
+#    '7 parse no data' );
+#__DATA__

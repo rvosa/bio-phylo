@@ -100,9 +100,9 @@ sub _open_handle {
     }
     
     # check to see if the data source contains anything
-    if ( eof $handle ) {
-        throw 'NoData' => "Source is empty!";
-    }
+    #if ( eof $handle ) {
+    #    throw 'NoData' => "Source is empty!";
+    #}
     return $handle;
 }
 
