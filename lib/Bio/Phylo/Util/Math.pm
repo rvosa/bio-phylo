@@ -10,6 +10,27 @@ BEGIN {
     );
 }
 
+=head1 NAME
+
+Bio::Phylo::Util::Math - Utility math functions
+
+=head1 EXPORTED FUNCTIONS
+
+=over
+
+=item nchoose_static
+
+Calculation of n choose j. This version saves partial results for use later.
+
+ Type    : Exported function
+ Title   : nchoose_static
+ Usage   : $c = nchoose_static( $n, $j )
+ Function: Calculation of n choose j.
+ Returns : n-choose
+ Args    : $n, $j
+
+=cut
+
 # Calculation of n choose j
 # This version saves partial results for use later
 my @nc_matrix; #stores the values of nchoose(n,j)
@@ -30,11 +51,37 @@ sub nchoose_static {
 	return $nc_matrix[$j]->[$n];
 }
 
+=item nchoose
+
+Calculation of n choose j. Dynamic version.
+
+ Type    : Exported function
+ Title   : nchoose
+ Usage   : $c = nchoose( $n, $j )
+ Function: Calculation of n choose j.
+ Returns : n-choose
+ Args    : $n, $j
+
+=cut
+
 # dynamic programming version
 sub nchoose {
 	my ( $n, $j ) = @_;
 	return nchoose_static($n,$j,@nc_matrix);
 }
+
+=item gcd
+
+Greatest common denominator - assumes positive integers as input
+
+ Type    : Exported function
+ Title   : gcd
+ Usage   : $gcd = gcd( $n, $m )
+ Function: Greatest common denominator
+ Returns : $gcd
+ Args    : $n, $m
+
+=cut
 
 # GCD - assumes positive integers as input
 # (subroutine for compare(t,u,v))
@@ -50,6 +97,20 @@ sub gcd {
 	return gcd($m,$n);
 }
 
+=item gcd_divide
+
+Takes two large integers and attempts to divide them and give
+the float answer without overflowing
+
+ Type    : Exported function
+ Title   : gcd_divide
+ Usage   : $gcd = gcd_divide( $n, $m )
+ Function: Greatest common denominator
+ Returns : $gcd
+ Args    : $n, $m
+
+=cut
+
 # Takes two large integers and attempts to divide them and give
 # the float answer without overflowing
 # (subroutine for compare(t,u,v))
@@ -62,5 +123,30 @@ sub gcd_divide {
 	return $n/$m;
 }
 
+=back
+
+=head1 SEE ALSO
+
+There is a mailing list at L<https://groups.google.com/forum/#!forum/bio-phylo> 
+for any user or developer questions and discussions.
+
+=over
+
+=item L<Bio::Phylo::Manual>
+
+Also see the manual: L<Bio::Phylo::Manual> and L<http://rutgervos.blogspot.com>.
+
+=back
+
+=head1 CITATION
+
+If you use Bio::Phylo in published research, please cite it:
+
+B<Rutger A Vos>, B<Jason Caravas>, B<Klaas Hartmann>, B<Mark A Jensen>
+and B<Chase Miller>, 2011. Bio::Phylo - phyloinformatic analysis using Perl.
+I<BMC Bioinformatics> B<12>:63.
+L<http://dx.doi.org/10.1186/1471-2105-12-63>
+
+=cut
 
 1;
