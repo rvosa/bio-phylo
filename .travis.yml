@@ -18,3 +18,4 @@ before_install:
   - cpanm SVG
   - cpanm Math::CDF
   - cpanm Math::Random
+  - cpanm Archive::Zip
