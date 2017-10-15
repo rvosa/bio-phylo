@@ -1,4 +1,4 @@
-!()[https://raw.githubusercontent.com/rvosa/bio-phylo/master/banner.png]
+![](https://raw.githubusercontent.com/rvosa/bio-phylo/master/banner.png)
 
 Bio::Phylo
 ==========
