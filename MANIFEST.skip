@@ -42,3 +42,5 @@ TODO\.txt
 experimental*
 BioPhylo\.komodoproject
 lib\/Bio\/Phylo\/PhyloWS\/Client\/NBA*
+lib\/Bio\/Phylo\/PhyloWS\/Client\/BGBM*
+lib\/Bio\/Phylo\/PhyloWS\/Client\/NHM*
