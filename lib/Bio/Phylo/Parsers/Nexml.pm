@@ -177,10 +177,10 @@ sub _init {
         # These handlers are called when the subtree is fully loaded, which
         # means we can traverse it
         'TwigHandlers' => {
+            'nex:nexml'  => sub { &_handle_nexml( @_,  $self ) },        
             'otus'       => sub { &_handle_otus( @_,   $self ) },
             'characters' => $skipchars ? sub {} : sub { &_handle_chars( @_,  $self ) },
             'trees'      => $skiptrees ? sub {} : sub { &_handle_forest( @_, $self ) },
-            'nex:nexml'  => sub { &_handle_nexml( @_,  $self ) },
         },
 
         # These handlers are called when the element opens, that is the

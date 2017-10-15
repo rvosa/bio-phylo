@@ -1041,7 +1041,7 @@ Serializes invocant to XML.
 =cut
 
     sub to_json {
-        looks_like_class('XML::XML2JSON')->new->convert( shift->to_xml );
+		looks_like_class('Bio::Phylo::NeXML::XML2JSON')->new->convert( shift->to_xml );
     }    
 
 	sub _json_data {

@@ -1,7 +1,7 @@
 use Test::More;
 
 BEGIN {
-	plan 'skip_all' => 'XML::XML2JSON is permanently broken';
+	#plan 'skip_all' => 'XML::XML2JSON is permanently broken';
     eval { require XML::XML2JSON };
     if ($@) {
         plan 'skip_all' => 'XML::XML2JSON not installed';
