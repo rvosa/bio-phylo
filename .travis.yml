@@ -12,7 +12,7 @@ perl:
 before_install:
   - cpanm XML::Twig
   - cpanm XML::LibXML
-  - cpanm XML::XML2JSON
+  - cpanm --force XML::XML2JSON
   - cpanm JSON
   - cpanm JSON::Syck
   - cpanm SVG
