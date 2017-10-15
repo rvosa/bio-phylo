@@ -1,3 +1,5 @@
+!()[https://raw.githubusercontent.com/rvosa/bio-phylo/master/banner.png]
+
 Bio::Phylo
 ==========
 
