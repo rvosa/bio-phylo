@@ -16,24 +16,31 @@ use Bio::Phylo::Util::CONSTANT ':objecttypes';
 my $url = 'http://api.gbif.org/v1/occurrence/download/request/0074675-160910150852091.zip';
 
 # like every Bio::Phylo::IO module, we can parse directly from a web location
-my $proj = parse(
-	'-format' => 'dwca',
-	'-url'    => $url,
-	'-as_project' => 1,
-);
+my $proj;
+eval {
+	$proj = parse(
+		'-format' => 'dwca',
+		'-url'    => $url,
+		'-as_project' => 1,
+	);
+};
 
-# write a CSV file with MAXENT header
-for my $t ( @{ $proj->get_items(_TAXON_) } ) {
-	my $exp  = expected();
-	my $i = 0;
-	for my $m ( @{ $t->get_meta } ) {
-		my $lat = $m->get_meta_object('dwc:decimalLatitude');
-		my $lon = $m->get_meta_object('dwc:decimalLongitude');
-		ok( $lat == $exp->[$i]->[0] );
-		ok( $lon == $exp->[$i]->[1] );
-		$i++;
+SKIP: {
+	skip "Network problem", 1204 if $@ && UNIVERSAL::isa( $@, 'Bio::Phylo::Util::Exceptions::NetworkError' );
+
+	# write a CSV file with MAXENT header
+	for my $t ( @{ $proj->get_items(_TAXON_) } ) {
+		my $exp  = expected();
+		my $i = 0;
+		for my $m ( @{ $t->get_meta } ) {
+			my $lat = $m->get_meta_object('dwc:decimalLatitude');
+			my $lon = $m->get_meta_object('dwc:decimalLongitude');
+			ok( $lat == $exp->[$i]->[0] );
+			ok( $lon == $exp->[$i]->[1] );
+			$i++;
+		}
 	}
-}
+};
 
 sub expected {
 	[
