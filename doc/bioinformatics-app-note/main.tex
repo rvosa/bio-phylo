@@ -42,9 +42,9 @@ $^{\text{\sf 2}}$Institute of Biology Leiden, Leiden University, Leiden, P.O. Bo
 requires versatile programming toolkits to manage the various data types, file formats,
 and needs for scalability, simulation, visualization, and data exploration.\\
 \textbf{Results:} We present version 2.0 of the Bio::Phylo libraries for phylogenetic data
-analysis. This new release represents a rewrite of the internal architecture, allowing
-for extensions that improve speed and persistence, as well as greatly increased 
-functionality in terms of analysis, data reading and writing, and visualization.\\
+analysis. This new release represents a rewrite of the architecture, allowing for 
+extensions that improve speed and persistence, as well as increased functionality in terms 
+of analysis, data reading and writing, and visualization.\\
 \textbf{Availability:} The package is released as open source software under the same terms as 
 Perl itself and available from the comprehensive Perl archive network as well as directly
 from the source code repository.\\
@@ -87,7 +87,7 @@ providing inspiration and impetus in larger collaborative networks (e.g.
 \citet{Lapp2007}, \citet{Katayama2010}, \citet{Katayama2011}, \citet{Katayama2013}, 
 \citet{Stoltzfus2013}, \citet{Katayama2014}, \citet{Vos2014}). In the process, additional
 requirements surfaced, which have been addressed by a rewrite of the internal architecture
-and the addition of functional modules. These have been integrated in a version 2.0
+and the addition of functional modules. These have been integrated in a version 2.0.0
 release, which we present here.
 
 \section{Design}
@@ -115,13 +115,54 @@ all the other operations, and thus be much more compact and easily written. In a
 the integration of such new classes has been made far more flexible (by adopting, in the 
 parlance of software design patterns \citep{Gamma1995}, the `Factory' pattern throughout).
 
-% object relational mapping
+The usefulness of this change of design is demonstrated by two optional extension packages
+that can be installed alongside Bio::Phylo. One of them, Bio::PhyloXS, serves as a drop-in
+replacement of the core data objects in Bio::Phylo, re-implemented in the C programming
+language. Because C is a very fast, compiled language, having some of the core 
+functionality (e.g. setting and fetching data properties) leads to significant speed 
+increases: a simple benchmark test where a small tree topology is constructed and then
+traversed executes about 700\% faster using this extension. The second optional extension,
+Bio::Phylo::Forest::DBTree, allows very large trees to be stored into, and accessed from,
+a simple SQLite database. This means that these trees never have to be loaded in working
+memory, and that, once stored in the database, there is no "file reading" step. The 
+typical application for this is to store static, immutable trees. To demonstrate this, we
+make available database files that were created by indexing the releases listed in 
+Table 1.
+
+\begin{table}[]
+\centering
+\caption{Large, published phylogenies made available as database files}
+\label{table1}
+\begin{tabular}{ll}
+\textbf{Project}                   & \textbf{Database files}                 \\
+PhyloTree \citep{Oven2009}         & {\small 10.6084/m9.figshare.4620757.v1} \\
+D-Place \citep{Kirby2016}          & {\small 10.6084/m9.figshare.4620217.v1} \\
+NCBI taxonomy \citep{Federhen2011} & {\small 10.6084/m9.figshare.4620733.v1} \\
+Green Genes \citep{Desantis2006}   & {\small 10.6084/m9.figshare.4620214.v1}
+\end{tabular}
+\end{table}
 
 \section{Data input and output}
 
-% file format
+In addition to the file formats already supported in previous releases of Bio::Phylo, 
+several new formats are now read and/or written. Specifically, PhyloXML \citep{Han2009},
+New Hampshire eXtended (NHX, \citet{Zmasek2001}), the extensions added to the NEXUS
+standard by the programs TreeAnnotator and Figtree \citep{Rambaut2007}, and a `badgerfish'
+mapping of NeXML \citep{Vos2012} to JSON can now both be read and written. In addition, 
+several response formats from web services (namely, the DarwinCore archive format returned 
+by GBIF \citep{Baker2014}, the response format from the TaxoSaurus.org service 
+\citep{Stoltzfus2013}, and the response documents of uBio.org) as well as FASTQ 
+\citep{Cock2009} files can be read. Data files for Hennig86 \citep{Farris1988} and for
+the haplotype `Network' program (fluxus-engineering.com) can be written. 
 
-% megatrees
+Support for RDF is experimental: RDF/XML triples can be written by way of a two-step 
+process that first exports data as NeXML and then transforms this to statements that 
+obtain terms from CDAO \citep{Prosdocimi2009}; this is the same approach and uses the 
+same transformation stylesheet as TreeBASE \citep{Piel2009}). RDF graphs can also be 
+`read' in the sense that a graph can be loaded and interrogated with SPARQL queries to 
+extract statements that map onto Bio::Phylo's object model. At present, this means that 
+annotated taxa and tree topologies can be extracted from CDAO/RDF, but character data 
+cannot.
 
 \section{Analysis and simulation algorithms}
 
