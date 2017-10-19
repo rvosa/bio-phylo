@@ -102,7 +102,7 @@ foreach my $format (qw(twig libxml)) {
     my $org_doc = $twig->parse($data);
     my %org_elts;
     my @elt_tags =
-      qw( nex:nexml otus otu trees tree node edge characters format states state uncertain_state_set member char matrix row cell );
+      qw( nexml otus otu trees tree node edge characters format states state uncertain_state_set member char matrix row cell );
     foreach (@elt_tags) {
         my @a = $org_doc->descendants($_);
         my @b = $doc->get_elements_by_tagname($_);
