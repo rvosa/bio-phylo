@@ -66,6 +66,7 @@ WHERE {
 STATES
 
 sub _parse {
+    warn "***Please note: implementation is incomplete, character data are not yet read correctly.\n***";
     my $self = shift;
     %objects = ();
     $self->_args->{'-opts'} = {
