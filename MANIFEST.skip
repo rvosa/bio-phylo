@@ -32,7 +32,6 @@ lib\/Bio\/Tools\/Run\/MrBayes\.pm
 lib\/Bio\/Phylo\/BranchClust\.pm
 lib\/Bio\/Phylo\/Article\.pod
 lib\/Bio\/Phylo\/Mediators\/NodeMediator\.pm
-lib\/Bio\/Phylo\/Parsers\/Cdao\.pm
 lib\/xs*
 lib\/util*
 README.html
