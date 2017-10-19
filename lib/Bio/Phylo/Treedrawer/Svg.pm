@@ -431,40 +431,41 @@ sub _draw_pies {
                 else {
                     $r = int $self->_drawer->get_tip_radius($node);
                 }
-                if ( my $pievalues = $node->get_generic('pie') ) {
-                    my @keys  = keys %{$pievalues};
-                    my $start = -90;
-                    my $total;
-                    $total += $pievalues->{$_} for @keys;
-                    my $pie = $self->_api->tag(
-                        'g',
-                        'id'        => 'pie_' . $node->get_id,
-                        'transform' => "translate($cx,$cy)",
-                    );
-                    for my $i ( 0 .. $#keys ) {
-                        next if not $pievalues->{ $keys[$i] };
-                        my $slice = $pievalues->{ $keys[$i] } / $total * 360;
-                        my $color = $colors{ $keys[$i] };
-                        if ( not $color ) {
-                            my $gray = int( ( $i / $#keys ) * 256 );
-                            $colors{ $keys[$i] } = "rgb($gray,$gray,$gray)";
-                        }
-                        my $do_arc  = 0;
-                        my $radians = $slice * $PI / 180;
-                        $do_arc++ if $slice > 180;
-                        my $radius = $r - 2;
-                        my $ry     = $radius * sin($radians);
-                        my $rx     = $radius * cos($radians);
-                        my $g =
-                          $pie->tag( 'g', 'transform' => "rotate($start)" );
-                        $g->path(
-                            'style' =>
-                              { 'fill' => "$color", 'stroke' => 'none' },
-                            'd' =>
-"M $radius,0 A $radius,$radius 0 $do_arc,1 $rx,$ry L 0,0 z"
-                        );
-                        $start += $slice;
-                    }
+                if ( $r ) {
+					if ( my $pievalues = $node->get_generic('pie') ) {
+						my @keys  = keys %{$pievalues};
+						my $start = -90;
+						my $total;
+						$total += $pievalues->{$_} for @keys;
+						my $pie = $self->_api->tag(
+							'g',
+							'id'        => 'pie_' . $node->get_id,
+							'transform' => "translate($cx,$cy)",
+						);
+						for my $i ( 0 .. $#keys ) {
+							next if not $pievalues->{ $keys[$i] };
+							my $slice = $pievalues->{ $keys[$i] } / $total * 360;
+							my $color = $colors{ $keys[$i] };
+							if ( not $color ) {
+								my $gray = int( ( $i / $#keys ) * 256 );
+								$colors{ $keys[$i] } = "rgb($gray,$gray,$gray)";
+							}
+							my $do_arc  = 0;
+							my $radians = $slice * $PI / 180;
+							$do_arc++ if $slice > 180;
+							my $radius = $r - 2;
+							my $ry     = $radius * sin($radians);
+							my $rx     = $radius * cos($radians);
+							my $g =
+							  $pie->tag( 'g', 'transform' => "rotate($start)" );
+							$g->path(
+								'style' =>
+								  { 'fill' => "$color", 'stroke' => 'none' },
+								'd' => "M $radius,0 A $radius,$radius 0 $do_arc,1 $rx,$ry L 0,0 z"
+							);
+							$start += $slice;
+						}
+					}
                 }
             }
         }
