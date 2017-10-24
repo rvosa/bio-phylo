@@ -89,7 +89,12 @@ packages that can be installed alongside Bio::Phylo. These packages are:
   code repository is [here](https://github.com/rvosa/bio-phylo-xs), and the
   v0.1.0 release is tagged as 
   [10.5281/zenodo.1010362](http://doi.org/10.5281/zenodo.1010362).
-  
+- [Bio::Phylo::Forest::DBTree](http://search.cpan.org/dist/Bio-Phylo-Forest-DBTree/) -
+  which provides an object-relational mapping of the core objects of Bio::Phylo.
+  The source code repository is 
+  [here](https://github.com/rvosa/bio-phylo-forest-dbtree), and the v0.1.1
+  release is tagged as 
+  [10.5281/zenodo.1010139](http://doi.org/10.5281/zenodo.1010139).
 
 CITATION
 --------
