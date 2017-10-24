@@ -75,7 +75,10 @@ no. 237046.
 
 SEE ALSO
 --------
-Read the manual: `perldoc Bio::Phylo::Manual`
+This distribution contains a high-level overview that can be accessed using the 
+perldoc documentation system. The documentation is at 
+[Bio::Phylo::Manual](lib/Bio/Phylo/Manual.pod) and can be viewed (after installation) 
+on the command line: `perldoc Bio::Phylo::Manual`
 
 CITATION
 --------
