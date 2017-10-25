@@ -12,7 +12,7 @@ use Bio::Phylo::Util::CONSTANT ':namespaces';
 
 # process command line arguments
 my $tree   = 'Bininda-emonds_2007_mammals.nex';
-my $data   = 'PanTHERIA_1-0_WR93_Aug2008.txt';
+my $data   = 'PanTHERIA_1-0_WR93_Aug2008.tsv';
 my $names  = 'MSW93_Binomial';
 my $column = '5-1_AdultBodyMass_g';
 my $verbosity = WARN;
