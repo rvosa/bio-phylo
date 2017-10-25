@@ -172,8 +172,8 @@ sub _draw_clade_label {
     
     my $desc = $node->get_descendants;
     my $ntips = [ grep { $_->is_terminal } @$desc ];
-    my $lmtl = $ntips->[0]  || $node; #$node->get_leftmost_terminal;
-    my $rmtl = $ntips->[-1] || $node; #$node->get_rightmost_terminal;
+    my $lmtl = $node->get_leftmost_terminal;
+    my $rmtl = $node->get_rightmost_terminal;
     my $root = $node->get_tree->get_root;    
     my $ncl  = scalar( grep { $_->get_clade_label } @{ $node->get_ancestors } );
     
