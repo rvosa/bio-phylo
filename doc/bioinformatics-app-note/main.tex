@@ -66,7 +66,6 @@ online.}
 
 \section{Introduction}
 
-% history
 Phylogenetic data is multi-faceted, encompassing morphological observations, molecular 
 sequences, biological taxa, and tree and network topologies, and is ubiquitous in a 
 variety of research fields including comparative genomics, systematics, evolution, 
@@ -78,7 +77,6 @@ useful and available in a variety programming languages. Bio::Phylo \citep{Vos20
 the most versatile toolkit for handling phylogenetic data in the Perl programming
 language.
 
-% development process, including hackathons
 Conceived about ten years ago \citep{Vos2006,Vos2017}, Bio::Phylo has been under
 ongoing development ever since. Numerous people have contributed to it, by writing code 
 - as volunteers and Google Summer of Code students - by submitting bug reports, and by 
@@ -92,7 +90,6 @@ release, which we present here.
 
 \section{Design}
 
-% extensible design with XS subclasses
 In `object-oriented' programming, the different concepts within the problem domain that
 the software addresses are modelled as different classes (e.g. a class to model 
 phylogenetic trees, and one to model multiple sequence alignments) that inherit some of 
@@ -127,7 +124,7 @@ a simple SQLite database. This means that these trees never have to be loaded in
 memory, and that, once stored in the database, there is no "file reading" step. The 
 typical application for this is to store static, immutable trees. To demonstrate this, we
 make available database files that were created by indexing the releases listed in 
-Table 1.
+Table~\ref{table1}.
 
 \begin{table}[]
 \centering
@@ -138,7 +135,7 @@ Table 1.
 PhyloTree \citep{Oven2009}         & {\small 10.6084/m9.figshare.4620757.v1} \\
 D-Place \citep{Kirby2016}          & {\small 10.6084/m9.figshare.4620217.v1} \\
 NCBI taxonomy \citep{Federhen2011} & {\small 10.6084/m9.figshare.4620733.v1} \\
-Green Genes \citep{Desantis2006}   & {\small 10.6084/m9.figshare.4620214.v1}
+Greengenes \citep{Desantis2006}    & {\small 10.6084/m9.figshare.4620214.v1}
 \end{tabular}
 \end{table}
 
@@ -164,11 +161,33 @@ extract statements that map onto Bio::Phylo's object model. At present, this mea
 annotated taxa and tree topologies can be extracted from CDAO/RDF, but character data 
 cannot.
 
-\section{Analysis and simulation algorithms}
+\section{Analysis, modification, and simulation}
 
-% topology indices
+From its first versions onwards, Bio::Phylo has implemented numerous algorithms for 
+computing topological indices, simulating new topologies, and adjusting them 
+algorithmically. Some of the simulation methods were developed and discussed by 
+\citet{Hartmann2010}, while some of the topology index algorithms were explored by
+\citet{Martyn2012}. To the existing topology indices, some additional methods were added: 
+the Euclidean distance between trees (see \citet{Kuhner1994}) and the number of `cherries'
+in a given topology (see \citet{McKenzie2000}) can now be computed. To the algorithms
+that adjust topologies have been added methods to obtain ultrametric trees using the mean 
+path lengths method of \citet{Britton2002}, by making node ages proportional to clade size 
+(as per \citet{Grafen1989}), and using an implementation of Stadler's algorithm for 
+computing the relative order of speciation or coalescence events on a given phylogeny 
+\citep{Gernhard2006}.
 
-% rankprob
+By implementing a bridge between Bio::Phylo's library code and the R programming language,
+additional functionality has become accessible. So far, this has been wrapped in methods
+to estimate the parameters of the birth/death process and use these to simulate replicates
+of the input tree (using `ape', \citet{Paradis2004}); and methods to estimate the 
+parameters of state transition models for binary characters and DNA sequences (using
+`phangorn', \cite{Schliep2010}; `phylosim', \citet{Sipos2011}; and `phytools', 
+\citet{Revell2012}). To encapsulate these state transition models, a class hierarchy has
+been implemented that represents some of the common substitution models (i.e. JC69,
+HKY85, GTR, F81, K80) such that they can be serialized to the syntax of commonly used 
+programs for phylogenetic inference. In addition, this facility to select substitution 
+models has been combined with a (tree-based) sequence simulator to allow multiple sequence 
+alignments to be replicated.
 
 \section{Visualization}
 
@@ -187,11 +206,11 @@ cannot.
 \section{Availability}
 
 All revisions of the source code are available from the source code repository at
-http://github.com/rvosa/bio-phylo. The latest stable release version, which is usually 
-considerably far behind the latest source code revision, is available from the 
-Comprehensive Perl Archive Network (CPAN) at http://search.cpan.org/dist/Bio-Phylo. 
-Accompanying this publication is a uniquely identifiable release, stamped with a Digital 
-Object Identifier (DOI) issued by Zenodo.org: \texttt{doi:10.5281/zenodo.tbd}.
+http://github.com/rvosa/bio-phylo. The latest stable release version, which over time may
+fall behind the latest source code revision, is available from the Comprehensive Perl 
+Archive Network (CPAN) at http://search.cpan.org/dist/Bio-Phylo. Accompanying this 
+publication is a uniquely identifiable release, stamped with a Digital Object Identifier 
+(DOI) issued by Zenodo.org: \texttt{doi:10.5281/zenodo.tbd}.
 
 As is a common convention in Perl software releases, a dual licensing scheme applies to
 Bio::Phylo - both the Artistic License 
