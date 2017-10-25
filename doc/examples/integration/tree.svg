@@ -1097,8 +1097,8 @@
     <text class="taxon_text" style="font-family: Verdana; font-size: 8; font-style: Italic" transform="rotate(31.4460999123576 10925.9802368276 9012.27400918036)" x="10931" y="9016">Rhabdomys pumilio</text>
     <line style="stroke: rgb(145,255,0); stroke-linecap: square; stroke-width: 2" x1="10833.9229702687" x2="10231.1950905277" y1="8821.51357234538" y2="8469.70720232672" />
     <path d="M 10540.3923701656 7840.46262778477 A 4899.23111919927 4899.23111919927, 0, 0, 1, 10231.1950905277 8469.70720232672" style="fill: none; stroke: rgb(145,255,0); stroke-linecap: square; stroke-width: 2" />
-    <path d="M 11049.8709332242 9062.61972137858 A 5906 5906, 0, 0, 0, 11099.7746601974 8978.78069270098" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
-    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(31.2357581069238 11055.0011779922 9065.73108580937)" x="11055.0011779922" y="9065.73108580937">Rattus</text>
+    <path d="M 11044.2407499907 9071.88399132087 A 5906 5906, 0, 0, 0, 11179.8481297966 8837.2538399379" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
+    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(31.3409290096407 11049.3652749653 9075.00476747189)" x="11049.3652749653" y="9075.00476747189">Rattus</text>
     <line style="stroke: rgb(255,250,0); stroke-linecap: square; stroke-width: 2" x1="10963.7325606978" x2="10309.7584849634" y1="8683.44844726526" y2="8329.90286506038" />
     <path d="M 10540.3923701656 7840.46262778477 A 4899.23111919927 4899.23111919927, 0, 0, 1, 10309.7584849634 8329.90286506038" style="fill: none; stroke: rgb(255,250,0); stroke-linecap: square; stroke-width: 2" />
     <line style="stroke: rgb(228,255,0); stroke-linecap: square; stroke-width: 2" x1="11020.5450752353" x2="10328.8564795718" y1="8660.80863466481" y2="8294.22473585292" />
@@ -1115,8 +1115,8 @@
     <path d="M 10540.3923701656 7840.46262778477 A 4899.23111919927 4899.23111919927, 0, 0, 1, 10446.6821193436 8056.57085675161" style="fill: none; stroke: rgb(188,255,0); stroke-linecap: square; stroke-width: 2" />
     <line style="stroke: rgb(255,175,0); stroke-linecap: square; stroke-width: 2" x1="11092.2876495147" x2="10472.7393091106" y1="8276.19855960498" y2="7999.26702370327" />
     <path d="M 10540.3923701656 7840.46262778477 A 4899.23111919927 4899.23111919927, 0, 0, 1, 10472.7393091106 7999.26702370327" style="fill: none; stroke: rgb(255,175,0); stroke-linecap: square; stroke-width: 2" />
-    <path d="M 11374.0251957363 8449.63042020451 A 5906 5906, 0, 0, 0, 11369.5196557769 8459.49073310426" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
-    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(24.5048203330412 11379.4847540117 8452.11903898562)" x="11379.4847540117" y="8452.11903898562">Mus</text>
+    <path d="M 11369.5196557769 8459.49073310426 A 5906 5906, 0, 0, 0, 11422.3877799312 8340.62956574771" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
+    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(24.6099912357581 11374.9746368021 8461.98936913518)" x="11374.9746368021" y="8461.98936913518">Mus</text>
     <line style="stroke: rgb(255,188,0); stroke-linecap: square; stroke-width: 2" x1="11305.388037573" x2="10501.6145086778" y1="8278.58152603256" y2="7933.37331485474" />
     <path d="M 10540.3923701656 7840.46262778477 A 4899.23111919927 4899.23111919927, 0, 0, 1, 10501.6145086778 7933.37331485474" style="fill: none; stroke: rgb(255,188,0); stroke-linecap: square; stroke-width: 2" />
     <text class="taxon_text" style="font-family: Verdana; font-size: 8; font-style: Italic" transform="rotate(23.2427695004382 11305.388037573 8278.58152603256)" x="11311" y="8282">Muriculus imberbis</text>
@@ -1414,8 +1414,8 @@
     <path d="M 10163.4852313027 9560.08805649188 A 5478.03215043979 5478.03215043979, 0, 0, 1, 10110.0966207932 9621.59384925979" style="fill: none; stroke: rgb(255,213,0); stroke-linecap: square; stroke-width: 2" />
     <line style="stroke: rgb(255,229,0); stroke-linecap: square; stroke-width: 2" x1="10308.952498583" x2="10215.9535237935" y1="9574.95257348281" y2="9497.79532369541" />
     <path d="M 10215.9535237935 9497.79532369541 A 5478.03215043979 5478.03215043979, 0, 0, 1, 10163.4852313027 9560.08805649188" style="fill: none; stroke: rgb(255,229,0); stroke-linecap: square; stroke-width: 2" />
-    <path d="M 10505.6219193904 9818.4037397201 A 5906 5906, 0, 0, 0, 10702.4042491533 9573.26605188379" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
-    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(40.2804557405784 10510.1992528676 9822.28291724098)" x="10510.1992528676" y="9822.28291724098">Akodon</text>
+    <path d="M 10441.9291524095 9892.31311754006 A 5906 5906, 0, 0, 0, 10728.5133034663 9538.64351679312" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
+    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(41.2269938650307 10446.4417793845 9896.26738078172)" x="10446.4417793845" y="9896.26738078172">Akodon</text>
     <line style="stroke: rgb(255,215,0); stroke-linecap: square; stroke-width: 2" x1="10314.5947054583" x2="10298.2366727563" y1="9837.10157900876" y2="9822.5538781481" />
     <path d="M 10301.7431608954 9818.60739328644 A 5752.10888686685 5752.10888686685, 0, 0, 1, 10298.2366727563 9822.5538781481" style="fill: none; stroke: rgb(255,215,0); stroke-linecap: square; stroke-width: 2" />
     <text class="taxon_text" style="font-family: Verdana; font-size: 8; font-style: Italic" transform="rotate(41.6476774758983 10314.5947054583 9837.10157900876)" x="10320" y="9841">Andalgalomys pearsoni</text>
@@ -2472,7 +2472,7 @@
     <path d="M 7715.7437935602 11228.2197646047 A 5502.55019714892 5502.55019714892, 0, 0, 1, 7659.66512826746 11246.2911026893" style="fill: none; stroke: rgb(117,255,0); stroke-linecap: square; stroke-width: 2" />
     <line style="stroke: rgb(109,255,0); stroke-linecap: square; stroke-width: 2" x1="7659.66512826746" x2="7643.8185484304" y1="11246.2911026893" y2="11196.1992080105" />
     <path d="M 7712.03023856347 11174.1258287499 A 5450.01152562936 5450.01152562936, 0, 0, 1, 7643.8185484304 11196.1992080105" style="fill: none; stroke: rgb(109,255,0); stroke-linecap: square; stroke-width: 2" />
-    <path d="M 7738.23405315756 11644.411251534 A 5906 5906, 0, 0, 0, 7758.94381340494 11637.9918997179" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
+    <path d="M 7738.23405315756 11644.411251534 A 5906 5906, 0, 0, 0, 7913.49216484653 11587.4308707197" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
     <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(72.8834355828221 7739.99995297452 11650.1454993344)" x="7739.99995297452" y="11650.1454993344">Neotoma</text>
     <line style="stroke: rgb(113,255,0); stroke-linecap: square; stroke-width: 2" x1="7845.43530608612" x2="7779.94566017046" y1="11340.6838882427" y2="11151.1570618972" />
     <path d="M 7779.94566017046 11151.1570618972 A 5450.01152562936 5450.01152562936, 0, 0, 1, 7712.03023856347 11174.1258287499" style="fill: none; stroke: rgb(113,255,0); stroke-linecap: square; stroke-width: 2" />
@@ -2776,8 +2776,8 @@
     <text class="taxon_text" style="font-family: Verdana; font-size: 8; font-style: Italic" transform="rotate(80.8764241893076 6915.55055957898 11700.9510761674)" x="6921" y="11704">Neofiber alleni</text>
     <line style="stroke: rgb(255,251,0); stroke-linecap: square; stroke-width: 2" x1="7052.9653516621" x2="6961.17943749609" y1="11454.3813862805" y2="10978.9285321486" />
     <path d="M 7057.20057013862 10959.4276074772 A 5070.85744616318 5070.85744616318, 0, 0, 1, 6961.17943749609 10978.9285321486" style="fill: none; stroke: rgb(255,251,0); stroke-linecap: square; stroke-width: 2" />
-    <path d="M 7075.35030266185 11807.2762743445 A 5906 5906, 0, 0, 0, 7213.60725467373 11779.9648295992" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
-    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(79.5092024539877 7076.44276825887 11813.1759793303)" x="7076.44276825887" y="11813.1759793303">Microtus</text>
+    <path d="M 6947.18324454723 11829.5522899489 A 5906 5906, 0, 0, 0, 7266.60329369419 11768.5831966266" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
+    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(80.7712532865907 6948.14550317698 11835.4746254958)" x="6948.14550317698" y="11835.4746254958">Microtus</text>
     <line style="stroke: rgb(255,237,0); stroke-linecap: square; stroke-width: 2" x1="7213.06270024624" x2="7111.35043460307" y1="11400.3833022698" y2="10947.5747039146" />
     <path d="M 7111.35043460307 10947.5747039146 A 5070.85744616318 5070.85744616318, 0, 0, 1, 7057.20057013862 10959.4276074772" style="fill: none; stroke: rgb(255,237,0); stroke-linecap: square; stroke-width: 2" />
     <line style="stroke: rgb(255,224,0); stroke-linecap: square; stroke-width: 2" x1="7300.33033384739" x2="7141.97952127847" y1="11625.6748060012" y2="10940.5949046941" />
@@ -3265,8 +3265,8 @@
     <text class="taxon_text" style="font-family: Verdana; font-size: 8; font-style: Italic" transform="rotate(92.6555652936021 5732.48038525338 11767.7993425331)" x="5738" y="11771">C. formosus</text>
     <line style="stroke: rgb(255,202,0); stroke-linecap: square; stroke-width: 2" x1="5731.5758221588" x2="5738.7930182538" y1="11073.3935768442" y2="10936.9838219342" />
     <path d="M 5779.79394382776 10938.982449673 A 4943.8889899909 4943.8889899909, 0, 0, 1, 5738.7930182538 10936.9838219342" style="fill: none; stroke: rgb(255,202,0); stroke-linecap: square; stroke-width: 2" />
-    <path d="M 5672.23045291657 11896.8977542437 A 5906 5906, 0, 0, 0, 5726.36459219024 11899.6575886735" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
-    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(93.1814198071867 5671.89746658361 11902.8885071265)" x="5671.89746658361" y="11902.8885071265">Chaetodipus</text>
+    <path d="M 5607.30633084794 11892.9303137071 A 5906 5906, 0, 0, 0, 5726.36459219024 11899.6575886735" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
+    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(93.8124452234882 5606.90738705943 11898.9170360034)" x="5606.90738705943" y="11898.9170360034">Chaetodipus</text>
     <line style="stroke: rgb(255,153,0); stroke-linecap: square; stroke-width: 2" x1="5795.70568483453" x2="5820.81005073415" y1="11632.8202960968" y2="10940.6405766292" />
     <path d="M 5820.81005073415 10940.6405766292 A 4943.8889899909 4943.8889899909, 0, 0, 1, 5779.79394382776 10938.982449673" style="fill: none; stroke: rgb(255,153,0); stroke-linecap: square; stroke-width: 2" />
     <path d="M 5737.19433189775 11900.1499286724 A 5906 5906, 0, 0, 0, 5834.69745640273 11903.6862271872" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
@@ -3366,8 +3366,8 @@
     <path d="M 5467.59210798303 11468.8146441878 A 5494.66939642099 5494.66939642099, 0, 0, 1, 5428.65993243103 11464.8844729926" style="fill: none; stroke: rgb(255,158,0); stroke-linecap: square; stroke-width: 2" />
     <line style="stroke: rgb(201,255,0); stroke-linecap: square; stroke-width: 2" x1="5495.69934479875" x2="5506.55128467365" y1="11592.8181425879" y2="11472.4674637048" />
     <path d="M 5506.55128467365 11472.4674637048 A 5494.66939642099 5494.66939642099, 0, 0, 1, 5467.59210798303 11468.8146441878" style="fill: none; stroke: rgb(201,255,0); stroke-linecap: square; stroke-width: 2" />
-    <path d="M 5542.42984068408 11888.2480882945 A 5906 5906, 0, 0, 0, 5423.63943007529 11877.8094978858" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
-    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(94.4434706397897 5541.96498783005 11894.230053843)" x="5541.96498783005" y="11894.230053843">Dipodomys</text>
+    <path d="M 5402.06500062817 11875.6539837303 A 5906 5906, 0, 0, 0, 5596.49006212212 11892.1995663787" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
+    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(95.8106923751096 5401.45754888482 11881.6231547263)" x="5401.45754888482" y="11881.6231547263">Dipodomys</text>
     <line style="stroke: rgb(255,233,0); stroke-linecap: square; stroke-width: 2" x1="5467.59210798303" x2="5532.66889733395" y1="11468.8146441878" y2="10800.3555474401" />
     <path d="M 5658.80505902054 10810.966405371 A 4823.05004549591 4823.05004549591, 0, 0, 1, 5532.66889733395 10800.3555474401" style="fill: none; stroke: rgb(255,233,0); stroke-linecap: square; stroke-width: 2" />
     <line style="stroke: rgb(255,178,0); stroke-linecap: square; stroke-width: 2" x1="5779.79394382776" x2="5785.17623850572" y1="10938.982449673" y2="10818.2634312432" />
@@ -4465,8 +4465,8 @@
     <path d="M 3023.64312020607 10361.3233144327 A 5280.13648771611 5280.13648771611, 0, 0, 1, 2903.67110956568 10276.9836019294" style="fill: none; stroke: rgb(0,255,1); stroke-linecap: square; stroke-width: 2" />
     <line style="stroke: rgb(82,255,0); stroke-linecap: square; stroke-width: 2" x1="2949.81947230809" x2="2973.90776867683" y1="10361.4062924123" y2="10326.9628073785" />
     <path d="M 3023.64312020607 10361.3233144327 A 5280.13648771611 5280.13648771611, 0, 0, 1, 2973.90776867683 10326.9628073785" style="fill: none; stroke: rgb(82,255,0); stroke-linecap: square; stroke-width: 2" />
-    <path d="M 2643.98023015772 10859.8320243016 A 5906 5906, 0, 0, 0, 2581.814757524 10816.3103770541" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
-    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(124.627519719544 2640.57079591812 10864.769205498)" x="2640.57079591812" y="10864.769205498">Spermophilus</text>
+    <path d="M 2564.15639948858 10803.7292547379 A 5906 5906, 0, 0, 0, 2824.61348987603 10979.7345824173" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
+    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(125.574057843996 2560.66587094082 10808.609440232)" x="2560.66587094082" y="10808.609440232">Spermophilus</text>
     <line style="stroke: rgb(0,255,131); stroke-linecap: square; stroke-width: 2" x1="2978.47616987668" x2="3196.9555852856" y1="10823.4554145847" y2="10474.6824846071" />
     <path d="M 3196.9555852856 10474.6824846071 A 5280.13648771611 5280.13648771611, 0, 0, 1, 3023.64312020607 10361.3233144327" style="fill: none; stroke: rgb(0,255,131); stroke-linecap: square; stroke-width: 2" />
     <line style="stroke: rgb(158,255,0); stroke-linecap: square; stroke-width: 2" x1="2563.8249939656" x2="2572.16269492049" y1="10640.23461992" y2="10628.9753305784" />
@@ -4603,8 +4603,8 @@
     <text class="taxon_text" style="font-family: Verdana; font-size: 8; font-style: Italic" transform="rotate(126.625766871166 2555.31327254155 10633.9194371149)" x="2561" y="10637">T. sibiricus</text>
     <line style="stroke: rgb(201,255,0); stroke-linecap: square; stroke-width: 2" x1="2862.33030582376" x2="2948.21347834372" y1="10084.4953779021" y2="9972.69603144816" />
     <path d="M 3024.83170318825 10030.3955559837 A 5009.56232939036 5009.56232939036, 0, 0, 1, 2948.21347834372 9972.69603144816" style="fill: none; stroke: rgb(201,255,0); stroke-linecap: square; stroke-width: 2" />
-    <path d="M 2407.34330584386 10687.6064124386 A 5906 5906, 0, 0, 0, 2476.56393966581 10739.8559396607" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
-    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(127.467134092901 2403.6934683625 10692.3686268772)" x="2403.6934683625" y="10692.3686268772">Tamias</text>
+    <path d="M 2279.65428426025 10586.9231250782 A 5906 5906, 0, 0, 0, 2476.56393966581 10739.8559396607" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
+    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(129.044697633655 2275.87472545659 10591.5830537525)" x="2275.87472545659" y="10591.5830537525">Tamias</text>
     <line style="stroke: rgb(72,255,0); stroke-linecap: square; stroke-width: 2" x1="3005.30018571408" x2="3102.54056527486" y1="10223.7668197061" y2="10086.6176180515" />
     <path d="M 3102.54056527486 10086.6176180515 A 5009.56232939036 5009.56232939036, 0, 0, 1, 3024.83170318825 10030.3955559837" style="fill: none; stroke: rgb(72,255,0); stroke-linecap: square; stroke-width: 2" />
     <line style="stroke: rgb(74,255,0); stroke-linecap: square; stroke-width: 2" x1="2305.48606745879" x2="2365.99675971151" y1="10437.3012972142" y2="10364.6248428467" />
@@ -4846,8 +4846,8 @@
     <text class="taxon_text" style="font-family: Verdana; font-size: 8; font-style: Italic" transform="rotate(134.829097283085 1929.36193082993 10094.9947142607)" x="1935" y="10098">Rheithrosciurus macrotis</text>
     <line style="stroke: rgb(62,255,0); stroke-linecap: square; stroke-width: 2" x1="2433.56202102078" x2="2472.30091630969" y1="9615.81281630137" y2="9576.5376081243" />
     <path d="M 2472.30091630969 9576.5376081243 A 5023.57264179557 5023.57264179557, 0, 0, 1, 2465.34830089178 9569.66657454002" style="fill: none; stroke: rgb(62,255,0); stroke-linecap: square; stroke-width: 2" />
-    <path d="M 1976.94339806841 10323.8699769598 A 5906 5906, 0, 0, 0, 1843.99819501927 10196.2465367274" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
-    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(132.936021034181 1972.85631042676 10328.2626657275)" x="1972.85631042676" y="10328.2626657275">Sciurus</text>
+    <path d="M 1843.99819501927 10196.2465367274 A 5906 5906, 0, 0, 0, 2024.80724170875 10367.914666569" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
+    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(134.723926380368 1839.77604621638 10200.5095707979)" x="1839.77604621638" y="10200.5095707979">Sciurus</text>
     <line style="stroke: rgb(163,255,0); stroke-linecap: square; stroke-width: 2" x1="1914.35602661089" x2="1923.65003019003" y1="10080.0232012464" y2="10070.7419837732" />
     <path d="M 1927.38782978857 10074.4814990216 A 5760.86533212011 5760.86533212011, 0, 0, 1, 1923.65003019003 10070.7419837732" style="fill: none; stroke: rgb(163,255,0); stroke-linecap: square; stroke-width: 2" />
     <text class="taxon_text" style="font-family: Verdana; font-size: 8; font-style: Italic" transform="rotate(135.039439088519 1914.35602661089 10080.0232012464)" x="1920" y="10084">Microsciurus mimulus</text>
@@ -5265,8 +5265,8 @@
     <path d="M 1681.45312813691 9141.92470899993 A 5340.5559599636 5340.5559599636, 0, 0, 1, 1672.36981926612 9129.40169685901" style="fill: none; stroke: rgb(0,255,12); stroke-linecap: square; stroke-width: 2" />
     <line style="stroke: rgb(0,255,0); stroke-linecap: square; stroke-width: 2" x1="1672.36981926612" x2="1714.23408892727" y1="9129.40169685901" y2="9099.12875045555" />
     <path d="M 1742.63264767584 9138.02671814274 A 5288.89293296937 5288.89293296937, 0, 0, 1, 1714.23408892727 9099.12875045555" style="fill: none; stroke: rgb(0,255,0); stroke-linecap: square; stroke-width: 2" />
-    <path d="M 1236.00325364115 9490.72642879419 A 5906 5906, 0, 0, 0, 1204.16683414355 9446.85657451413" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
-    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(143.768624014023 1231.16343303868 9494.2727136863)" x="1231.16343303868" y="9494.2727136863">Sylvilagus</text>
+    <path d="M 1204.16683414355 9446.85657451413 A 5906 5906, 0, 0, 0, 1268.24095945881 9534.30224828843" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
+    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(144.294478527607 1199.29467041258 9450.35829131859)" x="1199.29467041258" y="9450.35829131859">Sylvilagus</text>
     <line style="stroke: rgb(1,255,0); stroke-linecap: square; stroke-width: 2" x1="1536.85008394133" x2="1771.38423639304" y1="9352.85364595426" y2="9176.66447397078" />
     <path d="M 1771.38423639304 9176.66447397078 A 5288.89293296937 5288.89293296937, 0, 0, 1, 1742.63264767584 9138.02671814274" style="fill: none; stroke: rgb(1,255,0); stroke-linecap: square; stroke-width: 2" />
     <line style="stroke: rgb(0,255,92); stroke-linecap: square; stroke-width: 2" x1="1299.01492524587" x2="1336.79960965017" y1="9352.58338105689" y2="9325.63662352034" />
@@ -5411,8 +5411,8 @@
     <text class="taxon_text" style="font-family: Verdana; font-size: 8; font-style: Italic" transform="rotate(147.449605609115 1132.9883568091 9106.64991028024)" x="1138" y="9110">Oryctolagus cuniculus</text>
     <line style="stroke: rgb(0,255,69); stroke-linecap: square; stroke-width: 2" x1="1747.19443951083" x2="1932.96098074076" y1="8763.35329045296" y2="8642.64742331128" />
     <path d="M 1932.96098074076 8642.64742331128 A 4850.19502578101 4850.19502578101, 0, 0, 1, 1922.2873691151 8626.14765160542" style="fill: none; stroke: rgb(0,255,69); stroke-linecap: square; stroke-width: 2" />
-    <path d="M 1135.55240410005 9349.32613920221 A 5906 5906, 0, 0, 0, 1039.29709793878 9205.03708519596" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
-    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(145.451358457493 1130.61053387055 9352.72877327523)" x="1130.61053387055" y="9352.72877327523">Lepus</text>
+    <path d="M 1027.56435848399 9186.80400887492 A 5906 5906, 0, 0, 0, 1185.25871687086 9420.39506147052" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
+    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(147.344434706398 1022.51278146924 9190.04153411252)" x="1022.51278146924" y="9190.04153411252">Lepus</text>
     <line style="stroke: rgb(0,255,61); stroke-linecap: square; stroke-width: 2" x1="1922.2873691151" x2="2084.98361237662" y1="8626.14765160542" y2="8521.36725243503" />
     <path d="M 2146.96110439107 8615.09797253106 A 4656.67758568395 4656.67758568395, 0, 0, 1, 2084.98361237662 8521.36725243503" style="fill: none; stroke: rgb(0,255,61); stroke-linecap: square; stroke-width: 2" />
     <line style="stroke: rgb(0,255,92); stroke-linecap: square; stroke-width: 2" x1="1339.85380680682" x2="2211.18216550966" y1="9329.9150575241" y2="8707.30595870864" />
@@ -5504,8 +5504,8 @@
     <path d="M 1700.59828710189 8613.55479288467 A 5031.45344252351 5031.45344252351, 0, 0, 1, 1688.50135789515 8593.55030863287" style="fill: none; stroke: rgb(143,255,0); stroke-linecap: square; stroke-width: 2" />
     <line style="stroke: rgb(146,255,0); stroke-linecap: square; stroke-width: 2" x1="1688.50135789515" x2="2889.05788893722" y1="8593.55030863287" y2="7871.36435426242" />
     <path d="M 2915.04796983772 7913.90604168161 A 3630.42220200182 3630.42220200182, 0, 0, 1, 2889.05788893722 7871.36435426242" style="fill: none; stroke: rgb(146,255,0); stroke-linecap: square; stroke-width: 2" />
-    <path d="M 964.236386041642 9085.76097978004 A 5906 5906, 0, 0, 0, 925.004072543664 9020.80326011172" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
-    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(148.501314636284 959.120473125328 9088.89585378591)" x="959.120473125328" y="9088.89585378591">Ochotona</text>
+    <path d="M 925.004072543664 9020.80326011172 A 5906 5906, 0, 0, 0, 987.028546215539 9122.65163019222" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
+    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(149.237510955302 919.84830289166 9023.87214252972)" x="919.84830289166" y="9023.87214252972">Ochotona</text>
     <line style="stroke: rgb(0,255,43); stroke-linecap: square; stroke-width: 2" x1="2687.86125008493" x2="2941.61976455504" y1="8118.38636817548" y2="7956.08683350903" />
     <path d="M 2941.61976455504 7956.08683350903 A 3630.42220200182 3630.42220200182, 0, 0, 1, 2915.04796983772 7913.90604168161" style="fill: none; stroke: rgb(0,255,43); stroke-linecap: square; stroke-width: 2" />
     <line style="stroke: rgb(51,255,0); stroke-linecap: square; stroke-width: 2" x1="2915.04796983772" x2="3906.90543636119" y1="7913.90604168161" y2="7298.55709002662" />
@@ -5601,8 +5601,8 @@
     <path d="M 1268.8425622781 8610.5684873277 A 5403.60236578708 5403.60236578708, 0, 0, 1, 1253.3531561148 8582.29786565656" style="fill: none; stroke: rgb(0,255,166); stroke-linecap: square; stroke-width: 2" />
     <line style="stroke: rgb(0,255,138); stroke-linecap: square; stroke-width: 2" x1="1219.54855799583" x2="1284.50034389263" y1="8675.09256884548" y2="8638.74620242095" />
     <path d="M 1284.50034389263 8638.74620242095 A 5403.60236578708 5403.60236578708, 0, 0, 1, 1268.8425622781 8610.5684873277" style="fill: none; stroke: rgb(0,255,138); stroke-linecap: square; stroke-width: 2" />
-    <path d="M 854.371765753182 8898.85254452895 A 5906 5906, 0, 0, 0, 833.226369721077 8860.99392754587" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
-    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(150.604732690622 849.144239609349 8901.79753526163)" x="849.144239609349" y="8901.79753526163">Cercopithecus</text>
+    <path d="M 833.226369721077 8860.99392754587 A 5906 5906, 0, 0, 0, 913.948453062379 9002.1518385807" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
+    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(151.02541630149 827.977361630717 8863.90045710315)" x="827.977361630717" y="8863.90045710315">Cercopithecus</text>
     <line style="stroke: rgb(0,255,33); stroke-linecap: square; stroke-width: 2" x1="918.206287106202" x2="1360.57049565959" y1="8741.24947051396" y2="8502.62690514013" />
     <path d="M 1372.53811881139 8524.68692915022 A 5271.38004246285 5271.38004246285, 0, 0, 1, 1360.57049565959 8502.62690514013" style="fill: none; stroke: rgb(0,255,33); stroke-linecap: square; stroke-width: 2" />
     <text class="taxon_text" style="font-family: Verdana; font-size: 8; font-style: Italic" transform="rotate(151.656441717791 918.206287106202 8741.24947051396)" x="924" y="8745">Miopithecus talapoin</text>
@@ -5721,8 +5721,8 @@
     <path d="M 1098.42379743538 8492.8047350335 A 5499.04761904762 5499.04761904762, 0, 0, 1, 1070.33497125867 8436.78628955393" style="fill: none; stroke: rgb(0,255,177); stroke-linecap: square; stroke-width: 2" />
     <line style="stroke: rgb(0,255,191); stroke-linecap: square; stroke-width: 2" x1="1070.33497125867" x2="1133.91823038734" y1="8436.78628955393" y2="8405.35640269822" />
     <path d="M 1166.40575007975 8469.99146551075 A 5428.12041249621 5428.12041249621, 0, 0, 1, 1133.91823038734 8405.35640269822" style="fill: none; stroke: rgb(0,255,191); stroke-linecap: square; stroke-width: 2" />
-    <path d="M 726.808653934902 8659.75356523573 A 5906 5906, 0, 0, 0, 683.590529735874 8572.28037828032" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
-    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(153.234005258545 721.451534382516 8662.45565148554)" x="721.451534382516" y="8662.45565148554">Macaca</text>
+    <path d="M 683.590529735874 8572.28037828032 A 5906 5906, 0, 0, 0, 756.420987697409 8717.66722424579" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
+    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(154.180543382997 678.189504198864 8574.89359911839)" x="678.189504198864" y="8574.89359911839">Macaca</text>
     <line style="stroke: rgb(0,255,209); stroke-linecap: square; stroke-width: 2" x1="1127.7364158782" x2="1199.7517549315" y1="8572.20678766019" y2="8534.18783800151" />
     <path d="M 1199.7517549315 8534.18783800151 A 5428.12041249621 5428.12041249621, 0, 0, 1, 1166.40575007975 8469.99146551075" style="fill: none; stroke: rgb(0,255,209); stroke-linecap: square; stroke-width: 2" />
     <line style="stroke: rgb(0,255,200); stroke-linecap: square; stroke-width: 2" x1="1166.40575007975" x2="1443.99238550024" y1="8469.99146551075" y2="8328.14327036285" />
@@ -5936,8 +5936,8 @@
     <path d="M 880.731173942807 7964.56413417231 A 5483.28601759175 5483.28601759175, 0, 0, 1, 876.013013554115 7952.22511853793" style="fill: none; stroke: rgb(0,255,192); stroke-linecap: square; stroke-width: 2" />
     <line style="stroke: rgb(0,255,184); stroke-linecap: square; stroke-width: 2" x1="876.013013554115" x2="1096.12679499039" y1="7952.22511853793" y2="7868.36236592108" />
     <path d="M 1113.04184707006 7912.16901782061 A 5247.73764027904 5247.73764027904, 0, 0, 1, 1096.12679499039 7868.36236592108" style="fill: none; stroke: rgb(0,255,184); stroke-linecap: square; stroke-width: 2" />
-    <path d="M 493.395124725321 8134.97980027942 A 5906 5906, 0, 0, 0, 481.721906204893 8104.62416586455" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
-    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(158.808063102542 487.800876629884 8137.1487604558)" x="487.800876629884" y="8137.1487604558">Hylobates</text>
+    <path d="M 474.032703658963 8084.35156338113 A 5906 5906, 0, 0, 0, 509.219104913603 8175.35311206117" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
+    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(159.333917616126 468.418784969826 8086.46908952069)" x="468.418784969826" y="8086.46908952069">Hylobates</text>
     <line style="stroke: rgb(0,147,255); stroke-linecap: square; stroke-width: 2" x1="1015.77773568173" x2="1130.34821811879" y1="8001.8380692278" y2="7955.8225544314" />
     <path d="M 1130.34821811879 7955.8225544314 A 5247.73764027904 5247.73764027904, 0, 0, 1, 1113.04184707006 7912.16901782061" style="fill: none; stroke: rgb(0,147,255); stroke-linecap: square; stroke-width: 2" />
     <line style="stroke: rgb(0,236,255); stroke-linecap: square; stroke-width: 2" x1="1113.04184707006" x2="1406.60182288431" y1="7912.16901782061" y2="7797.30486857726" />
@@ -6103,8 +6103,8 @@
     <path d="M 748.420120756366 7683.45760578451 A 5514.80922050349 5514.80922050349, 0, 0, 1, 739.229436310598 7654.51316548687" style="fill: none; stroke: rgb(0,255,11); stroke-linecap: square; stroke-width: 2" />
     <line style="stroke: rgb(0,255,15); stroke-linecap: square; stroke-width: 2" x1="739.229436310598" x2="821.089632442951" y1="7654.51316548687" y2="7628.76812099374" />
     <path d="M 835.871728815204 7675.04548771229 A 5428.99605702154 5428.99605702154, 0, 0, 1, 821.089632442951 7628.76812099374" style="fill: none; stroke: rgb(0,255,15); stroke-linecap: square; stroke-width: 2" />
-    <path d="M 348.457911598755 7714.90758439903 A 5906 5906, 0, 0, 0, 380.88669337395 7818.3513541937" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
-    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(163.120070113935 342.716419466956 7716.64978648274)" x="342.716419466956" y="7716.64978648274">Callicebus</text>
+    <path d="M 345.319586828969 7704.53085184749 A 5906 5906, 0, 0, 0, 380.88669337395 7818.3513541937" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
+    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(163.225241016652 339.574906422768 7706.26251204239)" x="339.574906422768" y="7706.26251204239">Callicebus</text>
     <line style="stroke: rgb(0,255,93); stroke-linecap: square; stroke-width: 2" x1="693.277466424893" x2="851.067338315232" y1="7773.93483274261" y2="7721.18872660472" />
     <path d="M 851.067338315232 7721.18872660472 A 5428.99605702154 5428.99605702154, 0, 0, 1, 835.871728815204 7675.04548771229" style="fill: none; stroke: rgb(0,255,93); stroke-linecap: square; stroke-width: 2" />
     <line style="stroke: rgb(0,255,54); stroke-linecap: square; stroke-width: 2" x1="835.871728815204" x2="878.350848465272" y1="7675.04548771229" y2="7661.26688773272" />
@@ -6233,8 +6233,8 @@
     <path d="M 608.992505858344 7321.90274762968 A 5550.71064604186 5550.71064604186, 0, 0, 1, 596.892880706996 7271.5432094615" style="fill: none; stroke: rgb(46,255,0); stroke-linecap: square; stroke-width: 2" />
     <line style="stroke: rgb(36,255,0); stroke-linecap: square; stroke-width: 2" x1="596.892880706996" x2="749.465238232386" y1="7271.5432094615" y2="7235.63750911545" />
     <path d="M 766.360999902682 7305.34982097654 A 5393.97027600849 5393.97027600849, 0, 0, 1, 749.465238232386 7235.63750911545" style="fill: none; stroke: rgb(36,255,0); stroke-linecap: square; stroke-width: 2" />
-    <path d="M 252.503272032936 7359.08695895734 A 5906 5906, 0, 0, 0, 242.679440186072 7316.85077800936" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
-    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(166.69588080631 246.664298045838 7360.46767716827)" x="246.664298045838" y="7360.46767716827">Saguinus</text>
+    <path d="M 242.679440186072 7316.85077800936 A 5906 5906, 0, 0, 0, 270.440211217812 7432.8226082702" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
+    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(167.116564417178 236.830486010846 7318.18858780754)" x="236.830486010846" y="7318.18858780754">Saguinus</text>
     <line style="stroke: rgb(46,255,0); stroke-linecap: square; stroke-width: 2" x1="726.605093021817" x2="784.182301383171" y1="7390.00799805103" y2="7374.83128901643" />
     <path d="M 784.182301383171 7374.83128901643 A 5393.97027600849 5393.97027600849, 0, 0, 1, 766.360999902682 7305.34982097654" style="fill: none; stroke: rgb(46,255,0); stroke-linecap: square; stroke-width: 2" />
     <line style="stroke: rgb(0,255,107); stroke-linecap: square; stroke-width: 2" x1="366.668055126389" x2="390.58878525324" y1="7266.7466987786" y2="7261.36773190481" />
@@ -6872,8 +6872,8 @@
     <path d="M 334.635121886181 5897.29643295216 A 5666.2957233849 5666.2957233849, 0, 0, 1, 335.541904986165 5855.7026865039" style="fill: none; stroke: rgb(0,243,255); stroke-linecap: square; stroke-width: 2" />
     <line style="stroke: rgb(0,209,255); stroke-linecap: square; stroke-width: 2" x1="335.541904986165" x2="411.698272513008" y1="5855.7026865039" y2="5857.64270601775" />
     <path d="M 410.769139426621 5900.60088633085 A 5590.11464968153 5590.11464968153, 0, 0, 1, 411.698272513008 5857.64270601775" style="fill: none; stroke: rgb(0,209,255); stroke-linecap: square; stroke-width: 2" />
-    <path d="M 95.3157971439332 5875.33860043295 A 5906 5906, 0, 0, 0, 96.3902508718402 5831.98830398169" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
-    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(-178.790534618756 89.3171338833272 5875.21195492036)" x="89.3171338833272" y="5875.21195492036">Gazella</text>
+    <path d="M 97.0468294033544 5810.31640623656 A 5906 5906, 0, 0, 0, 94.4203692565807 5929.53564767613" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
+    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(-178.159509202454 91.0499247261487 5810.12370363538)" x="91.0499247261487" y="5810.12370363538">Gazella</text>
     <line style="stroke: rgb(0,193,255); stroke-linecap: square; stroke-width: 2" x1="226.294248605013" x2="410.170227948802" y1="5941.70852284897" y2="5943.56493931875" />
     <path d="M 410.170227948802 5943.56493931875 A 5590.11464968153 5590.11464968153, 0, 0, 1, 410.769139426621 5900.60088633085" style="fill: none; stroke: rgb(0,193,255); stroke-linecap: square; stroke-width: 2" />
     <text class="taxon_text" style="font-family: Verdana; font-size: 8; font-style: Italic" transform="rotate(180.578439964943 226.294248605013 5941.70852284897)" x="232" y="5945">Antilope cervicapra</text>
@@ -8036,8 +8036,8 @@
     <path d="M 2056.90030187282 3767.04270179065 A 4531.46041856233 4531.46041856233, 0, 0, 1, 2062.49907607133 3757.18480496988" style="fill: none; stroke: rgb(4,255,0); stroke-linecap: square; stroke-width: 2" />
     <line style="stroke: rgb(25,255,0); stroke-linecap: square; stroke-width: 2" x1="1322.16666613949" x2="2003.99678066555" y1="3498.55341247875" y2="3863.15845321517" />
     <path d="M 2003.99678066555 3863.15845321517 A 4531.46041856233 4531.46041856233, 0, 0, 1, 2056.90030187282 3767.04270179065" style="fill: none; stroke: rgb(25,255,0); stroke-linecap: square; stroke-width: 2" />
-    <path d="M 781.583937087284 3234.32290490474 A 5906 5906, 0, 0, 0, 807.186449955038 3186.54599567197" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
-    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(-152.077125328659 776.282464622422 3231.5132092443)" x="776.282464622422" y="3231.5132092443">Mustela</text>
+    <path d="M 807.186449955038 3186.54599567197 A 5906 5906, 0, 0, 0, 736.608539478377 3320.90568786613" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
+    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(-151.551270815074 801.91098749309 3183.68776268416)" x="801.91098749309" y="3183.68776268416">Mustela</text>
     <line style="stroke: rgb(0,255,199); stroke-linecap: square; stroke-width: 2" x1="1016.88097010194" x2="2284.19832119976" y1="3083.22082874487" y2="3825.0222649285" />
     <path d="M 2268.7457391793 3851.63971705424 A 4305.54413102821 4305.54413102821, 0, 0, 1, 2284.19832119976 3825.0222649285" style="fill: none; stroke: rgb(0,255,199); stroke-linecap: square; stroke-width: 2" />
     <text class="taxon_text" style="font-family: Verdana; font-size: 8; font-style: Italic" transform="rotate(210.34180543383 1016.88097010194 3083.22082874487)" x="1022" y="3087">Mellivora capensis</text>
@@ -9171,8 +9171,8 @@
     <path d="M 2784.8484687399 1371.46558069548 A 5635.64816499848 5635.64816499848, 0, 0, 1, 2825.75372040728 1343.31761914745" style="fill: none; stroke: rgb(245,255,0); stroke-linecap: square; stroke-width: 2" />
     <line style="stroke: rgb(231,255,0); stroke-linecap: square; stroke-width: 2" x1="2825.75372040728" x2="2921.43485437884" y1="1343.31761914745" y2="1483.68374436271" />
     <path d="M 2895.37279416317 1501.55962698795 A 5465.77312708523 5465.77312708523, 0, 0, 1, 2921.43485437884 1483.68374436271" style="fill: none; stroke: rgb(231,255,0); stroke-linecap: square; stroke-width: 2" />
-    <path d="M 2715.7043286355 1091.41181773655 A 5906 5906, 0, 0, 0, 2724.71995562119 1085.39150787228" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
-    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(-123.786152497809 2712.3677600564 1086.42510437834)" x="2712.3677600564" y="1086.42510437834">Nyctimene</text>
+    <path d="M 2724.71995562119 1085.39150787228 A 5906 5906, 0, 0, 0, 2626.16167876485 1152.52117259238" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
+    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(-123.680981595092 2721.39254616195 1080.39867838484)" x="2721.39254616195" y="1080.39867838484">Nyctimene</text>
     <line style="stroke: rgb(255,213,0); stroke-linecap: square; stroke-width: 2" x1="2692.87398303203" x2="2869.41452867545" y1="1266.92557549603" y2="1519.5859026761" />
     <path d="M 2869.41452867545 1519.5859026761 A 5465.77312708523 5465.77312708523, 0, 0, 1, 2895.37279416317 1501.55962698795" style="fill: none; stroke: rgb(255,213,0); stroke-linecap: square; stroke-width: 2" />
     <text class="taxon_text" style="font-family: Verdana; font-size: 8; font-style: Italic" transform="rotate(235.056967572305 2692.87398303203 1266.92557549603)" x="2698" y="1270">Paranyctimene raptor</text>
@@ -9452,8 +9452,8 @@
     <path d="M 3369.16438179185 883.796821039551 A 5752.98453139218 5752.98453139218, 0, 0, 1, 3409.49334093292 863.25917845111" style="fill: none; stroke: rgb(130,255,0); stroke-linecap: square; stroke-width: 2" />
     <line style="stroke: rgb(114,255,0); stroke-linecap: square; stroke-width: 2" x1="3409.49334093292" x2="3469.82020833585" y1="863.25917845111" y2="982.881909911838" />
     <path d="M 3438.62359055058 998.736699877571 A 5619.01091901729 5619.01091901729, 0, 0, 1, 3469.82020833585 982.881909911838" style="fill: none; stroke: rgb(114,255,0); stroke-linecap: square; stroke-width: 2" />
-    <path d="M 3313.66220267401 740.3017920552 A 5906 5906, 0, 0, 0, 3323.32131195852 735.379671715674" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
-    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(-117.055214723926 3310.933109077 734.958380397959)" x="3310.933109077" y="734.958380397959">Dobsonia</text>
+    <path d="M 3371.75148633533 711.035474649178 A 5906 5906, 0, 0, 0, 3284.73931208221 755.17441694691" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
+    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(-116.424189307625 3369.08140657204 705.662330871307)" x="3369.08140657204" y="705.662330871307">Dobsonia</text>
     <line style="stroke: rgb(25,255,0); stroke-linecap: square; stroke-width: 2" x1="3336.01816175485" x2="3407.52631846844" y1="877.278382978438" y2="1014.78546914963" />
     <path d="M 3407.52631846844 1014.78546914963 A 5619.01091901729 5619.01091901729, 0, 0, 1, 3438.62359055058 998.736699877571" style="fill: none; stroke: rgb(25,255,0); stroke-linecap: square; stroke-width: 2" />
     <text class="taxon_text" style="font-family: Verdana; font-size: 8; font-style: Italic" transform="rotate(242.524101665206 3336.01816175485 877.278382978438)" x="3342" y="881">Aproteles bulmerae</text>
@@ -9633,8 +9633,8 @@
     <text class="taxon_text" style="font-family: Verdana; font-size: 8; font-style: Italic" transform="rotate(244.41717791411 3506.69816949891 792.071238772564)" x="3512" y="796">P. neohibernicus</text>
     <line style="stroke: rgb(65,255,0); stroke-linecap: square; stroke-width: 2" x1="3751.46163970361" x2="3774.18132000973" y1="929.903492703255" y2="981.132759591003" />
     <path d="M 3692.30346235696 1018.24991963722 A 5490.29117379436 5490.29117379436, 0, 0, 1, 3774.18132000973 981.132759591003" style="fill: none; stroke: rgb(65,255,0); stroke-linecap: square; stroke-width: 2" />
-    <path d="M 3857.44137102377 496.339534328129 A 5906 5906, 0, 0, 0, 3449.69854330803 673.012250812394" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
-    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(-111.270815074496 3855.26471139393 490.748277505571)" x="3855.26471139393" y="490.748277505571">Pteropus</text>
+    <path d="M 3867.54737584864 492.41597379123 A 5906 5906, 0, 0, 0, 3449.69854330803 673.012250812394" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
+    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(-111.165644171779 3865.38098307098 486.820730960676)" x="3865.38098307098" y="486.820730960676">Pteropus</text>
     <line style="stroke: rgb(31,255,0); stroke-linecap: square; stroke-width: 2" x1="3513.5048188501" x2="3611.0443172219" y1="854.871132906143" y2="1056.7027280603" />
     <path d="M 3611.0443172219 1056.7027280603 A 5490.29117379436 5490.29117379436, 0, 0, 1, 3692.30346235696 1018.24991963722" style="fill: none; stroke: rgb(31,255,0); stroke-linecap: square; stroke-width: 2" />
     <line style="stroke: rgb(48,255,0); stroke-linecap: square; stroke-width: 2" x1="3692.30346235696" x2="3747.14345982248" y1="1018.24991963722" y2="1136.63600607646" />
@@ -9727,8 +9727,8 @@
     <path d="M 4336.17634821529 1526.23870118384 A 4773.13830755232 4773.13830755232, 0, 0, 1, 4372.05389918059 1513.05885977425" style="fill: none; stroke: rgb(255,230,0); stroke-linecap: square; stroke-width: 2" />
     <line style="stroke: rgb(255,231,0); stroke-linecap: square; stroke-width: 2" x1="4372.05389918059" x2="4420.13669540732" y1="1513.05885977425" y2="1645.58454746025" />
     <path d="M 4384.67132368692 1658.61597390923 A 4632.15953897483 4632.15953897483, 0, 0, 1, 4420.13669540732 1645.58454746025" style="fill: none; stroke: rgb(255,231,0); stroke-linecap: square; stroke-width: 2" />
-    <path d="M 4019.98051985024 435.796655564477 A 5906 5906, 0, 0, 0, 4030.19738199564 432.171550226862" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
-    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(-109.588080631025 4017.96898634517 430.14389226163)" x="4017.96898634517" y="430.14389226163">Taphozous</text>
+    <path d="M 4030.19738199564 432.171550226862 A 5906 5906, 0, 0, 0, 3918.18449272696 473.076787788933" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
+    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(-109.482909728308 4028.19622796448 426.515104121437)" x="4028.19622796448" y="426.515104121437">Taphozous</text>
     <line style="stroke: rgb(240,255,0); stroke-linecap: square; stroke-width: 2" x1="4066.91808587075" x2="4349.31342603007" y1="931.501902683432" y2="1671.93624942621" />
     <path d="M 4349.31342603007 1671.93624942621 A 4632.15953897483 4632.15953897483, 0, 0, 1, 4384.67132368692 1658.61597390923" style="fill: none; stroke: rgb(240,255,0); stroke-linecap: square; stroke-width: 2" />
     <line style="stroke: rgb(255,154,0); stroke-linecap: square; stroke-width: 2" x1="4134.2889344275" x2="4169.37358291567" y1="535.734429971369" y2="638.489803141454" />
@@ -10201,8 +10201,8 @@
     <path d="M 5290.1906435885 2149.87689481324 A 3915.00667273279 3915.00667273279, 0, 0, 1, 5464.041150571 2121.85284455824" style="fill: none; stroke: rgb(255,106,0); stroke-linecap: square; stroke-width: 2" />
     <line style="stroke: rgb(255,102,0); stroke-linecap: square; stroke-width: 2" x1="4790.02540176467" x2="5117.77618579417" y1="768.654215753545" y2="2185.6903128888" />
     <path d="M 5117.77618579417 2185.6903128888 A 3915.00667273279 3915.00667273279, 0, 0, 1, 5290.1906435885 2149.87689481324" style="fill: none; stroke: rgb(255,102,0); stroke-linecap: square; stroke-width: 2" />
-    <path d="M 4919.32029516749 193.713116322693 A 5906 5906, 0, 0, 0, 4475.34190563754 294.191232148151" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
-    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(-100.543382997371 4918.22241534544 187.814416474732)" x="4918.22241534544" y="187.814416474732">Rhinolophus</text>
+    <path d="M 4940.64332073426 189.784907071418 A 5906 5906, 0, 0, 0, 4475.34190563754 294.191232148151" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
+    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(-100.333041191937 4939.56710331544 183.882216492758)" x="4939.56710331544" y="183.882216492758">Rhinolophus</text>
     <line style="stroke: rgb(255,104,0); stroke-linecap: square; stroke-width: 2" x1="5290.1906435885" x2="5372.58631703461" y1="2149.87689481324" y2="2596.80462722029" />
     <path d="M 5217.86871135496 2628.99757902729 A 3460.54716408857 3460.54716408857, 0, 0, 1, 5372.58631703461 2596.80462722029" style="fill: none; stroke: rgb(255,104,0); stroke-linecap: square; stroke-width: 2" />
     <line style="stroke: rgb(255,148,0); stroke-linecap: square; stroke-width: 2" x1="4485.47723369046" x2="5064.78219180386" y1="604.405743477937" y2="2668.22054659763" />
@@ -11198,8 +11198,8 @@
     <path d="M 7880.32753360946 761.65733142933 A 5565.5966029724 5565.5966029724, 0, 0, 1, 7909.1450462388 772.091169555481" style="fill: none; stroke: rgb(255,76,0); stroke-linecap: square; stroke-width: 2" />
     <line style="stroke: rgb(255,76,0); stroke-linecap: square; stroke-width: 2" x1="7909.1450462388" x2="7894.12659873849" y1="772.091169555481" y2="813.216947013351" />
     <path d="M 7826.72904143904 789.098444610438 A 5521.8143767061 5521.8143767061, 0, 0, 1, 7894.12659873849 813.216947013351" style="fill: none; stroke: rgb(255,76,0); stroke-linecap: square; stroke-width: 2" />
-    <path d="M 8046.26493317163 459.816264484351 A 5906 5906, 0, 0, 0, 8056.43092248751 463.581675754876" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
-    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(-69.7283085013146 8048.34376649351 454.187903086943)" x="8048.34376649351" y="454.187903086943">Kerivoula</text>
+    <path d="M 8056.43092248751 463.581675754876 A 5906 5906, 0, 0, 0, 7944.23150134373 423.190888224459" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
+    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(-69.6231375985978 8058.52008360077 457.95713969909)" x="8058.52008360077" y="457.95713969909">Kerivoula</text>
     <line style="stroke: rgb(255,131,0); stroke-linecap: square; stroke-width: 2" x1="7776.87694221065" x2="7759.02448941607" y1="712.734003250121" y2="765.855671035363" />
     <path d="M 7759.02448941607 765.855671035363 A 5521.8143767061 5521.8143767061, 0, 0, 1, 7826.72904143904 789.098444610438" style="fill: none; stroke: rgb(255,131,0); stroke-linecap: square; stroke-width: 2" />
     <line style="stroke: rgb(255,215,0); stroke-linecap: square; stroke-width: 2" x1="8148.88580716267" x2="8116.9490754214" y1="640.768171857571" y2="720.417052530601" />
@@ -11513,8 +11513,8 @@
     <path d="M 7511.95841962715 1113.02970181752 A 5115.51531695481 5115.51531695481, 0, 0, 1, 8270.86467973649 1416.15111894769" style="fill: none; stroke: rgb(255,134,0); stroke-linecap: square; stroke-width: 2" />
     <line style="stroke: rgb(255,114,0); stroke-linecap: square; stroke-width: 2" x1="7979.39745041071" x2="7889.48364465676" y1="1020.01286811405" y2="1246.22796985658" />
     <path d="M 7511.95841962715 1113.02970181752 A 5115.51531695481 5115.51531695481, 0, 0, 1, 7889.48364465676 1246.22796985658" style="fill: none; stroke: rgb(255,114,0); stroke-linecap: square; stroke-width: 2" />
-    <path d="M 8476.72632040593 638.408563326694 A 5906 5906, 0, 0, 0, 8066.58998297282 467.365741143157" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
-    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(-65.2059596844873 8479.24246634606 632.961636706301)" x="8479.24246634606" y="632.961636706301">Myotis</text>
+    <path d="M 8584.47195540569 689.506547248032 A 5906 5906, 0, 0, 0, 8066.58998297282 467.365741143157" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
+    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(-64.0490797546013 8587.09756186225 684.111531887973)" x="8587.09756186225" y="684.111531887973">Myotis</text>
     <line style="stroke: rgb(255,103,0); stroke-linecap: square; stroke-width: 2" x1="7826.72904143904" x2="7692.31700921136" y1="789.098444610438" y2="1172.52031611389" />
     <path d="M 7511.95841962715 1113.02970181752 A 5115.51531695481 5115.51531695481, 0, 0, 1, 7692.31700921136 1172.52031611389" style="fill: none; stroke: rgb(255,103,0); stroke-linecap: square; stroke-width: 2" />
     <line style="stroke: rgb(255,94,0); stroke-linecap: square; stroke-width: 2" x1="7669.12451398396" x2="7564.92142684871" y1="805.43568951164" y2="1129.73123064147" />
@@ -12401,8 +12401,8 @@
     <text class="taxon_text" style="font-family: Verdana; font-size: 8; font-style: Italic" transform="rotate(321.402278702892 10512.6424700118 2397.89867745985)" x="10518" y="2401">Blarinella quadraticauda</text>
     <line style="stroke: rgb(255,78,0); stroke-linecap: square; stroke-width: 2" x1="9645.66796638813" x2="9400.92006159925" y1="2958.58848219668" y2="3162.77029563829" />
     <path d="M 9400.92006159925 3162.77029563829 A 4429.01000909918 4429.01000909918, 0, 0, 1, 9431.39653192864 3199.70581878103" style="fill: none; stroke: rgb(255,78,0); stroke-linecap: square; stroke-width: 2" />
-    <path d="M 10413.2310929055 2075.17805236824 A 5906 5906, 0, 0, 0, 10595.4472768181 2290.1886401078" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
-    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(-41.6476774758983 10417.7145650622 2071.19076288538)" x="10417.7145650622" y="2071.19076288538">Sorex</text>
+    <path d="M 10609.0355790966 2307.08421019085 A 5906 5906, 0, 0, 0, 10369.7384012176 2026.81207279033" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
+    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(-38.7028921998247 10613.7179721671 2303.3325178883)" x="10613.7179721671" y="2303.3325178883">Sorex</text>
     <line style="stroke: rgb(255,188,0); stroke-linecap: square; stroke-width: 2" x1="10532.4097684887" x2="10436.1802617268" y1="2422.8030959272" y2="2498.75207478225" />
     <path d="M 10432.964986039 2494.68207134816 A 5651.40976645435 5651.40976645435, 0, 0, 1, 10436.1802617268 2498.75207478225" style="fill: none; stroke: rgb(255,188,0); stroke-linecap: square; stroke-width: 2" />
     <text class="taxon_text" style="font-family: Verdana; font-size: 8; font-style: Italic" transform="rotate(321.717791411043 10532.4097684887 2422.8030959272)" x="10538" y="2426">Blarina brevicauda</text>
@@ -12453,8 +12453,8 @@
     <text class="taxon_text" style="font-family: Verdana; font-size: 8; font-style: Italic" transform="rotate(321.82296231376 10538.9683550031 2431.12871172402)" x="10544" y="2435">C. goodwini</text>
     <line style="stroke: rgb(255,124,0); stroke-linecap: square; stroke-width: 2" x1="10354.5681507666" x2="10288.0650418781" y1="2633.24027122402" y2="2684.65753720596" />
     <path d="M 10267.6144734527 2658.3740252747 A 5420.23961176827 5420.23961176827, 0, 0, 1, 10288.0650418781 2684.65753720596" style="fill: none; stroke: rgb(255,124,0); stroke-linecap: square; stroke-width: 2" />
-    <path d="M 10702.4042491533 2426.73394811621 A 5906 5906, 0, 0, 0, 10642.7341712241 2349.54038300001" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
-    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(-37.2304995617879 10707.1814969513 2423.10380989893)" x="10707.1814969513" y="2423.10380989893">Cryptotis</text>
+    <path d="M 10708.9553338986 2435.37159533447 A 5906 5906, 0, 0, 0, 10642.7341712241 2349.54038300001" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
+    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(-37.125328659071 10713.7392370485 2431.75023224135)" x="10713.7392370485" y="2431.75023224135">Cryptotis</text>
     <line style="stroke: rgb(255,168,0); stroke-linecap: square; stroke-width: 2" x1="10320.4162609921" x2="10247.002803802" y1="2574.00134091466" y2="2632.21665876795" />
     <path d="M 10247.002803802 2632.21665876795 A 5420.23961176827 5420.23961176827, 0, 0, 1, 10267.6144734527 2658.3740252747" style="fill: none; stroke: rgb(255,168,0); stroke-linecap: square; stroke-width: 2" />
     <line style="stroke: rgb(255,146,0); stroke-linecap: square; stroke-width: 2" x1="10267.6144734527" x2="9409.26552039155" y1="2658.3740252747" y2="3330.47811873722" />
@@ -13255,8 +13255,8 @@
     <text class="taxon_text" style="font-family: Verdana; font-size: 8; font-style: Italic" transform="rotate(341.489921121823 11475.2984134425 4166.91972795678)" x="11481" y="4170">Wallabia bicolor</text>
     <line style="stroke: rgb(0,255,243); stroke-linecap: square; stroke-width: 2" x1="11156.0493564151" x2="11047.7011906002" y1="4207.43123028844" y2="4245.09990350503" />
     <path d="M 11047.7011906002 4245.09990350503 A 5344.05853806491 5344.05853806491, 0, 0, 1, 11057.7340180905 4274.22821308432" style="fill: none; stroke: rgb(0,255,243); stroke-linecap: square; stroke-width: 2" />
-    <path d="M 11583.0257103462 4073.69267311423 A 5906 5906, 0, 0, 0, 11568.7317953412 4032.75263590057" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
-    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(-19.0359333917617 11588.697595592 4071.73570664601)" x="11588.697595592" y="4071.73570664601">Macropus</text>
+    <path d="M 11597.018648151 4114.73655627381 A 5906 5906, 0, 0, 0, 11554.1376737115 3991.91865168297" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
+    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(-18.6152497808939 11602.7047490465 4112.82128694391)" x="11602.7047490465" y="4112.82128694391">Macropus</text>
     <line style="stroke: rgb(0,255,172); stroke-linecap: square; stroke-width: 2" x1="11481.9910275716" x2="11481.1596670882" y1="4187.03271578769" y2="4187.30765774769" />
     <path d="M 11479.4936892576 4182.27787240151 A 5773.12435547467 5773.12435547467, 0, 0, 1, 11481.1596670882 4187.30765774769" style="fill: none; stroke: rgb(0,255,172); stroke-linecap: square; stroke-width: 2" />
     <text class="taxon_text" style="font-family: Verdana; font-size: 8; font-style: Italic" transform="rotate(341.700262927257 11481.9910275716 4187.03271578769)" x="11487" y="4191">Onychogalea unguifera</text>
@@ -13339,8 +13339,8 @@
     <path d="M 11090.8139137594 4432.93196350737 A 5326.54564755839 5326.54564755839, 0, 0, 1, 11098.1167394874 4456.85572739235" style="fill: none; stroke: rgb(0,255,158); stroke-linecap: square; stroke-width: 2" />
     <line style="stroke: rgb(0,255,122); stroke-linecap: square; stroke-width: 2" x1="11142.7316050256" x2="11083.3988224521" y1="4390.47330753701" y2="4409.04275751505" />
     <path d="M 11083.3988224521 4409.04275751505 A 5326.54564755839 5326.54564755839, 0, 0, 1, 11090.8139137594 4432.93196350737" style="fill: none; stroke: rgb(0,255,122); stroke-linecap: square; stroke-width: 2" />
-    <path d="M 11617.442076914 4176.49225049188 A 5906 5906, 0, 0, 0, 11627.3984293591 4207.45351043628" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
-    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(-17.9842243645925 11623.1489262979 4174.63971976092)" x="11623.1489262979" y="4174.63971976092">Petrogale</text>
+    <path d="M 11646.7989008003 4269.53816166872 A 5906 5906, 0, 0, 0, 11614.0854235624 4166.18407222973" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
+    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(-17.0376862401403 11652.5355742518 4267.7801577693)" x="11652.5355742518" y="4267.7801577693">Petrogale</text>
     <line style="stroke: rgb(0,255,140); stroke-linecap: square; stroke-width: 2" x1="11090.8139137594" x2="10795.3910448531" y1="4432.93196350737" y2="4523.86982589137" />
     <path d="M 10767.4579814353 4436.00512813507 A 5017.44313011829 5017.44313011829, 0, 0, 1, 10795.3910448531 4523.86982589137" style="fill: none; stroke: rgb(0,255,140); stroke-linecap: square; stroke-width: 2" />
     <line style="stroke: rgb(0,255,114); stroke-linecap: square; stroke-width: 2" x1="10741.2225908711" x2="10737.9151457432" y1="4347.51576446183" y2="4348.66852639803" />
@@ -13671,8 +13671,8 @@
     <path d="M 11016.3496853789 5043.32763826819 A 5106.75887170155 5106.75887170155, 0, 0, 1, 11025.5246217186 5092.7577775463" style="fill: none; stroke: rgb(255,197,0); stroke-linecap: square; stroke-width: 2" />
     <line style="stroke: rgb(255,200,0); stroke-linecap: square; stroke-width: 2" x1="11025.5246217186" x2="11002.2583040254" y1="5092.7577775463" y2="5096.95797302062" />
     <path d="M 10991.6140738648 5039.86356163426 A 5083.11646951774 5083.11646951774, 0, 0, 1, 11002.2583040254 5096.95797302062" style="fill: none; stroke: rgb(255,200,0); stroke-linecap: square; stroke-width: 2" />
-    <path d="M 11808.7511881784 4932.64549758 A 5906 5906, 0, 0, 0, 11823.7980455616 5018.05686289243" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
-    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(-10.4119193689745 11814.6523915528 4931.56115504452)" x="11814.6523915528" y="4931.56115504452">Sminthopsis</text>
+    <path d="M 11823.7980455616 5018.05686289243 A 5906 5906, 0, 0, 0, 11790.3264370284 4836.83373817396" style="fill: none; stroke: black; stroke-linecap: butt; stroke-width: 1" />
+    <text style="font-family: Verdana; font-size: 8; font-weight: bold" transform="rotate(-9.5705521472393 11829.7145352794 5017.05929113107)" x="11829.7145352794" y="5017.05929113107">Sminthopsis</text>
     <line style="stroke: rgb(255,116,0); stroke-linecap: square; stroke-width: 2" x1="11462.4782111204" x2="10980.3182056783" y1="4884.42536354165" y2="4982.89449275315" />
     <path d="M 10980.3182056783 4982.89449275315 A 5083.11646951774 5083.11646951774, 0, 0, 1, 10991.6140738648 5039.86356163426" style="fill: none; stroke: rgb(255,116,0); stroke-linecap: square; stroke-width: 2" />
     <line style="stroke: rgb(255,217,0); stroke-linecap: square; stroke-width: 2" x1="11695.3878279333" x2="10866.213985832" y1="5050.45616771553" y2="5188.69730799352" />
