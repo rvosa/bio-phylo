@@ -75,7 +75,26 @@ no. 237046.
 
 SEE ALSO
 --------
-Read the manual: `perldoc Bio::Phylo::Manual`
+**Documentation** This distribution contains a high-level overview that can be 
+accessed using the perldoc documentation system. The documentation is at 
+[Bio::Phylo::Manual](lib/Bio/Phylo/Manual.pod) and can be viewed (after 
+installation) on the command line:
+
+    perldoc Bio::Phylo::Manual
+
+**Optional extensions** Compatible with this distribution are two optional 
+packages that can be installed alongside Bio::Phylo. These packages are:
+- [Bio::PhyloXS](http://search.cpan.org/dist/Bio-PhyloXS/) - which provides 
+  faster implementations (in C) of the core objects of Bio::Phylo. The source
+  code repository is [here](https://github.com/rvosa/bio-phylo-xs), and the
+  v0.1.0 release is tagged as 
+  [10.5281/zenodo.1010362](http://doi.org/10.5281/zenodo.1010362).
+- [Bio::Phylo::Forest::DBTree](http://search.cpan.org/dist/Bio-Phylo-Forest-DBTree/) -
+  which provides an object-relational mapping of the core objects of Bio::Phylo.
+  The source code repository is 
+  [here](https://github.com/rvosa/bio-phylo-forest-dbtree), and the v0.1.2
+  release is tagged as 
+  [10.5281/zenodo.1035856](http://doi.org/10.5281/zenodo.1035856).
 
 CITATION
 --------
