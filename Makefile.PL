@@ -17,6 +17,8 @@ my %recommended = (
     'GD'            => '0',
     'JSON'          => '0',
     'Archive::Zip'  => '0',
+    'RDF::Trine'    => '0',
+    'RDF::Query'    => '0',
 );
 
 check_prereq( keys %recommended );

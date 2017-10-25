@@ -84,15 +84,17 @@ sub _draw {
                     );
                 }
             }
-            $self->_draw_circle(
-                '-radius' => $r,
-                '-x'      => $x,
-                '-y'      => $y,
-                '-width'  => $node->get_branch_width,
-                '-stroke' => $node->get_node_outline_colour,
-                '-fill'   => $node->get_node_colour,
-                '-url'    => $node->get_link,
-            );
+            if ( $r ) {
+				$self->_draw_circle(
+					'-radius' => $r,
+					'-x'      => $x,
+					'-y'      => $y,
+					'-width'  => $node->get_branch_width,
+					'-stroke' => $node->get_node_outline_colour,
+					'-fill'   => $node->get_node_colour,
+					'-url'    => $node->get_link,
+				);
+            }
             if ( $node->get_clade_label ) {
             	if ( not $self->_tree->get_meta_object('map:tree_size') ) {
             		my $tips = $self->_tree->get_root->get_terminals;

@@ -18,30 +18,30 @@ Bio::Phylo::Models::Substitution::Dna - DNA substitution model
 
 =head1 SYNOPSIS
 
-use Bio::Phylo::Models::Substitution::Dna;
+    use Bio::Phylo::Models::Substitution::Dna;
 
-# create a DNA substitution model from scratch
-my $model = Bio::Phylo::Models::Substitution::Dna->new(
-    '-type'   => 'GTR',
-    '-pi'     => [ 0.23, 0.27, 0.24, 0.26 ],
-    '-kappa'  => 2,
-    '-alpha'  => 0.9,
-    '-pinvar' => 0.5,
-    '-ncat'   => 6,
-    '-median' => 1,
-    '-rate'   => [
-        [ 0.23, 0.23, 0.23, 0.23 ],
-        [ 0.23, 0.26, 0.26, 0.26 ],
-        [ 0.27, 0.26, 0.26, 0.26 ],
-        [ 0.24, 0.26, 0.26, 0.26 ]
-    ]
-);
+    # create a DNA substitution model from scratch
+    my $model = Bio::Phylo::Models::Substitution::Dna->new(
+        '-type'   => 'GTR',
+        '-pi'     => [ 0.23, 0.27, 0.24, 0.26 ],
+        '-kappa'  => 2,
+        '-alpha'  => 0.9,
+        '-pinvar' => 0.5,
+        '-ncat'   => 6,
+        '-median' => 1,
+        '-rate'   => [
+            [ 0.23, 0.23, 0.23, 0.23 ],
+            [ 0.23, 0.26, 0.26, 0.26 ],
+            [ 0.27, 0.26, 0.26, 0.26 ],
+            [ 0.24, 0.26, 0.26, 0.26 ]
+        ]
+    );
 
-# get substitution rate from A to C
-my $rate = $model->get_rate('A', 'C');
+    # get substitution rate from A to C
+    my $rate = $model->get_rate('A', 'C');
 
-# get model representation that can be used by Garli
-my $modelstr = $model->to_string( '-format' => 'garli' )
+    # get model representation that can be used by Garli
+    my $modelstr = $model->to_string( '-format' => 'garli' )
 
 =head1 DESCRIPTION
 
