@@ -8,16 +8,14 @@ use Bio::Phylo::IO 'parse_tree';
 use Bio::Phylo::Util::Logger ':levels';
 
 # process command line arguments
-my $width  = 3000;
-my $height = 3000;
-my $clade  = 5;
+my $width  = 12000;
+my $height = 12000;
 my $shape  = 'radial';
 my $nexml  = 'tree.xml';
 my $verbosity = WARN;
 GetOptions(
 	'width=i'  => \$width,
 	'height=i' => \$height,
-	'clade=i'  => \$clade,
 	'shape=s'  => \$shape,
 	'nexml=s'  => \$nexml,
 	'verbose+' => \$verbosity,
@@ -29,7 +27,8 @@ my $log = Bio::Phylo::Util::Logger->new(
 	'-class'   => [ 
 		'main', 
 		'Bio::Phylo::Treedrawer',
-		'Bio::Phylo::Treedrawer::Svg' 
+		'Bio::Phylo::Treedrawer::Svg',
+		'Bio::Phylo::Treedrawer::Abstract'
 	],
 );
 $log->info("going to read tree '$nexml'");
@@ -45,49 +44,43 @@ my $draw = Bio::Phylo::Treedrawer->new(
 	'-width'   => $width,
 	'-height'  => $height,
 	'-tree'    => $tree,
-	'-padding' => 400,
-	'-branch_width' => 6,
+	'-padding' => 100,
+	'-branch_width' => 2,
+	'-text_width'   => 120,
 	'-node_radius'  => 0,
 );
 
-# prune monotypic genera
-my @prune;
-for my $tip ( @{ $tree->get_terminals } ) {
-	$log->debug("checking tip ".$tip->get_name);
-	unless ( grep { $_->get_clade_label } @{ $tip->get_ancestors } ) {
-		push @prune, $tip;
-		$log->info("pruning tip ".$tip->get_name);
+# clade label font
+my %font = (
+	'-face'   => 'Verdana',
+	'-size'   => 8,
+	'-weight' => 'bold',
+);
+
+# rename taxa to "G. species" for genus >= 10 taxa, label, apply font
+my @nodes  = @{ $tree->get_entities };
+my @labels = grep { $_->get_clade_label } @nodes;
+for my $l ( @labels ) {
+	my @tips = @{ $l->get_terminals };
+	if ( scalar(@tips) >= 10 ) {
+		for my $t ( @tips ) {
+			my $name = $t->get_name;
+			$name =~ s/^([A-Z])[a-z]+/$1./;
+			$t->set_name($name);
+		}
+		$l->set_clade_label_font(\%font);
+	}
+	else {
+		$l->set_clade_label('');
 	}
 }
-$tree->prune_tips(\@prune);
-$log->info("pruned ".scalar(@prune)." monotypic genera");
 
-# prune clades < 10
-my @clade;
-$tree->visit_depth_first(
-	'-post' => sub {
-		my $n = shift;
-		if ( $n->is_terminal ) {
-			$n->set_generic( 'weight' => 1 );
-		}
-		else {
-			my $weight;
-			for my $c ( @{ $n->get_children } ) {
-				$weight += $c->get_generic('weight');
-			}
-			$n->set_generic( 'weight' => $weight );
-			if ( my $label = $n->get_clade_label ) {
-				push @clade, [ $label, $n, $weight ];
-				$log->debug("visiting clade $label ($weight)");
-			}
-		}
-	}
-);
-for my $c ( grep { $_->[2] <= $clade } @clade ) {
-	$log->info("pruning clade ".$c->[0]);
-	$tree->prune_tips( $c->[1]->get_terminals );
+# mark up the tip labels
+for my $tip ( grep { $_->is_terminal } @nodes ) {
+	$tip->set_font_face($font{'-face'});
+	$tip->set_font_size($font{'-size'});
+	$tip->set_font_style('Italic');
 }
 
 # draw tree
-$log->info("going to draw tree n=".scalar(@{$tree->get_terminals}));
 print $draw->draw;
