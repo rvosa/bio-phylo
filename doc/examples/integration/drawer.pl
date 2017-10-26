@@ -7,6 +7,8 @@ use Bio::Phylo::Treedrawer;
 use Bio::Phylo::IO 'parse_tree';
 use Bio::Phylo::Util::Logger ':levels';
 
+my $template = 'http://www.eol.org/search?q=%s';
+
 # process command line arguments
 my $width  = 12000;
 my $height = 12000;
@@ -59,10 +61,20 @@ my %font = (
 
 # rename taxa to "G. species" for genus >= 10 taxa, label, apply font
 my @nodes  = @{ $tree->get_entities };
-my @labels = grep { $_->get_clade_label } @nodes;
-for my $l ( @labels ) {
+
+# mark up the tip labels
+for my $tip ( grep { $_->is_terminal } @nodes ) {
+	my $name = $tip->get_name;
+	$name =~ s/ /+/g;
+	$tip->set_font_face($font{'-face'});
+	$tip->set_font_size($font{'-size'});
+	$tip->set_font_style('Italic');
+	$tip->set_link(sprintf $template, $name	);
+}
+
+for my $l ( grep { $_->get_clade_label } @nodes ) {
 	my @tips = @{ $l->get_terminals };
-	if ( scalar(@tips) >= 10 ) {
+	if ( scalar(@tips) >= 3 ) {
 		for my $t ( @tips ) {
 			my $name = $t->get_name;
 			$name =~ s/^([A-Z])[a-z]+/$1./;
@@ -75,12 +87,7 @@ for my $l ( @labels ) {
 	}
 }
 
-# mark up the tip labels
-for my $tip ( grep { $_->is_terminal } @nodes ) {
-	$tip->set_font_face($font{'-face'});
-	$tip->set_font_size($font{'-size'});
-	$tip->set_font_style('Italic');
-}
+
 
 # draw tree
 print $draw->draw;
