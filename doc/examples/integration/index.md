@@ -6,14 +6,14 @@ layout: index
 Input data
 ==========
 
-The [mammal supertree][1] represents a time-calibrated synthesis of the phylogenetic 
-relationships among the extant mammals (normalized agains the [Mammal Species of the World][2]
-taxonomy). Here we use a [nexus file](Bininda-emonds_2007_mammals.nex) of the data tree.
-
-The [PanTHERIA][3] project is a trait database of the mammals, containing mostly 
-life-history traits. Conveniently, this database uses the same taxonomy as the mammal
-supertree. Here we use a [tab-separated file](PanTHERIA_1-0_WR93_Aug2008.tsv) that 
-represents the August, 2008 release of the database.
+- The [mammal supertree][1] represents a time-calibrated synthesis of the phylogenetic 
+  relationships among the extant mammals (normalized against the 
+  [Mammal Species of the World][2] taxonomy). Here we use a 
+  [nexus file](Bininda-emonds_2007_mammals.nex) of the dated tree.
+- The [PanTHERIA][3] project is a trait database of the mammals, containing mostly 
+  life-history traits. Conveniently, this database uses the same taxonomy as the mammal
+  supertree. Here we use a [tab-separated file](PanTHERIA_1-0_WR93_Aug2008.tsv) that 
+  represents the August, 2008 release of the database.
 
 Integrating the data sets
 =========================
