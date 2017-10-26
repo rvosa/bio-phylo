@@ -49,8 +49,7 @@ of analysis, data reading and writing, and visualization.\\
 Perl itself and available from the comprehensive Perl archive network as well as directly
 from the source code repository.\\
 \textbf{Contact:} \href{rutger.vos@naturalis.nl}{rutger.vos@naturalis.nl}\\
-\textbf{Supplementary information:} Supplementary data are available at \textit{Bioinformatics}
-online.}
+\textbf{Supplementary information:} Supplementary data are available as \texttt{doi:10.5281/zenodo.tbd}}
 
 \maketitle
 
@@ -118,7 +117,10 @@ replacement of the core data objects in Bio::Phylo, re-implemented in the C prog
 language. Because C is a very fast, compiled language, having some of the core 
 functionality (e.g. setting and fetching data properties) leads to significant speed 
 increases: a simple benchmark test where a small tree topology is constructed and then
-traversed executes about 700\% faster using this extension. The second optional extension,
+traversed executes about 700\% faster using this extension. (Note, however, that bindings
+between C and Perl are fraught with challenges due to the complexity of the Perl API and
+the differences in memory management on different architectures. Hence, this application
+should currently be considered 'experimental'.) The second optional extension,
 Bio::Phylo::Forest::DBTree, allows very large trees to be stored into, and accessed from,
 a simple SQLite database. This means that these trees never have to be loaded in working
 memory, and that, once stored in the database, there is no "file reading" step. The 
@@ -126,18 +128,16 @@ typical application for this is to store static, immutable trees. To demonstrate
 make available database files that were created by indexing the releases listed in 
 Table~\ref{table1}.
 
-\begin{table}[]
-\centering
-\caption{Large, published phylogenies made available as database files}
-\label{table1}
-\begin{tabular}{ll}
-\textbf{Project}                   & \textbf{Database files}                 \\
+\begin{table}[!t]
+\processtable{Large, published phylogenies made available as database files\label{table1}} 
+{\begin{tabular}{@{}ll@{}}\toprule \textbf{Project} & \textbf{Database files}\\\midrule
 PhyloTree \citep{Oven2009}         & {\small 10.6084/m9.figshare.4620757.v1} \\
 D-Place \citep{Kirby2016}          & {\small 10.6084/m9.figshare.4620217.v1} \\
 NCBI taxonomy \citep{Federhen2011} & {\small 10.6084/m9.figshare.4620733.v1} \\
-Greengenes \citep{Desantis2006}    & {\small 10.6084/m9.figshare.4620214.v1}
-\end{tabular}
+Greengenes \citep{Desantis2006}    & {\small 10.6084/m9.figshare.4620214.v1} \\\botrule
+\end{tabular}}{}
 \end{table}
+
 
 \section{Data input and output}
 
@@ -160,6 +160,15 @@ same transformation stylesheet as TreeBASE \citep{Piel2009}). RDF graphs can als
 extract statements that map onto Bio::Phylo's object model. At present, this means that 
 annotated taxa and tree topologies can be extracted from CDAO/RDF, but character data 
 cannot.
+
+\begin{figure}
+\centerline{\includegraphics{tree_detail_cropped.eps}}
+\caption{Mammal supertree \citep{Bininda2007} decorated with log-transformed body 
+mass \citep{Jones2009} as branch colors and monophyletic genera as labeled braces; detail 
+and full tree (inset). Image produced as per the workflow described on 
+http://rvosa.github.io/bio-phylo/doc/examples/integration/}
+\label{figure1}
+\end{figure}
 
 \section{Analysis, modification, and simulation}
 
@@ -191,17 +200,35 @@ alignments to be replicated.
 
 \section{Visualization}
 
-% unrooted trees
-
-% radial trees
-
-% clade labels
+The ability to visualize phylogenies as rooted, rectangular cladograms and phylograms in
+vector formats (SVG being best supported) as always existed in Bio::Phylo. This included
+functionality to paint branches, add pie charts to nodes, collapse clades as triangles,
+and influence styling (such as branch thickness; fonts and their size, weight, and style).
+To this has been added in v2.0.0 the ability to draw unrooted and radial tree projections,
+and the option to mark up higher taxa in labeled braces (straight or arched, depending on 
+projection). Figure~\ref{figure1} demonstrates some of this new functionality.
 
 \section{Impact and re-use}
 
-% studies using it, by type
+As of time of writing (October 2017), the first version of Bio::Phylo has been cited 35
+times. Among these, the papers with the highest impact used Bio::Phylo in analyses in
+phylogenomics and comparative genomics (e.g. see \citet{Roure2012,Hayward2013,Smet2013}).
 
-% projects using it
+Several infrastructural projects depend on Bio::Phylo. These include the BioPerl project 
+\citep{Stajich2002}, which uses it for reading and writing NeXML. This usage is promoted
+by the interface compatibility between the two projects: the core data objects of 
+Bio::Phylo, i.e. trees, tree nodes, sequence alignments, and so on, can be used directly
+in BioPerl. Also, the TreeBASE project \citep{Piel2009} uses Bio::Phylo for certain
+server-side maintenance tasks, and the SUPERSMART project \citep{Antonelli2017}, as well
+as the BioVeL services that expose it \citep{Hardisty2016}, are deeply integrated with 
+Bio::Phylo (and drove some of the development of new functionality). 
+
+In addition, several single-purpose programs and pipelines use Bio::Phylo. These include
+the Monophylizer web service for assessing monophyly in gene trees 
+\citep{Mutanen2016,Mutanen2016a}; the CopyRighter tool for improving the accuracy of 
+microbial community profiles through lineage-specific gene copy number correction
+\citep{Angly2014}; and the PhyloMatch pipeline to discover highly phylogenetically 
+informative genes in sequenced genomes \citep{Ramazzotti2012}.
 
 \section{Availability}
 
