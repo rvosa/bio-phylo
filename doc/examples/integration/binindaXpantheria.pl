@@ -107,7 +107,7 @@ $t->visit_depth_first(
 		if ( $n->is_terminal ) {
 			my $raw = $n->get_generic( $column );
 			my $scaled = ( $raw - $min ) / ( $max - $min );
-			my $c = Convert::Color::HSV->new( $scaled * 360, 1, 1 );
+			my $c = Convert::Color::HSV->new( $scaled * 360, 1, 0.8 );
 			my $rgb = join ',', map { int(255*$_) } $c->rgb;
 			$n->set_generic( 'hue' => $scaled );			
 			$n->set_branch_color( "rgb($rgb)" );
@@ -118,7 +118,7 @@ $t->visit_depth_first(
 			
 			# this should really be using contrasts
 			my $averaged = sum(@vals) / scalar(@vals);
-			my $c = Convert::Color::HSV->new( $averaged * 360, 1, 1 );
+			my $c = Convert::Color::HSV->new( $averaged * 360, 1, 0.8 );
 			my $rgb = join ',', map { int(255*$_) } $c->rgb;
 			$n->set_generic( 'hue' => $averaged );
 			$n->set_branch_color( "rgb($rgb)" );
