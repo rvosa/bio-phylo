@@ -1054,8 +1054,9 @@ sub draw {
 
     # Reset the stored data in the tree
     $self->_reset_internal($root);
+    $logger->debug("going to compute coordinates");
     $self->compute_coordinates;
-
+	$logger->debug("going to render figure");
     return $self->render;
 }
 

@@ -58,12 +58,15 @@ sub _draw {
             my $y           = $node->get_y;            
             my $is_terminal = $node->is_terminal;
             my $r = $is_terminal ? $td->get_tip_radius : $td->get_node_radius;
+            $logger->debug("going to draw branch");
             $self->_draw_branch($node);
             if ( $node->get_collapsed ) {
+            	$logger->debug("going to draw collapsed clade");
                 $self->_draw_collapsed($node);
             }
             else {
                 if ( my $name = $node->get_name ) {
+                	$logger->debug("going to draw node label '$name'");
                     $name =~ s/_/ /g;
                     $name =~ s/^'(.*)'$/$1/;
                     $name =~ s/^"(.*)"$/$1/;
@@ -93,11 +96,18 @@ sub _draw {
 				);
             }
             if ( $node->get_clade_label ) {
+            	if ( not $self->_tree->get_meta_object('map:tree_size') ) {
+            		my $tips = $self->_tree->get_root->get_terminals;
+            		$self->_tree->set_meta_object( 'map:tree_size' => scalar(@$tips) );
+            	}
+            	$logger->debug("going to draw clade label");
             	$self->_draw_clade_label($node);
             }
         }
     );
+    $logger->debug("going to draw node pie charts");
     $self->_draw_pies;
+    $logger->debug("going to draw legend");
     $self->_draw_legend;
     return $self->_finish;
 }
@@ -155,15 +165,16 @@ sub _draw_rectangle {
 # XXX incomplete, still needs work for the radial part
 sub _draw_clade_label {    
     my ( $self, $node ) = @_;
-    $logger->info("drawing clade label ".$node->get_clade_label);
+    $logger->info("Drawing clade label ".$node->get_clade_label);
     my $td  = $self->_drawer;
     my $tho = $td->get_text_horiz_offset;
     my $tw  = $td->get_text_width;
     
+    my $desc = $node->get_descendants;
+    my $ntips = [ grep { $_->is_terminal } @$desc ];
     my $lmtl = $node->get_leftmost_terminal;
     my $rmtl = $node->get_rightmost_terminal;
-    my $root = $node->get_tree->get_root;
-    my $desc = $node->get_descendants;
+    my $root = $node->get_tree->get_root;    
     my $ncl  = scalar( grep { $_->get_clade_label } @{ $node->get_ancestors } );
     
     # copy font preferences, if any
@@ -217,9 +228,10 @@ sub _draw_clade_label {
         my ( $x2, $y2 ) = $td->polar_to_cartesian( $radius, $la ); # + add origin!
         
         # draw line and label
-        my $ntips = $node->get_terminals;
-        my $rtips = $root->get_terminals;
-        my $large = (scalar(@$ntips)/scalar(@$rtips)) > 1/2 ? 1 : 0; # spans majority of tips
+        #my $ntips = $node->get_terminals;
+        #my $rtips = $root->get_terminals;
+        my $size = $node->get_tree->get_meta_object('map:tree_size');
+        my $large = (scalar(@$ntips)/$size) > 1/2 ? 1 : 0; # spans majority of tips
         $self->_draw_arc(
             '-x1' => $x1 + $cx,
             '-y1' => $y1 + $cy,
