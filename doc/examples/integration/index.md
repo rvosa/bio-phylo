@@ -1,7 +1,11 @@
-Integrating and visualizing data
---------------------------------
+---
+title: Data integration example
+layout: index
+---
+
 Input data
 ==========
+
 The [mammal supertree][1] represents a time-calibrated synthesis of the phylogenetic 
 relationships among the extant mammals (normalized agains the [Mammal Species of the World][2]
 taxonomy). Here we use a [nexus file](Bininda-emonds_2007_mammals.nex) of the data tree.
@@ -13,6 +17,7 @@ represents the August, 2008 release of the database.
 
 Integrating the data sets
 =========================
+
 As a first step, we do an inner join of the two data sets, so that the merger only 
 includes the taxa that are both present in the tree as well as the database. From the
 database, we embed one data column, which we log-transform (because the default is
@@ -47,6 +52,7 @@ STDOUT, so here we re-direct it to a [file](tree.xml), which is in
 
 Visualizing the result
 ======================
+
 In the next step, we visualize the results as a radial phylogram with painted branches and
 braces to mark up the monophyletic genera. The [drawer script](drawer.pl) is invoked as
 follows:
@@ -70,6 +76,7 @@ also made a [PDF version](tree.pdf) (by opening the SVG in Illustrator and savin
 
 Dependencies
 ============
+
 The scripts are written in Perl, and require a number of packages that are freely 
 available from the comprehensive Perl archive network. If you know what you are doing and
 you have a correctly configured system, the installation is as simple as issuing the
