@@ -47,9 +47,10 @@ my $draw = Bio::Phylo::Treedrawer->new(
 	'-height'  => $height,
 	'-tree'    => $tree,
 	'-padding' => 100,
-	'-branch_width' => 2,
-	'-text_width'   => 120,
-	'-node_radius'  => 0,
+	'-branch_width'     => 4,
+	'-text_width'       => 120,
+	'-node_radius'      => 0,
+	'-text_vert_offset' => 3,
 );
 
 # clade label font
