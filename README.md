@@ -47,14 +47,30 @@ utility)
 
 CONTRIBUTORS
 ------------
+The following people have contributed code to the project:
 * Rutger Vos
+* Hannes Hettling
+* Florent Angly
 * Jason Caravas
 * Klaas Hartmann
 * Mark A. Jensen
+* Moritz Lenz
 * Chase Miller
 * Aki Mimoto
-* Hannes Hettling
-* Florent Angly
+* Jan Willem Wijnands
+
+The following people have provided feedback through issues and reviews:
+* Denis Baurain
+* Chris Fields
+* Shlomi Fish
+* Jean-Marc Frigerio
+* Andreas J. König
+* Hilmar Lapp
+* Nicolas Lenfant
+* Sébastien Moretti
+* Slaven Rezić
+* `Seiler`
+* `scorpio17`
 
 BUGS
 ----
