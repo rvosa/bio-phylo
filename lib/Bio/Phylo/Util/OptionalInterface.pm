@@ -1,5 +1,6 @@
 package Bio::Phylo::Util::OptionalInterface;
 use strict;
+use warnings;
 use Bio::Phylo::Util::CONSTANT 'looks_like_class';
 use Bio::Phylo::Util::Logger;
 my $logger = Bio::Phylo::Util::Logger->new;

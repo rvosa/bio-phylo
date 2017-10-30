@@ -1,5 +1,6 @@
 package Bio::Phylo::ListableRole;
 use strict;
+use warnings;
 use Bio::Phylo::Util::MOP;
 use base 'Bio::Phylo::NeXML::Writable';
 use Scalar::Util qw'blessed';

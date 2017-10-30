@@ -1,5 +1,6 @@
 package Bio::Phylo::Parsers::Json;
 use strict;
+use warnings;
 use base 'Bio::Phylo::Parsers::Abstract';
 use Bio::Phylo::IO 'parse';
 use Bio::Phylo::Util::Exceptions 'throw';

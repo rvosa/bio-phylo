@@ -4,6 +4,7 @@ use Bio::Phylo::Mediators::TaxaMediator;
 use Bio::Phylo::Util::Exceptions 'throw';
 use Bio::Phylo::Util::CONSTANT qw'_TAXA_ looks_like_object';
 use strict;
+use warnings;
 my $logger        = Bio::Phylo->get_logger;
 my $mediator      = 'Bio::Phylo::Mediators::TaxaMediator';
 my $TYPE_CONSTANT = _TAXA_;

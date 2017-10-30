@@ -1,5 +1,6 @@
 package Bio::Phylo::Models::Substitution::Binary;
 use strict;
+use warnings;
 use Data::Dumper;
 use Bio::Phylo::Util::Logger;
 use Bio::Phylo::Util::CONSTANT qw'/looks_like/ :objecttypes';

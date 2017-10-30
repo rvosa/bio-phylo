@@ -5,6 +5,7 @@ use Bio::Phylo::Util::MOP;
 use Bio::Phylo::Util::Logger ':simple';
 use Bio::Phylo::Util::CONSTANT qw'_TAXON_ looks_like_object';
 use strict;
+use warnings;
 {
     my $TAXON_CONSTANT = _TAXON_;
     my $mediator = 'Bio::Phylo::Mediators::TaxaMediator';

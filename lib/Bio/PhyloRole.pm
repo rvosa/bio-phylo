@@ -1,5 +1,6 @@
 package Bio::PhyloRole;
 use strict;
+use warnings;
 use base 'Bio::Phylo::Identifiable';
 use Data::Dumper;
 use Bio::Phylo::Util::CONSTANT '/looks_like/';

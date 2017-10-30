@@ -1,5 +1,6 @@
 package Bio::Phylo::Mediators::TaxaMediator;
 use strict;
+use warnings;
 use Scalar::Util qw'weaken isweak';
 use Bio::Phylo::Util::Logger ':simple';
 use Bio::Phylo::Util::Exceptions;

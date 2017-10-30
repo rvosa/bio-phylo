@@ -1,5 +1,6 @@
 package Bio::Phylo::Treedrawer::Processing;
 use strict;
+use warnings;
 use base 'Bio::Phylo::Treedrawer::Abstract';
 use Bio::Phylo::Util::Logger;
 use Bio::Phylo::Util::Exceptions 'throw';

@@ -1,5 +1,6 @@
 package Bio::Phylo::Util::Exceptions;
 use strict;
+use warnings;
 use base 'Exporter';
 use Bio::Phylo::Util::StackTrace;
 use Scalar::Util 'blessed';

@@ -2,6 +2,7 @@ package Bio::Phylo::NeXML::XML2JSON;
 use XML::XML2JSON;
 use base 'XML::XML2JSON';
 use strict;
+use warnings;
 
 =head1 NAME
 

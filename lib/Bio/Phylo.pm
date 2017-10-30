@@ -1,5 +1,6 @@
 package Bio::Phylo;
 use strict;
+use warnings;
 use Bio::PhyloRole;
 use base 'Bio::PhyloRole';
 

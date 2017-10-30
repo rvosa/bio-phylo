@@ -1,5 +1,6 @@
 package Bio::Phylo::Generator;
 use strict;
+use warnings;
 use Bio::Phylo::Util::CONSTANT 'looks_like_hash';
 use Bio::Phylo::Util::Exceptions 'throw';
 use Bio::Phylo::Util::Logger;

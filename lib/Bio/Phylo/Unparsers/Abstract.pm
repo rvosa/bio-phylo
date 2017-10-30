@@ -1,5 +1,6 @@
 package Bio::Phylo::Unparsers::Abstract;
 use strict;
+use warnings;
 use base 'Bio::Phylo::IO';
 use Bio::Phylo::Util::Logger;
 my $logger = Bio::Phylo::Util::Logger->new;

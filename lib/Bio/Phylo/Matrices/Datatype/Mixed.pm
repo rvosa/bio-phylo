@@ -1,5 +1,6 @@
 package Bio::Phylo::Matrices::Datatype::Mixed;
 use strict;
+use warnings;
 use base 'Bio::Phylo::Matrices::Datatype';
 use Bio::Phylo::Util::CONSTANT '/looks_like/';
 use Bio::Phylo::Util::Exceptions 'throw';

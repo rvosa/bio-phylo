@@ -1,5 +1,6 @@
 package Bio::Phylo::Matrices::Datatype::Standard;
 use strict;
+use warnings;
 use base 'Bio::Phylo::Matrices::Datatype';
 our ( $LOOKUP, $MISSING, $GAP );
 

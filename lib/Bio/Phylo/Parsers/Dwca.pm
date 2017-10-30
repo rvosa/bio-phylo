@@ -1,5 +1,6 @@
 package Bio::Phylo::Parsers::Dwca;
 use strict;
+use warnings;
 use base 'Bio::Phylo::Parsers::Abstract';
 use File::Temp qw[tempfile];
 use Bio::Phylo::Factory;

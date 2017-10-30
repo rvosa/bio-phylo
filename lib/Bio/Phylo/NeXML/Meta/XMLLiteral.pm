@@ -1,5 +1,6 @@
 package Bio::Phylo::NeXML::Meta::XMLLiteral;
 use strict;
+use warnings;
 use Bio::Phylo::Util::CONSTANT qw'_META_ /looks_like/';
 use Bio::Phylo::Util::Exceptions 'throw';
 {

@@ -1,5 +1,6 @@
 package Bio::Phylo::NeXML::DOM::Element::Twig;
 use strict;
+use warnings;
 use Bio::Phylo::Util::Exceptions 'throw';
 use Bio::Phylo::Util::Dependency 'XML::Twig';
 use base qw'Bio::Phylo::NeXML::DOM::Element XML::Twig::Elt';

@@ -1,5 +1,6 @@
 package Bio::Phylo::Parsers::Nexus;
 use strict;
+use warnings;
 use base 'Bio::Phylo::Parsers::Abstract';
 use Bio::Phylo::Factory;
 use Bio::Phylo::IO 'parse';

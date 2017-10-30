@@ -1,5 +1,6 @@
 package Bio::Phylo::Util::MOP;
 use strict;
+use warnings;
 use attributes;
 use Attribute::Handlers;
 use Data::Dumper;

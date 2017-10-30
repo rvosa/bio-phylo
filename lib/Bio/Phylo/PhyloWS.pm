@@ -1,5 +1,6 @@
 package Bio::Phylo::PhyloWS;
 use strict;
+use warnings;
 use base 'Bio::Phylo::NeXML::Writable';
 use Bio::Phylo::Util::CONSTANT 'looks_like_hash';
 use Bio::Phylo::Util::Exceptions 'throw';

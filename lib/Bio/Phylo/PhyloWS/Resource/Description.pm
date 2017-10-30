@@ -1,5 +1,6 @@
 package Bio::Phylo::PhyloWS::Resource::Description;
 use strict;
+use warnings;
 use base qw'Bio::Phylo::PhyloWS::Resource Bio::Phylo::Listable';
 use Bio::Phylo::Util::Exceptions 'throw';
 use Bio::Phylo::Util::CONSTANT qw'_DESCRIPTION_ _NONE_';

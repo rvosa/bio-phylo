@@ -1,5 +1,6 @@
 package Bio::Phylo::Forest::TreeRole;
 use strict;
+use warnings;
 use Bio::Phylo::Util::MOP;
 use base 'Bio::Phylo::Listable';
 use Bio::Phylo::Util::Exceptions 'throw';

@@ -1,5 +1,6 @@
 package Bio::Phylo::Unparsers::Pagel;
 use strict;
+use warnings;
 use base 'Bio::Phylo::Unparsers::Abstract';
 use Bio::Phylo::Forest::Tree;
 

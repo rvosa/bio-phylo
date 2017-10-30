@@ -1,5 +1,6 @@
 package Bio::Phylo::NeXML::Meta;
 use strict;
+use warnings;
 use base 'Bio::Phylo::Listable';
 use Bio::Phylo::Util::CONSTANT qw'_DOMCREATOR_ _META_ /looks_like/';
 use Bio::Phylo::Util::Exceptions 'throw';

@@ -1,5 +1,6 @@
 package Bio::Phylo::Parsers::Table;
 use strict;
+use warnings;
 use base 'Bio::Phylo::Parsers::Abstract';
 
 =head1 NAME

@@ -1,5 +1,6 @@
 package Bio::Phylo::PhyloWS::Resource;
 use strict;
+use warnings;
 use base qw'Bio::Phylo::PhyloWS Bio::Phylo::NeXML::Writable';
 use Bio::Phylo::Util::Exceptions 'throw';
 use Bio::Phylo::Util::CONSTANT qw'_DESCRIPTION_ _RESOURCE_ /looks_like/';

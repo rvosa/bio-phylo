@@ -1,5 +1,6 @@
 package Bio::Phylo::Forest::NodeRole;
 use strict;
+use warnings;
 use Bio::Phylo::Util::MOP;
 use base qw'Bio::Phylo::Taxa::TaxonLinker Bio::Phylo::Listable';
 use Bio::Phylo::Util::OptionalInterface 'Bio::Tree::NodeI';

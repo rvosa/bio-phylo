@@ -1,5 +1,6 @@
 package Bio::Phylo::Parsers::Ubiosearch;
 use strict;
+use warnings;
 use base 'Bio::Phylo::Parsers::Abstract';
 use Bio::Phylo::Util::Dependency 'XML::Twig';
 use Bio::Phylo::Util::Logger;

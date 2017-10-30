@@ -1,5 +1,6 @@
 package Bio::Phylo::Matrices::MatrixRole;
 use strict;
+use warnings;
 use Data::Dumper;
 use base qw'Bio::Phylo::Matrices::TypeSafeData Bio::Phylo::Taxa::TaxaLinker';
 use Bio::Phylo::Models::Substitution::Binary;

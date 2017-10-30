@@ -22,6 +22,7 @@ Mark A. Jensen ( maj -at- fortinbras -dot- us )
 
 package Bio::Phylo::NeXML::DOM::Element::Libxml;
 use strict;
+use warnings;
 use Bio::Phylo::Util::Exceptions 'throw';
 use Bio::Phylo::Util::CONSTANT '/looks_like/';
 use Bio::Phylo::Util::Dependency 'XML::LibXML';

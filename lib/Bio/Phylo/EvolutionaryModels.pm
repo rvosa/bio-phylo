@@ -1,5 +1,6 @@
 package Bio::Phylo::EvolutionaryModels;
 use strict;
+use warnings;
 use base 'Exporter';
 use Bio::Phylo::Forest::Tree;
 use Bio::Phylo::Forest;

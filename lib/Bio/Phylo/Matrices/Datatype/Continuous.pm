@@ -1,5 +1,6 @@
 package Bio::Phylo::Matrices::Datatype::Continuous;
 use strict;
+use warnings;
 use base 'Bio::Phylo::Matrices::Datatype';
 use Bio::Phylo::Util::CONSTANT
   qw(looks_like_number looks_like_implementor looks_like_instance);

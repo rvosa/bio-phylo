@@ -1,5 +1,6 @@
 package Bio::Phylo::Unparsers::Hennig86;
 use strict;
+use warnings;
 use base 'Bio::Phylo::Unparsers::Abstract';
 use Bio::Phylo;
 use Bio::Phylo::Util::CONSTANT qw'/looks_like/ :objecttypes';

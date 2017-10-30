@@ -1,5 +1,6 @@
 package Bio::Phylo::Parsers::Adjacency;
 use strict;
+use warnings;
 use base 'Bio::Phylo::Parsers::Abstract';
 use Bio::Phylo::Util::Exceptions 'throw';
 use Bio::Phylo::Util::CONSTANT qw'/looks_like/ :namespaces :objecttypes';

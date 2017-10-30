@@ -1,5 +1,6 @@
 package Bio::Phylo::Util::StackTrace;
 use strict;
+use warnings;
 
 =head1 NAME
 

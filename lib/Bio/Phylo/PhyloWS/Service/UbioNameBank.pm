@@ -1,5 +1,6 @@
 package Bio::Phylo::PhyloWS::Service::UbioNameBank;
 use strict;
+use warnings;
 use base 'Bio::Phylo::PhyloWS::Service';
 use constant UBIO_BASE => 'http://www.ubio.org/';
 use constant UBIO_SRCH => UBIO_BASE . 'browser/search.php?search_all=';

@@ -1,5 +1,6 @@
 package Bio::Phylo::Treedrawer::Svg;
 use strict;
+use warnings;
 use base 'Bio::Phylo::Treedrawer::Abstract';
 use Bio::Phylo::Util::CONSTANT qw'looks_like_hash _PI_';
 use Bio::Phylo::Util::Exceptions 'throw';

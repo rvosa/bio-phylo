@@ -1,5 +1,6 @@
 package Bio::Phylo::PhyloWS::Service::Timetree;
 use strict;
+use warnings;
 use utf8;
 use base 'Bio::Phylo::PhyloWS::Service';
 use Bio::Phylo::IO 'parse';

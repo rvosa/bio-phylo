@@ -1,5 +1,6 @@
 package Bio::Phylo::Treedrawer::Abstract;
 use strict;
+use warnings;
 use Bio::Phylo::Util::Exceptions 'throw';
 use Bio::Phylo::Util::Logger ':levels';
 
@@ -438,7 +439,8 @@ sub _draw_scale {
         );
         
         # pre-compute indexes so we can reverse
-        my ( @maji, @mini, @blocksi, $j ); # major/minor/blocks indexes
+        my ( @maji, @mini, @blocksi ); # major/minor/blocks indexes
+        my $j = 0;
         if ( $options->{'-reverse'} ) {
             for ( my $i = $ttx ; $i >= ( $ttx - $width ) ; $i -= $minor ) {
                 if ( not $j % sprintf('%.0f', $major/$minor) ) {

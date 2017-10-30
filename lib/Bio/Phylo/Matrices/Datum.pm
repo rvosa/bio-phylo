@@ -1,5 +1,6 @@
 package Bio::Phylo::Matrices::Datum;
 use strict;
+use warnings;
 use Bio::Phylo::Matrices::DatumRole;
 use base qw'Bio::Phylo::Matrices::DatumRole';
 use Bio::Phylo::Util::Exceptions 'throw';

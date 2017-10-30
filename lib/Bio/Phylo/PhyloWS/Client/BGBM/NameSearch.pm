@@ -1,5 +1,6 @@
 package Bio::Phylo::PhyloWS::Client::BGBM::NameSearch;
 use strict;
+use warnings;
 use base 'Bio::Phylo::PhyloWS::Client::BGBM';
 
 my $fac = Bio::Phylo::Factory->new;

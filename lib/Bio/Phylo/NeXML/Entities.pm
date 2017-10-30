@@ -1,5 +1,6 @@
 package Bio::Phylo::NeXML::Entities;
 use strict;
+use warnings;
 use base 'Exporter';
 our @EXPORT_OK = qw'encode_entities decode_entities';
 

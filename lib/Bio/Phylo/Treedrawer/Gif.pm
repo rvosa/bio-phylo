@@ -1,5 +1,6 @@
 package Bio::Phylo::Treedrawer::Gif;
 use strict;
+use warnings;
 use Bio::Phylo::Util::Exceptions 'throw';
 use Bio::Phylo::Util::Dependency 'Bio::Phylo::Treedrawer::Png';
 use base 'Bio::Phylo::Treedrawer::Png';

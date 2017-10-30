@@ -1,5 +1,6 @@
 package Bio::Phylo::Forest::Node;
 use strict;
+use warnings;
 use Bio::Phylo::Forest::DrawNodeRole;
 use base qw'Bio::Phylo::Forest::DrawNodeRole';
 use Bio::Phylo::Util::CONSTANT qw':objecttypes /looks_like/';

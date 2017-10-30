@@ -1,5 +1,6 @@
 package Bio::Phylo::Matrices::Character;
 use strict;
+use warnings;
 use base 'Bio::Phylo::Matrices::TypeSafeData';
 use Bio::Phylo::Factory;
 use Bio::Phylo::Util::CONSTANT qw'_CHARACTER_ _CHARACTERS_ _NS_BIOPHYLO_ /looks_like/';

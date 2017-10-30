@@ -1,5 +1,6 @@
 package Bio::Phylo::NeXML::DOM::Document;
 use strict;
+use warnings;
 use Bio::Phylo::Util::Exceptions 'throw';
 use Bio::Phylo::Util::CONSTANT qw'_DOCUMENT_ /looks_like/';
 

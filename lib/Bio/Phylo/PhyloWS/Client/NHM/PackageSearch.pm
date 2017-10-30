@@ -1,5 +1,6 @@
 package Bio::Phylo::PhyloWS::Client::NHM::PackageSearch;
 use strict;
+use warnings;
 use base 'Bio::Phylo::PhyloWS::Client::NHM';
 
 my $base = 'http://data.nhm.ac.uk/api/action/datastore_search?resource_id=%s&amp;q=%s';

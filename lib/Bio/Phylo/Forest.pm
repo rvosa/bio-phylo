@@ -1,5 +1,6 @@
 package Bio::Phylo::Forest;
 use strict;
+use warnings;
 use base qw'Bio::Phylo::Listable Bio::Phylo::Taxa::TaxaLinker';
 use Bio::Phylo::Util::CONSTANT qw':objecttypes /looks_like/';
 use Bio::Phylo::Util::Exceptions 'throw';

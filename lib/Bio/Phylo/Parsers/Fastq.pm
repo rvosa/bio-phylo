@@ -1,5 +1,6 @@
 package Bio::Phylo::Parsers::Fastq;
 use strict;
+use warnings;
 use base 'Bio::Phylo::Parsers::Abstract';
 use Bio::Phylo::Util::Logger ':simple';
 use Bio::Phylo::Util::Exceptions 'throw';

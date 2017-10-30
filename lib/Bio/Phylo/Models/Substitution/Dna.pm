@@ -6,6 +6,7 @@ use Bio::Phylo::Util::Logger':levels';
 use File::Temp qw(tempfile cleanup);
 
 use strict;
+use warnings;
 
 sub _INDEX_OF_ { { A => 0, C => 1, G => 2, T => 3 } }
 sub _BASE_AT_ { [qw(A C G T)] }

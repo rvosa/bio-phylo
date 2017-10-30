@@ -1,5 +1,6 @@
 package Bio::Phylo::Models::Substitution::Dna::F81;
 use strict;
+use warnings;
 use base 'Bio::Phylo::Models::Substitution::Dna';
 
 =head1 NAME

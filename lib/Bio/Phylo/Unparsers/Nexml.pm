@@ -1,6 +1,6 @@
-# Subversion: $Rev: 190 $
 package Bio::Phylo::Unparsers::Nexml;
 use strict;
+use warnings;
 use base 'Bio::Phylo::Unparsers::Abstract';
 use Bio::Phylo::Util::CONSTANT qw':objecttypes looks_like_object';
 use Bio::Phylo::Util::Exceptions 'throw';

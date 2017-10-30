@@ -1,5 +1,6 @@
 package Bio::Phylo::PhyloWS::Service::Tolweb;
 use strict;
+use warnings;
 use base 'Bio::Phylo::PhyloWS::Service';
 use Bio::Phylo::IO 'parse';
 use Bio::Phylo::Factory;

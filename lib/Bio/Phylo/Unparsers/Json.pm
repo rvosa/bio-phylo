@@ -1,5 +1,6 @@
 package Bio::Phylo::Unparsers::Json;
 use strict;
+use warnings;
 use base 'Bio::Phylo::Unparsers::Abstract';
 use Bio::Phylo::Util::CONSTANT qw'/looks_like/';
 use Bio::Phylo::Util::Exceptions 'throw';

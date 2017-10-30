@@ -1,5 +1,6 @@
 package Bio::Phylo::Treedrawer;
 use strict;
+use warnings;
 use Bio::Phylo::Util::Logger;
 use Bio::Phylo::Util::Exceptions 'throw';
 use Bio::Phylo::Util::CONSTANT qw'_TREE_ /looks_like/ _PI_';

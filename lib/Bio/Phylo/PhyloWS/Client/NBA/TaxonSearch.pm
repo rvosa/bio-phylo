@@ -1,5 +1,6 @@
 package Bio::Phylo::PhyloWS::Client::NBA::TaxonSearch;
 use strict;
+use warnings;
 use base 'Bio::Phylo::PhyloWS::Client::NBA';
 
 =head1 NAME

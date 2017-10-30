@@ -1,5 +1,6 @@
 package Bio::Phylo::Project;
 use strict;
+use warnings;
 use base 'Bio::Phylo::Listable';
 use Bio::Phylo::Util::CONSTANT qw':all';
 use Bio::Phylo::Util::Exceptions 'throw';

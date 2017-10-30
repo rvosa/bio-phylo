@@ -1,5 +1,6 @@
 package Bio::Phylo::Taxa;
 use strict;
+use warnings;
 use base 'Bio::Phylo::Listable';
 use Bio::Phylo::Util::CONSTANT qw':objecttypes /looks_like/ :namespaces';
 use Bio::Phylo::Util::Exceptions 'throw';

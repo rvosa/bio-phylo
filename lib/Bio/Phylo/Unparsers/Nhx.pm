@@ -1,5 +1,6 @@
 package Bio::Phylo::Unparsers::Nhx;
 use strict;
+use warnings;
 use base 'Bio::Phylo::Unparsers::Abstract';
 use Bio::Phylo::IO 'unparse';
 use Bio::Phylo::Util::CONSTANT qw':objecttypes :namespaces';

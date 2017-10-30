@@ -1,5 +1,6 @@
 package Bio::Phylo::Parsers::Tnrs;
 use strict;
+use warnings;
 use base 'Bio::Phylo::Parsers::Abstract';
 use Data::Dumper;
 use Bio::Phylo::Util::Exceptions 'throw';

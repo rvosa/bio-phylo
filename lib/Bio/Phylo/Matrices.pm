@@ -1,5 +1,6 @@
 package Bio::Phylo::Matrices;
 use strict;
+use warnings;
 use base 'Bio::Phylo::Listable';
 use Bio::Phylo::Util::CONSTANT qw'_NONE_ _MATRICES_';
 

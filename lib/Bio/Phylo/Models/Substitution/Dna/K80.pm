@@ -1,5 +1,6 @@
 package Bio::Phylo::Models::Substitution::Dna::K80;
 use strict;
+use warnings;
 use base 'Bio::Phylo::Models::Substitution::Dna::JC69';
 my %purines = ( 'A' => 1, 'G' => 1 );
 

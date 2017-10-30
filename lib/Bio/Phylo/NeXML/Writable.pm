@@ -1,5 +1,6 @@
 package Bio::Phylo::NeXML::Writable;
 use strict;
+use warnings;
 use base 'Bio::Phylo';
 use Bio::Phylo::IO 'unparse';
 use Bio::Phylo::Factory;

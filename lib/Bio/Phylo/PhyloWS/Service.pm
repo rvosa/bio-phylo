@@ -1,5 +1,6 @@
 package Bio::Phylo::PhyloWS::Service;
 use strict;
+use warnings;
 use base 'Bio::Phylo::PhyloWS';
 use Bio::Phylo::Factory;
 use Bio::Phylo::IO 'unparse';

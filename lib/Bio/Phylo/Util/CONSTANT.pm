@@ -1,5 +1,6 @@
 package Bio::Phylo::Util::CONSTANT;
 use strict;
+use warnings;
 use base 'Exporter';
 use Scalar::Util 'blessed';
 use Bio::Phylo::Util::Exceptions 'throw';

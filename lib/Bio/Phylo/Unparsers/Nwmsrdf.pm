@@ -1,5 +1,6 @@
 package Bio::Phylo::Unparsers::Nwmsrdf;
 use strict;
+use warnings;
 use base 'Bio::Phylo::Unparsers::Abstract';
 use Bio::Phylo::Util::Exceptions 'throw';
 use Bio::Phylo::Util::CONSTANT qw':objecttypes looks_like_object';

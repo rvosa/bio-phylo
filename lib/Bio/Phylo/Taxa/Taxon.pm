@@ -1,5 +1,6 @@
 package Bio::Phylo::Taxa::Taxon;
 use strict;
+use warnings;
 use base 'Bio::Phylo::NeXML::Writable';
 use Bio::Phylo::Util::CONSTANT qw':objecttypes looks_like_object';
 use Bio::Phylo::Mediators::TaxaMediator;

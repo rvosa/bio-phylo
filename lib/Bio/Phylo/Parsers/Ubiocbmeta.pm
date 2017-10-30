@@ -3,6 +3,7 @@ use base 'Bio::Phylo::Parsers::Abstract';
 use Bio::Phylo::Util::Dependency 'XML::Twig';
 use Bio::Phylo::NeXML::Entities '/entities/';
 use strict;
+use warnings;
 
 =head1 NAME
 

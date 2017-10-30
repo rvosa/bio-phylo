@@ -1,5 +1,6 @@
 package Bio::Phylo::Matrices::Datatype;
 use strict;
+use warnings;
 use base 'Bio::Phylo::NeXML::Writable';
 use Bio::Phylo::Factory;
 use Bio::Phylo::Util::Exceptions 'throw';

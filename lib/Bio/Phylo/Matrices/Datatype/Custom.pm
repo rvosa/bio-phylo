@@ -1,5 +1,6 @@
 package Bio::Phylo::Matrices::Datatype::Custom;
 use strict;
+use warnings;
 use base 'Bio::Phylo::Matrices::Datatype';
 
 =head1 NAME

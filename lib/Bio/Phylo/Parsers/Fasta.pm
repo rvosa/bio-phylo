@@ -1,5 +1,6 @@
 package Bio::Phylo::Parsers::Fasta;
 use strict;
+use warnings;
 use base 'Bio::Phylo::Parsers::Abstract';
 use Bio::Phylo::Util::Exceptions 'throw';
 use Bio::Phylo::Util::CONSTANT ':objecttypes';

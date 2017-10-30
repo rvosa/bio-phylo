@@ -1,5 +1,6 @@
 package Bio::Phylo::Unparsers::Figtree;
 use strict;
+use warnings;
 use base 'Bio::Phylo::Unparsers::Nexus';
 use Bio::Phylo::Util::Logger ':levels';
 use Bio::Phylo::Util::Exceptions 'throw';

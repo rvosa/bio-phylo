@@ -1,5 +1,6 @@
 package Bio::Phylo::Unparsers::Mrp;
 use strict;
+use warnings;
 use base 'Bio::Phylo::Unparsers::Abstract';
 use Bio::Phylo::Util::CONSTANT qw'/looks_like/ :objecttypes';
 use Bio::Phylo::Util::Exceptions 'throw';

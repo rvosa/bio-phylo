@@ -1,5 +1,6 @@
 package Bio::Phylo::Parsers::Abstract;
 use strict;
+use warnings;
 use base 'Bio::Phylo::IO';
 use IO::Handle;
 use Bio::Phylo::Util::Exceptions 'throw';

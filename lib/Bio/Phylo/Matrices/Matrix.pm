@@ -1,5 +1,6 @@
 package Bio::Phylo::Matrices::Matrix;
 use strict;
+use warnings;
 use base 'Bio::Phylo::Matrices::MatrixRole';
 use Bio::Phylo::Util::CONSTANT qw':objecttypes /looks_like/';
 use Bio::Phylo::Util::Exceptions qw'throw';

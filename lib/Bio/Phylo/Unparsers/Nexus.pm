@@ -1,5 +1,6 @@
 package Bio::Phylo::Unparsers::Nexus;
 use strict;
+use warnings;
 use base 'Bio::Phylo::Unparsers::Abstract';
 use Bio::Phylo::Util::CONSTANT ':objecttypes';
 use Bio::Phylo::Util::Exceptions 'throw';

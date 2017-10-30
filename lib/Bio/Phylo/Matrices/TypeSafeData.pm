@@ -1,5 +1,6 @@
 package Bio::Phylo::Matrices::TypeSafeData;
 use strict;
+use warnings;
 use base 'Bio::Phylo::Listable';
 use Bio::Phylo::Util::Exceptions 'throw';
 use Bio::Phylo::Util::CONSTANT qw'_MATRIX_ /looks_like/';

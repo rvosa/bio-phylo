@@ -1,5 +1,6 @@
 package Bio::Phylo::Forest::Tree;
 use strict;
+use warnings;
 use Bio::Phylo::Forest::DrawTreeRole;
 use base qw'Bio::Phylo::Forest::DrawTreeRole';
 {

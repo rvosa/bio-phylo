@@ -1,5 +1,6 @@
 package Bio::Phylo::Listable;
 use strict;
+use warnings;
 use Bio::Phylo::ListableRole;
 use base 'Bio::Phylo::ListableRole';
 use Bio::Phylo::Util::Exceptions 'throw';

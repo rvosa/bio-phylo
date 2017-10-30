@@ -1,5 +1,6 @@
 package Bio::Phylo::Util::Logger;
 use strict;
+use warnings;
 use base 'Exporter';
 use Term::ANSIColor;
 use Bio::Phylo::Util::Exceptions 'throw';

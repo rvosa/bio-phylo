@@ -1,5 +1,6 @@
 package Bio::Phylo::NeXML::DOM;
 use strict;
+use warnings;
 use base 'Bio::Phylo';
 use Bio::Phylo::Util::CONSTANT qw'_DOMCREATOR_ looks_like_class';
 use Bio::Phylo::Util::Exceptions 'throw';

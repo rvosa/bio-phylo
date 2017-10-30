@@ -1,5 +1,6 @@
 package Bio::Phylo::Util::Math;
 use strict;
+use warnings;
 use base 'Exporter';
 
 BEGIN {

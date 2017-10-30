@@ -1,5 +1,6 @@
 package Bio::Phylo::IO;
 use strict;
+use warnings;
 use base 'Exporter';
 use Bio::Phylo;
 use Bio::Phylo::Util::CONSTANT qw'/looks_like/ :objecttypes';
