@@ -1,6 +1,7 @@
 package Bio::Phylo::NeXML::XML2JSON;
 use XML::XML2JSON;
 use base 'XML::XML2JSON';
+use strict;
 
 =head1 NAME
 
