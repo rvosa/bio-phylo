@@ -5,7 +5,13 @@ BEGIN {
         plan 'skip_all' => 'XML::Twig not installed';
     }
     else {
-        Test::More->import('no_plan');
+        eval { require Archive::Zip };
+        if ($@) {
+            plan 'skip_all' => 'Archive::Zip not installed';
+        }
+        else {
+            Test::More->import('no_plan');
+        }
     }
 }
 use Net::Ping;
