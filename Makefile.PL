@@ -52,6 +52,10 @@ if ( $ExtUtils::MakeMaker::VERSION ge '6.46' ) {
     };
 }
 
+if ( $ExtUtils::MakeMaker::VERSION ge '6.48' ) {
+    $parms{MIN_PERL_VERSION} = '5.8.0';
+}
+
 WriteMakefile( %parms );
 
 sub check_prereq {
