@@ -79,6 +79,7 @@ BEGIN {
     # by the DEBUG() ... FATAL() subs below
     sub LOG ($$) {
         my ( $message, $level ) = @_;
+        no warnings 'uninitialized';
         
         # probe the call stack
         my ( $pack2, $file2, $line2, $sub  ) = caller( $TRACEBACK + 2 );
