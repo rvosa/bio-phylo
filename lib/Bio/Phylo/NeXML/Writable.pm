@@ -220,7 +220,12 @@ This is the superclass for all objects that can be serialized to NeXML
 	
 	sub set_meta : Clonable {
 		my ( $self, $meta ) = @_;
-		if ( $meta && @{ $meta } ) {
+		if ( $meta && ref($meta) eq 'HASH' ) {
+			for my $key ( keys %{ $meta } ) {
+				$self->set_meta_object( $key => $meta->{$key} );
+			}
+		}
+		elsif ( $meta && ref($meta) eq 'ARRAY' ) {
 			$meta{$self->get_id} = $meta;
             $self->set_attributes( 'about' => '#' . $self->get_xml_id );			
 		}
