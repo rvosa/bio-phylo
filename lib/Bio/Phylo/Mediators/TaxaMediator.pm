@@ -143,7 +143,7 @@ Removes argument from invocant's cache.
             if ( $taxa_id ) {
                 my @others = keys %{ $one_to_many{$taxa_id} };
                 if ( @others == 1 ) {
-                    weaken $object[$taxa_id];
+                    weaken $object[$taxa_id] unless isweak $object[$taxa_id];
                 }
                 delete $one_to_many{$taxa_id}->{$id};
             }            
