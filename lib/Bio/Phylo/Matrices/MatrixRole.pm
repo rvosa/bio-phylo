@@ -1947,7 +1947,7 @@ Serializes matrix to nexus format.
                 my $i = 1;
                 for my $label (@labels) {
                     $charlabels .=
-                      $label =~ /\s/
+                      $label =~ /(\s|-)/
                       ? "\n\t\t [$i] '$label'"
                       : "\n\t\t [$i] $label";
                     $i++;
