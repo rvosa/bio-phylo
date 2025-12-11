@@ -15,11 +15,11 @@ jobs:
     strategy:
       matrix:
         perl-version:
+          - '5.42'
           - '5.40'
           - '5.38'
           - '5.36'
           - '5.34'
-          - '5.32'
     name: Perl ${{ matrix.perl-version }}
     steps:
       - uses: actions/checkout@v4
