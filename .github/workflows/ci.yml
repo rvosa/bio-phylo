@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   test:
@@ -24,12 +24,12 @@ jobs:
     name: Perl ${{ matrix.perl-version }}
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Set up Perl
         uses: shogo82148/actions-setup-perl@v1
         with:
           perl-version: ${{ matrix.perl-version }}
-      
+
       - name: Install dependencies
         run: |
           cpanm --notest XML::Twig
@@ -41,11 +41,11 @@ jobs:
           cpanm --notest Math::CDF
           cpanm --notest Math::Random
           cpanm --notest Archive::Zip
-      
+
       - name: Build
         run: |
           perl Makefile.PL
           make
-      
+
       - name: Run tests
         run: make test
