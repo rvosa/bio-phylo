@@ -34,6 +34,7 @@ jobs:
         run: |
           cpanm --notest XML::Twig
           cpanm --notest XML::LibXML
+          # XML::XML2JSON requires --force due to dependency resolution issues
           cpanm --notest --force XML::XML2JSON
           cpanm --notest JSON
           cpanm --notest JSON::Syck
