@@ -20,9 +20,9 @@ For a list of automated test results for the latest release number visit:
 
 http://testers.cpan.org/show/Bio-Phylo.html
 
-Currently, the build status at Travis for the head revision is:
+Currently, the build status for the head revision is:
 
-[![Build Status](https://travis-ci.org/rvosa/bio-phylo.svg?branch=master)](https://travis-ci.org/rvosa/bio-phylo)
+[![CI](https://github.com/rvosa/bio-phylo/workflows/CI/badge.svg)](https://github.com/rvosa/bio-phylo/actions/workflows/ci.yml)
 
 INSTALLATION
 ------------

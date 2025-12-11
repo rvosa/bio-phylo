@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        perl-version:
+          - '5.40'
+          - '5.38'
+          - '5.36'
+          - '5.34'
+          - '5.32'
+    name: Perl ${{ matrix.perl-version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Perl
+        uses: shogo82148/actions-setup-perl@v1
+        with:
+          perl-version: ${{ matrix.perl-version }}
+
+      - name: Install dependencies
+        run: |
+          cpanm --notest XML::Twig
+          cpanm --notest XML::LibXML
+          # XML::XML2JSON requires --force due to dependency resolution issues
+          cpanm --notest --force XML::XML2JSON
+          cpanm --notest JSON
+          cpanm --notest JSON::Syck
+          cpanm --notest SVG
+          cpanm --notest Math::CDF
+          cpanm --notest Math::Random
+          cpanm --notest Archive::Zip
+
+      - name: Build
+        run: |
+          perl Makefile.PL
+          make
+
+      - name: Run tests
+        run: make test
